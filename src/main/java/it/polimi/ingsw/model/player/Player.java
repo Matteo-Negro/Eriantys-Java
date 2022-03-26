@@ -9,6 +9,10 @@ import java.util.Map;
 
 public class Player {
 
+    public Player(String name) {
+
+    }
+
     public String getName() {
         return "";
     }
@@ -33,7 +37,7 @@ public class Player {
 
     }
 
-    public void moveStudentSchoolBoard(HouseColor houseColor, String string) {      // Perché la stringa
+    public void moveStudentSchoolBoard(HouseColor houseColor) {
 
     }
 

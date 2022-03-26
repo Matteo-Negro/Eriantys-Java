@@ -7,6 +7,10 @@ import java.util.Map;
 
 public class SchoolBoard {
 
+    public SchoolBoard() {
+
+    }
+
     public int getTowersNumber() {
         return 0;
     }

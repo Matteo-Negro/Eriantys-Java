@@ -8,6 +8,10 @@ import java.util.List;
 
 public class GamePlatform {
 
+    public GamePlatform(String id) {
+
+    }
+
     public String getId() {
         return "";
     }
@@ -25,7 +29,7 @@ public class GamePlatform {
     }
 
     public Player getPlayerByName(String name) {
-        return new Player();
+        return new Player(name);
     }
 
     public boolean isExpert() {
