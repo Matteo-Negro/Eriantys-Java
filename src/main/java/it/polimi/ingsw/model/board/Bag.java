@@ -13,7 +13,7 @@ import java.util.List;
 public class Bag {
     private List<HouseColor> listStudents;
 
-    public Bag(List<HouseColor> listStudents) {
+    public Bag() {
     }
 
     public HouseColor pop() {

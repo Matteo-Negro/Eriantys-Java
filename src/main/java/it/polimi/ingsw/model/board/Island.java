@@ -18,7 +18,7 @@ public class Island {
     private TowerType tower;
     private Map<HouseColor, Integer> students;
 
-    public Island() {
+    public Island(HouseColor color, int idIsland) {
     }
 
     public int getId() {
@@ -33,7 +33,7 @@ public class Island {
         return 0;
     }
 
-    public boolean isBan() {
+    public boolean isBanned() {
         return false;
     }
 
