@@ -20,6 +20,9 @@ public class GameBoard {
     private Bag bag;
     private List<SpecialCharacter> characters;
 
+    public GameBoard() {
+    }
+
     public void moveMotherNature(Island targetIsland, Assistant playedAssistant) {
     }
 
@@ -54,10 +57,7 @@ public class GameBoard {
         return null;
     }
 
-    /**
-     * I'm not sure about it
-     */
-    public List<Assistant> getPlayedAssistants() {
+    public Assistant getAssistant(int idAssistant) {
         return null;
     }
 

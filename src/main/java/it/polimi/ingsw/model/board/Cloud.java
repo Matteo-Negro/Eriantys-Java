@@ -15,7 +15,7 @@ public class Cloud {
     private int studentsNum;
     private Map<HouseColor, Integer> students;
 
-    public Cloud() {
+    public Cloud(int idCloud) {
     }
 
     public int getId() {
