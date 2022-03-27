@@ -6,22 +6,22 @@ public class MonkEffect implements Effect{
     private int cost;
 
     public MonkEffect(){
-        students = new Map<HouseColor, Integer>;
+        students = new Map<HouseColor, Integer>();
     }
 
     public int getId(){
         return 1;
     }
 
-    public void effect(){
-
+    public void effect(HouseColor color){
+        takeStudent(color);
     }
 
     public void clean(){
 
     }
 
-    public int setCost(){
+    public int getCost(){
         return 1;
     }
 

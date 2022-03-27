@@ -13,14 +13,14 @@ public class HerablistEffect implements Effect{
     }
 
     public void effect(){
-
+        takeBan();
     }
 
     public void clean(){
 
     }
 
-    public int setCost(){
+    public int getCost(){
         return 2;
     }
 
@@ -29,10 +29,10 @@ public class HerablistEffect implements Effect{
     }
 
     private void takeBan(){
-
+        availableBans--;
     }
 
     private void putBan(){
-
+        availableBans++;
     }
 }

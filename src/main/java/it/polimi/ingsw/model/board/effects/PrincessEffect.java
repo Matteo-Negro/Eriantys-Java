@@ -14,15 +14,15 @@ public class PrincessEffect implements Effect{
         return 11;
     }
 
-    public void effect(){
-
+    public void effect(HouseColor color){
+        takeStudent(color);
     }
 
     public void clean(){
 
     }
 
-    public int setCost(){
+    public int getCost(){
         return 2;
     }
 
@@ -30,7 +30,7 @@ public class PrincessEffect implements Effect{
         return students;
     }
 
-    private void takeStudent(){
+    private void takeStudent(HouseColor color){
 
     }
 

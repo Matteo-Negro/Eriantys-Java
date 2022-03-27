@@ -17,7 +17,7 @@ public class KnightEffect implements Effect{
 
     }
 
-    public int setCost(){
+    public int getCost(){
         return 2;
     }
 }

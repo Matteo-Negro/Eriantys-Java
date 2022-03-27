@@ -5,6 +5,5 @@ public interface Effect {
     public int getId();
     public void effect();
     public void clean();
-    public int setCost();
-
+    public int getCost();
 }

@@ -6,6 +6,7 @@ public class CentaurEffect implements Effect{
 
     private List<Island> takenTowers;
 
+
     public CentaurEffect(){
         takenTowers = new ArrayList<Island>();
     }
@@ -14,15 +15,15 @@ public class CentaurEffect implements Effect{
         return 6;
     }
 
-    public void effect(){
-
+    public void effect(List<Island> towers){
+        takeTowers(towers);
     }
 
     public void clean(){
-
+        returnTowers();
     }
 
-    public int setCost(){
+    public int getCost(){
         return 3;
     }
 
@@ -30,11 +31,11 @@ public class CentaurEffect implements Effect{
         return takenTowers;
     }
 
-    private void takeTowers(){
-
+    private void takeTowers(List<Island> towers){
+        takenTowers = towers;
     }
 
     private void returnTowers(){
-
+        takenTowers = new ArrayList<Island>();
     }
 }
