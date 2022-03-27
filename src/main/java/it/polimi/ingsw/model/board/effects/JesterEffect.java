@@ -1,8 +1,11 @@
 package it.polimi.ingsw.model.board.effects;
 
+import java.util.Map;
+
 public class JesterEffect implements Effect{
 
     private Map<HouseColor, Integer> students;
+
 
     public JesterEffect(){
         students = new Map<HouseColor, Integer>;
@@ -12,15 +15,15 @@ public class JesterEffect implements Effect{
         return 7;
     }
 
-    public void effect(){
-
+    public void effect(Map<HouseColor, Integer> exchangedStudents){
+        exchangeStudents(exchangedStudents);
     }
 
     public void clean(){
-
+        students = new Map<HouseColor, Integer>();
     }
 
-    public int setCost(){
+    public int getCost(){
         return 1;
     }
 
@@ -28,7 +31,7 @@ public class JesterEffect implements Effect{
         return students;
     }
 
-    private void exchangeStudents(){
-
+    private void exchangeStudents(Map<HouseColor, Integer> exchangedStudents){
+        students = exchangedStudents;
     }
 }

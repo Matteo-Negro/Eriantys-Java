@@ -17,7 +17,7 @@ public class MessengerEffect implements Effect{
 
     }
 
-    public int setCost(){
+    public int getCost(){
         return 1;
     }
 

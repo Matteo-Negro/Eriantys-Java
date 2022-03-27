@@ -17,7 +17,7 @@ public class MushroomerEffect implements Effect{
 
     }
 
-    public int setCost(){
+    public int getCost(){
         return 3;
     }
 }
