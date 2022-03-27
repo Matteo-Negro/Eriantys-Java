@@ -5,19 +5,13 @@ import java.util.ArrayList;
 public class CentaurEffect implements Effect{
 
     private List<Island> takenTowers;
-    private int cost;
 
     public CentaurEffect(){
         takenTowers = new ArrayList<Island>();
-        cost = 3;
     }
 
     public int getId(){
         return 6;
-    }
-
-    public int getCost(){
-        return cost;
     }
 
     public void effect(){
@@ -26,6 +20,10 @@ public class CentaurEffect implements Effect{
 
     public void clean(){
 
+    }
+
+    public int setCost(){
+        return 3;
     }
 
     private List<Island> getTakenTowers(){

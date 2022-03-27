@@ -7,15 +7,10 @@ public class MonkEffect implements Effect{
 
     public MonkEffect(){
         students = new Map<HouseColor, Integer>;
-        cost = 1;
     }
 
     public int getId(){
         return 1;
-    }
-
-    public int getCost(){
-        return cost;
     }
 
     public void effect(){
@@ -24,6 +19,10 @@ public class MonkEffect implements Effect{
 
     public void clean(){
 
+    }
+
+    public int setCost(){
+        return 1;
     }
 
     private Map<HouseColor, Integer> getStudents(){
