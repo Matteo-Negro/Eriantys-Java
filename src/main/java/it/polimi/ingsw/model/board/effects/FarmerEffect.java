@@ -3,19 +3,13 @@ package it.polimi.ingsw.model.board.effects;
 public class FarmerEffect implements Effect{
 
     private Map<HouseColor, Player> stolenProfessors;
-    private int cost;
 
     public FarmerEffect(){
         stolenProfessors = new Map<HouseColor, Player>;
-        cost = 2;
     }
 
     public int getId(){
         return 2;
-    }
-
-    public int getCost(){
-        return cost;
     }
 
     public void effect(){
@@ -24,6 +18,10 @@ public class FarmerEffect implements Effect{
 
     public void clean(){
 
+    }
+
+    public int setCost(){
+        return 2;
     }
 
     private Map<HouseColor, Player> getStolenProfessors(){

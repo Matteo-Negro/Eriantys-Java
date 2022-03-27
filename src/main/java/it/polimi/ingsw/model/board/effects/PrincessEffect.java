@@ -4,21 +4,14 @@ import java.util.Map;
 
 public class PrincessEffect implements Effect{
 
-    private int cost;
-
     private Map<HouseColor, Integer> students;
 
     public PrincessEffect(){
         students = new Map<HouseColor, Integer>;
-        cost = 2;
     }
 
     public int getId(){
         return 11;
-    }
-
-    public int getCost(){
-        return cost;
     }
 
     public void effect(){
@@ -27,6 +20,10 @@ public class PrincessEffect implements Effect{
 
     public void clean(){
 
+    }
+
+    public int setCost(){
+        return 2;
     }
 
     private Map<HouseColor, Integer> getStudents(){
