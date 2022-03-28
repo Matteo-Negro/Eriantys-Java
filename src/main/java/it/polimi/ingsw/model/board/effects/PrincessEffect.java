@@ -1,27 +1,38 @@
 package it.polimi.ingsw.model.board.effects;
 
+import it.polimi.ingsw.model.utilities.HouseColor;
+
+import java.util.HashMap;
 import java.util.Map;
 
 public class PrincessEffect implements Effect {
 
-    private Map<HouseColor, Integer> students;
+    private final Map<HouseColor, Integer> students;
 
     public PrincessEffect() {
-        students = new Map<HouseColor, Integer>;
+        students = new HashMap<>();
     }
 
+    @Override
     public int getId() {
         return 11;
+    }
+
+    @Override
+    public void effect() {
+
     }
 
     public void effect(HouseColor color) {
         takeStudent(color);
     }
 
+    @Override
     public void clean() {
 
     }
 
+    @Override
     public int getCost() {
         return 2;
     }
