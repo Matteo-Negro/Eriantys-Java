@@ -1,8 +1,13 @@
 package it.polimi.ingsw.model.board;
 
+
+import it.polimi.ingsw.model.player.Assistant;
+import it.polimi.ingsw.model.player.Player;
 import it.polimi.ingsw.model.utilities.HouseColor;
+import it.polimi.ingsw.model.board.SpecialCharacter;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * GameBoard Class
