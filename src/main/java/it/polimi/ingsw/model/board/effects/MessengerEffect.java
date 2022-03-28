@@ -1,23 +1,24 @@
 package it.polimi.ingsw.model.board.effects;
 
-public class MessengerEffect implements Effect{
+public class MessengerEffect implements Effect {
 
-    public MessengerEffect(){
+    public MessengerEffect() {
 
     }
 
-    public int getId(){
+    public int getId() {
         return 4;
     }
 
-    public void effect(){
-
-    }
-    public void clean(){
+    public void effect() {
 
     }
 
-    public int getCost(){
+    public void clean() {
+
+    }
+
+    public int getCost() {
         return 1;
     }
 

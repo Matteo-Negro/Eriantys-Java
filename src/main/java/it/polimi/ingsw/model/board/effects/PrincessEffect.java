@@ -2,39 +2,39 @@ package it.polimi.ingsw.model.board.effects;
 
 import java.util.Map;
 
-public class PrincessEffect implements Effect{
+public class PrincessEffect implements Effect {
 
     private Map<HouseColor, Integer> students;
 
-    public PrincessEffect(){
+    public PrincessEffect() {
         students = new Map<HouseColor, Integer>;
     }
 
-    public int getId(){
+    public int getId() {
         return 11;
     }
 
-    public void effect(HouseColor color){
+    public void effect(HouseColor color) {
         takeStudent(color);
     }
 
-    public void clean(){
+    public void clean() {
 
     }
 
-    public int getCost(){
+    public int getCost() {
         return 2;
     }
 
-    private Map<HouseColor, Integer> getStudents(){
+    private Map<HouseColor, Integer> getStudents() {
         return students;
     }
 
-    private void takeStudent(HouseColor color){
+    private void takeStudent(HouseColor color) {
 
     }
 
-    private void addStudent(HouseColor color){
+    private void addStudent(HouseColor color) {
 
     }
 }

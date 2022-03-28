@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model.player;
 
+import it.polimi.ingsw.model.board.Island;
 import it.polimi.ingsw.model.utilities.HouseColor;
 import it.polimi.ingsw.model.utilities.WizardType;
 
@@ -45,7 +46,7 @@ public class Player {
 
     }
 
-    public void refillEntrance(Map<HouseColor, Integer>) {
+    public void refillEntrance(Map<HouseColor, Integer> students) {
 
     }
 
