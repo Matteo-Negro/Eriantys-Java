@@ -1,15 +1,15 @@
 package it.polimi.ingsw.model.board.effects;
 
-public class ThiefEffect implements Effect{
+public class ThiefEffect implements Effect {
 
-    public ThiefEffect(){
+    public ThiefEffect() {
     }
 
-    public int getId(){
+    public int getId() {
         return 12;
     }
 
-    public void effect(){
+    public void effect() {
 
     }
 
@@ -17,7 +17,7 @@ public class ThiefEffect implements Effect{
 
     }
 
-    public int getCost(){
+    public int getCost() {
         return 3;
     }
 }

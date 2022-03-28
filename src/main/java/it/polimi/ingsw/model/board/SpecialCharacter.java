@@ -1,16 +1,18 @@
-package it.polimi.ingsw.model.board.effects;
+package it.polimi.ingsw.model.board;
 
-public class CharacterCard {
+import it.polimi.ingsw.model.board.effects.Effect;
+
+public class SpecialCharacter {
 
     private final int id;
-    private int effectCost;
+    private final Effect assignedEffect;
+    private final int effectCost;
     private boolean alreadyPayed;
     private boolean payedInRound;
     private boolean isActive;
-    private final Effect assignedEffect;
 
 
-    public CharacterCard(int id, Effect assignedEffect){
+    public SpecialCharacter(int id, Effect assignedEffect) {
         this.id = id;
         this.assignedEffect = assignedEffect;
         effectCost = assignedEffect.getCost();
@@ -19,35 +21,35 @@ public class CharacterCard {
         payedInRound = false;
     }
 
-    public int getId(){
+    public int getId() {
         return id;
     }
 
-    public int getEffectCost(){
+    public int getEffectCost() {
 
-        if(alreadyPayed)  return effectCost+1;
+        if (alreadyPayed) return effectCost + 1;
 
         else return effectCost;
 
     }
 
-    public Effect getEffect(){
+    public Effect getEffect() {
         return assignedEffect;
     }
 
-    public void payCost(){
+    public void payCost() {
         alreadyPayed = true;
         payedInRound = true;
         isActive = true;
         getEffect().effect();
     }
 
-    public void cleanEffect(){
+    public void cleanEffect() {
         isActive = false;
         assignedEffect.clean();
     }
 
-    public void changedRound(){
+    public void changedRound() {
         payedInRound = false;
     }
 }
