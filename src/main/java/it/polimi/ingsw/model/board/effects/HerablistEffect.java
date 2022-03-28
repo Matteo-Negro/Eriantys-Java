@@ -8,18 +8,22 @@ public class HerablistEffect implements Effect {
         availableBans = 5;
     }
 
+    @Override
     public int getId() {
         return 5;
     }
 
+    @Override
     public void effect() {
         takeBan();
     }
 
+    @Override
     public void clean() {
 
     }
 
+    @Override
     public int getCost() {
         return 2;
     }
