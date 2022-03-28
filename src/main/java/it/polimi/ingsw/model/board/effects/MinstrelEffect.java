@@ -1,23 +1,23 @@
 package it.polimi.ingsw.model.board.effects;
 
-public class MinstrelEffect implements Effect{
+public class MinstrelEffect implements Effect {
 
-    public MinstrelEffect(){
+    public MinstrelEffect() {
     }
 
-    public int getId(){
+    public int getId() {
         return 10;
     }
 
-    public void effect(){
+    public void effect() {
 
     }
 
-    public void clean(){
+    public void clean() {
 
     }
 
-    public int getCost(){
+    public int getCost() {
         return 1;
     }
 }
