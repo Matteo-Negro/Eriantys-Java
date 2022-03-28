@@ -1,23 +1,23 @@
 package it.polimi.ingsw.model.board.effects;
 
-public class MushroomerEffect implements Effect{
+public class MushroomerEffect implements Effect {
 
-    public MushroomerEffect(){
+    public MushroomerEffect() {
     }
 
-    public int getId(){
+    public int getId() {
         return 9;
     }
 
-    public void effect(){
+    public void effect() {
 
     }
 
-    public void clean(){
+    public void clean() {
 
     }
 
-    public int getCost(){
+    public int getCost() {
         return 3;
     }
 }
