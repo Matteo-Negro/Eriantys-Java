@@ -62,4 +62,7 @@ public class Island {
 
     public void setBan() {
     }
+
+    public void removeBan() {
+    }
 }
