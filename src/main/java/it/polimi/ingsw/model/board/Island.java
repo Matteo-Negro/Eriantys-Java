@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model.board;
 
+import it.polimi.ingsw.model.player.Player;
 import it.polimi.ingsw.model.utilities.HouseColor;
 import it.polimi.ingsw.model.utilities.TowerType;
 
