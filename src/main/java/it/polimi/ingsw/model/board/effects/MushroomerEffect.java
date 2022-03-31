@@ -1,7 +1,17 @@
 package it.polimi.ingsw.model.board.effects;
 
-public class MushroomerEffect implements Effect {
+/**
+ * Specific effect n.9
+ *
+ * @author Riccardo Milici
+ */
 
+public class MushroomerEffect extends Effect {
+
+    /**
+     * Class constructor.
+     * It creates an instance of the class.
+     */
     public MushroomerEffect() {
     }
 
