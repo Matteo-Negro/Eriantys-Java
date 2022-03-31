@@ -1,7 +1,17 @@
 package it.polimi.ingsw.model.board.effects;
 
-public class HeraldEffect implements Effect {
+/**
+ * Specific effect n.3
+ *
+ * @author Riccardo Milici
+ */
 
+public class HeraldEffect extends Effect {
+
+    /**
+     * Class constructor.
+     * It creates an instance of the class.
+     */
     public HeraldEffect() {
     }
 

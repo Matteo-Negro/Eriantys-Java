@@ -1,7 +1,17 @@
 package it.polimi.ingsw.model.board.effects;
 
-public class KnightEffect implements Effect {
+/**
+ * Specific effect n.8
+ *
+ * @author Riccardo Milici
+ */
 
+public class KnightEffect extends Effect {
+
+    /**
+     * Class constructor.
+     * It creates an instance of the class.
+     */
     public KnightEffect() {
     }
 

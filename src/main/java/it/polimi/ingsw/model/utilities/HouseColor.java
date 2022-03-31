@@ -1,4 +1,5 @@
 package it.polimi.ingsw.model.utilities;
 
-public class HouseColor {
+public enum HouseColor {
+    BLUE, FUCHSIA, GREEN, RED, YELLOW
 }
