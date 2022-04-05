@@ -1,6 +1,6 @@
 package it.polimi.ingsw.model.board;
 
-import it.polimi.ingsw.model.board.effects.Effect;
+import it.polimi.ingsw.model.board.effects.*;
 
 /**
  * The character card containing the corresponding effect
@@ -11,7 +11,7 @@ import it.polimi.ingsw.model.board.effects.Effect;
 public class SpecialCharacter {
 
     private final int id;
-    private final Effect assignedEffect;
+    private Effect assignedEffect;
     private final int effectCost;
     private boolean alreadyPayed;
     private boolean payedInRound;
@@ -21,15 +21,53 @@ public class SpecialCharacter {
      * Class constructor.
      * It creates an instance of the class containing the given specific effect object and identified by the given numeric id.
      * @param id
-     * @param assignedEffect
      */
-    public SpecialCharacter(int id, Effect assignedEffect) {
+    public SpecialCharacter(int id) {
         this.id = id;
-        this.assignedEffect = assignedEffect;
-        effectCost = assignedEffect.getCost();
         isActive = false;
         alreadyPayed = false;
         payedInRound = false;
+
+        switch (id){
+            case 1:
+                assignedEffect = new MonkEffect();
+                break;
+            case 2:
+                assignedEffect = new FarmerEffect();
+                break;
+            case 3:
+                assignedEffect = new HeraldEffect();
+                break;
+            case 4:
+                assignedEffect = new MessengerEffect();
+                break;
+            case 5:
+                assignedEffect = new HerablistEffect();
+                break;
+                case 6:
+                assignedEffect = new CentaurEffect();
+                break;
+            case 7:
+                assignedEffect = new JesterEffect();
+                break;
+            case 8:
+                assignedEffect = new KnightEffect();
+                break;
+            case 9:
+                assignedEffect = new MushroomerEffect();
+                break;
+            case 10:
+                assignedEffect = new MinstrelEffect();
+                break;
+            case 11:
+                assignedEffect = new PrincessEffect();
+                break;
+            case 12:
+                assignedEffect = new ThiefEffect();
+                break;
+        }
+
+        effectCost = assignedEffect.getCost();
     }
 
     /**
