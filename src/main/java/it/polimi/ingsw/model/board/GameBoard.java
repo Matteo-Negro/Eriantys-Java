@@ -78,12 +78,12 @@ public class GameBoard {
     }
 
     /**
-     * This method exposes the rep of clouds.
+     * This method returns a copy of clouds.
      *
      * @return The data structure that contains all the clouds.
      */
     public List<Cloud> getClouds() {
-        return this.clouds;
+        return new ArrayList<>(this.clouds);
     }
 
     /**
@@ -137,12 +137,12 @@ public class GameBoard {
     }
 
     /**
-     * This method exposes the rep of islands.
+     * This method returns a copy of islands.
      *
      * @return The data structure that contains all the islands.
      */
     public List<Island> getIslands() {
-        return this.islands;
+        return new ArrayList<>(this.islands);
     }
 
     /**
