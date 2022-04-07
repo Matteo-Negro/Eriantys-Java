@@ -122,7 +122,7 @@ public class Player {
         } catch (NegativeException e) {
             e.printStackTrace();
         }
-        specialCharacter.payCost();
+        specialCharacter.activateEffect();
     }
 
     /**

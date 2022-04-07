@@ -11,7 +11,7 @@ import java.util.*;
  */
 
 public class Bag {
-    private Stack<HouseColor> listStudents;
+    private final Stack<HouseColor> listStudents;
 
     /**
      * Bag Constructor, listStudents is initialized with the all 120 students and shuffled.

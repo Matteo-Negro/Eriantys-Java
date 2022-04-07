@@ -61,6 +61,7 @@ public class PrincessEffect extends Effect {
 
     /**
      * Returns the map saved in the students attribute.
+     *
      * @return students attribute.
      */
     private Map<HouseColor, Integer> getStudents() {
@@ -69,20 +70,22 @@ public class PrincessEffect extends Effect {
 
     /**
      * Adds a student, of the color specified by the parameter, to the map saved in the students attribute, increasing the counter mapped with the respective HouseColor.
+     *
      * @param color
      */
     private void addStudent(HouseColor color) {
-        students.replace(color, students.get(color)+1);
+        students.replace(color, students.get(color) + 1);
     }
 
     /**
      * Deletes a student, of the color specified by the parameter, from the map saved in the students attribute, decreasing the counter mapped with the respective HouseColor.
      * Throws an EmptyStackException  if the counter is already at 0.
+     *
      * @param color
      * @throws EmptyStackException
      */
     private void takeStudent(HouseColor color) throws EmptyStackException {
-        if(students.get(color)==0) throw new EmptyStackException();
-        students.replace(color, students.get(color)-1);
+        if (students.get(color) == 0) throw new EmptyStackException();
+        students.replace(color, students.get(color) - 1);
     }
 }

@@ -47,7 +47,7 @@ public class GamePlatform {
         this.clockwisePlayersOrder = new ArrayList<>();
         this.turnPlayersOrder = new ArrayList<>();
         this.players = new HashMap<>();
-        this.gameBoard = new GameBoard();
+        this.gameBoard = new GameBoard(playersNumber, expert);
     }
 
     /**

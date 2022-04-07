@@ -37,6 +37,7 @@ public class FarmerEffect extends Effect {
     /**
      * effect() method overload.
      * Calls the stealProfessors(Map<HouseColor, Player> stolen) private method.
+     *
      * @param stolen
      */
     public void effect(Map<HouseColor, Player> stolen) {
@@ -55,6 +56,7 @@ public class FarmerEffect extends Effect {
 
     /**
      * Returns the Map saved in the stolenProfessors attribute.
+     *
      * @return stolenProfessors attribute.
      */
     private Map<HouseColor, Player> getStolenProfessors() {
@@ -63,6 +65,7 @@ public class FarmerEffect extends Effect {
 
     /**
      * Saves the input map, containing a mapping between the color of the professors stolen from the players to whom they belong, into the stolenProfessors attribute.
+     *
      * @param stolen
      */
     private void stealProfessors(Map<HouseColor, Player> stolen) {

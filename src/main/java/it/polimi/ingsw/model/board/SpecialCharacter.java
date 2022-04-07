@@ -11,8 +11,8 @@ import it.polimi.ingsw.model.board.effects.*;
 public class SpecialCharacter {
 
     private final int id;
-    private Effect assignedEffect;
     private final int effectCost;
+    private Effect assignedEffect;
     private boolean alreadyPayed;
     private boolean payedInRound;
     private boolean isActive;
@@ -20,6 +20,7 @@ public class SpecialCharacter {
     /**
      * Class constructor.
      * It creates an instance of the class containing the given specific effect object and identified by the given numeric id.
+     *
      * @param id
      */
     public SpecialCharacter(int id) {
@@ -28,50 +29,28 @@ public class SpecialCharacter {
         alreadyPayed = false;
         payedInRound = false;
 
-        switch (id){
-            case 1:
-                assignedEffect = new MonkEffect();
-                break;
-            case 2:
-                assignedEffect = new FarmerEffect();
-                break;
-            case 3:
-                assignedEffect = new HeraldEffect();
-                break;
-            case 4:
-                assignedEffect = new MessengerEffect();
-                break;
-            case 5:
-                assignedEffect = new HerablistEffect();
-                break;
-                case 6:
-                assignedEffect = new CentaurEffect();
-                break;
-            case 7:
-                assignedEffect = new JesterEffect();
-                break;
-            case 8:
-                assignedEffect = new KnightEffect();
-                break;
-            case 9:
-                assignedEffect = new MushroomerEffect();
-                break;
-            case 10:
-                assignedEffect = new MinstrelEffect();
-                break;
-            case 11:
-                assignedEffect = new PrincessEffect();
-                break;
-            case 12:
-                assignedEffect = new ThiefEffect();
-                break;
-        }
+        assignedEffect = switch (id) {
+            case 1 -> new MonkEffect();
+            case 2 -> new FarmerEffect();
+            case 3 -> new HeraldEffect();
+            case 4 -> new MessengerEffect();
+            case 5 -> new HerablistEffect();
+            case 6 -> new CentaurEffect();
+            case 7 -> new JesterEffect();
+            case 8 -> new KnightEffect();
+            case 9 -> new MushroomerEffect();
+            case 10 -> new MinstrelEffect();
+            case 11 -> new PrincessEffect();
+            case 12 -> new ThiefEffect();
+            default -> throw new IllegalStateException("Unexpected value: " + id);
+        };
 
         effectCost = assignedEffect.getCost();
     }
 
     /**
      * Returns the identification number of the object.
+     *
      * @return id attribute
      */
     public int getId() {
@@ -80,6 +59,7 @@ public class SpecialCharacter {
 
     /**
      * Returns the actual cost of the effect assigned to the object: the effect's native cost if it has never been activated; the native cost increased by 1 if it has already been activated.
+     *
      * @return effectCost or effectCost+1 attribute
      */
     public int getEffectCost() {
@@ -92,6 +72,7 @@ public class SpecialCharacter {
 
     /**
      * Returns the instance of the specific effect assigned to the object.
+     *
      * @return assignedEffect attribute
      */
     public Effect getEffect() {

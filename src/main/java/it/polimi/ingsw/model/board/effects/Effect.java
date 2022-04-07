@@ -10,6 +10,7 @@ public abstract class Effect {
 
     /**
      * Returns the identification number of the specific effect object.
+     *
      * @return id attribute
      */
     public abstract int getId();
@@ -26,6 +27,7 @@ public abstract class Effect {
 
     /**
      * returns the activation cost of the effect.
+     *
      * @return cost attribute
      */
     public abstract int getCost();

@@ -43,6 +43,7 @@ public class MonkEffect extends Effect {
     /**
      * effect() method overload.
      * Calls the takeStudents(HouseColor) private method.
+     *
      * @param color
      */
     public void effect(HouseColor color) {
@@ -61,6 +62,7 @@ public class MonkEffect extends Effect {
 
     /**
      * Returns the map saved in the students attribute.
+     *
      * @return students attribute.
      */
     private Map<HouseColor, Integer> getStudents() {
@@ -69,20 +71,22 @@ public class MonkEffect extends Effect {
 
     /**
      * Increases the counter ,of the color specified by the parameter, in the students' map.
+     *
      * @param color
      */
     private void addStudent(HouseColor color) {
-        students.replace(color, students.get(color)+1);
+        students.replace(color, students.get(color) + 1);
     }
 
     /**
      * Decreases the counter, of the color specified by the parameter, in the students' map.
      * Throws the EmptyStackException if the counter is already at 0.
+     *
      * @param color
      * @throws EmptyStackException
      */
     private void takeStudent(HouseColor color) throws EmptyStackException {
-        if(students.get(color)==0) throw new EmptyStackException();
-        students.replace(color, students.get(color)-1);
+        if (students.get(color) == 0) throw new EmptyStackException();
+        students.replace(color, students.get(color) - 1);
     }
 }

@@ -40,6 +40,7 @@ public class HerablistEffect extends Effect {
 
     /**
      * Returns the availableBans attribute.
+     *
      * @return availableBans attribute.
      */
     private int getAvailableBans() {

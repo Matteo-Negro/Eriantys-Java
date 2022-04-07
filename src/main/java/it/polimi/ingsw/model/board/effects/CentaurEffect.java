@@ -36,6 +36,7 @@ public class CentaurEffect extends Effect {
     /**
      * effect() method's overload.
      * Calls the takeTowers(List<Island> towers) private method.
+     *
      * @param towers
      */
     public void effect(List<Island> towers) {
@@ -54,6 +55,7 @@ public class CentaurEffect extends Effect {
 
     /**
      * Returns the takenTowers (List<Island>) attribute.
+     *
      * @return takenTowers attribute.
      */
     private List<Island> getTakenTowers() {
@@ -62,6 +64,7 @@ public class CentaurEffect extends Effect {
 
     /**
      * Saves the list of islands, from which the towers are being taken, in the takenTowers attribute.
+     *
      * @param towers
      */
     private void takeTowers(List<Island> towers) {

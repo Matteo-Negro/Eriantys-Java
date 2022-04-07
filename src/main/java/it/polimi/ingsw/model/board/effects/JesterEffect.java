@@ -43,6 +43,7 @@ public class JesterEffect extends Effect {
     /**
      * effect() method overload.
      * Calls the exchangeStudents(Map<HouseColor, Integer> exchangedStudents) private method.
+     *
      * @param exchangedStudents
      */
     public void effect(Map<HouseColor, Integer> exchangedStudents) {
@@ -61,6 +62,7 @@ public class JesterEffect extends Effect {
 
     /**
      * Returns the map saved in the student attribute.
+     *
      * @return student attribute.
      */
     private Map<HouseColor, Integer> getStudents() {
@@ -69,11 +71,12 @@ public class JesterEffect extends Effect {
 
     /**
      * Overwrites the mapping saved in the students attribute with the mapping of the students exchanged.
+     *
      * @param exchangedStudents
      */
     private void exchangeStudents(Map<HouseColor, Integer> exchangedStudents) {
-        for(HouseColor key : exchangedStudents.keySet()){
-            students.replace(key, students.get(key)+exchangedStudents.get(key));
+        for (HouseColor key : exchangedStudents.keySet()) {
+            students.replace(key, students.get(key) + exchangedStudents.get(key));
         }
     }
 }

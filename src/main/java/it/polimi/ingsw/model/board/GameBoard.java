@@ -19,10 +19,10 @@ public class GameBoard {
     private final List<Cloud> clouds;
     private Island motherNatureIsland;
     private HouseColor ignoreColor;
-    private List<Island> islands;
-    private List<SpecialCharacter> characters;
-    private Map<HouseColor, Player> professors;
-    private Map<Player, Assistant> playedAssistants;
+    private final List<Island> islands;
+    private final List<SpecialCharacter> characters;
+    private final Map<HouseColor, Player> professors;
+    private final Map<Player, Assistant> playedAssistants;
 
     /**
      * GameBoard Constructor, this constructor initializes all the elements in the board.
