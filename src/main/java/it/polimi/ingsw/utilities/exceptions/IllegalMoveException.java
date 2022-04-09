@@ -1,4 +1,4 @@
-package it.polimi.ingsw.model.utilities.exceptions;
+package it.polimi.ingsw.utilities.exceptions;
 
 public class IllegalMoveException extends Exception {
     public IllegalMoveException() {

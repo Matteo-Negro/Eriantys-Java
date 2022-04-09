@@ -1,4 +1,4 @@
-package it.polimi.ingsw.model.utilities;
+package it.polimi.ingsw.utilities;
 
 public enum TowerType {
     BLACK, GREY, WHITE

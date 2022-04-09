@@ -1,6 +1,6 @@
 package it.polimi.ingsw.model.board;
 
-import it.polimi.ingsw.model.utilities.HouseColor;
+import it.polimi.ingsw.utilities.HouseColor;
 
 import java.util.Arrays;
 import java.util.HashMap;

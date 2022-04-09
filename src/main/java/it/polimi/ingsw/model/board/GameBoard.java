@@ -2,8 +2,8 @@ package it.polimi.ingsw.model.board;
 
 import it.polimi.ingsw.model.player.Assistant;
 import it.polimi.ingsw.model.player.Player;
-import it.polimi.ingsw.model.utilities.HouseColor;
-import it.polimi.ingsw.model.utilities.exceptions.IllegalMoveException;
+import it.polimi.ingsw.utilities.HouseColor;
+import it.polimi.ingsw.utilities.exceptions.IllegalMoveException;
 
 import java.util.*;
 

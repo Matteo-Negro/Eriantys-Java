@@ -1,8 +1,8 @@
 package it.polimi.ingsw.model.player;
 
-import it.polimi.ingsw.model.utilities.HouseColor;
-import it.polimi.ingsw.model.utilities.TowerType;
-import it.polimi.ingsw.model.utilities.exceptions.*;
+import it.polimi.ingsw.utilities.HouseColor;
+import it.polimi.ingsw.utilities.TowerType;
+import it.polimi.ingsw.utilities.exceptions.*;
 
 import java.util.Arrays;
 import java.util.HashMap;

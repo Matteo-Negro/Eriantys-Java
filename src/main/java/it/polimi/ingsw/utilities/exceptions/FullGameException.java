@@ -1,4 +1,4 @@
-package it.polimi.ingsw.model.utilities.exceptions;
+package it.polimi.ingsw.utilities.exceptions;
 
 /**
  * Exception thrown when someone tries to add a new player to the game, but there already enough players.
