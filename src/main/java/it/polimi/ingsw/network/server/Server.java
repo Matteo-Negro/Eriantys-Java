@@ -1,5 +1,6 @@
-package it.polimi.ingsw;
+package it.polimi.ingsw.network.server;
 
+import it.polimi.ingsw.ServerLauncher;
 import it.polimi.ingsw.controller.GameController;
 
 import java.io.File;
@@ -16,7 +17,7 @@ public class Server {
     public Server(String savePath) {
         this.savePath = savePath != null
                 ? savePath
-                : Paths.get(new File(Server.class.getProtectionDomain().getCodeSource().getLocation().getFile())
+                : Paths.get(new File(ServerLauncher.class.getProtectionDomain().getCodeSource().getLocation().getFile())
                 .getParent(), "database").toString();
         activeGames = new HashMap<>();
         interrupetdGames = new HashMap<>();
@@ -26,11 +27,8 @@ public class Server {
         loadGames(directory);
     }
 
-    public static void main(String[] args) {
-        Server server = new Server(args.length == 1 ? args[0] : null);
-    }
-
     private void loadGames(File directory) {
         // TODO: load previous games into interruptedGames
     }
+
 }

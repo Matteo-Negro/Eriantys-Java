@@ -48,7 +48,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>it.polimi.ingsw.Server</mainClass>
+                            <mainClass>it.polimi.ingsw.ServerLauncher</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
