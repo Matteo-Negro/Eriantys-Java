@@ -1,4 +1,4 @@
-package it.polimi.ingsw.model.utilities.exceptions;
+package it.polimi.ingsw.utilities.exceptions;
 
 /**
  * Exception thrown when something has already been played.

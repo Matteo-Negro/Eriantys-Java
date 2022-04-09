@@ -1,4 +1,4 @@
-package it.polimi.ingsw.model.utilities.exceptions;
+package it.polimi.ingsw.utilities.exceptions;
 
 /**
  * Exception thrown when there are not enough coins for the specified cost.

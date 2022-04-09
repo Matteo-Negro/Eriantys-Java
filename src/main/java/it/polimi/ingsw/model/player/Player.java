@@ -1,11 +1,11 @@
 package it.polimi.ingsw.model.player;
 
 import it.polimi.ingsw.model.board.SpecialCharacter;
-import it.polimi.ingsw.model.utilities.TowerType;
-import it.polimi.ingsw.model.utilities.WizardType;
-import it.polimi.ingsw.model.utilities.exceptions.AlreadyPlayedException;
-import it.polimi.ingsw.model.utilities.exceptions.NegativeException;
-import it.polimi.ingsw.model.utilities.exceptions.NotEnoughCoinsException;
+import it.polimi.ingsw.utilities.TowerType;
+import it.polimi.ingsw.utilities.WizardType;
+import it.polimi.ingsw.utilities.exceptions.AlreadyPlayedException;
+import it.polimi.ingsw.utilities.exceptions.NegativeException;
+import it.polimi.ingsw.utilities.exceptions.NotEnoughCoinsException;
 
 import java.util.ArrayList;
 import java.util.List;
