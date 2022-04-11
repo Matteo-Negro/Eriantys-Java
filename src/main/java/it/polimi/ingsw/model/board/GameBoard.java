@@ -15,7 +15,6 @@ import java.util.*;
 public class GameBoard {
     //TODO: fix Player influencesBonus
     private final Bag bag;
-    private final int numPlayer;
     private final List<Cloud> clouds;
     private final List<Island> islands;
     private final Map<HouseColor, Player> professors;
@@ -27,7 +26,6 @@ public class GameBoard {
     /**
      * GameBoard Constructor, this constructor initializes all the elements in the board.
      *
-     * @param numPlayer This parameter contains the number of the player.
      * @param isExp     This parameter is set true whether the game is in expert mode.
      */
     public GameBoard(int numPlayer, boolean isExp) {
@@ -35,7 +33,6 @@ public class GameBoard {
         List<Integer> randomVector = new Vector<>();
 
         this.bag = new Bag();
-        this.numPlayer = numPlayer;
         this.ignoreColor = null;
         this.playedAssistants = new HashMap<>();
         this.islands = new ArrayList<>();
@@ -55,7 +52,7 @@ public class GameBoard {
             }
         }
         Arrays.stream(HouseColor.values()).forEach(color -> this.professors.put(color, null));
-        this.initializeClouds();
+        this.initializeClouds(numPlayer);
         this.motherNatureIsland = this.islands.get(0);
     }
 
@@ -63,8 +60,6 @@ public class GameBoard {
      * GameBoard Constructor, this constructor initializes all the elements in the board to the last saved status.
      *
      * @param statusBag              A map that contains the number of students in the bag.
-     * @param numPlayer              The number of player from the saved status.
-     * @param ignoredColor           The color that will be ignored from the saved status.
      * @param statusPlayedAssistants A map that contains the played assistants from the saved status.
      * @param statusIslands          A list that contains the islands from the saved status.
      * @param statusClouds           A list that contains the clouds from the saved status.
@@ -73,10 +68,9 @@ public class GameBoard {
      * @param isExp                  This parameter is set true whether the saved game is in expert mode.
      * @param idMotherNatureIsland   The id of the island where mother nature is in the saved status.
      */
-    public GameBoard(Map<HouseColor, Integer> statusBag, int numPlayer, HouseColor ignoredColor, Map<Player, Assistant> statusPlayedAssistants, List<Island> statusIslands, List<Cloud> statusClouds, List<SpecialCharacter> statusCharacters, Map<HouseColor, Player> statusProfessors, boolean isExp, int idMotherNatureIsland) {
+    public GameBoard(Map<HouseColor, Integer> statusBag, Map<Player, Assistant> statusPlayedAssistants, List<Island> statusIslands, List<Cloud> statusClouds, List<SpecialCharacter> statusCharacters, Map<HouseColor, Player> statusProfessors, boolean isExp, int idMotherNatureIsland) {
         this.bag = new Bag(statusBag);
-        this.numPlayer = numPlayer;
-        this.ignoreColor = ignoredColor;
+        this.ignoreColor = null;
         this.playedAssistants = new HashMap<>(statusPlayedAssistants);
         this.islands = new ArrayList<>(statusIslands);
         this.clouds = new ArrayList<>(statusClouds);
@@ -97,15 +91,6 @@ public class GameBoard {
      */
     public Bag getBag() {
         return this.bag;
-    }
-
-    /**
-     * This method returns the number of player in the game.
-     *
-     * @return The number of player.
-     */
-    public int getNumPlayer() {
-        return this.numPlayer;
     }
 
     /**
@@ -268,7 +253,7 @@ public class GameBoard {
     /**
      * This method initializes the clouds, it is used in the constructor.
      */
-    private void initializeClouds() {
+    private void initializeClouds(int numPlayer) {
         for (int i = 0; i < numPlayer; i++) {
             this.clouds.add(new Cloud(i));
         }
