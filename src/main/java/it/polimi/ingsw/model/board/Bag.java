@@ -89,7 +89,7 @@ public class Bag {
      * @return A map that contains the number of students for each color.
      */
     public Map<HouseColor, Integer> getStatus() {
-        listStudents.stream().forEach(color -> {
+        listStudents.forEach(color -> {
             if (result.containsKey(color)) {
                 result.put(color, result.get(color) + 1);
             } else {

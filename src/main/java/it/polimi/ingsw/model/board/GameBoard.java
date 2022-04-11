@@ -115,7 +115,7 @@ public class GameBoard {
      * This method moves mother nature from her current position to targetIsland whether is permitted.
      *
      * @param targetIsland    The island where the player would like to move mother nature.
-     * @param playedAssistant
+     * @param playedAssistant The played assistant that shows the max movement that mother nature can do.
      * @throws IllegalMoveException Player would like moves MotherNature over assistant card limit.
      */
     public void moveMotherNature(Island targetIsland, Assistant playedAssistant) throws IllegalMoveException {
@@ -169,7 +169,7 @@ public class GameBoard {
      */
     public Map<Player, Integer> getInfluence(Island targetIsland) {
         Map<Player, Integer> result = new HashMap<>();
-        this.professors.keySet().stream().forEach(professorColor -> {
+        this.professors.keySet().forEach(professorColor -> {
             if (!professorColor.equals(ignoreColor)) {
                 if (!result.containsKey(this.professors.get(professorColor))) {
                     result.put(this.professors.get(professorColor), 0);
@@ -212,13 +212,13 @@ public class GameBoard {
     /**
      * This method adds assistants to the data structure in the class GameBoard.
      *
-     * @param currentPlayer   The current player that wolud like to play the card.
+     * @param currentPlayer   The current player that would like to play the card.
      * @param playedAssistant The card that the player would like to play.
      * @throws IllegalMoveException The played card is already played from another player.
      */
     //TODO: throws exception is permitted when it is the last choice
     public void addPlayedAssistant(Player currentPlayer, Assistant playedAssistant) throws IllegalMoveException {
-        if (!this.playedAssistants.keySet().stream().anyMatch(player -> this.playedAssistants.get(player) == playedAssistant)) {
+        if (this.playedAssistants.keySet().stream().noneMatch(player -> this.playedAssistants.get(player) == playedAssistant)) {
             throw new IllegalMoveException("The played card is already played from another player.");
         }
         this.playedAssistants.put(currentPlayer, playedAssistant);
@@ -244,7 +244,7 @@ public class GameBoard {
     /**
      * This method shows the played assistants.
      *
-     * @return The copy of the data structure playeAssistants.
+     * @return The copy of the data structure playedAssistants.
      */
     public Map<Player, Assistant> getPlayedAssistants() {
         return new HashMap<>(this.playedAssistants);
