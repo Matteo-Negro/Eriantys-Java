@@ -29,6 +29,23 @@ public class Bag {
     }
 
     /**
+     * Bag Constructor, listStudents is initialized with the remaining students to restart the Game from the last state.
+     *
+     * @param status Last state of the bag, it's a map that contains the number of student for each house color.
+     */
+    public Bag(Map<HouseColor, Integer> status){
+        this.listStudents = new Stack<>();
+
+        Arrays.stream(HouseColor.values()).forEach(color -> {
+            for (int i = 0; i < status.get(color); i++) {
+                this.listStudents.push(color);
+            }
+        });
+
+        this.randomize();
+    }
+
+    /**
      * This method gets and removes the first element in the List.
      *
      * @return First element in the List.
