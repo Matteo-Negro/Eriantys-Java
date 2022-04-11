@@ -17,7 +17,7 @@ public class Cloud {
     private final Map<HouseColor, Integer> students;
 
     /**
-     * Cloud Constructor, listStudents is initialized with the all 130 students and shuffled.
+     * Cloud Constructor, students is initialized to zero for each color.
      *
      * @param idCloud it's a number in the interval [0;2] or [0;3], it's used to identified the cloud.
      */
@@ -25,6 +25,18 @@ public class Cloud {
         this.id = idCloud;
         this.students = new HashMap<>();
         Arrays.stream(HouseColor.values()).forEach(color -> this.students.put(color, 0));
+    }
+
+    /**
+     * Cloud Constructor, students is initialized to the saved state.
+     *
+     * @param idCloud it's a number in the interval [0;2] or [0;3], it's used to identified the cloud.
+     * @param status it's a map that contains the number of student, for each house color, in the last saved status.
+     */
+    public Cloud(int idCloud, Map<HouseColor, Integer> status){
+        this.id = idCloud;
+        this.students = new HashMap<>();
+        Arrays.stream(HouseColor.values()).forEach(color -> this.students.put(color, status.get(color)));
     }
 
     /**
