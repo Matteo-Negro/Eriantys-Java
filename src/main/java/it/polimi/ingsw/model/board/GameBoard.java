@@ -17,12 +17,12 @@ public class GameBoard {
     private final Bag bag;
     private final int numPlayer;
     private final List<Cloud> clouds;
-    private Island motherNatureIsland;
-    private HouseColor ignoreColor;
     private final List<Island> islands;
-    private final List<SpecialCharacter> characters;
     private final Map<HouseColor, Player> professors;
     private final Map<Player, Assistant> playedAssistants;
+    private List<SpecialCharacter> characters;
+    private Island motherNatureIsland;
+    private HouseColor ignoreColor;
 
     /**
      * GameBoard Constructor, this constructor initializes all the elements in the board.
@@ -57,6 +57,37 @@ public class GameBoard {
         Arrays.stream(HouseColor.values()).forEach(color -> this.professors.put(color, null));
         this.initializeClouds();
         this.motherNatureIsland = this.islands.get(0);
+    }
+
+    /**
+     * GameBoard Constructor, this constructor initializes all the elements in the board to the last saved status.
+     *
+     * @param statusBag              A map that contains the number of students in the bag.
+     * @param numPlayer              The number of player from the saved status.
+     * @param ignoredColor           The color that will be ignored from the saved status.
+     * @param statusPlayedAssistants A map that contains the played assistants from the saved status.
+     * @param statusIslands          A list that contains the islands from the saved status.
+     * @param statusClouds           A list that contains the clouds from the saved status.
+     * @param statusCharacters       A list that contains the special characters from the saved status.
+     * @param statusProfessors       A map that contains the player that posses each professor.
+     * @param isExp                  This parameter is set true whether the saved game is in expert mode.
+     * @param idMotherNatureIsland   The id of the island where mother nature is in the saved status.
+     */
+    public GameBoard(Map<HouseColor, Integer> statusBag, int numPlayer, HouseColor ignoredColor, Map<Player, Assistant> statusPlayedAssistants, List<Island> statusIslands, List<Cloud> statusClouds, List<SpecialCharacter> statusCharacters, Map<HouseColor, Player> statusProfessors, boolean isExp, int idMotherNatureIsland) {
+        this.bag = new Bag(statusBag);
+        this.numPlayer = numPlayer;
+        this.ignoreColor = ignoredColor;
+        this.playedAssistants = new HashMap<>(statusPlayedAssistants);
+        this.islands = new ArrayList<>(statusIslands);
+        this.clouds = new ArrayList<>(statusClouds);
+        this.professors = new HashMap<>(statusProfessors);
+        this.characters = null;
+
+        if (isExp) {
+            this.characters = new ArrayList<>(statusCharacters);
+        }
+
+        this.motherNatureIsland = this.islands.get(idMotherNatureIsland);
     }
 
     /**
