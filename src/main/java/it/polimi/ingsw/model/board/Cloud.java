@@ -30,10 +30,10 @@ public class Cloud {
     /**
      * Cloud Constructor, students is initialized to the saved state.
      *
-     * @param idCloud it's a number in the interval [0;2] or [0;3], it's used to identified the cloud.
-     * @param status it's a map that contains the number of student, for each house color, in the last saved status.
+     * @param idCloud It's a number in the interval [0;2] or [0;3], it's used to identified the cloud.
+     * @param status  It's a map that contains the number of student, for each house color, in the last saved status.
      */
-    public Cloud(int idCloud, Map<HouseColor, Integer> status){
+    public Cloud(int idCloud, Map<HouseColor, Integer> status) {
         this.id = idCloud;
         this.students = new HashMap<>();
         Arrays.stream(HouseColor.values()).forEach(color -> this.students.put(color, status.get(color)));
