@@ -24,6 +24,13 @@ public class FarmerEffect extends Effect {
         stolenProfessors = new HashMap<>();
     }
 
+    /**
+     * Class constructor used to restore the game.
+     * @param statusStolenProfessors
+     */
+    public FarmerEffect(Map<HouseColor, Player> statusStolenProfessors) {
+        this.stolenProfessors = statusStolenProfessors;
+    }
     @Override
     public int getId() {
         return 2;
