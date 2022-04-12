@@ -27,7 +27,7 @@ public class User{
         return name;
     }
 
-    public Map<> getCommand(){
-
-    }
+//    public Map<> getCommand(){
+//
+//    }
 }

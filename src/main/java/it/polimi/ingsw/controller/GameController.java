@@ -1,7 +1,6 @@
 package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.model.GamePlatform;
-import it.polimi.ingsw.model.board.GameBoard;
 import it.polimi.ingsw.utilities.HouseColor;
 
 import java.net.Socket;
@@ -12,10 +11,10 @@ public class GameController {
     private int round;
     private String phase;
     private List<User> users;
-    private GamePlatform gameModel;
+    private final GamePlatform gameModel;
 
-    public GameController() {
-
+    public GameController(GamePlatform gameModel) {
+        this.gameModel = gameModel;
     }
 
     public String getId() {
@@ -40,17 +39,17 @@ public class GameController {
 
     public void addUser(Socket userSocket, String name) {
 
-        int userId=1;
+        int userId = 1;
 
-        for(int i=0; 0<getUsers().size(); i++){
-            if(userId == getUsers().get(i).getId()) userId++;
+        for (int i = 0; 0 < getUsers().size(); i++) {
+            if (userId == getUsers().get(i).getId()) userId++;
         }
         users.add(new User(userId, userSocket, name));
     }
 
-    public void manageCommand(Map<> command) {
-
-    }
+//    public void manageCommand(Map<> command) {
+//
+//    }
 
     public void saveGame() {
 
@@ -76,9 +75,9 @@ public class GameController {
 
     }
 
-    private boolean checkWinContitions() {
-
-    }
+//    private boolean checkWinContitions() {
+//
+//    }
 
     private void endGame() {
 
