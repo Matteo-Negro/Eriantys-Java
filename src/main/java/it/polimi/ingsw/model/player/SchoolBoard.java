@@ -6,7 +6,6 @@ import it.polimi.ingsw.model.utilities.exceptions.NegativeException;
 import it.polimi.ingsw.model.utilities.exceptions.NoStudentException;
 import it.polimi.ingsw.model.utilities.exceptions.NotEnoughTowersException;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,11 +32,10 @@ public class SchoolBoard {
         this.towerType = towerType;
         this.diningRoom = new HashMap<>();
         this.entrance = new HashMap<>();
-        Arrays.stream(HouseColor.values())
-                .forEach(color -> {
-                    this.diningRoom.put(color, 0);
-                    this.entrance.put(color, 0);
-                });
+        for (HouseColor color : HouseColor.values()) {
+            this.diningRoom.put(color, 0);
+            this.entrance.put(color, 0);
+        }
     }
 
     /**
@@ -48,7 +46,7 @@ public class SchoolBoard {
      * @param diningRoom   Students in the dining room.
      * @param entrance     Students at the entrance.
      */
-    SchoolBoard(int towersNumber, TowerType towerType, Map<HouseColor, Integer> diningRoom, Map<HouseColor, Integer> entrance) {
+    public SchoolBoard(int towersNumber, TowerType towerType, Map<HouseColor, Integer> diningRoom, Map<HouseColor, Integer> entrance) {
         this.towersNumber = towersNumber;
         this.towerType = towerType;
         this.diningRoom = new HashMap<>(diningRoom);
@@ -107,8 +105,8 @@ public class SchoolBoard {
      * @param students Students to add.
      */
     public void addToEntrance(Map<HouseColor, Integer> students) {
-        Arrays.stream(HouseColor.values())
-                .forEach(color -> entrance.replace(color, entrance.get(color) + students.get(color)));
+        for (HouseColor color : HouseColor.values())
+            entrance.replace(color, entrance.get(color) + students.get(color));
     }
 
     /**

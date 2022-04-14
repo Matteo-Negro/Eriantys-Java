@@ -171,8 +171,8 @@ public class GamePlatform {
         gameBoard.getClouds().forEach(cloud -> {
             HouseColor houseColor;
             Map<HouseColor, Integer> map = new HashMap<>();
-            Arrays.stream(HouseColor.values())
-                    .forEach(color -> map.put(color, 0));
+            for (HouseColor color : HouseColor.values())
+                map.put(color, 0);
             for (int i = 0; i < (playersNumber == 3 ? 3 : 4); i++) {
                 houseColor = bag.pop();
                 map.replace(houseColor, map.get(houseColor) + 1);
