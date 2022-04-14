@@ -10,11 +10,13 @@ public class GameController {
     private String id;
     private int round;
     private String phase;
+    private int expectedPlayers;
     private List<User> users;
     private final GamePlatform gameModel;
 
-    public GameController(GamePlatform gameModel) {
+    public GameController(GamePlatform gameModel, int expectedPlayers) {
         this.gameModel = gameModel;
+        this.expectedPlayers = expectedPlayers;
     }
 
     public String getId() {
