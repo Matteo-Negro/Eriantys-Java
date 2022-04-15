@@ -12,7 +12,7 @@ public class SpecialCharacter {
 
     private final int id;
     private final int effectCost;
-    private Effect assignedEffect;
+    private final Effect assignedEffect;
     private boolean alreadyPayed;
     private boolean payedInRound;
     private boolean isActive;
@@ -21,7 +21,7 @@ public class SpecialCharacter {
      * Class constructor.
      * It creates an instance of the class containing the given specific effect object and identified by the given numeric id.
      *
-     * @param id
+     * @param id The identification number of the special character card.
      */
     public SpecialCharacter(int id) {
         this.id = id;
@@ -29,7 +29,38 @@ public class SpecialCharacter {
         alreadyPayed = false;
         payedInRound = false;
 
-        assignedEffect = switch (id) {
+        assignedEffect = getEffectBy(id);
+
+        effectCost = assignedEffect.getCost();
+    }
+
+    /**
+     * Class constructor used to restore the game.
+     *
+     * @param statusId           The identification number of the special character card.
+     * @param statusEffectCost   The special character's activation cost.
+     * @param statusAlreadyPayed True if the special character has already been payed and it's effect has already been activated during this game.
+     * @param statusPayedInRound True if the special character has already been payed and it's effect has already been activated during this round.
+     * @param statusIsActive     True if the special character's effect is active.
+     */
+    public SpecialCharacter(int statusId, int statusEffectCost, boolean statusAlreadyPayed, boolean statusPayedInRound, boolean statusIsActive) {
+
+        this.id = statusId;
+        this.effectCost = statusEffectCost;
+        this.assignedEffect = getEffectBy(statusId);
+        this.alreadyPayed = statusAlreadyPayed;
+        this.payedInRound = statusPayedInRound;
+        this.isActive = statusIsActive;
+    }
+
+    /**
+     * Gets the effect according to it's identification number.
+     *
+     * @param id The identification number of the effect.
+     * @return The required effect.
+     */
+    private Effect getEffectBy(int id) {
+        return switch (id) {
             case 1 -> new MonkEffect();
             case 2 -> new FarmerEffect();
             case 3 -> new HeraldEffect();
@@ -44,8 +75,6 @@ public class SpecialCharacter {
             case 12 -> new ThiefEffect();
             default -> throw new IllegalStateException("Unexpected value: " + id);
         };
-
-        effectCost = assignedEffect.getCost();
     }
 
     /**

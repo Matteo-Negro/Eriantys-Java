@@ -12,6 +12,7 @@ import java.util.*;
 
 public class Bag {
     private final Stack<HouseColor> listStudents;
+    Map<HouseColor, Integer> result = new HashMap<>();
 
     /**
      * Bag Constructor, listStudents is initialized with the all 120 students and shuffled.
@@ -21,6 +22,23 @@ public class Bag {
 
         Arrays.stream(HouseColor.values()).forEach(color -> {
             for (int i = 0; i < 24; i++) {
+                this.listStudents.push(color);
+            }
+        });
+
+        this.randomize();
+    }
+
+    /**
+     * Bag Constructor, listStudents is initialized with the remaining students to restart the Game from the last state.
+     *
+     * @param status Last state of the bag, it's a map that contains the number of student for each house color.
+     */
+    public Bag(Map<HouseColor, Integer> status) {
+        this.listStudents = new Stack<>();
+
+        Arrays.stream(HouseColor.values()).forEach(color -> {
+            for (int i = 0; i < status.get(color); i++) {
                 this.listStudents.push(color);
             }
         });
@@ -63,6 +81,23 @@ public class Bag {
 
         Collections.shuffle(setUp);
         return setUp;
+    }
+
+    /**
+     * This method returns the present state of the bag.
+     *
+     * @return A map that contains the number of students for each color.
+     */
+    public Map<HouseColor, Integer> getStatus() {
+        listStudents.forEach(color -> {
+            if (result.containsKey(color)) {
+                result.put(color, result.get(color) + 1);
+            } else {
+                result.put(color, 0);
+            }
+        });
+
+        return result;
     }
 
     /**

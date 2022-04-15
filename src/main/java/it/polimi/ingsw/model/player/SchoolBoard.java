@@ -2,9 +2,10 @@ package it.polimi.ingsw.model.player;
 
 import it.polimi.ingsw.utilities.HouseColor;
 import it.polimi.ingsw.utilities.TowerType;
-import it.polimi.ingsw.utilities.exceptions.*;
+import it.polimi.ingsw.utilities.exceptions.NegativeException;
+import it.polimi.ingsw.utilities.exceptions.NoStudentException;
+import it.polimi.ingsw.utilities.exceptions.NotEnoughTowersException;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,9 +17,8 @@ import java.util.Map;
 public class SchoolBoard {
 
     private final TowerType towerType;
-    private final Map<HouseColor, Integer> diningRoom;
     private final Map<HouseColor, Integer> entrance;
-    private final Map<HouseColor, Boolean> professors;
+    private final Map<HouseColor, Integer> diningRoom;
     private int towersNumber;
 
     /**
@@ -30,15 +30,27 @@ public class SchoolBoard {
     SchoolBoard(int towersNumber, TowerType towerType) {
         this.towersNumber = towersNumber;
         this.towerType = towerType;
-        diningRoom = new HashMap<>();
-        entrance = new HashMap<>();
-        professors = new HashMap<>();
-        Arrays.stream(HouseColor.values())
-                .forEach(color -> {
-                    diningRoom.put(color, 0);
-                    entrance.put(color, 0);
-                    professors.put(color, false);
-                });
+        this.diningRoom = new HashMap<>();
+        this.entrance = new HashMap<>();
+        for (HouseColor color : HouseColor.values()) {
+            this.diningRoom.put(color, 0);
+            this.entrance.put(color, 0);
+        }
+    }
+
+    /**
+     * Class constructor used to restore the game.
+     *
+     * @param towersNumber Number of towers to put on the board.
+     * @param towerType    Color of the tower.
+     * @param diningRoom   Students in the dining room.
+     * @param entrance     Students at the entrance.
+     */
+    public SchoolBoard(int towersNumber, TowerType towerType, Map<HouseColor, Integer> diningRoom, Map<HouseColor, Integer> entrance) {
+        this.towersNumber = towersNumber;
+        this.towerType = towerType;
+        this.diningRoom = new HashMap<>(diningRoom);
+        this.entrance = new HashMap<>(entrance);
     }
 
     /**
@@ -78,15 +90,6 @@ public class SchoolBoard {
     }
 
     /**
-     * Gets a map of the professors.
-     *
-     * @return Map of the professors.
-     */
-    public Map<HouseColor, Boolean> getProfessors() {
-        return new HashMap<>(professors);
-    }
-
-    /**
      * Gets the number of students of the specified color.
      *
      * @param houseColor Color of the students.
@@ -97,46 +100,13 @@ public class SchoolBoard {
     }
 
     /**
-     * Gets the required professor is present.
-     *
-     * @param houseColor Color of the professor.
-     * @return If the required professor is present.
-     */
-    public boolean hasProfessorOf(HouseColor houseColor) {
-        return professors.get(houseColor);
-    }
-
-    /**
-     * Adds the specified professor.
-     *
-     * @param professor Color of the professor to add.
-     */
-    public void addProfessor(HouseColor professor) throws AlreadyPresentProfessorException {
-        if (professors.get(professor))
-            throw new AlreadyPresentProfessorException("The required professor (" + professor + ") is already present.");
-        professors.replace(professor, true);
-    }
-
-    /**
-     * Removes the specified professor.
-     *
-     * @param professor Color of the professor to remove.
-     * @throws NoProfessorException If the professor wasn't there.
-     */
-    public void removeProfessor(HouseColor professor) throws NoProfessorException {
-        if (!professors.get(professor))
-            throw new NoProfessorException("The required professor (" + professor + ") is not present.");
-        professors.replace(professor, false);
-    }
-
-    /**
      * Adds the students to the entrance
      *
      * @param students Students to add.
      */
     public void addToEntrance(Map<HouseColor, Integer> students) {
-        Arrays.stream(HouseColor.values())
-                .forEach(color -> entrance.replace(color, entrance.get(color) + students.get(color)));
+        for (HouseColor color : HouseColor.values())
+            entrance.replace(color, entrance.get(color) + students.get(color));
     }
 
     /**

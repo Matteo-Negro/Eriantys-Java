@@ -30,6 +30,15 @@ public class JesterEffect extends Effect {
         students.put(HouseColor.YELLOW, 0);
     }
 
+    /**
+     * Class constructor used to restore the game.
+     *
+     * @param statusStudents
+     */
+    public JesterEffect(Map<HouseColor, Integer> statusStudents) {
+        this.students = statusStudents;
+    }
+
     @Override
     public int getId() {
         return 7;
