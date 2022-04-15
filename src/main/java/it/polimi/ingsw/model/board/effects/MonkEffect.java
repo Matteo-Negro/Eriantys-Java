@@ -1,6 +1,6 @@
 package it.polimi.ingsw.model.board.effects;
 
-import it.polimi.ingsw.model.utilities.HouseColor;
+import it.polimi.ingsw.utilities.HouseColor;
 
 import java.util.EmptyStackException;
 import java.util.HashMap;
@@ -32,6 +32,7 @@ public class MonkEffect extends Effect {
 
     /**
      * Class constructor used to restore the game.
+     *
      * @param statusStudents
      */
     public MonkEffect(Map<HouseColor, Integer> statusStudents) {

@@ -1,6 +1,6 @@
 package it.polimi.ingsw.model.board.effects;
 
-import it.polimi.ingsw.model.utilities.HouseColor;
+import it.polimi.ingsw.utilities.HouseColor;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,10 +32,11 @@ public class JesterEffect extends Effect {
 
     /**
      * Class constructor used to restore the game.
+     *
      * @param statusStudents
      */
     public JesterEffect(Map<HouseColor, Integer> statusStudents) {
-           this.students = statusStudents;
+        this.students = statusStudents;
     }
 
     @Override

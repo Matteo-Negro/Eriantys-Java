@@ -2,8 +2,8 @@ package it.polimi.ingsw.model.board;
 
 import it.polimi.ingsw.model.player.Assistant;
 import it.polimi.ingsw.model.player.Player;
-import it.polimi.ingsw.model.utilities.HouseColor;
-import it.polimi.ingsw.model.utilities.exceptions.IllegalMoveException;
+import it.polimi.ingsw.utilities.HouseColor;
+import it.polimi.ingsw.utilities.exceptions.IllegalMoveException;
 
 import java.util.*;
 
@@ -26,7 +26,7 @@ public class GameBoard {
     /**
      * GameBoard Constructor, this constructor initializes all the elements in the board.
      *
-     * @param isExp     This parameter is set true whether the game is in expert mode.
+     * @param isExp This parameter is set true whether the game is in expert mode.
      */
     public GameBoard(int numPlayer, boolean isExp) {
         List<HouseColor> temp;

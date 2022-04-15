@@ -20,11 +20,13 @@ public class HerablistEffect extends Effect {
 
     /**
      * Class constructor used to restore the game.
+     *
      * @param statusAvailableBans
      */
     public HerablistEffect(int statusAvailableBans) {
         this.availableBans = statusAvailableBans;
     }
+
     @Override
     public int getId() {
         return 5;

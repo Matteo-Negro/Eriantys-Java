@@ -1,7 +1,7 @@
 package it.polimi.ingsw.model.board.effects;
 
 import it.polimi.ingsw.model.player.Player;
-import it.polimi.ingsw.model.utilities.HouseColor;
+import it.polimi.ingsw.utilities.HouseColor;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,11 +26,13 @@ public class FarmerEffect extends Effect {
 
     /**
      * Class constructor used to restore the game.
+     *
      * @param statusStolenProfessors
      */
     public FarmerEffect(Map<HouseColor, Player> statusStolenProfessors) {
         this.stolenProfessors = statusStolenProfessors;
     }
+
     @Override
     public int getId() {
         return 2;

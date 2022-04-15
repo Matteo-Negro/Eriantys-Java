@@ -1,10 +1,10 @@
 package it.polimi.ingsw.model.player;
 
-import it.polimi.ingsw.model.utilities.HouseColor;
-import it.polimi.ingsw.model.utilities.TowerType;
-import it.polimi.ingsw.model.utilities.exceptions.NegativeException;
-import it.polimi.ingsw.model.utilities.exceptions.NoStudentException;
-import it.polimi.ingsw.model.utilities.exceptions.NotEnoughTowersException;
+import it.polimi.ingsw.utilities.HouseColor;
+import it.polimi.ingsw.utilities.TowerType;
+import it.polimi.ingsw.utilities.exceptions.NegativeException;
+import it.polimi.ingsw.utilities.exceptions.NoStudentException;
+import it.polimi.ingsw.utilities.exceptions.NotEnoughTowersException;
 
 import java.util.HashMap;
 import java.util.Map;

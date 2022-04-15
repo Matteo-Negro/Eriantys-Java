@@ -21,7 +21,7 @@ public class SpecialCharacter {
      * Class constructor.
      * It creates an instance of the class containing the given specific effect object and identified by the given numeric id.
      *
-     * @param id                The identification number of the special character card.
+     * @param id The identification number of the special character card.
      */
     public SpecialCharacter(int id) {
         this.id = id;
@@ -36,6 +36,7 @@ public class SpecialCharacter {
 
     /**
      * Class constructor used to restore the game.
+     *
      * @param statusId           The identification number of the special character card.
      * @param statusEffectCost   The special character's activation cost.
      * @param statusAlreadyPayed True if the special character has already been payed and it's effect has already been activated during this game.

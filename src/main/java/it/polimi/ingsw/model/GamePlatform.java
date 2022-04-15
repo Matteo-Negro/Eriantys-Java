@@ -4,15 +4,18 @@ import it.polimi.ingsw.model.board.Bag;
 import it.polimi.ingsw.model.board.GameBoard;
 import it.polimi.ingsw.model.player.Assistant;
 import it.polimi.ingsw.model.player.Player;
-import it.polimi.ingsw.model.utilities.HouseColor;
-import it.polimi.ingsw.model.utilities.Pair;
-import it.polimi.ingsw.model.utilities.TowerType;
-import it.polimi.ingsw.model.utilities.WizardType;
-import it.polimi.ingsw.model.utilities.exceptions.AlreadyExistingPlayerException;
-import it.polimi.ingsw.model.utilities.exceptions.FullGameException;
-import it.polimi.ingsw.model.utilities.exceptions.RoundConcluded;
+import it.polimi.ingsw.utilities.HouseColor;
+import it.polimi.ingsw.utilities.Pair;
+import it.polimi.ingsw.utilities.TowerType;
+import it.polimi.ingsw.utilities.WizardType;
+import it.polimi.ingsw.utilities.exceptions.AlreadyExistingPlayerException;
+import it.polimi.ingsw.utilities.exceptions.FullGameException;
+import it.polimi.ingsw.utilities.exceptions.RoundConcluded;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Core of the entire game structure.
