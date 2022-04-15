@@ -48,8 +48,10 @@ public class Island {
         this.size = size;
         this.ban = ban;
         this.tower = tower;
+        this.students = new HashMap<>();
 
-        Arrays.stream(HouseColor.values()).forEach(color -> this.students.put(color, status.containsKey(color) ? status.get(color) : 0));
+        for (HouseColor color : HouseColor.values())
+            this.students.put(color, status.getOrDefault(color, 0));
     }
 
     /**
