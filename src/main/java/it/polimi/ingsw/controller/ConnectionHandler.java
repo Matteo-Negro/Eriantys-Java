@@ -6,8 +6,8 @@ import java.net.Socket;
 
 public class ConnectionHandler {
 
-    private Socket userSocket;
-    private ServerLauncher gameServer;
+    private final Socket userSocket;
+    private final ServerLauncher gameServer;
 
     public ConnectionHandler(Socket userSocket, ServerLauncher gameServer) {
         this.userSocket = userSocket;

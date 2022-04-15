@@ -7,12 +7,12 @@ import java.net.Socket;
 import java.util.List;
 
 public class GameController {
+    private final GamePlatform gameModel;
     private String id;
     private int round;
     private String phase;
-    private int expectedPlayers;
+    private final int expectedPlayers;
     private List<User> users;
-    private final GamePlatform gameModel;
 
     public GameController(GamePlatform gameModel, int expectedPlayers) {
         this.gameModel = gameModel;

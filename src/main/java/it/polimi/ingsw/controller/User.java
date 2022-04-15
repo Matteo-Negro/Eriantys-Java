@@ -1,13 +1,12 @@
 package it.polimi.ingsw.controller;
 
 import java.net.Socket;
-import java.util.Map;
 
-public class User{
+public class User {
 
-    private int id;
-    private Socket socket;
-    private String name;
+    private final int id;
+    private final Socket socket;
+    private final String name;
 
     public User(int id, Socket socket, String name) {
         this.id = id;
