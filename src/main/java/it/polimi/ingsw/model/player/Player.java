@@ -36,9 +36,26 @@ public class Player {
         this.wizardType = wizardType;
         this.coins = 0;
         this.assistants = new ArrayList<>();
-        for (int index = 0; index < 10; index++)
+        for (int index = 1; index <= 10; index++)
             assistants.add(new Assistant(index));
         this.schoolBoard = new SchoolBoard(towersNumber, towerType);
+    }
+
+    /**
+     * Class constructor used to restore the game.
+     *
+     * @param name        Player's name.
+     * @param wizardType  Player's Wizard.
+     * @param assistants  Player's deck of Assistants.
+     * @param coins       Player's coins.
+     * @param schoolBoard Player's SchoolBoard.
+     */
+    public Player(String name, WizardType wizardType, List<Assistant> assistants, int coins, SchoolBoard schoolBoard) {
+        this.name = name;
+        this.wizardType = wizardType;
+        this.assistants = new ArrayList<>(assistants);
+        this.coins = coins;
+        this.schoolBoard = schoolBoard;
     }
 
     /**

@@ -12,7 +12,10 @@ import it.polimi.ingsw.utilities.exceptions.AlreadyExistingPlayerException;
 import it.polimi.ingsw.utilities.exceptions.FullGameException;
 import it.polimi.ingsw.utilities.exceptions.RoundConcluded;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Core of the entire game structure.
@@ -21,11 +24,10 @@ import java.util.*;
  */
 public class GamePlatform {
 
-    private final String id;
     private final boolean expert;
     private final GameBoard gameBoard;
-    private final List<Player> clockwisePlayersOrder;
-    private final List<Player> turnPlayersOrder;
+    private final List<Player> clockwiseOrder;
+    private final List<Player> turnOrder;
     private final Map<String, Player> players;
     private final int playersNumber;
     private String currentPlayer;
@@ -34,29 +36,39 @@ public class GamePlatform {
     /**
      * Class constructor.
      *
-     * @param id            Game identifier.
      * @param playersNumber Number of players that the game requires.
      * @param expert        Indicates whether the game has to be played in expert mode or not.
      */
-    public GamePlatform(String id, int playersNumber, boolean expert) {
-        this.id = id;
-        this.playersNumber = playersNumber;
+    public GamePlatform(int playersNumber, boolean expert) {
         this.expert = expert;
+        this.gameBoard = new GameBoard(playersNumber, expert);
+        this.clockwiseOrder = new ArrayList<>();
+        this.turnOrder = new ArrayList<>();
+        this.players = new HashMap<>();
+        this.playersNumber = playersNumber;
         this.currentPlayer = "";
         this.roundWinner = "";
-        this.clockwisePlayersOrder = new ArrayList<>();
-        this.turnPlayersOrder = new ArrayList<>();
-        this.players = new HashMap<>();
-        this.gameBoard = new GameBoard(playersNumber, expert);
     }
 
     /**
-     * Gets the ID of the game.
+     * Class constructor used to restore the game.
      *
-     * @return Game id.
+     * @param expert         Indicates whether the game has to be played in expert mode or not.
+     * @param gameBoard      Game's board.
+     * @param clockwiseOrder List of players in clockwise order.
+     * @param turnOrder      List of players ordered by turn.
+     * @param currentPlayer  Current playing player.
      */
-    public String getId() {
-        return id;
+    public GamePlatform(boolean expert, GameBoard gameBoard, List<Player> clockwiseOrder, List<Player> turnOrder, String currentPlayer) {
+        this.expert = expert;
+        this.gameBoard = gameBoard;
+        this.clockwiseOrder = new ArrayList<>(clockwiseOrder);
+        this.turnOrder = new ArrayList<>(turnOrder);
+        this.playersNumber = clockwiseOrder.size();
+        this.currentPlayer = currentPlayer;
+        this.roundWinner = turnOrder.get(0).getName();
+        this.players = new HashMap<>();
+        this.clockwiseOrder.forEach(player -> this.players.put(player.getName(), player));
     }
 
     /**
@@ -74,7 +86,11 @@ public class GamePlatform {
      * @return Clockwise order of the players.
      */
     public List<Player> getPlayers() {
-        return new ArrayList<>(clockwisePlayersOrder);
+        return new ArrayList<>(clockwiseOrder);
+    }
+
+    public List<Player> getTurnOrder() {
+        return new ArrayList<>(turnOrder);
     }
 
     /**
@@ -95,7 +111,7 @@ public class GamePlatform {
         if (players.containsKey(name))
             throw new AlreadyExistingPlayerException("A player with name \"" + name + "\" already exists.");
         tmp = new Player(name, wizardType, towersNumber, towerType);
-        clockwisePlayersOrder.add(tmp);
+        clockwiseOrder.add(tmp);
         players.put(name, tmp);
         if (players.size() == 1) {
             currentPlayer = name;
@@ -158,8 +174,8 @@ public class GamePlatform {
         gameBoard.getClouds().forEach(cloud -> {
             HouseColor houseColor;
             Map<HouseColor, Integer> map = new HashMap<>();
-            Arrays.stream(HouseColor.values())
-                    .forEach(color -> map.put(color, 0));
+            for (HouseColor color : HouseColor.values())
+                map.put(color, 0);
             for (int i = 0; i < (playersNumber == 3 ? 3 : 4); i++) {
                 houseColor = bag.pop();
                 map.replace(houseColor, map.get(houseColor) + 1);
@@ -174,7 +190,7 @@ public class GamePlatform {
     public void updateTurnOrder() {
         Map<Player, Assistant> playedAssistants = gameBoard.getPlayedAssistants();
         getNewOrder(roundWinner, playedAssistants);
-        roundWinner = turnPlayersOrder.get(0).getName();
+        roundWinner = turnOrder.get(0).getName();
         currentPlayer = roundWinner;
     }
 
@@ -184,7 +200,7 @@ public class GamePlatform {
     public void nextTurn() throws RoundConcluded {
         String player;
         gameBoard.removeEffects();
-        player = turnPlayersOrder.get(turnPlayersOrder.indexOf(currentPlayer) + 1 % playersNumber).getName();
+        player = turnOrder.get(turnOrder.indexOf(currentPlayer) + 1 % playersNumber).getName();
         if (player.equals(roundWinner))
             throw new RoundConcluded();
         currentPlayer = player;
@@ -199,8 +215,8 @@ public class GamePlatform {
     private void getNewOrder(String roundWinner, Map<Player, Assistant> playedAssistants) {
         Player player;
         List<Pair<Player, Assistant>> playedAssistantsOrder = reorderPlayedCards(roundWinner, playedAssistants);
-        List<Player> remainingPlayers = new ArrayList<>(clockwisePlayersOrder);
-        turnPlayersOrder.clear();
+        List<Player> remainingPlayers = new ArrayList<>(clockwiseOrder);
+        turnOrder.clear();
         while (!remainingPlayers.isEmpty()) {
             player = playedAssistantsOrder.stream()
                     .filter(pair -> pair.value().getId() == remainingPlayers.stream()
@@ -210,7 +226,7 @@ public class GamePlatform {
                     .toList()
                     .get(0)
                     .key();
-            turnPlayersOrder.add(player);
+            turnOrder.add(player);
             remainingPlayers.remove(player);
         }
     }
@@ -224,10 +240,10 @@ public class GamePlatform {
      */
     private List<Pair<Player, Assistant>> reorderPlayedCards(String roundWinner, Map<Player, Assistant> playedAssistants) {
         Player player;
-        int roundWinnerIndex = clockwisePlayersOrder.indexOf(roundWinner);
+        int roundWinnerIndex = clockwiseOrder.indexOf(roundWinner);
         List<Pair<Player, Assistant>> playedAssistantsOrder = new ArrayList<>();
         for (int index = 0; index < playersNumber; index++) {
-            player = clockwisePlayersOrder.get(roundWinnerIndex + index % playersNumber);
+            player = clockwiseOrder.get(roundWinnerIndex + index % playersNumber);
             playedAssistantsOrder.add(new Pair<>(player, playedAssistants.get(player)));
         }
         return playedAssistantsOrder;

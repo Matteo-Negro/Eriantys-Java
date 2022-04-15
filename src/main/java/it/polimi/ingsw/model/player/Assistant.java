@@ -17,7 +17,7 @@ public class Assistant {
      * @param id Identifier of the Assistant.
      * @throws IndexOutOfBoundsException If the passed ID is not between 1 and 10.
      */
-    Assistant(int id) throws IndexOutOfBoundsException {
+    public Assistant(int id) throws IndexOutOfBoundsException {
         if (id < 1 || id > 10)
             throw new IndexOutOfBoundsException("The Assistant has to have a value between 1 and 10, passed " + id + ".");
         this.id = id;

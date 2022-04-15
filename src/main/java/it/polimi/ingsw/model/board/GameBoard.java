@@ -15,27 +15,24 @@ import java.util.*;
 public class GameBoard {
     //TODO: fix Player influencesBonus
     private final Bag bag;
-    private final int numPlayer;
     private final List<Cloud> clouds;
-    private Island motherNatureIsland;
-    private HouseColor ignoreColor;
     private final List<Island> islands;
-    private final List<SpecialCharacter> characters;
     private final Map<HouseColor, Player> professors;
     private final Map<Player, Assistant> playedAssistants;
+    private List<SpecialCharacter> characters;
+    private Island motherNatureIsland;
+    private HouseColor ignoreColor;
 
     /**
      * GameBoard Constructor, this constructor initializes all the elements in the board.
      *
-     * @param numPlayer This parameter contains the number of the player.
-     * @param isExp     This parameter is set true whether the game is in expert mode.
+     * @param isExp This parameter is set true whether the game is in expert mode.
      */
     public GameBoard(int numPlayer, boolean isExp) {
         List<HouseColor> temp;
         List<Integer> randomVector = new Vector<>();
 
         this.bag = new Bag();
-        this.numPlayer = numPlayer;
         this.ignoreColor = null;
         this.playedAssistants = new HashMap<>();
         this.islands = new ArrayList<>();
@@ -55,8 +52,36 @@ public class GameBoard {
             }
         }
         Arrays.stream(HouseColor.values()).forEach(color -> this.professors.put(color, null));
-        this.initializeClouds();
+        this.initializeClouds(numPlayer);
         this.motherNatureIsland = this.islands.get(0);
+    }
+
+    /**
+     * GameBoard Constructor, this constructor initializes all the elements in the board to the last saved status.
+     *
+     * @param statusBag              A map that contains the number of students in the bag.
+     * @param statusPlayedAssistants A map that contains the played assistants from the saved status.
+     * @param statusIslands          A list that contains the islands from the saved status.
+     * @param statusClouds           A list that contains the clouds from the saved status.
+     * @param statusCharacters       A list that contains the special characters from the saved status.
+     * @param statusProfessors       A map that contains the player that posses each professor.
+     * @param isExp                  This parameter is set true whether the saved game is in expert mode.
+     * @param idMotherNatureIsland   The id of the island where mother nature is in the saved status.
+     */
+    public GameBoard(Map<HouseColor, Integer> statusBag, Map<Player, Assistant> statusPlayedAssistants, List<Island> statusIslands, List<Cloud> statusClouds, List<SpecialCharacter> statusCharacters, Map<HouseColor, Player> statusProfessors, boolean isExp, int idMotherNatureIsland) {
+        this.bag = new Bag(statusBag);
+        this.ignoreColor = null;
+        this.playedAssistants = new HashMap<>(statusPlayedAssistants);
+        this.islands = new ArrayList<>(statusIslands);
+        this.clouds = new ArrayList<>(statusClouds);
+        this.professors = new HashMap<>(statusProfessors);
+        this.characters = null;
+
+        if (isExp) {
+            this.characters = new ArrayList<>(statusCharacters);
+        }
+
+        this.motherNatureIsland = this.islands.get(idMotherNatureIsland);
     }
 
     /**
@@ -66,15 +91,6 @@ public class GameBoard {
      */
     public Bag getBag() {
         return this.bag;
-    }
-
-    /**
-     * This method returns the number of player in the game.
-     *
-     * @return The number of player.
-     */
-    public int getNumPlayer() {
-        return this.numPlayer;
     }
 
     /**
@@ -99,7 +115,7 @@ public class GameBoard {
      * This method moves mother nature from her current position to targetIsland whether is permitted.
      *
      * @param targetIsland    The island where the player would like to move mother nature.
-     * @param playedAssistant
+     * @param playedAssistant The played assistant that shows the max movement that mother nature can do.
      * @throws IllegalMoveException Player would like moves MotherNature over assistant card limit.
      */
     public void moveMotherNature(Island targetIsland, Assistant playedAssistant) throws IllegalMoveException {
@@ -153,7 +169,7 @@ public class GameBoard {
      */
     public Map<Player, Integer> getInfluence(Island targetIsland) {
         Map<Player, Integer> result = new HashMap<>();
-        this.professors.keySet().stream().forEach(professorColor -> {
+        this.professors.keySet().forEach(professorColor -> {
             if (!professorColor.equals(ignoreColor)) {
                 if (!result.containsKey(this.professors.get(professorColor))) {
                     result.put(this.professors.get(professorColor), 0);
@@ -196,13 +212,13 @@ public class GameBoard {
     /**
      * This method adds assistants to the data structure in the class GameBoard.
      *
-     * @param currentPlayer   The current player that wolud like to play the card.
+     * @param currentPlayer   The current player that would like to play the card.
      * @param playedAssistant The card that the player would like to play.
      * @throws IllegalMoveException The played card is already played from another player.
      */
     //TODO: throws exception is permitted when it is the last choice
     public void addPlayedAssistant(Player currentPlayer, Assistant playedAssistant) throws IllegalMoveException {
-        if (!this.playedAssistants.keySet().stream().anyMatch(player -> this.playedAssistants.get(player) == playedAssistant)) {
+        if (this.playedAssistants.keySet().stream().noneMatch(player -> this.playedAssistants.get(player) == playedAssistant)) {
             throw new IllegalMoveException("The played card is already played from another player.");
         }
         this.playedAssistants.put(currentPlayer, playedAssistant);
@@ -228,7 +244,7 @@ public class GameBoard {
     /**
      * This method shows the played assistants.
      *
-     * @return The copy of the data structure playeAssistants.
+     * @return The copy of the data structure playedAssistants.
      */
     public Map<Player, Assistant> getPlayedAssistants() {
         return new HashMap<>(this.playedAssistants);
@@ -237,7 +253,7 @@ public class GameBoard {
     /**
      * This method initializes the clouds, it is used in the constructor.
      */
-    private void initializeClouds() {
+    private void initializeClouds(int numPlayer) {
         for (int i = 0; i < numPlayer; i++) {
             this.clouds.add(new Cloud(i));
         }

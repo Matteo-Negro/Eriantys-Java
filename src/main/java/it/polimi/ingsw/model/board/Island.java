@@ -35,6 +35,24 @@ public class Island {
     }
 
     /**
+     * Island Constructor, all the attributes are initialized to the saved state.
+     *
+     * @param status   A map that contains the number of students for each color.
+     * @param idIsland The id of the island that is initialized.
+     * @param size     The size of the island that is initialized.
+     * @param ban      The status of ban on the island that is initialized.
+     * @param tower    The tower of the player that rules the island.
+     */
+    public Island(Map<HouseColor, Integer> status, int idIsland, int size, boolean ban, TowerType tower) {
+        this.id = idIsland;
+        this.size = size;
+        this.ban = ban;
+        this.tower = tower;
+
+        Arrays.stream(HouseColor.values()).forEach(color -> this.students.put(color, status.containsKey(color) ? status.get(color) : 0));
+    }
+
+    /**
      * This method returns the island's id.
      *
      * @return Island's id.

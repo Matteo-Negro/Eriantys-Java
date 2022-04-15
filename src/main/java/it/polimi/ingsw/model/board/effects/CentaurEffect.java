@@ -23,6 +23,15 @@ public class CentaurEffect extends Effect {
         takenTowers = new ArrayList<Island>();
     }
 
+    /**
+     * Class constructor used to restore the game.
+     *
+     * @param statusTakenTowers A map containing the towers taken from their respective
+     */
+    public CentaurEffect(List<Island> statusTakenTowers) {
+        this.takenTowers = statusTakenTowers;
+    }
+
     @Override
     public int getId() {
         return 6;
