@@ -6,7 +6,7 @@ import it.polimi.ingsw.utilities.HouseColor;
 import java.net.Socket;
 import java.util.List;
 
-public class GameController {
+public class GameController extends Thread{
     private final GamePlatform gameModel;
     private String id;
     private int round;
@@ -19,7 +19,7 @@ public class GameController {
         this.expectedPlayers = expectedPlayers;
     }
 
-    public String getId() {
+    public String getGameId() {
         return id;
     }
 
@@ -39,17 +39,18 @@ public class GameController {
         return gameModel;
     }
 
-    public void addUser(Socket userSocket, String name) {
+    public void addUser(User user) {
 
         int userId = 1;
 
         for (int i = 0; 0 < getUsers().size(); i++) {
             if (userId == getUsers().get(i).getId()) userId++;
         }
-        users.add(new User(userId, userSocket, name));
+        user.putId(userId);
+        users.add(user);
     }
 
-//    public void manageCommand(Map<> command) {
+//    public void manageCommand(JsonObject command) {
 //
 //    }
 
