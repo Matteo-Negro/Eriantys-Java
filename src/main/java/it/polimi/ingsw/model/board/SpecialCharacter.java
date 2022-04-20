@@ -13,8 +13,8 @@ public class SpecialCharacter {
     private final int id;
     private final int effectCost;
     private final Effect assignedEffect;
-    private boolean alreadyPayed;
-    private boolean payedInRound;
+    private boolean alreadyPaid;
+    private boolean paidInRound;
     private boolean isActive;
 
     /**
@@ -26,8 +26,8 @@ public class SpecialCharacter {
     public SpecialCharacter(int id) {
         this.id = id;
         isActive = false;
-        alreadyPayed = false;
-        payedInRound = false;
+        alreadyPaid = false;
+        paidInRound = false;
 
         assignedEffect = getEffectBy(id);
 
@@ -37,19 +37,19 @@ public class SpecialCharacter {
     /**
      * Class constructor used to restore the game.
      *
-     * @param statusId           The identification number of the special character card.
-     * @param statusEffectCost   The special character's activation cost.
-     * @param statusAlreadyPayed True if the special character has already been payed and it's effect has already been activated during this game.
-     * @param statusPayedInRound True if the special character has already been payed and it's effect has already been activated during this round.
-     * @param statusIsActive     True if the special character's effect is active.
+     * @param statusId          The identification number of the special character card.
+     * @param statusEffectCost  The special character's activation cost.
+     * @param statusAlreadyPaid True if the special character has already been payed and it's effect has already been activated during this game.
+     * @param statusPaidInRound True if the special character has already been payed and it's effect has already been activated during this round.
+     * @param statusIsActive    True if the special character's effect is active.
      */
-    public SpecialCharacter(int statusId, int statusEffectCost, boolean statusAlreadyPayed, boolean statusPayedInRound, boolean statusIsActive) {
+    public SpecialCharacter(int statusId, int statusEffectCost, boolean statusAlreadyPaid, boolean statusPaidInRound, boolean statusIsActive) {
 
         this.id = statusId;
         this.effectCost = statusEffectCost;
         this.assignedEffect = getEffectBy(statusId);
-        this.alreadyPayed = statusAlreadyPayed;
-        this.payedInRound = statusPayedInRound;
+        this.alreadyPaid = statusAlreadyPaid;
+        this.paidInRound = statusPaidInRound;
         this.isActive = statusIsActive;
     }
 
@@ -93,7 +93,7 @@ public class SpecialCharacter {
      */
     public int getEffectCost() {
 
-        if (alreadyPayed) return effectCost + 1;
+        if (alreadyPaid) return effectCost + 1;
 
         else return effectCost;
 
@@ -112,8 +112,8 @@ public class SpecialCharacter {
      * Activates the specific effect assigned to the object.
      */
     public void activateEffect() {
-        alreadyPayed = true;
-        payedInRound = true;
+        alreadyPaid = true;
+        paidInRound = true;
         isActive = true;
         getEffect().effect();
     }
@@ -130,6 +130,33 @@ public class SpecialCharacter {
      * Sets the "payedInRound" attribute to false.
      */
     public void changedRound() {
-        payedInRound = false;
+        paidInRound = false;
+    }
+
+    /**
+     * Tells if the card had already been paid.
+     *
+     * @return if the card had already been paid.
+     */
+    public boolean isAlreadyPaid() {
+        return alreadyPaid;
+    }
+
+    /**
+     * Tells if the card had been paid in the current round.
+     *
+     * @return if the card had been paid in the current round.
+     */
+    public boolean isPaidInRound() {
+        return paidInRound;
+    }
+
+    /**
+     * Tells if the card is currently active.
+     *
+     * @return if the card is currently active.
+     */
+    public boolean isActive() {
+        return isActive;
     }
 }

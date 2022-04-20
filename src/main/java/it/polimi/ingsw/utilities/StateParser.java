@@ -174,8 +174,8 @@ public class StateParser {
             specialCharactersList.add(new SpecialCharacter(
                     specialCharacter.get("id").getAsInt(),
                     specialCharacter.get("effectCost").getAsInt(),
-                    specialCharacter.get("alreadyPlayed").getAsBoolean(),
-                    specialCharacter.get("playedInRound").getAsBoolean(),
+                    specialCharacter.get("alreadyPaid").getAsBoolean(),
+                    specialCharacter.get("paidInRound").getAsBoolean(),
                     specialCharacter.get("active").getAsBoolean()
             ));
         }

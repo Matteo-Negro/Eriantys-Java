@@ -1,12 +1,19 @@
 package it.polimi.ingsw.controller;
 
+import com.google.gson.JsonObject;
 import it.polimi.ingsw.model.GamePlatform;
 import it.polimi.ingsw.utilities.HouseColor;
+import it.polimi.ingsw.utilities.SaveUtilities;
 
-import java.net.Socket;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.List;
 
-public class GameController extends Thread{
+public class GameController extends Thread {
     private final GamePlatform gameModel;
     private String id;
     private int round;
@@ -14,9 +21,12 @@ public class GameController extends Thread{
     private final int expectedPlayers;
     private List<User> users;
 
-    public GameController(GamePlatform gameModel, int expectedPlayers) {
+    private final String savePath;
+
+    public GameController(GamePlatform gameModel, int expectedPlayers, String savePath) {
         this.gameModel = gameModel;
         this.expectedPlayers = expectedPlayers;
+        this.savePath = savePath;
     }
 
     public String getGameId() {
@@ -56,6 +66,34 @@ public class GameController extends Thread{
 
     public void saveGame() {
 
+        JsonObject json = new JsonObject();
+        json.addProperty("id", id);
+        json.addProperty("expert", gameModel.isExpert());
+        json.addProperty("currentPlayer", gameModel.getCurrentPlayer().getName());
+        json.add("clockwiseOrder", SaveUtilities.toJsonArray(gameModel.getPlayers(), SaveUtilities.GET_NAMES));
+        json.add("turnOrder", SaveUtilities.toJsonArray(gameModel.getTurnOrder(), SaveUtilities.GET_NAMES));
+        json.addProperty("expectedPlayers", expectedPlayers);
+        json.add("players", SaveUtilities.toJsonArray(gameModel.getPlayers(), SaveUtilities.GET_PLAYERS));
+        json.add("board", SaveUtilities.toJsonObject(gameModel.getGameBoard()));
+
+        new Thread(() -> {
+            try {
+                writeFile(json);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }).start();
+    }
+
+    private void writeFile(JsonObject json) throws IOException {
+        BufferedWriter writer = Files.newBufferedWriter(
+                Paths.get(savePath, id + ".json"),
+                StandardCharsets.UTF_8,
+                StandardOpenOption.CREATE,
+                StandardOpenOption.TRUNCATE_EXISTING,
+                StandardOpenOption.WRITE);
+        writer.write(json.toString());
+        writer.close();
     }
 
     private void playAssistantCard(String player, int assistant) {

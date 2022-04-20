@@ -13,7 +13,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 import static it.polimi.ingsw.utilities.StateParser.*;
 
@@ -41,7 +43,10 @@ public class Server {
         File directory = new File(this.savePath);
         if (!directory.exists())
             directory.mkdir();
+
+        System.out.println("Loading games...");
         loadGames();
+        System.out.println("Load completed.\n");
     }
 
     /**
@@ -73,9 +78,10 @@ public class Server {
      * @param json Json object which contains all the required information to restore the game.
      */
     private void loadGame(JsonObject json) {
+
+        System.out.println("Loading game \"" + json.get("id").getAsString() + "\"");
+
         Map<String, Player> players = new HashMap<>();
-        List<Player> clockwiseOrder = new ArrayList<>();
-        List<Player> turnOrder = new ArrayList<>();
         GameController gameController;
 
         for (JsonElement player : json.getAsJsonArray("players"))
@@ -87,7 +93,7 @@ public class Server {
                 parsePlayersList(json.getAsJsonArray("clockwiseOrder"), players),
                 parsePlayersList(json.getAsJsonArray("turnOrder"), players),
                 json.get("currentPlayer").getAsString()
-        ), json.get("expectedPlayers").getAsInt());
+        ), json.get("expectedPlayers").getAsInt(), savePath);
 
         synchronized (games) {
             games.put(json.get("id").getAsString(), gameController);
