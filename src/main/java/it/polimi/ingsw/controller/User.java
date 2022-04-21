@@ -13,7 +13,7 @@ public class User {
     private int id;
     private final Socket socket;
     private String name;
-    private boolean isConnected;
+    private boolean connected;
     private ObjectInputStream socketInputStream;
     private ObjectOutputStream socketOutputStream;
 
@@ -21,7 +21,7 @@ public class User {
         this.id = -1;
         this.socket = socket;
         this.name = null;
-        this.isConnected = true;
+        this.connected = true;
 
         socketInputStream = new ObjectInputStream(socket.getInputStream());
         socketOutputStream = new ObjectOutputStream(socket.getOutputStream());
@@ -35,8 +35,8 @@ public class User {
         this.id = userId;
     }
 
-    public void setIsConnected(boolean connectionStatus) {
-        this.isConnected = connectionStatus;
+    public void setConnected(boolean connectionStatus) {
+        this.connected = connectionStatus;
     }
 
     public int getId() {
@@ -51,8 +51,8 @@ public class User {
         return name;
     }
 
-    public boolean getIsConnected() {
-        return isConnected;
+    public boolean isConnected() {
+        return connected;
     }
 
     public JsonObject getCommand() throws IOException, ClassNotFoundException{

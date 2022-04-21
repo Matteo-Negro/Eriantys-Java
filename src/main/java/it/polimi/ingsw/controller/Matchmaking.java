@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import it.polimi.ingsw.network.server.Server;
+import it.polimi.ingsw.utilities.exceptions.FullGameException;
 import it.polimi.ingsw.utilities.exceptions.GameNotFoundException;
 
 import java.io.IOException;
@@ -33,7 +34,7 @@ public class Matchmaking extends Thread{
         try {
             this.user = new User(userSocket);
         }catch(IOException ioe){
-            user.setIsConnected(false);
+            user.setConnected(false);
         }
     }
 
@@ -53,13 +54,13 @@ public class Matchmaking extends Thread{
 
         JsonObject command = null;
 
-        while(true) {
+        while(user.isConnected()) {
 
             //Get a command from the user
             try {
                 command = user.getCommand();
             }catch(IOException | ClassNotFoundException ioe) {
-                user.setIsConnected(false);
+                user.setConnected(false);
                 return;
             }
 
@@ -78,15 +79,46 @@ public class Matchmaking extends Thread{
                 try{
                     user.sendCommand(gameCreationReply);
                 }catch(IOException ioe){
-                    user.setIsConnected(false);
+                    user.setConnected(false);
+                    return;
                 }
 
                 //Join the game
-                searchGame(gameCode);
+                try {
+                    searchGame(gameCode);
+                }catch(FullGameException fge) {
+
+                    //Send a game NOT found reply
+                    JsonObject gameNotFoundReply = new JsonObject();
+                    gameNotFoundReply.addProperty("type", "enterGame");
+                    gameNotFoundReply.addProperty("found", true);
+                    try {
+                        user.sendCommand(gameNotFoundReply);
+                    }catch(IOException ioe) {
+                        user.setConnected(false);
+                        return;
+                    }
+                }
+
             }
             else if(type.toString().equals("enterGame")) {
 
-                searchGame(command.get("code").toString());
+                try {
+                    searchGame(command.get("code").toString());
+                }catch(FullGameException fge) {
+
+                    //Send a game NOT found reply
+                    JsonObject gameNotFoundReply = new JsonObject();
+                    gameNotFoundReply.addProperty("type", "enterGame");
+                    gameNotFoundReply.addProperty("found", true);
+                    try {
+                        user.sendCommand(gameNotFoundReply);
+                    }catch(IOException ioe) {
+                        user.setConnected(false);
+                        return;
+                    }
+                }
+
             }
         }
     }
@@ -108,16 +140,14 @@ public class Matchmaking extends Thread{
      *
      * @param gameId
      */
-    private void searchGame(String gameId) {
+    private void searchGame(String gameId) throws FullGameException {
 
         GameController desiredGame = null;
-        JsonObject playerEntranceMessage = null;
-        boolean loggedIn = false;
-        boolean isPresent = false;
 
+        //Search the game
         try {
             desiredGame = gameServer.findGame(gameId);
-        }catch(GameNotFoundException gnfe) {
+        } catch (GameNotFoundException gnfe) {
 
             //Send a game NOT found reply
             JsonObject gameNotFoundReply = new JsonObject();
@@ -125,44 +155,64 @@ public class Matchmaking extends Thread{
             gameNotFoundReply.addProperty("found", true);
             try {
                 user.sendCommand(gameNotFoundReply);
-            }catch(IOException ioe) {
-                user.setIsConnected(false);
+            } catch (IOException ioe) {
+                user.setConnected(false);
+                return;
             }
             return;
         }
 
-        //Send a game found reply
+        //Throw an exception if the searched game is already full and active.
+        if (desiredGame.getIsRunning()) throw new FullGameException();
+
+        //Send a game found reply.
         JsonObject gameFoundReply = new JsonObject();
         gameFoundReply.addProperty("type", "enterGame");
         gameFoundReply.addProperty("found", true);
-        gameFoundReply.addProperty("expectedPlayers", desiredGame.getExpectedPlayers);
+        gameFoundReply.addProperty("expectedPlayers", desiredGame.getExpectedPlayers());
         JsonArray playersList = new JsonArray();
-        for(User savedPlayer : desiredGame.getUsers()){
+        for (User savedPlayer : desiredGame.getUsers()) {
 
             JsonObject player = new JsonObject();
             player.addProperty("name", savedPlayer.getName());
-            player.addProperty("online", savedPlayer.getIsConnected());
+            player.addProperty("online", savedPlayer.isConnected());
             playersList.add(player);
         }
 
         try {
             user.sendCommand(gameFoundReply);
-        }catch(IOException ioe) {
-            user.setIsConnected(false);
+        } catch (IOException ioe) {
+            user.setConnected(false);
         }
 
+        login(desiredGame);
+    }
 
-        // LOGGING IN
-        while(!loggedIn) {
+
+    /**
+     *
+     */
+    private void login(GameController desiredGame) {
+
+
+        JsonObject playerEntranceMessage;
+        boolean loggedIn = false;
+        boolean isPresent = false;
+
+
+        while(!loggedIn && user.isConnected()) {
+
 
             //Wait for a message from the user
             do {
                 try {
                     playerEntranceMessage = user.getCommand();
                 } catch (IOException | ClassNotFoundException ioe) {
-                    user.setIsConnected(false);
+                    user.setConnected(false);
+                    return;
                 }
             } while (!playerEntranceMessage.get("type").toString().equals("login") && !playerEntranceMessage.get("type").toString().equals("exit"));
+
 
             // A LOGIN MESSAGE ARRIVED
             if (playerEntranceMessage.get("type").toString().equals("login")) {
@@ -171,43 +221,52 @@ public class Matchmaking extends Thread{
 
                 for (User savedPlayer : desiredGame.getUsers()) {
 
-                    if (user.getName().equals(savedPlayer.getName()) && !savedPlayer.getIsConnected()) {
-
+                    if (user.getName().equals(savedPlayer.getName()) && !savedPlayer.isConnected()) {
                         isPresent = true;
                         desiredGame.getUsers().remove(savedPlayer);
                         loggedIn = true;
+                        break;
                     } else {
 
-                        if (user.getName().equals(savedPlayer.getName()) && savedPlayer.getIsConnected()) {
+                        if (user.getName().equals(savedPlayer.getName()) && savedPlayer.isConnected()) {
 
                             //Send a notAccessible reply
                             isPresent = true;
-                            JsonObject notAccessibleReply = new JsonObject();
-                            gameFoundReply.addProperty("type", "notAccessibleGame");
-                            gameFoundReply.addProperty("message", "The player has already joined the game.");
+                            //Send a login not success message
+                            JsonObject loginNotSuccess = new JsonObject();
+                            loginNotSuccess.addProperty("type", "login");
+                            loginNotSuccess.addProperty("success", false);
                             try {
-                                user.sendCommand(notAccessibleReply);
+                                user.sendCommand(loginNotSuccess);
                             }catch(IOException ioe) {
-                                user.setIsConnected(false);
+                                user.setConnected(false);
+                                return;
                             }
                             break;
                         }
                     }
                 }
-                if(!isPresent && desiredGame.getUsers().size()<desiredGame.getExpectedPlayers()) {
-
-                    loggedIn = true;
-                }
+                if(!isPresent && desiredGame.getUsers().size()<desiredGame.getExpectedPlayers()) loggedIn = true;
 
             }
             else {
+
                 //AN EXIT MESSAGE ARRIVED
-                if(playerEntranceMessage.get("type").toString().equals("exit")) {
-                    return;
-                }
+                if(playerEntranceMessage.get("type").toString().equals("exit")) return;
             }
         }
 
         gameServer.joinGame(user, desiredGame);
+
+        //Send a login success message
+        JsonObject loginSuccess = new JsonObject();
+        loginSuccess.addProperty("type", "login");
+        loginSuccess.addProperty("success", true);
+        try {
+            user.sendCommand(loginSuccess);
+        }catch(IOException ioe) {
+            user.setConnected(false);
+        }
     }
 }
+

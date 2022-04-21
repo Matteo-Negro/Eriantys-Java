@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import it.polimi.ingsw.ServerLauncher;
 import it.polimi.ingsw.controller.GameController;
+import it.polimi.ingsw.controller.User;
 import it.polimi.ingsw.model.GamePlatform;
 import it.polimi.ingsw.model.player.Player;
 
@@ -98,5 +99,17 @@ public class Server {
         synchronized (games) {
             games.put(json.get("id").getAsString(), gameController);
         }
+    }
+
+    //public GameController addGame(int expectedPlayers, boolean expertMode) {
+
+    //}
+
+    //public GameController findGame(String id) {
+
+    //}
+
+    public void joinGame(User newUser, GameController game) {
+
     }
 }

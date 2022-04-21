@@ -16,6 +16,7 @@ import java.util.List;
 public class GameController extends Thread {
     private final GamePlatform gameModel;
     private String id;
+    private boolean isRunning;
     private int round;
     private String phase;
     private final int expectedPlayers;
@@ -33,6 +34,10 @@ public class GameController extends Thread {
         return id;
     }
 
+    public boolean getIsRunning() {
+        return isRunning;
+    }
+
     public int getRound() {
         return round;
     }
@@ -43,6 +48,10 @@ public class GameController extends Thread {
 
     public List<User> getUsers() {
         return users;
+    }
+
+    public int getExpectedPlayers() {
+        return expectedPlayers;
     }
 
     public GamePlatform getGameModel() {
@@ -94,6 +103,10 @@ public class GameController extends Thread {
                 StandardOpenOption.WRITE);
         writer.write(json.toString());
         writer.close();
+    }
+
+    private void setIsRunning() {
+
     }
 
     private void playAssistantCard(String player, int assistant) {
