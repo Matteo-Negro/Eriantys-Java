@@ -3,17 +3,21 @@ package it.polimi.ingsw.controller;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import it.polimi.ingsw.ServerLauncher;
+import it.polimi.ingsw.network.server.Server;
+import it.polimi.ingsw.utilities.exceptions.GameNotFoundException;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
 
+/**
+ * Matchmaking class: used to create a multithread interface between a user and the main server object.
+ *
+ * @author Riccardo Milici
+ */
 public class Matchmaking extends Thread{
 
     private User user;
-    private final ServerLauncher gameServer;
+    private final Server gameServer;
 
 
     /**
@@ -21,20 +25,15 @@ public class Matchmaking extends Thread{
      * @param userSocket
      * @param gameServer
      */
-    public Matchmaking(Socket userSocket, ServerLauncher gameServer){
+    public Matchmaking(Socket userSocket, Server gameServer){
 
         this.user = null;
         this.gameServer = gameServer;
 
         try {
             this.user = new User(userSocket);
-
-        }catch(IOException i){
-            try{userSocket.close();}
-            catch(IOException c){
-                //exception handle
-            }
-            //exception handle
+        }catch(IOException ioe){
+            user.setIsConnected(false);
         }
     }
 
@@ -55,24 +54,12 @@ public class Matchmaking extends Thread{
         JsonObject command = null;
 
         while(true) {
+
+            //Get a command from the user
             try {
                 command = user.getCommand();
-            }catch(IOException ioe) {
-                //send an error message to the client
-                try{
-                    user.getSocket().close();
-                }catch(IOException ioe_ioe){
-                    //exception handle
-                }
-                return;
-            }
-            catch(ClassNotFoundException cnfe) {
-                //send an error message to the client
-                try{
-                    user.getSocket().close();
-                }catch(IOException cnfe_ioe){
-                    //exception handle
-                }
+            }catch(IOException | ClassNotFoundException ioe) {
+                user.setIsConnected(false);
                 return;
             }
 
@@ -91,7 +78,7 @@ public class Matchmaking extends Thread{
                 try{
                     user.sendCommand(gameCreationReply);
                 }catch(IOException ioe){
-                    //exception handle
+                    user.setIsConnected(false);
                 }
 
                 //Join the game
@@ -139,7 +126,7 @@ public class Matchmaking extends Thread{
             try {
                 user.sendCommand(gameNotFoundReply);
             }catch(IOException ioe) {
-                //exception handle
+                user.setIsConnected(false);
             }
             return;
         }
@@ -161,19 +148,19 @@ public class Matchmaking extends Thread{
         try {
             user.sendCommand(gameFoundReply);
         }catch(IOException ioe) {
-            //exception handle
+            user.setIsConnected(false);
         }
 
 
         // LOGGING IN
         while(!loggedIn) {
+
+            //Wait for a message from the user
             do {
                 try {
                     playerEntranceMessage = user.getCommand();
-                } catch (IOException ioe) {
-                    //exception handle
-                } catch (ClassNotFoundException cnfe) {
-                    //exception handle
+                } catch (IOException | ClassNotFoundException ioe) {
+                    user.setIsConnected(false);
                 }
             } while (!playerEntranceMessage.get("type").toString().equals("login") && !playerEntranceMessage.get("type").toString().equals("exit"));
 
@@ -193,8 +180,16 @@ public class Matchmaking extends Thread{
 
                         if (user.getName().equals(savedPlayer.getName()) && savedPlayer.getIsConnected()) {
 
+                            //Send a notAccessible reply
                             isPresent = true;
-                            //send a user already present message
+                            JsonObject notAccessibleReply = new JsonObject();
+                            gameFoundReply.addProperty("type", "notAccessibleGame");
+                            gameFoundReply.addProperty("message", "The player has already joined the game.");
+                            try {
+                                user.sendCommand(notAccessibleReply);
+                            }catch(IOException ioe) {
+                                user.setIsConnected(false);
+                            }
                             break;
                         }
                     }

@@ -21,7 +21,7 @@ public class User {
         this.id = -1;
         this.socket = socket;
         this.name = null;
-        this.isConnected = false;
+        this.isConnected = true;
 
         socketInputStream = new ObjectInputStream(socket.getInputStream());
         socketOutputStream = new ObjectOutputStream(socket.getOutputStream());
