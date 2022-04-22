@@ -166,6 +166,8 @@ public class Server {
      * @return GameController associated with a specific game identifier.
      */
     public GameController findGame(String id) {
-        return games.get(id);
+        synchronized (games) {
+            return games.get(id);
+        }
     }
 }
