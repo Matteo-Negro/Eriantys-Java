@@ -8,62 +8,85 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
+/**
+ * User class: containing the tcp connection socket of the client connected to the game server and its input and output streams.
+ *
+ * @author Riccardo Milici
+ */
 public class User {
 
-    private int id;
     private final Socket socket;
-    private String name;
+    private String username;
     private boolean connected;
-    private ObjectInputStream socketInputStream;
-    private ObjectOutputStream socketOutputStream;
+    private final ObjectInputStream socketInputStream;
+    private final ObjectOutputStream socketOutputStream;
 
-    public User(Socket socket) throws IOException{
-        this.id = -1;
+    /**
+     * @param socket
+     * @throws IOException
+     */
+    public User(Socket socket) throws IOException {
         this.socket = socket;
-        this.name = null;
+        this.username = null;
         this.connected = true;
 
         socketInputStream = new ObjectInputStream(socket.getInputStream());
         socketOutputStream = new ObjectOutputStream(socket.getOutputStream());
+        socket.setSoTimeout(10 * 1000);
     }
 
+    /**
+     * @param username
+     */
     public void putName(String username) {
-        this.name = username;
+        this.username = username;
     }
 
-    public void putId(int userId) {
-        this.id = userId;
-    }
-
+    /**
+     * @param connectionStatus
+     */
     public void setConnected(boolean connectionStatus) {
         this.connected = connectionStatus;
     }
 
-    public int getId() {
-        return id;
-    }
-
+    /**
+     * @return
+     */
     public Socket getSocket() {
         return socket;
     }
 
-    public String getName() {
-        return name;
+    /**
+     * @return
+     */
+    public String getUsername() {
+        return username;
     }
 
+    /**
+     * @return
+     */
     public boolean isConnected() {
         return connected;
     }
 
-    public JsonObject getCommand() throws IOException, ClassNotFoundException{
+    /**
+     * @return
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
+    public synchronized JsonObject getCommand() throws IOException, ClassNotFoundException {
 
-        String message = (String) socketInputStream.readObject();
-        return JsonParser.parseString(message).getAsJsonObject();
+        return JsonParser.parseString((String) socketInputStream.readObject()).getAsJsonObject();
     }
 
-    public void sendCommand(JsonObject command) throws IOException{
+    /**
+     * @param command
+     * @throws IOException
+     */
+    public synchronized void sendCommand(JsonObject command) throws IOException {
 
-        String message = command.getAsString();
-        socketOutputStream.writeObject(message);
+        socketOutputStream.writeObject(command.getAsString());
     }
+
 }

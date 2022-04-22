@@ -5,7 +5,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import it.polimi.ingsw.network.server.Server;
 import it.polimi.ingsw.utilities.exceptions.FullGameException;
-import it.polimi.ingsw.utilities.exceptions.GameNotFoundException;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -15,26 +14,28 @@ import java.net.Socket;
  *
  * @author Riccardo Milici
  */
-public class Matchmaking extends Thread{
+public class Matchmaking extends Thread {
 
     private User user;
     private final Server gameServer;
+    private final JsonObject ping;
 
 
     /**
-     *
      * @param userSocket
      * @param gameServer
      */
-    public Matchmaking(Socket userSocket, Server gameServer){
+    public Matchmaking(Socket userSocket, Server gameServer) {
 
         this.user = null;
         this.gameServer = gameServer;
+        this.ping = new JsonObject();
+        ping.addProperty("type", "ping");
 
         try {
             this.user = new User(userSocket);
-        }catch(IOException ioe){
-            user.setConnected(false);
+        } catch (IOException ioe) {
+            this.user.setConnected(false);
         }
     }
 
@@ -43,69 +44,86 @@ public class Matchmaking extends Thread{
      *
      */
     public void run() {
-        manageCommand();
-    }
 
+        while (user.isConnected()) {
+            handleCommunication();
+        }
+
+    }
 
     /**
      *
      */
-    private void manageCommand() {
+    private void handleCommunication() {
 
-        JsonObject command = null;
+        //Send a ping message to the client.
+        try {
+            user.sendCommand(ping);
+        } catch (IOException ioe) {
+            user.setConnected(false);
+            return;
+        }
 
-        while(user.isConnected()) {
+        //Get a message from the client
+        JsonObject incomingMessage;
+        try {
+            incomingMessage = user.getCommand();
+        } catch (IOException | ClassNotFoundException e) {
+            //If socket time out expires.
+            user.setConnected(false);
+            return;
+        }
 
-            //Get a command from the user
+        //User is connected and wants a command to be executed.
+        if (!incomingMessage.get("type").toString().equals("pong")) manageCommand(incomingMessage);
+    }
+
+    /**
+     *
+     */
+    private void manageCommand(JsonObject command) {
+
+        // COMMAND PARSING
+        JsonElement type = command.get("type");
+
+        if (type.toString().equals("gameCreation")) {
+
+            //Create the game
+            String gameCode = createGame(command.get("playersNumber").getAsInt(), command.get("expert").getAsBoolean());
+
+            //Send a game creation reply
+            JsonObject gameCreationReply = new JsonObject();
+            gameCreationReply.addProperty("type", "gameCreation");
+            gameCreationReply.addProperty("code", gameCode);
             try {
-                command = user.getCommand();
-            }catch(IOException | ClassNotFoundException ioe) {
+                user.sendCommand(gameCreationReply);
+            } catch (IOException ioe) {
                 user.setConnected(false);
                 return;
             }
 
-            // COMMAND PARSING
-            JsonElement type = command.get("type");
+            //Join the game
+            try {
+                searchGame(gameCode);
+            } catch (FullGameException fge) {
 
-            if(type.toString().equals("gameCreation")) {
-
-                //Create the game
-                String gameCode = createGame(command.get("playersNumber").getAsInt(), command.get("expert").getAsBoolean());
-
-                //Send a game creation reply
-                JsonObject gameCreationReply = new JsonObject();
-                gameCreationReply.addProperty("type", "gameCreation");
-                gameCreationReply.addProperty("code", gameCode);
-                try{
-                    user.sendCommand(gameCreationReply);
-                }catch(IOException ioe){
-                    user.setConnected(false);
-                    return;
-                }
-
-                //Join the game
+                //Send a game NOT found reply
+                JsonObject gameNotFoundReply = new JsonObject();
+                gameNotFoundReply.addProperty("type", "enterGame");
+                gameNotFoundReply.addProperty("found", false);
                 try {
-                    searchGame(gameCode);
-                }catch(FullGameException fge) {
-
-                    //Send a game NOT found reply
-                    JsonObject gameNotFoundReply = new JsonObject();
-                    gameNotFoundReply.addProperty("type", "enterGame");
-                    gameNotFoundReply.addProperty("found", true);
-                    try {
-                        user.sendCommand(gameNotFoundReply);
-                    }catch(IOException ioe) {
-                        user.setConnected(false);
-                        return;
-                    }
+                    user.sendCommand(gameNotFoundReply);
+                } catch (IOException ioe) {
+                    user.setConnected(false);
                 }
-
             }
-            else if(type.toString().equals("enterGame")) {
+
+        } else {
+            if (type.toString().equals("enterGame")) {
 
                 try {
                     searchGame(command.get("code").toString());
-                }catch(FullGameException fge) {
+                } catch (FullGameException fge) {
 
                     //Send a game NOT found reply
                     JsonObject gameNotFoundReply = new JsonObject();
@@ -113,19 +131,16 @@ public class Matchmaking extends Thread{
                     gameNotFoundReply.addProperty("found", true);
                     try {
                         user.sendCommand(gameNotFoundReply);
-                    }catch(IOException ioe) {
+                    } catch (IOException ioe) {
                         user.setConnected(false);
-                        return;
                     }
                 }
-
             }
         }
     }
 
 
     /**
-     *
      * @param playersNumber
      * @param expertMode
      * @return
@@ -137,18 +152,16 @@ public class Matchmaking extends Thread{
 
 
     /**
-     *
-     * @param gameId
+     * @param gameCode
      */
-    private void searchGame(String gameId) throws FullGameException {
+    private void searchGame(String gameCode) throws FullGameException {
 
-        GameController desiredGame = null;
+        GameController desiredGame;
 
         //Search the game
-        try {
-            desiredGame = gameServer.findGame(gameId);
-        } catch (GameNotFoundException gnfe) {
+        desiredGame = gameServer.findGame(gameCode);
 
+        if (desiredGame == null) {
             //Send a game NOT found reply
             JsonObject gameNotFoundReply = new JsonObject();
             gameNotFoundReply.addProperty("type", "enterGame");
@@ -174,10 +187,11 @@ public class Matchmaking extends Thread{
         for (User savedPlayer : desiredGame.getUsers()) {
 
             JsonObject player = new JsonObject();
-            player.addProperty("name", savedPlayer.getName());
+            player.addProperty("name", savedPlayer.getUsername());
             player.addProperty("online", savedPlayer.isConnected());
             playersList.add(player);
         }
+        gameFoundReply.add("players", playersList);
 
         try {
             user.sendCommand(gameFoundReply);
@@ -200,7 +214,7 @@ public class Matchmaking extends Thread{
         boolean isPresent = false;
 
 
-        while(!loggedIn && user.isConnected()) {
+        while (!loggedIn && user.isConnected()) {
 
 
             //Wait for a message from the user
@@ -208,6 +222,7 @@ public class Matchmaking extends Thread{
                 try {
                     playerEntranceMessage = user.getCommand();
                 } catch (IOException | ClassNotFoundException ioe) {
+                    //If socket timeout expires.
                     user.setConnected(false);
                     return;
                 }
@@ -221,16 +236,15 @@ public class Matchmaking extends Thread{
 
                 for (User savedPlayer : desiredGame.getUsers()) {
 
-                    if (user.getName().equals(savedPlayer.getName()) && !savedPlayer.isConnected()) {
+                    if (user.getUsername().equals(savedPlayer.getUsername()) && !savedPlayer.isConnected()) {
                         isPresent = true;
                         desiredGame.getUsers().remove(savedPlayer);
                         loggedIn = true;
                         break;
                     } else {
 
-                        if (user.getName().equals(savedPlayer.getName()) && savedPlayer.isConnected()) {
+                        if (user.getUsername().equals(savedPlayer.getUsername()) && savedPlayer.isConnected()) {
 
-                            //Send a notAccessible reply
                             isPresent = true;
                             //Send a login not success message
                             JsonObject loginNotSuccess = new JsonObject();
@@ -238,7 +252,7 @@ public class Matchmaking extends Thread{
                             loginNotSuccess.addProperty("success", false);
                             try {
                                 user.sendCommand(loginNotSuccess);
-                            }catch(IOException ioe) {
+                            } catch (IOException ioe) {
                                 user.setConnected(false);
                                 return;
                             }
@@ -246,17 +260,16 @@ public class Matchmaking extends Thread{
                         }
                     }
                 }
-                if(!isPresent && desiredGame.getUsers().size()<desiredGame.getExpectedPlayers()) loggedIn = true;
+                if (!isPresent && desiredGame.getUsers().size() < desiredGame.getExpectedPlayers()) loggedIn = true;
 
-            }
-            else {
+            } else {
 
                 //AN EXIT MESSAGE ARRIVED
-                if(playerEntranceMessage.get("type").toString().equals("exit")) return;
+                if (playerEntranceMessage.get("type").toString().equals("exit")) return;
             }
         }
 
-        gameServer.joinGame(user, desiredGame);
+        desiredGame.addUser(user);
 
         //Send a login success message
         JsonObject loginSuccess = new JsonObject();
@@ -264,7 +277,7 @@ public class Matchmaking extends Thread{
         loginSuccess.addProperty("success", true);
         try {
             user.sendCommand(loginSuccess);
-        }catch(IOException ioe) {
+        } catch (IOException ioe) {
             user.setConnected(false);
         }
     }
