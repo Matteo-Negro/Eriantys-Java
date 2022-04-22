@@ -73,6 +73,9 @@ public class GameController extends Thread {
 //
 //    }
 
+    /**
+     * Saves the current state of the game into a file.
+     */
     public void saveGame() {
 
         JsonObject json = new JsonObject();
@@ -94,6 +97,12 @@ public class GameController extends Thread {
         }).start();
     }
 
+    /**
+     * Writes the json containing the state into a file.
+     *
+     * @param json The json to write.
+     * @throws IOException If there is an exception during the process.
+     */
     private void writeFile(JsonObject json) throws IOException {
         BufferedWriter writer = Files.newBufferedWriter(
                 Paths.get(savePath, id + ".json"),
