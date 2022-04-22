@@ -1,33 +1,41 @@
 package it.polimi.ingsw.network.server;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import it.polimi.ingsw.ServerLauncher;
 import it.polimi.ingsw.controller.GameController;
+import it.polimi.ingsw.controller.Matchmaking;
 import it.polimi.ingsw.model.GamePlatform;
 import it.polimi.ingsw.model.player.Player;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
+import java.util.NoSuchElementException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static it.polimi.ingsw.utilities.StateParser.*;
 
 /**
  * Server instance.
+ *
+ * @author Riccardo Milici
+ * @author Riccardo Motta
  */
 
 public class Server {
 
     private final Map<String, GameController> games;
     private final String savePath;
+    private int port;
 
     /**
      * Class constructor.
@@ -35,7 +43,8 @@ public class Server {
      * @param savePath Path where to find and store the games.
      * @throws IOException Thrown if there is an error while processing files.
      */
-    public Server(String savePath) throws IOException {
+    public Server(String savePath, int port) throws IOException {
+        this.port = port;
         this.savePath = savePath != null
                 ? savePath
                 : Paths.get(new File(ServerLauncher.class.getProtectionDomain().getCodeSource().getLocation().getFile())
@@ -50,6 +59,24 @@ public class Server {
         System.out.println("Load completed.\n");
     }
 
+    public void start() throws IOException {
+
+        ExecutorService executor = Executors.newCachedThreadPool();
+        try (ServerSocket serverSocket = new ServerSocket(port)) {
+            System.out.println("Server up and listening on port: " + port);
+            while (true) {
+                Socket socket = serverSocket.accept();
+                System.out.println("Received client connection.");
+                executor.submit(new Matchmaking(socket, this));
+            }
+        } catch (NoSuchElementException e) {
+            System.err.println(e.getMessage());
+        } finally {
+            executor.shutdown();
+            System.out.println("Socket closed.");
+        }
+    }
+
     /**
      * Loads the previous games from the disk.
      *
@@ -59,18 +86,13 @@ public class Server {
         Files.list(Paths.get(savePath))
                 .parallel()
                 .filter(file -> !Files.isDirectory(file) && file.toString().endsWith(".json"))
-                .map(file -> {
+                .forEach(file -> {
                     try {
-                        BufferedReader stream = Files.newBufferedReader(file);
-                        Optional<String> json = stream.lines().reduce((s1, s2) -> s1 + s2);
-                        stream.close();
-                        return json;
+                        loadGame(JsonParser.parseReader(Files.newBufferedReader(file)).getAsJsonObject());
                     } catch (IOException e) {
-                        return Optional.<String>empty();
+                        throw new RuntimeException(e);
                     }
-                })
-                .filter(Optional::isPresent)
-                .forEach(json -> loadGame(new Gson().fromJson(json.get(), JsonObject.class)));
+                });
     }
 
     /**
@@ -116,6 +138,7 @@ public class Server {
             while (games.containsKey(id));
             games.put(id, gameController);
         }
+        System.out.println("Created new game with id " + id);
         return id;
     }
 
