@@ -5,7 +5,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import it.polimi.ingsw.ServerLauncher;
 import it.polimi.ingsw.controller.GameController;
-import it.polimi.ingsw.controller.User;
 import it.polimi.ingsw.model.GamePlatform;
 import it.polimi.ingsw.model.player.Player;
 
@@ -17,6 +16,7 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static it.polimi.ingsw.utilities.StateParser.*;
 
@@ -101,15 +101,48 @@ public class Server {
         }
     }
 
-    //public GameController addGame(int expectedPlayers, boolean expertMode) {
+    /**
+     * Adds a new game to the list of games.
+     *
+     * @param expectedPlayers Number of players expected to play the game.
+     * @param expertMode      Tells if the desired game has to be played in expert mode.
+     * @return The string of the newly created game.
+     */
+    public String addGame(int expectedPlayers, boolean expertMode) {
+        String id;
+        GameController gameController = new GameController(new GamePlatform(expectedPlayers, expertMode), expectedPlayers, savePath);
+        synchronized (games) {
+            do id = getNewId();
+            while (games.containsKey(id));
+            games.put(id, gameController);
+        }
+        return id;
+    }
 
-    //}
+    /**
+     * Generates a random identifier for a new game.
+     *
+     * @return The generated identifier.
+     */
+    private String getNewId() {
+        StringBuilder id = new StringBuilder();
+        int letter = 'A';
+        int number = '0';
+        for (int index = 0; index < 5; index++)
+            if (ThreadLocalRandom.current().nextBoolean())
+                id.append((char) (letter + ThreadLocalRandom.current().nextInt(0, 26)));
+            else
+                id.append((char) (number + ThreadLocalRandom.current().nextInt(0, 10)));
+        return id.toString();
+    }
 
-    //public GameController findGame(String id) {
-
-    //}
-
-    public void joinGame(User newUser, GameController game) {
-
+    /**
+     * Gets the GameController associated with a specific game identifier.
+     *
+     * @param id The game identifier.
+     * @return GameController associated with a specific game identifier.
+     */
+    public GameController findGame(String id) {
+        return games.get(id);
     }
 }
