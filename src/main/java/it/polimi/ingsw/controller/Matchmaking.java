@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.net.Socket;
 
 /**
- * Matchmaking class: used to create a multithread interface between a user and the main server object.
+ * A multithreading interface between a user and the main server object.
  *
  * @author Riccardo Milici
  */
@@ -22,8 +22,11 @@ public class Matchmaking extends Thread {
 
 
     /**
-     * @param userSocket
-     * @param gameServer
+     * The class constructor.
+     * Creates an instance of the class containing the user connected, a reference to the game server and a standard ping message.
+     *
+     * @param userSocket The user's tcp connection socket.
+     * @param gameServer The main game server object's reference.
      */
     public Matchmaking(Socket userSocket, Server gameServer) {
 
@@ -41,7 +44,7 @@ public class Matchmaking extends Thread {
 
 
     /**
-     *
+     * Runs the "handleCommunication()" method in a new thread, while the user remains connected.
      */
     public void run() {
 
@@ -52,7 +55,7 @@ public class Matchmaking extends Thread {
     }
 
     /**
-     *
+     * Manages the ping between server and user's client; calls the "manageCommand(JsonObject command)" method if a command message is received.
      */
     private void handleCommunication() {
 
@@ -79,7 +82,9 @@ public class Matchmaking extends Thread {
     }
 
     /**
+     * Manages the user's command parsing and calls the "createGame(int playersNumber, boolean expertMode)" method or "searchGame(String gameCode)" method if requested.
      *
+     * @param command The command to manage.
      */
     private void manageCommand(JsonObject command) {
 
@@ -141,9 +146,11 @@ public class Matchmaking extends Thread {
 
 
     /**
-     * @param playersNumber
-     * @param expertMode
-     * @return
+     * Calls the gameServer's "addGame(int expectedPlayers, boolean expertMode)" method, in order to create the game requested by the user.
+     *
+     * @param playersNumber The game's players number.
+     * @param expertMode    Set to true if the expert game difficulty is requested.
+     * @return The alphanumerical code associated with the created game.
      */
     private String createGame(int playersNumber, boolean expertMode) {
 
@@ -152,7 +159,9 @@ public class Matchmaking extends Thread {
 
 
     /**
-     * @param gameCode
+     * Calls the gameServer's "findGame(String gameCode)" method in order to search for a specified game; calls the "login(GameController desiredGame)" method if the game has been found.
+     *
+     * @param gameCode The alphanumerical code associated with the game searched.
      */
     private void searchGame(String gameCode) throws FullGameException {
 
@@ -204,7 +213,9 @@ public class Matchmaking extends Thread {
 
 
     /**
+     * Manages the process regarding the login of the user to a specific game.
      *
+     * @param desiredGame The instance of the game in which the user wants to log in.
      */
     private void login(GameController desiredGame) {
 
