@@ -1,4 +1,4 @@
-package it.polimi.ingsw.utilities;
+package it.polimi.ingsw.utilities.parsers;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonNull;
@@ -10,6 +10,7 @@ import it.polimi.ingsw.model.board.SpecialCharacter;
 import it.polimi.ingsw.model.player.Assistant;
 import it.polimi.ingsw.model.player.Player;
 import it.polimi.ingsw.model.player.SchoolBoard;
+import it.polimi.ingsw.utilities.HouseColor;
 
 import java.util.List;
 import java.util.Map;
@@ -19,11 +20,11 @@ import java.util.Map;
  *
  * @author Riccardo Motta
  */
-public enum SaveUtilities {
+public enum ObjectsToJson {
 
     GET_NAMES, GET_PLAYERS;
 
-    public static JsonArray toJsonArray(List<Player> players, SaveUtilities action) {
+    public static JsonArray toJsonArray(List<Player> players, ObjectsToJson action) {
         return switch (action) {
             case GET_NAMES -> toNamesArray(players);
             case GET_PLAYERS -> toPlayersArray(players);

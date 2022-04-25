@@ -1,4 +1,4 @@
-package it.polimi.ingsw.utilities;
+package it.polimi.ingsw.utilities.parsers;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -10,6 +10,9 @@ import it.polimi.ingsw.model.board.SpecialCharacter;
 import it.polimi.ingsw.model.player.Assistant;
 import it.polimi.ingsw.model.player.Player;
 import it.polimi.ingsw.model.player.SchoolBoard;
+import it.polimi.ingsw.utilities.HouseColor;
+import it.polimi.ingsw.utilities.TowerType;
+import it.polimi.ingsw.utilities.WizardType;
 
 import java.util.*;
 
@@ -18,7 +21,7 @@ import java.util.*;
  *
  * @author Riccardo Motta
  */
-public class StateParser {
+public class JsonToObjects {
 
     /**
      * Parses a json to get the corresponding Player.

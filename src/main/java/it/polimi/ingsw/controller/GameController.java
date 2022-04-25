@@ -3,7 +3,7 @@ package it.polimi.ingsw.controller;
 import com.google.gson.JsonObject;
 import it.polimi.ingsw.model.GamePlatform;
 import it.polimi.ingsw.utilities.HouseColor;
-import it.polimi.ingsw.utilities.SaveUtilities;
+import it.polimi.ingsw.utilities.parsers.ObjectsToJson;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -82,11 +82,11 @@ public class GameController extends Thread {
         json.addProperty("id", id);
         json.addProperty("expert", gameModel.isExpert());
         json.addProperty("currentPlayer", gameModel.getCurrentPlayer().getName());
-        json.add("clockwiseOrder", SaveUtilities.toJsonArray(gameModel.getPlayers(), SaveUtilities.GET_NAMES));
-        json.add("turnOrder", SaveUtilities.toJsonArray(gameModel.getTurnOrder(), SaveUtilities.GET_NAMES));
+        json.add("clockwiseOrder", ObjectsToJson.toJsonArray(gameModel.getPlayers(), ObjectsToJson.GET_NAMES));
+        json.add("turnOrder", ObjectsToJson.toJsonArray(gameModel.getTurnOrder(), ObjectsToJson.GET_NAMES));
         json.addProperty("expectedPlayers", expectedPlayers);
-        json.add("players", SaveUtilities.toJsonArray(gameModel.getPlayers(), SaveUtilities.GET_PLAYERS));
-        json.add("board", SaveUtilities.toJsonObject(gameModel.getGameBoard()));
+        json.add("players", ObjectsToJson.toJsonArray(gameModel.getPlayers(), ObjectsToJson.GET_PLAYERS));
+        json.add("board", ObjectsToJson.toJsonObject(gameModel.getGameBoard()));
 
         new Thread(() -> {
             try {
