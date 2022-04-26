@@ -2,108 +2,145 @@ package it.polimi.ingsw.controller;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import it.polimi.ingsw.network.server.Server;
+import it.polimi.ingsw.utilities.MessageCreator;
+import it.polimi.ingsw.utilities.exceptions.FullGameException;
+import it.polimi.ingsw.utilities.exceptions.GameNotFoundException;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Scanner;
 
 /**
  * The entity containing the tcp connection socket of the client connected to the game server and its input and output streams.
  *
  * @author Riccardo Milici
+ * @author Riccardo Motta
  */
-public class User {
+public class User extends Thread {
 
-    private final Socket socket;
-    private String username;
     private boolean connected;
-    private final ObjectInputStream socketInputStream;
-    private final ObjectOutputStream socketOutputStream;
+    private final Object connectedLock;
+    private final Scanner inputStream;
+    private final PrintWriter outputStream;
+    private final Server server;
+    private final Ping ping;
+    private GameController gameController;
+    private boolean logged;
 
     /**
      * Class constructor.
      * Creates an instance of the class, containing the username, tcp socket and its input and output streams.
      *
      * @param socket The user's tcp socket, used to communicate with the game server throw the network.
+     * @param server The main server instance.
      * @throws IOException Thrown if an error occurs during the input and output streams' opening.
      */
-    public User(Socket socket) throws IOException {
-        this.socket = socket;
-        this.username = null;
+    public User(Socket socket, Server server) throws IOException {
         this.connected = true;
+        this.server = server;
+        this.connectedLock = new Object();
+        this.ping = new Ping(this);
+        this.gameController = null;
+        this.logged = false;
 
-        socketInputStream = new ObjectInputStream(socket.getInputStream());
-        socketOutputStream = new ObjectOutputStream(socket.getOutputStream());
-        socket.setSoTimeout(10 * 1000);
+        inputStream = new Scanner(socket.getInputStream());
+        outputStream = new PrintWriter(socket.getOutputStream());
+        socket.setSoTimeout(10000);
     }
 
-    /**
-     * Associates a name to the user.
-     *
-     * @param username The name chosen.
-     */
-    public void putName(String username) {
-        this.username = username;
+    public boolean isLogged() {
+        return logged;
     }
 
-    /**
-     * Sets the connected attribute to true or false, according to the user socket's current connection status.
-     *
-     * @param connectionStatus Current user socket's connection status.
-     */
-    public void setConnected(boolean connectionStatus) {
-        this.connected = connectionStatus;
-    }
+    public void run() {
 
-    /**
-     * Returns the user's tcp connection socket.
-     *
-     * @return socket attribute.
-     */
-    public Socket getSocket() {
-        return socket;
-    }
+        JsonObject incomingMessage;
 
-    /**
-     * Returns the name associated to the user.
-     *
-     * @return username attribute.
-     */
-    public String getUsername() {
-        return username;
-    }
+        new Thread(ping).start();
 
-    /**
-     * Returns the current socket's connection status (true->connected | false->disconnected).
-     *
-     * @return connected attribute.
-     */
-    public boolean isConnected() {
-        return connected;
+        while (true) {
+
+            synchronized (connectedLock) {
+                if (!connected)
+                    break;
+            }
+
+            try {
+                incomingMessage = getCommand();
+            } catch (IOException e) {
+                // If socket time out expires.
+                disconnected();
+                break;
+            }
+            manageCommand(incomingMessage);
+        }
+
+        ping.interrupt();
     }
 
     /**
      * Reads the incoming message from the tcp socket.
      *
      * @return A JsonObject containing the command received.
-     * @throws IOException            Thrown if an error occurs during the socket input stream read.
-     * @throws ClassNotFoundException Thrown if an error occurs during the socket input stream read.
+     * @throws IOException Thrown if an error occurs during the socket input stream read.
      */
-    public synchronized JsonObject getCommand() throws IOException, ClassNotFoundException {
-
-        return JsonParser.parseString((String) socketInputStream.readObject()).getAsJsonObject();
+    public synchronized JsonObject getCommand() throws IOException {
+        return JsonParser.parseString(inputStream.nextLine()).getAsJsonObject();
     }
 
     /**
      * Sends a message to the user client through the tcp socket.
      *
      * @param command A JsonObject containing the command to send.
-     * @throws IOException Thrown if an error occurs during the socket input stream write.
      */
-    public synchronized void sendCommand(JsonObject command) throws IOException {
-
-        socketOutputStream.writeObject(command.getAsString());
+    public void sendMessage(JsonObject command) {
+        synchronized (outputStream) {
+            outputStream.println(command.toString());
+            outputStream.flush();
+        }
     }
 
+    /**
+     * Manages the user's command parsing and calls the "createGame(int playersNumber, boolean expertMode)" method or "searchGame(String gameCode)" method if requested.
+     *
+     * @param command The command to manage.
+     */
+    private void manageCommand(JsonObject command) {
+
+        switch (command.get("type").getAsString()) {
+            case "pong" -> {
+            }
+            case "gameCreation" -> sendMessage(MessageCreator.gameCreation(Matchmaking.gameCreation(command, server)));
+            case "enterGame" -> {
+                try {
+                    gameController = Matchmaking.enterGame(command.get("code").getAsString(), server);
+                } catch (FullGameException | GameNotFoundException e) {
+                    gameController = null;
+                }
+                sendMessage(MessageCreator.enterGame(gameController));
+            }
+            case "login" -> {
+                logged = Matchmaking.login(gameController, command.get("name").getAsString(), this);
+                sendMessage(MessageCreator.login(logged));
+            }
+            default -> sendMessage(MessageCreator.error("Wrong command."));
+        }
+    }
+
+    public void disconnected() {
+        synchronized (connectedLock) {
+            connected = false;
+        }
+        removeFromGame();
+    }
+
+    private void removeFromGame() {
+        if (gameController == null)
+            return;
+        gameController.removeUser(this);
+    }
 }
+
+// TODO: re-add username and match it to GameController's one

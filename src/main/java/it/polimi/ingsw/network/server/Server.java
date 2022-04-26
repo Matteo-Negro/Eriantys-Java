@@ -5,7 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import it.polimi.ingsw.ServerLauncher;
 import it.polimi.ingsw.controller.GameController;
-import it.polimi.ingsw.controller.Matchmaking;
+import it.polimi.ingsw.controller.User;
 import it.polimi.ingsw.model.GamePlatform;
 import it.polimi.ingsw.model.player.Player;
 
@@ -35,7 +35,7 @@ public class Server {
 
     private final Map<String, GameController> games;
     private final String savePath;
-    private int port;
+    private final int port;
 
     /**
      * Class constructor.
@@ -67,7 +67,7 @@ public class Server {
             while (true) {
                 Socket socket = serverSocket.accept();
                 System.out.println("Received client connection.");
-                executor.submit(new Matchmaking(socket, this));
+                executor.submit(new User(socket, this));
             }
         } catch (NoSuchElementException e) {
             System.err.println(e.getMessage());

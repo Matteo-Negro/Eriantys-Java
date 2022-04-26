@@ -3,6 +3,8 @@ package it.polimi.ingsw.controller;
 import com.google.gson.JsonObject;
 import it.polimi.ingsw.model.GamePlatform;
 import it.polimi.ingsw.utilities.HouseColor;
+import it.polimi.ingsw.utilities.exceptions.AlreadyExistingPlayerException;
+import it.polimi.ingsw.utilities.exceptions.FullGameException;
 import it.polimi.ingsw.utilities.parsers.ObjectsToJson;
 
 import java.io.BufferedWriter;
@@ -11,31 +13,31 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.List;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class GameController extends Thread {
     private final GamePlatform gameModel;
     private String id;
-    private boolean isRunning;
     private int round;
     private String phase;
     private final int expectedPlayers;
-    private List<User> users;
-
+    private int connectedPlayers;
+    private final Map<String, User> users;
     private final String savePath;
 
     public GameController(GamePlatform gameModel, int expectedPlayers, String savePath) {
         this.gameModel = gameModel;
         this.expectedPlayers = expectedPlayers;
+        this.connectedPlayers = 0;
+        this.users = new HashMap<>();
         this.savePath = savePath;
     }
 
     public String getGameId() {
         return id;
-    }
-
-    public boolean getIsRunning() {
-        return isRunning;
     }
 
     public int getRound() {
@@ -46,27 +48,65 @@ public class GameController extends Thread {
         return phase;
     }
 
-    public List<User> getUsers() {
-        return users;
+    public Set<User> getUsers() {
+        synchronized (users) {
+            return new HashSet<>(users.values());
+        }
+    }
+
+    public User getUser(String name) {
+        synchronized (users) {
+            return users.get(name);
+        }
+    }
+
+    public Set<String> getUsernames() {
+        synchronized (users) {
+            return users.keySet();
+        }
+    }
+
+    public void addUser(String name, User user) throws FullGameException, AlreadyExistingPlayerException {
+
+        if (isFull())
+            throw new FullGameException();
+
+        synchronized (users) {
+
+            if (users.get(name) != null)
+                throw new AlreadyExistingPlayerException();
+
+            users.put(name, user);
+            connectedPlayers++;
+        }
+
+        // TODO: create player into model
+        // TODO: notify game start if full
+    }
+
+    public void removeUser(User user) {
+        synchronized (users) {
+            String username = users.entrySet().stream().filter(entry -> entry.getValue().equals(user)).findFirst().map(Map.Entry::getKey).orElse(null);
+            if (username == null)
+                return;
+            users.replace(username, null);
+            connectedPlayers--;
+            // TODO: pause game (notifyAll())
+        }
     }
 
     public int getExpectedPlayers() {
         return expectedPlayers;
     }
 
-    public GamePlatform getGameModel() {
-        return gameModel;
+    public boolean isFull() {
+        synchronized (users) {
+            return connectedPlayers == expectedPlayers;
+        }
     }
 
-    public void addUser(User user) {
-
-        int userId = 1;
-
-        for (int i = 0; 0 < getUsers().size(); i++) {
-            if (userId == getUsers().get(i).getId()) userId++;
-        }
-        user.putId(userId);
-        users.add(user);
+    public GamePlatform getGameModel() {
+        return gameModel;
     }
 
 //    public void manageCommand(JsonObject command) {
@@ -76,7 +116,7 @@ public class GameController extends Thread {
     /**
      * Saves the current state of the game into a file.
      */
-    public void saveGame() {
+    private void saveGame() {
 
         JsonObject json = new JsonObject();
         json.addProperty("id", id);
