@@ -86,7 +86,7 @@ public class User extends Thread {
      * @return A JsonObject containing the command received.
      * @throws IOException Thrown if an error occurs during the socket input stream read.
      */
-    public synchronized JsonObject getCommand() throws IOException {
+    private synchronized JsonObject getCommand() throws IOException {
         return JsonParser.parseString(inputStream.nextLine()).getAsJsonObject();
     }
 
@@ -125,6 +125,7 @@ public class User extends Thread {
                 logged = Matchmaking.login(gameController, command.get("name").getAsString(), this);
                 sendMessage(MessageCreator.login(logged));
             }
+            case "logout" -> removeFromGame();
             default -> sendMessage(MessageCreator.error("Wrong command."));
         }
     }

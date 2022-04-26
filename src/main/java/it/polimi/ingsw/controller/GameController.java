@@ -86,13 +86,17 @@ public class GameController extends Thread {
 
     public void removeUser(User user) {
         synchronized (users) {
-            String username = users.entrySet().stream().filter(entry -> entry.getValue().equals(user)).findFirst().map(Map.Entry::getKey).orElse(null);
+            String username = getUsername(user);
             if (username == null)
                 return;
             users.replace(username, null);
             connectedPlayers--;
             // TODO: pause game (notifyAll())
         }
+    }
+
+    public String getUsername(User user) {
+        return users.entrySet().stream().filter(entry -> entry.getValue().equals(user)).findFirst().map(Map.Entry::getKey).orElse(null);
     }
 
     public int getExpectedPlayers() {

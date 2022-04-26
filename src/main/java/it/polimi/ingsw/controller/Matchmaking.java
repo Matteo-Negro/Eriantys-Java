@@ -17,13 +17,9 @@ class Matchmaking {
     }
 
     static GameController enterGame(String code, Server server) throws FullGameException, GameNotFoundException {
-        return searchGame(code, server);
-    }
-
-    private static GameController searchGame(String gameCode, Server server) throws GameNotFoundException, FullGameException {
 
         // Search the game
-        GameController desiredGame = server.findGame(gameCode);
+        GameController desiredGame = server.findGame(code);
 
         if (desiredGame == null)
             throw new GameNotFoundException();
