@@ -170,7 +170,7 @@ public class GameController extends Thread {
      */
     public void removeUser(User user) {
         synchronized (this.users) {
-            if (this.user.getUsername() == null)
+            if (user.getUsername() == null)
                 return;
             this.users.replace(user.getUsername(), null);
             this.connectedPlayers--;
