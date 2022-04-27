@@ -27,6 +27,7 @@ public class User extends Thread {
     private final Server server;
     private final Ping ping;
     private GameController gameController;
+    private String username;
     private boolean logged;
 
     /**
@@ -43,6 +44,7 @@ public class User extends Thread {
         this.connectedLock = new Object();
         this.ping = new Ping(this);
         this.gameController = null;
+        this.username = null;
         this.logged = false;
 
         inputStream = new Scanner(socket.getInputStream());
@@ -52,6 +54,10 @@ public class User extends Thread {
 
     public boolean isLogged() {
         return logged;
+    }
+
+    public String getUsername() {
+        return username;
     }
 
     public void run() {
@@ -124,6 +130,8 @@ public class User extends Thread {
             case "login" -> {
                 logged = Matchmaking.login(gameController, command.get("name").getAsString(), this);
                 sendMessage(MessageCreator.login(logged));
+                if (logged)
+                    username = command.get("name").getAsString();
             }
             case "logout" -> removeFromGame();
             default -> sendMessage(MessageCreator.error("Wrong command."));
@@ -141,7 +149,6 @@ public class User extends Thread {
         if (gameController == null)
             return;
         gameController.removeUser(this);
+        username = null;
     }
 }
-
-// TODO: re-add username and match it to GameController's one

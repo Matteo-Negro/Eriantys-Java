@@ -9,7 +9,6 @@ import it.polimi.ingsw.model.player.Assistant;
 import it.polimi.ingsw.model.player.Player;
 import it.polimi.ingsw.utilities.HouseColor;
 import it.polimi.ingsw.utilities.MessageCreator;
-import it.polimi.ingsw.utilities.TowerType;
 import it.polimi.ingsw.utilities.exceptions.*;
 import it.polimi.ingsw.utilities.parsers.ObjectsToJson;
 
@@ -41,9 +40,9 @@ public class GameController extends Thread {
     /**
      * The game controller constructor.
      *
-     * @param gameModel The reference to the game model, that represent the game state.
+     * @param gameModel       The reference to the game model, that represent the game state.
      * @param expectedPlayers The number of expected player.
-     * @param savePath The path to the location where the game will be saved.
+     * @param savePath        The path to the location where the game will be saved.
      */
     public GameController(GamePlatform gameModel, int expectedPlayers, String savePath) {
         this.connectedPlayers = 0;
@@ -106,7 +105,7 @@ public class GameController extends Thread {
      *
      * @return The path to the location used to save the game.
      */
-    public String getSavePath(){
+    public String getSavePath() {
         return this.savePath;
     }
 
@@ -134,7 +133,6 @@ public class GameController extends Thread {
     }
 
     /**
-     *
      * @return
      */
     public Set<String> getUsernames() {
@@ -144,7 +142,6 @@ public class GameController extends Thread {
     }
 
     /**
-     *
      * @param name
      * @param user
      * @throws FullGameException
@@ -160,36 +157,28 @@ public class GameController extends Thread {
 
             this.users.put(name, user);
             this.connectedPlayers++;
+
+            if (this.gameModel.getPlayers().stream().noneMatch(player -> player.getName().equals(name)))
+                this.gameModel.addPlayer(name);
         }
-        // TODO: create player into model
+
         // TODO: notify game start if full
     }
 
     /**
-     *
      * @param user
      */
     public void removeUser(User user) {
         synchronized (this.users) {
-            String username = getUsername(user);
-            if (username == null) return;
-            this.users.replace(username, null);
+            if (this.user.getUsername() == null)
+                return;
+            this.users.replace(user.getUsername(), null);
             this.connectedPlayers--;
             // TODO: pause game (notifyAll())
         }
     }
 
     /**
-     *
-     * @param user
-     * @return
-     */
-    public String getUsername(User user) {
-        return this.users.entrySet().stream().filter(entry -> entry.getValue().equals(user)).findFirst().map(Map.Entry::getKey).orElse(null);
-    }
-
-    /**
-     *
      * @return
      */
     public boolean isFull() {
@@ -242,23 +231,24 @@ public class GameController extends Thread {
     private void playAssistantCard(String player, int assistant) {
         try {
             this.gameModel.getPlayerByName(player).playAssistant(assistant);
-        }catch (AlreadyPlayedException e){
+        } catch (AlreadyPlayedException e) {
             //TODO: send message
             e.printStackTrace();
         }
 
-        try{
+        try {
             this.gameModel.getGameBoard().addPlayedAssistant(this.gameModel.getPlayerByName(player), new Assistant(assistant));
-        }catch (IllegalMoveException e){
+        } catch (IllegalMoveException e) {
             //TODO: send message
             e.printStackTrace();
         }
     }
 
-    private void moveStudent(JsonObject command){
+    private void moveStudent(JsonObject command) {
         try {
             switch (command.get("from").getAsString()) {
-                case "entrance" -> this.gameModel.getPlayerByName(command.get("player").getAsString()).getSchoolBoard().removeFromEntrance(HouseColor.valueOf(command.get("color").getAsString()));
+                case "entrance" ->
+                        this.gameModel.getPlayerByName(command.get("player").getAsString()).getSchoolBoard().removeFromEntrance(HouseColor.valueOf(command.get("color").getAsString()));
                 case "diningRoom" -> {
                     String newProfessorOwner = this.gameModel.getGameBoard().getProfessors().get(HouseColor.valueOf(command.get("color").getAsString())).getName();
                     int numStudent;
@@ -290,10 +280,10 @@ public class GameController extends Thread {
                     }
                 }
                 default ->
-                        //TODO: send it
+                    //TODO: send it
                         MessageCreator.error("Wrong command.");
             }
-        }catch (NoStudentException e){
+        } catch (NoStudentException e) {
             e.printStackTrace();
         }
 
@@ -306,8 +296,10 @@ public class GameController extends Thread {
                     }
                 }
             }
-            case "bag" -> this.gameModel.getGameBoard().getBag().push(HouseColor.valueOf(command.get("color").getAsString()));
-            case "island" -> this.gameModel.getGameBoard().getIslands().get(command.get("toId").getAsInt()).addStudent(HouseColor.valueOf(command.get("color").getAsString()));
+            case "bag" ->
+                    this.gameModel.getGameBoard().getBag().push(HouseColor.valueOf(command.get("color").getAsString()));
+            case "island" ->
+                    this.gameModel.getGameBoard().getIslands().get(command.get("toId").getAsInt()).addStudent(HouseColor.valueOf(command.get("color").getAsString()));
             case "card" -> {
                 boolean check = false;
                 for (SpecialCharacter c : this.gameModel.getGameBoard().getCharacters()) {
@@ -325,35 +317,35 @@ public class GameController extends Thread {
                 }
             }
             default ->
-                    //TODO: send it
+                //TODO: send it
                     MessageCreator.error("Wrong command.");
         }
     }
 
-    private void moveMotherNature(int idIsland){
+    private void moveMotherNature(int idIsland) {
         Map<Player, Integer> influence;
         Island island = null;
-        try{
+        try {
             island = this.gameModel.getGameBoard().getIslandById(idIsland);
             this.gameModel.getGameBoard().moveMotherNature(island,
                     this.gameModel.getGameBoard().getPlayedAssistants().get(this.gameModel.getCurrentPlayer()));
 
-        }catch (IllegalMoveException | IslandNotFoundException e){
+        } catch (IllegalMoveException | IslandNotFoundException e) {
             //TODO: send it
             MessageCreator.error("Error");
             e.printStackTrace();
         }
-        if (island!=null) {
+        if (island != null) {
             influence = this.gameModel.getGameBoard().getInfluence(island);
             int max = Collections.max(influence.values());
             List<Player> mostInfluential = influence.entrySet().stream()
-                                                   .filter(entry -> entry.getValue() == max)
-                                                   .map(entry -> entry.getKey())
-                                                   .collect(Collectors.toList());
+                    .filter(entry -> entry.getValue() == max)
+                    .map(entry -> entry.getKey())
+                    .collect(Collectors.toList());
             if (mostInfluential.size() == 1 || (mostInfluential.size() == 2 && mostInfluential.get(0).getSchoolBoard().getTowerType().equals(mostInfluential.get(1).getSchoolBoard().getTowerType()))) {
                 if (island.getTower() == null) {
                     island.setTower(mostInfluential.get(0).getSchoolBoard().getTowerType());
-                    try{
+                    try {
                         for (Player player : this.gameModel.getPlayers()) {
                             if (player.getSchoolBoard().getTowerType().equals(mostInfluential.get(0).getSchoolBoard().getTowerType())) {
                                 player.getSchoolBoard().removeTowers(island.getSize());
@@ -367,12 +359,12 @@ public class GameController extends Thread {
                         e2.printStackTrace();
                     }
                 } else {
-                    if (!island.getTower().equals(mostInfluential.get(0).getSchoolBoard().getTowerType())){
-                        try{
+                    if (!island.getTower().equals(mostInfluential.get(0).getSchoolBoard().getTowerType())) {
+                        try {
                             for (Player player : this.gameModel.getPlayers()) {
                                 if (island.getTower().equals(player.getSchoolBoard().getTowerType())) {
                                     player.getSchoolBoard().addTowers(island.getSize());
-                                } else if (player.getSchoolBoard().getTowerType().equals(mostInfluential.get(0).getSchoolBoard().getTowerType())){
+                                } else if (player.getSchoolBoard().getTowerType().equals(mostInfluential.get(0).getSchoolBoard().getTowerType())) {
                                     player.getSchoolBoard().removeTowers(island.getSize());
                                 }
                             }
@@ -401,23 +393,23 @@ public class GameController extends Thread {
     private boolean endGame() {
         boolean end = false;
         List<Player> winners = new ArrayList<>();
-        if (this.gameModel.getPlayers().stream().anyMatch(player -> player.getSchoolBoard().getTowersNumber()==0)) {
+        if (this.gameModel.getPlayers().stream().anyMatch(player -> player.getSchoolBoard().getTowersNumber() == 0)) {
             end = true;
-            for(Player player : this.gameModel.getPlayers()) {
-                if (player.getSchoolBoard().getTowersNumber() ==0) winners.add(player);
+            for (Player player : this.gameModel.getPlayers()) {
+                if (player.getSchoolBoard().getTowersNumber() == 0) winners.add(player);
             }
-        } else if (this.gameModel.getGameBoard().getIslands().size() == 3){
+        } else if (this.gameModel.getGameBoard().getIslands().size() == 3) {
             //TODO
             end = checkForWinners();
-        } else if ((this.gameModel.getCurrentPlayer().equals(this.gameModel.getTurnOrder().get(this.expectedPlayers-1)))) {
-            if (this.gameModel.getGameBoard().getBag().isEmpty() || this.gameModel.getPlayers().get(0).getAssistants().size()==0) {
-                end =checkForWinners();
+        } else if ((this.gameModel.getCurrentPlayer().equals(this.gameModel.getTurnOrder().get(this.expectedPlayers - 1)))) {
+            if (this.gameModel.getGameBoard().getBag().isEmpty() || this.gameModel.getPlayers().get(0).getAssistants().size() == 0) {
+                end = checkForWinners();
             }
         }
         return end;
     }
 
-    private boolean checkForWinners(){
+    private boolean checkForWinners() {
         boolean end = false;
         List<Player> winners = new ArrayList<>();
 
@@ -430,7 +422,7 @@ public class GameController extends Thread {
                 .filter(entry -> entry.getValue() == min)
                 .map(entry -> entry.getKey())
                 .collect(Collectors.toList());
-        if (possibleWinners.size()==1 || (possibleWinners.size()==2 && possibleWinners.get(0).getSchoolBoard().getTowerType().equals(possibleWinners.get(1).getSchoolBoard().getTowerType()))) {
+        if (possibleWinners.size() == 1 || (possibleWinners.size() == 2 && possibleWinners.get(0).getSchoolBoard().getTowerType().equals(possibleWinners.get(1).getSchoolBoard().getTowerType()))) {
             winners.addAll(possibleWinners);
             end = true;
         } else {

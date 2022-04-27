@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Core of the entire game structure.
@@ -96,27 +97,70 @@ public class GamePlatform {
     /**
      * Adds a player to the game.
      *
-     * @param name         Name of the player.
-     * @param wizardType   Type of the Wizard.
-     * @param towersNumber Number of towers.
-     * @param towerType    Color of the tower.
+     * @param name Name of the player.
      * @throws AlreadyExistingPlayerException If a player with the same name already exists.
      * @throws FullGameException              If there are already enough players.
      */
-    public void addPlayer(String name, WizardType wizardType, int towersNumber, TowerType towerType)
+    public void addPlayer(String name)
             throws AlreadyExistingPlayerException, FullGameException {
         Player tmp;
         if (players.size() == playersNumber)
             throw new FullGameException("There are already " + playersNumber + "/" + playersNumber + " players.");
         if (players.containsKey(name))
             throw new AlreadyExistingPlayerException("A player with name \"" + name + "\" already exists.");
-        tmp = new Player(name, wizardType, towersNumber, towerType);
+        tmp = new Player(name, getWizardType(), getTowersNumber(), getTowerType());
         clockwiseOrder.add(tmp);
         players.put(name, tmp);
         if (players.size() == 1) {
             currentPlayer = name;
             roundWinner = name;
         }
+    }
+
+    /**
+     * Returns a random Wizard which has not yet been used.
+     *
+     * @return The chosen Wizard.
+     */
+    private WizardType getWizardType() {
+        List<WizardType> wizards = new ArrayList<>();
+        for (WizardType wizard : WizardType.values())
+            if (clockwiseOrder.stream().noneMatch(player -> player.getWizard().equals(wizard)))
+                wizards.add(wizard);
+        return wizards.get(ThreadLocalRandom.current().nextInt(0, wizards.size()));
+    }
+
+    /**
+     * Returns the number of towers for the player, according to the number of players.
+     *
+     * @return The number of towers.
+     */
+    private int getTowersNumber() {
+        return switch (playersNumber) {
+            case 2, 4 -> 8;
+            case 3 -> 6;
+            default -> 0;
+        };
+    }
+
+    /**
+     * Returns a random Tower according to game rules.
+     *
+     * @return The chosen Tower.
+     */
+    private TowerType getTowerType() {
+        List<TowerType> towers = new ArrayList<>();
+        if (playersNumber == 3) {
+            for (TowerType tower : TowerType.values())
+                if (clockwiseOrder.stream().noneMatch(player -> player.getSchoolBoard().getTowerType().equals(tower)))
+                    towers.add(tower);
+        } else {
+            for (int index = 0; index < playersNumber - (int) clockwiseOrder.stream().filter(player -> player.getSchoolBoard().getTowerType().equals(TowerType.WHITE)).count(); index++)
+                towers.add(TowerType.WHITE);
+            for (int index = 0; index < playersNumber - (int) clockwiseOrder.stream().filter(player -> player.getSchoolBoard().getTowerType().equals(TowerType.BLACK)).count(); index++)
+                towers.add(TowerType.BLACK);
+        }
+        return towers.get(ThreadLocalRandom.current().nextInt(0, towers.size()));
     }
 
     /**
