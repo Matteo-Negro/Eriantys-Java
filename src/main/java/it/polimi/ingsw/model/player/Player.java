@@ -86,6 +86,13 @@ public class Player {
     }
 
     /**
+     * Adds one coin to preview coin amount.
+     */
+    public void addCoins(){
+        coins += 1;
+    }
+
+    /**
      * Removes the specified number of coins. Used in combination with paySpecialCharacter.
      *
      * @param number Number of coins to spend.

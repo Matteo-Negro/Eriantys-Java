@@ -83,7 +83,7 @@ public class MonkEffect extends Effect {
      *
      * @param color
      */
-    private void addStudent(HouseColor color) {
+    public void addStudent(HouseColor color) {
         students.replace(color, students.get(color) + 1);
     }
 

@@ -4,6 +4,7 @@ import it.polimi.ingsw.model.player.Assistant;
 import it.polimi.ingsw.model.player.Player;
 import it.polimi.ingsw.utilities.HouseColor;
 import it.polimi.ingsw.utilities.exceptions.IllegalMoveException;
+import it.polimi.ingsw.utilities.exceptions.IslandNotFoundException;
 
 import java.util.*;
 
@@ -159,6 +160,13 @@ public class GameBoard {
      */
     public List<Island> getIslands() {
         return new ArrayList<>(this.islands);
+    }
+
+    public Island getIslandById(int idIsland) throws IslandNotFoundException {
+        for(int i=0; i<this.islands.size(); i++) {
+            if(this.islands.get(i).getId() == idIsland) return this.islands.get(i);
+        }
+        throw new IslandNotFoundException("The island that you are searching");
     }
 
     /**

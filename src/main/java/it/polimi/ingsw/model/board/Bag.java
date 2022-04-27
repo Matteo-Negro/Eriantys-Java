@@ -100,6 +100,10 @@ public class Bag {
         return result;
     }
 
+    public boolean isEmpty(){
+        return this.listStudents.isEmpty();
+    }
+
     /**
      * This method shuffles the students in the List.
      */
