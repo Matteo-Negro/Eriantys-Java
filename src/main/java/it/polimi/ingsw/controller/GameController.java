@@ -28,14 +28,14 @@ import java.util.stream.Collectors;
  * @author Riccardo Motta
  */
 public class GameController extends Thread {
+    private int connectedPlayers;
     private final int expectedPlayers;
     private final GamePlatform gameModel;
-    private final String savePath;
-    private final Map<String, User> users;
-    private int connectedPlayers;
     private String id;
     private String phase;
     private int round;
+    private final String savePath;
+    private final Map<String, User> users;
 
     /**
      * The game controller constructor.
@@ -148,15 +148,20 @@ public class GameController extends Thread {
      * @throws AlreadyExistingPlayerException
      */
     public void addUser(String name, User user) throws FullGameException, AlreadyExistingPlayerException {
-        if (isFull()) throw new FullGameException();
+        if (isFull())
+            throw new FullGameException();
 
         synchronized (this.users) {
-            if (this.users.get(name) != null) throw new AlreadyExistingPlayerException();
+            if (this.users.get(name) != null)
+                throw new AlreadyExistingPlayerException();
 
             this.users.put(name, user);
             this.connectedPlayers++;
+
+            if (this.gameModel.getPlayers().stream().noneMatch(player -> player.getName().equals(name)))
+                this.gameModel.addPlayer(name);
         }
-        // TODO: create player into model
+
         // TODO: notify game start if full
     }
 
@@ -165,20 +170,12 @@ public class GameController extends Thread {
      */
     public void removeUser(User user) {
         synchronized (this.users) {
-            String username = getUsername(user);
-            if (username == null) return;
-            this.users.replace(username, null);
+            if (this.user.getUsername() == null)
+                return;
+            this.users.replace(user.getUsername(), null);
             this.connectedPlayers--;
             // TODO: pause game (notifyAll())
         }
-    }
-
-    /**
-     * @param user
-     * @return
-     */
-    public String getUsername(User user) {
-        return this.users.entrySet().stream().filter(entry -> entry.getValue().equals(user)).findFirst().map(Map.Entry::getKey).orElse(null);
     }
 
     /**
@@ -221,7 +218,12 @@ public class GameController extends Thread {
      * @throws IOException If there is an exception during the process.
      */
     private void writeFile(JsonObject json) throws IOException {
-        BufferedWriter writer = Files.newBufferedWriter(Paths.get(this.savePath, this.id + ".json"), StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE);
+        BufferedWriter writer = Files.newBufferedWriter(
+                Paths.get(this.savePath, this.id + ".json"),
+                StandardCharsets.UTF_8,
+                StandardOpenOption.CREATE,
+                StandardOpenOption.TRUNCATE_EXISTING,
+                StandardOpenOption.WRITE);
         writer.write(json.toString());
         writer.close();
     }
@@ -245,7 +247,8 @@ public class GameController extends Thread {
     private void moveStudent(JsonObject command) {
         try {
             switch (command.get("from").getAsString()) {
-                case "entrance" -> this.gameModel.getPlayerByName(command.get("player").getAsString()).getSchoolBoard().removeFromEntrance(HouseColor.valueOf(command.get("color").getAsString()));
+                case "entrance" ->
+                        this.gameModel.getPlayerByName(command.get("player").getAsString()).getSchoolBoard().removeFromEntrance(HouseColor.valueOf(command.get("color").getAsString()));
                 case "diningRoom" -> {
                     String newProfessorOwner = this.gameModel.getGameBoard().getProfessors().get(HouseColor.valueOf(command.get("color").getAsString())).getName();
                     int numStudent;
@@ -277,7 +280,7 @@ public class GameController extends Thread {
                     }
                 }
                 default ->
-                        //TODO: send it
+                    //TODO: send it
                         MessageCreator.error("Wrong command.");
             }
         } catch (NoStudentException e) {
@@ -293,8 +296,10 @@ public class GameController extends Thread {
                     }
                 }
             }
-            case "bag" -> this.gameModel.getGameBoard().getBag().push(HouseColor.valueOf(command.get("color").getAsString()));
-            case "island" -> this.gameModel.getGameBoard().getIslands().get(command.get("toId").getAsInt()).addStudent(HouseColor.valueOf(command.get("color").getAsString()));
+            case "bag" ->
+                    this.gameModel.getGameBoard().getBag().push(HouseColor.valueOf(command.get("color").getAsString()));
+            case "island" ->
+                    this.gameModel.getGameBoard().getIslands().get(command.get("toId").getAsInt()).addStudent(HouseColor.valueOf(command.get("color").getAsString()));
             case "card" -> {
                 boolean check = false;
                 for (SpecialCharacter c : this.gameModel.getGameBoard().getCharacters()) {
@@ -312,7 +317,7 @@ public class GameController extends Thread {
                 }
             }
             default ->
-                    //TODO: send it
+                //TODO: send it
                     MessageCreator.error("Wrong command.");
         }
     }
@@ -322,7 +327,8 @@ public class GameController extends Thread {
         Island island = null;
         try {
             island = this.gameModel.getGameBoard().getIslandById(idIsland);
-            this.gameModel.getGameBoard().moveMotherNature(island, this.gameModel.getGameBoard().getPlayedAssistants().get(this.gameModel.getCurrentPlayer()));
+            this.gameModel.getGameBoard().moveMotherNature(island,
+                    this.gameModel.getGameBoard().getPlayedAssistants().get(this.gameModel.getCurrentPlayer()));
 
         } catch (IllegalMoveException | IslandNotFoundException e) {
             //TODO: send it
@@ -332,7 +338,10 @@ public class GameController extends Thread {
         if (island != null) {
             influence = this.gameModel.getGameBoard().getInfluence(island);
             int max = Collections.max(influence.values());
-            List<Player> mostInfluential = influence.entrySet().stream().filter(entry -> entry.getValue() == max).map(entry -> entry.getKey()).collect(Collectors.toList());
+            List<Player> mostInfluential = influence.entrySet().stream()
+                    .filter(entry -> entry.getValue() == max)
+                    .map(entry -> entry.getKey())
+                    .collect(Collectors.toList());
             if (mostInfluential.size() == 1 || (mostInfluential.size() == 2 && mostInfluential.get(0).getSchoolBoard().getTowerType().equals(mostInfluential.get(1).getSchoolBoard().getTowerType()))) {
                 if (island.getTower() == null) {
                     island.setTower(mostInfluential.get(0).getSchoolBoard().getTowerType());
@@ -409,7 +418,10 @@ public class GameController extends Thread {
             numTowerPlayers.put(player, player.getSchoolBoard().getTowersNumber());
         }
         int min = Collections.min(numTowerPlayers.values());
-        List<Player> possibleWinners = numTowerPlayers.entrySet().stream().filter(entry -> entry.getValue() == min).map(entry -> entry.getKey()).collect(Collectors.toList());
+        List<Player> possibleWinners = numTowerPlayers.entrySet().stream()
+                .filter(entry -> entry.getValue() == min)
+                .map(entry -> entry.getKey())
+                .collect(Collectors.toList());
         if (possibleWinners.size() == 1 || (possibleWinners.size() == 2 && possibleWinners.get(0).getSchoolBoard().getTowerType().equals(possibleWinners.get(1).getSchoolBoard().getTowerType()))) {
             winners.addAll(possibleWinners);
             end = true;
@@ -421,7 +433,10 @@ public class GameController extends Thread {
                 numProfessorsPlayers.put(player, numProfessorsPlayers.containsKey(player) ? numProfessorsPlayers.get(player) + 1 : 1);
             }
             int max = Collections.max(numProfessorsPlayers.values());
-            possibleWinners = numProfessorsPlayers.entrySet().stream().filter(entry -> entry.getValue() == max).map(entry -> entry.getKey()).collect(Collectors.toList());
+            possibleWinners = numProfessorsPlayers.entrySet().stream()
+                    .filter(entry -> entry.getValue() == max)
+                    .map(entry -> entry.getKey())
+                    .collect(Collectors.toList());
             if (possibleWinners.size() == 1 || (possibleWinners.size() == 2 && possibleWinners.get(0).getSchoolBoard().getTowerType().equals(possibleWinners.get(1).getSchoolBoard().getTowerType()))) {
                 winners.addAll(possibleWinners);
                 end = true;
