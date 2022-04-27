@@ -88,7 +88,7 @@ public class Player {
     /**
      * Adds one coin to preview coin amount.
      */
-    public void addCoins(){
+    public void addCoins() {
         coins += 1;
     }
 
@@ -100,8 +100,7 @@ public class Player {
      * @throws NotEnoughCoinsException If the number of available coins is less than the required one.
      */
     private void takeCoins(int number) throws NegativeException, NotEnoughCoinsException {
-        if (number < 0)
-            throw new NegativeException("Given value is negative (" + number + ")");
+        if (number < 0) throw new NegativeException("Given value is negative (" + number + ")");
         if (coins < number)
             throw new NotEnoughCoinsException("Required coins (" + number + ") is more than available (" + coins + ")");
         coins -= number;
@@ -139,8 +138,7 @@ public class Player {
      * @throws NullPointerException    If the argument is null.
      */
     public void paySpecialCharacter(SpecialCharacter specialCharacter) throws NotEnoughCoinsException, NullPointerException {
-        if (specialCharacter == null)
-            throw new NullPointerException();
+        if (specialCharacter == null) throw new NullPointerException();
         try {
             takeCoins(specialCharacter.getEffectCost());
         } catch (NegativeException e) {

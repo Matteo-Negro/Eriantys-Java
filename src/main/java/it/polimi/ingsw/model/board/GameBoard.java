@@ -163,8 +163,8 @@ public class GameBoard {
     }
 
     public Island getIslandById(int idIsland) throws IslandNotFoundException {
-        for(int i=0; i<this.islands.size(); i++) {
-            if(this.islands.get(i).getId() == idIsland) return this.islands.get(i);
+        for (int i = 0; i < this.islands.size(); i++) {
+            if (this.islands.get(i).getId() == idIsland) return this.islands.get(i);
         }
         throw new IslandNotFoundException("The island that you are searching");
     }

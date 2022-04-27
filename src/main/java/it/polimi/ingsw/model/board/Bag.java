@@ -100,7 +100,7 @@ public class Bag {
         return result;
     }
 
-    public boolean isEmpty(){
+    public boolean isEmpty() {
         return this.listStudents.isEmpty();
     }
 
