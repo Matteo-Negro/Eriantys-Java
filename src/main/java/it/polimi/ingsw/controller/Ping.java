@@ -6,10 +6,18 @@ public class Ping extends Thread {
 
     private final User user;
 
+    /**
+     * Default constructor.
+     *
+     * @param user The user to ping.
+     */
     public Ping(User user) {
         this.user = user;
     }
 
+    /**
+     * Periodically generates a ping message and sends it to the user.
+     */
     @Override
     public void run() {
         JsonObject ping = new JsonObject();

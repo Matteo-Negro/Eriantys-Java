@@ -56,10 +56,18 @@ public class User extends Thread {
         return logged;
     }
 
+    /**
+     * Returns the name associated to the user.
+     *
+     * @return username attribute.
+     */
     public String getUsername() {
         return username;
     }
 
+    /**
+     * Every time checks if the user is online and when receives a command, processes it.
+     */
     public void run() {
 
         JsonObject incomingMessage;
@@ -138,6 +146,9 @@ public class User extends Thread {
         }
     }
 
+    /**
+     * Manages the user disconnection after a network problem.
+     */
     public void disconnected() {
         synchronized (connectedLock) {
             connected = false;
@@ -145,6 +156,9 @@ public class User extends Thread {
         removeFromGame();
     }
 
+    /**
+     * If the user was in a game, s/he's removed from the game and the username is reset.
+     */
     private void removeFromGame() {
         if (gameController == null)
             return;
