@@ -162,6 +162,13 @@ public class GameBoard {
         return new ArrayList<>(this.islands);
     }
 
+    /**
+     * This method returns the island searching with his id.
+     *
+     * @param idIsland The island's id.
+     * @return The searching island.
+     * @throws IslandNotFoundException The exception is throws whether the island that you are searching.
+     */
     public Island getIslandById(int idIsland) throws IslandNotFoundException {
         for (int i = 0; i < this.islands.size(); i++) {
             if (this.islands.get(i).getId() == idIsland) return this.islands.get(i);

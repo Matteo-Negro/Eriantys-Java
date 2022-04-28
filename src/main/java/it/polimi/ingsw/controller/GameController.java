@@ -28,14 +28,14 @@ import java.util.stream.Collectors;
  * @author Riccardo Motta
  */
 public class GameController extends Thread {
-    private int connectedPlayers;
     private final int expectedPlayers;
     private final GamePlatform gameModel;
+    private final String savePath;
+    private final Map<String, User> users;
+    private int connectedPlayers;
     private String id;
     private String phase;
     private int round;
-    private final String savePath;
-    private final Map<String, User> users;
 
     /**
      * The game controller constructor.
@@ -133,7 +133,9 @@ public class GameController extends Thread {
     }
 
     /**
-     * @return
+     * This method returns a set of usernames of the online player.
+     *
+     * @return The set of usernames.
      */
     public Set<String> getUsernames() {
         synchronized (this.users) {
@@ -142,8 +144,10 @@ public class GameController extends Thread {
     }
 
     /**
-     * @param name
-     * @param user
+     * This method adds user to the data structures that contains the online users.
+     *
+     * @param name The name of the user that will be added.
+     * @param user The User that will be added.
      * @throws FullGameException
      * @throws AlreadyExistingPlayerException
      */
@@ -166,7 +170,9 @@ public class GameController extends Thread {
     }
 
     /**
-     * @param user
+     * This method removes user from the data structures that contains the online users.
+     *
+     * @param user The that will be removed.
      */
     public void removeUser(User user) {
         synchronized (this.users) {
@@ -179,7 +185,9 @@ public class GameController extends Thread {
     }
 
     /**
-     * @return
+     * This method returns whether the game is full.
+     *
+     * @return True whether the bag is full.
      */
     public boolean isFull() {
         synchronized (this.users) {
@@ -228,6 +236,12 @@ public class GameController extends Thread {
         writer.close();
     }
 
+    /**
+     * This method updates the played assistant in game model.
+     *
+     * @param player    The name of the player that played the card.
+     * @param assistant The id of the card that tha player added.
+     */
     private void playAssistantCard(String player, int assistant) {
         try {
             this.gameModel.getPlayerByName(player).playAssistant(assistant);
@@ -244,11 +258,15 @@ public class GameController extends Thread {
         }
     }
 
+    /**
+     * This method manages the movements of the student in the game.
+     *
+     * @param command The json with the directions of the movements.
+     */
     private void moveStudent(JsonObject command) {
         try {
             switch (command.get("from").getAsString()) {
-                case "entrance" ->
-                        this.gameModel.getPlayerByName(command.get("player").getAsString()).getSchoolBoard().removeFromEntrance(HouseColor.valueOf(command.get("color").getAsString()));
+                case "entrance" -> this.gameModel.getPlayerByName(command.get("player").getAsString()).getSchoolBoard().removeFromEntrance(HouseColor.valueOf(command.get("color").getAsString()));
                 case "diningRoom" -> {
                     String newProfessorOwner = this.gameModel.getGameBoard().getProfessors().get(HouseColor.valueOf(command.get("color").getAsString())).getName();
                     int numStudent;
@@ -280,7 +298,7 @@ public class GameController extends Thread {
                     }
                 }
                 default ->
-                    //TODO: send it
+                        //TODO: send it
                         MessageCreator.error("Wrong command.");
             }
         } catch (NoStudentException e) {
@@ -296,10 +314,8 @@ public class GameController extends Thread {
                     }
                 }
             }
-            case "bag" ->
-                    this.gameModel.getGameBoard().getBag().push(HouseColor.valueOf(command.get("color").getAsString()));
-            case "island" ->
-                    this.gameModel.getGameBoard().getIslands().get(command.get("toId").getAsInt()).addStudent(HouseColor.valueOf(command.get("color").getAsString()));
+            case "bag" -> this.gameModel.getGameBoard().getBag().push(HouseColor.valueOf(command.get("color").getAsString()));
+            case "island" -> this.gameModel.getGameBoard().getIslands().get(command.get("toId").getAsInt()).addStudent(HouseColor.valueOf(command.get("color").getAsString()));
             case "card" -> {
                 boolean check = false;
                 for (SpecialCharacter c : this.gameModel.getGameBoard().getCharacters()) {
@@ -312,16 +328,21 @@ public class GameController extends Thread {
                     }
                 }
                 if (!check) {
-                    //TODO: send it
+                    //TODO: send message
                     MessageCreator.error("Error: card not available");
                 }
             }
             default ->
-                //TODO: send it
+                    //TODO: send message
                     MessageCreator.error("Wrong command.");
         }
     }
 
+    /**
+     * This method manages the movements of mother nature in the game and her consequences.
+     *
+     * @param idIsland The id of the island where mother nature will be set.
+     */
     private void moveMotherNature(int idIsland) {
         Map<Player, Integer> influence;
         Island island = null;
@@ -331,7 +352,7 @@ public class GameController extends Thread {
                     this.gameModel.getGameBoard().getPlayedAssistants().get(this.gameModel.getCurrentPlayer()));
 
         } catch (IllegalMoveException | IslandNotFoundException e) {
-            //TODO: send it
+            //TODO: send message
             MessageCreator.error("Error");
             e.printStackTrace();
         }
@@ -382,14 +403,29 @@ public class GameController extends Thread {
         }
     }
 
+    /**
+     * This method manages the choosing of the cloud.
+     *
+     * @param command The json with the information about the choosing of the cloud.
+     */
     private void chooseCloud(JsonObject command) {
         this.gameModel.getPlayerByName(command.get("player").getAsString()).getSchoolBoard().addToEntrance(this.gameModel.getGameBoard().getClouds().get(command.get("cloud").getAsInt()).flush());
     }
 
+    /**
+     * This method manages the payment of the special character.
+     *
+     * @param specialCharacter The id of the special character that will be paid.
+     */
     private void paySpecialCharacter(int specialCharacter) {
         this.gameModel.getGameBoard().getCharacters().get(specialCharacter).activateEffect();
     }
 
+    /**
+     * This method manages the win condition for the game.
+     *
+     * @return A boolean value, true whether the game will have to end.
+     */
     private boolean endGame() {
         boolean end = false;
         List<Player> winners = new ArrayList<>();
@@ -399,7 +435,6 @@ public class GameController extends Thread {
                 if (player.getSchoolBoard().getTowersNumber() == 0) winners.add(player);
             }
         } else if (this.gameModel.getGameBoard().getIslands().size() == 3) {
-            //TODO
             end = checkForWinners();
         } else if ((this.gameModel.getCurrentPlayer().equals(this.gameModel.getTurnOrder().get(this.expectedPlayers - 1)))) {
             if (this.gameModel.getGameBoard().getBag().isEmpty() || this.gameModel.getPlayers().get(0).getAssistants().size() == 0) {
@@ -409,6 +444,11 @@ public class GameController extends Thread {
         return end;
     }
 
+    /**
+     * This method is a helper for the win condition method.
+     *
+     * @return A boolean value, true whether the game will have to end.
+     */
     private boolean checkForWinners() {
         boolean end = false;
         List<Player> winners = new ArrayList<>();
@@ -442,6 +482,10 @@ public class GameController extends Thread {
                 end = true;
             } else {
                 //TODO: Tie
+                end = true;
+            }
+            if (end) {
+                //TODO: notify winners
             }
         }
         return end;

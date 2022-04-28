@@ -100,6 +100,11 @@ public class Bag {
         return result;
     }
 
+    /**
+     * This method returns whether the bag is empty.
+     *
+     * @return True whether the bag is empty.
+     */
     public boolean isEmpty() {
         return this.listStudents.isEmpty();
     }
