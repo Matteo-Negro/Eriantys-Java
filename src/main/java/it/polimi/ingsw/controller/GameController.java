@@ -152,12 +152,10 @@ public class GameController extends Thread {
      * @throws AlreadyExistingPlayerException
      */
     public void addUser(String name, User user) throws FullGameException, AlreadyExistingPlayerException {
-        if (isFull())
-            throw new FullGameException();
+        if (isFull()) throw new FullGameException();
 
         synchronized (this.users) {
-            if (this.users.get(name) != null)
-                throw new AlreadyExistingPlayerException();
+            if (this.users.get(name) != null) throw new AlreadyExistingPlayerException();
 
             this.users.put(name, user);
             this.connectedPlayers++;
@@ -176,8 +174,7 @@ public class GameController extends Thread {
      */
     public void removeUser(User user) {
         synchronized (this.users) {
-            if (user.getUsername() == null)
-                return;
+            if (user.getUsername() == null) return;
             this.users.replace(user.getUsername(), null);
             this.connectedPlayers--;
             // TODO: pause game (notifyAll())
@@ -226,12 +223,7 @@ public class GameController extends Thread {
      * @throws IOException If there is an exception during the process.
      */
     private void writeFile(JsonObject json) throws IOException {
-        BufferedWriter writer = Files.newBufferedWriter(
-                Paths.get(this.savePath, this.id + ".json"),
-                StandardCharsets.UTF_8,
-                StandardOpenOption.CREATE,
-                StandardOpenOption.TRUNCATE_EXISTING,
-                StandardOpenOption.WRITE);
+        BufferedWriter writer = Files.newBufferedWriter(Paths.get(this.savePath, this.id + ".json"), StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE);
         writer.write(json.toString());
         writer.close();
     }
@@ -278,7 +270,7 @@ public class GameController extends Thread {
                             newProfessorOwner = p.getName();
                         }
                     }
-                    this.gameModel.getGameBoard().getProfessors().put(HouseColor.valueOf(command.get("color").getAsString()), this.gameModel.getPlayerByName(newProfessorOwner));
+                    this.gameModel.getGameBoard().setProfessor(HouseColor.valueOf(command.get("color").getAsString()), this.gameModel.getPlayerByName(newProfessorOwner));
                 }
                 case "card" -> {
                     boolean check = false;
@@ -348,8 +340,7 @@ public class GameController extends Thread {
         Island island = null;
         try {
             island = this.gameModel.getGameBoard().getIslandById(idIsland);
-            this.gameModel.getGameBoard().moveMotherNature(island,
-                    this.gameModel.getGameBoard().getPlayedAssistants().get(this.gameModel.getCurrentPlayer()));
+            this.gameModel.getGameBoard().moveMotherNature(island, this.gameModel.getGameBoard().getPlayedAssistants().get(this.gameModel.getCurrentPlayer()));
 
         } catch (IllegalMoveException | IslandNotFoundException e) {
             //TODO: send message
@@ -359,10 +350,7 @@ public class GameController extends Thread {
         if (island != null) {
             influence = this.gameModel.getGameBoard().getInfluence(island);
             int max = Collections.max(influence.values());
-            List<Player> mostInfluential = influence.entrySet().stream()
-                    .filter(entry -> entry.getValue() == max)
-                    .map(entry -> entry.getKey())
-                    .collect(Collectors.toList());
+            List<Player> mostInfluential = influence.entrySet().stream().filter(entry -> entry.getValue() == max).map(entry -> entry.getKey()).collect(Collectors.toList());
             if (mostInfluential.size() == 1 || (mostInfluential.size() == 2 && mostInfluential.get(0).getSchoolBoard().getTowerType().equals(mostInfluential.get(1).getSchoolBoard().getTowerType()))) {
                 if (island.getTower() == null) {
                     island.setTower(mostInfluential.get(0).getSchoolBoard().getTowerType());
@@ -458,10 +446,7 @@ public class GameController extends Thread {
             numTowerPlayers.put(player, player.getSchoolBoard().getTowersNumber());
         }
         int min = Collections.min(numTowerPlayers.values());
-        List<Player> possibleWinners = numTowerPlayers.entrySet().stream()
-                .filter(entry -> entry.getValue() == min)
-                .map(entry -> entry.getKey())
-                .collect(Collectors.toList());
+        List<Player> possibleWinners = numTowerPlayers.entrySet().stream().filter(entry -> entry.getValue() == min).map(entry -> entry.getKey()).collect(Collectors.toList());
         if (possibleWinners.size() == 1 || (possibleWinners.size() == 2 && possibleWinners.get(0).getSchoolBoard().getTowerType().equals(possibleWinners.get(1).getSchoolBoard().getTowerType()))) {
             winners.addAll(possibleWinners);
             end = true;
@@ -473,10 +458,7 @@ public class GameController extends Thread {
                 numProfessorsPlayers.put(player, numProfessorsPlayers.containsKey(player) ? numProfessorsPlayers.get(player) + 1 : 1);
             }
             int max = Collections.max(numProfessorsPlayers.values());
-            possibleWinners = numProfessorsPlayers.entrySet().stream()
-                    .filter(entry -> entry.getValue() == max)
-                    .map(entry -> entry.getKey())
-                    .collect(Collectors.toList());
+            possibleWinners = numProfessorsPlayers.entrySet().stream().filter(entry -> entry.getValue() == max).map(entry -> entry.getKey()).collect(Collectors.toList());
             if (possibleWinners.size() == 1 || (possibleWinners.size() == 2 && possibleWinners.get(0).getSchoolBoard().getTowerType().equals(possibleWinners.get(1).getSchoolBoard().getTowerType()))) {
                 winners.addAll(possibleWinners);
                 end = true;

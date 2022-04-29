@@ -170,8 +170,8 @@ public class GameBoard {
      * @throws IslandNotFoundException The exception is throws whether the island that you are searching.
      */
     public Island getIslandById(int idIsland) throws IslandNotFoundException {
-        for (int i = 0; i < this.islands.size(); i++) {
-            if (this.islands.get(i).getId() == idIsland) return this.islands.get(i);
+        for (Island island : this.islands) {
+            if (island.getId() == idIsland) return island;
         }
         throw new IslandNotFoundException("The island that you are searching");
     }
@@ -220,7 +220,7 @@ public class GameBoard {
      * @param color  The house color of the professor.
      * @param player The player who takes the professor.
      */
-    public void setProfessors(HouseColor color, Player player) {
+    public void setProfessor(HouseColor color, Player player) {
         this.professors.put(color, player);
     }
 
