@@ -68,7 +68,7 @@ public class FarmerEffect extends Effect {
      *
      * @return stolenProfessors attribute.
      */
-    private Map<HouseColor, Player> getStolenProfessors() {
+    public Map<HouseColor, Player> getStolenProfessors() {
         return stolenProfessors;
     }
 

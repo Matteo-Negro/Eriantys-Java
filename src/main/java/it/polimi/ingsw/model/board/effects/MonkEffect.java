@@ -51,12 +51,14 @@ public class MonkEffect extends Effect {
 
     /**
      * effect() method overload.
-     * Calls the takeStudents(HouseColor) private method.
      *
-     * @param color
+     *
+     * @param toTake    The color of the desired student.
+     * @param toPut     The color of the new student extracted from the bag.
      */
-    public void effect(HouseColor color) {
-        takeStudent(color);
+    public void effect(HouseColor toTake, HouseColor toPut) {
+        if(toTake != null) takeStudent(toTake);
+        if(toPut != null) addStudent(toPut);
     }
 
     @Override
@@ -74,7 +76,7 @@ public class MonkEffect extends Effect {
      *
      * @return students attribute.
      */
-    private Map<HouseColor, Integer> getStudents() {
+    public Map<HouseColor, Integer> getStudents() {
         return students;
     }
 
@@ -83,7 +85,7 @@ public class MonkEffect extends Effect {
      *
      * @param color
      */
-    public void addStudent(HouseColor color) {
+    private void addStudent(HouseColor color) {
         students.replace(color, students.get(color) + 1);
     }
 

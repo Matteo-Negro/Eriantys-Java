@@ -2,6 +2,7 @@ package it.polimi.ingsw.model.board.effects;
 
 import it.polimi.ingsw.utilities.HouseColor;
 
+import java.util.EmptyStackException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -51,12 +52,14 @@ public class JesterEffect extends Effect {
 
     /**
      * effect() method overload.
-     * Calls the exchangeStudents(Map<HouseColor, Integer> exchangedStudents) private method.
      *
-     * @param exchangedStudents
+     *
+     * @param toTake
+     * @param toPut
      */
-    public void effect(Map<HouseColor, Integer> exchangedStudents) {
-        exchangeStudents(exchangedStudents);
+    public void effect(HouseColor toTake, HouseColor toPut) {
+        if(toTake != null) takeStudent(toTake);
+        if(toPut != null) addStudent(toPut);
     }
 
     @Override
@@ -74,18 +77,28 @@ public class JesterEffect extends Effect {
      *
      * @return student attribute.
      */
-    private Map<HouseColor, Integer> getStudents() {
+    public Map<HouseColor, Integer> getStudents() {
         return students;
     }
 
     /**
-     * Overwrites the mapping saved in the students attribute with the mapping of the students exchanged.
+     * Increases the counter ,of the color specified by the parameter, in the students' map.
      *
-     * @param exchangedStudents
+     * @param color
      */
-    private void exchangeStudents(Map<HouseColor, Integer> exchangedStudents) {
-        for (HouseColor key : exchangedStudents.keySet()) {
-            students.replace(key, students.get(key) + exchangedStudents.get(key));
-        }
+    private void addStudent(HouseColor color) {
+        students.replace(color, students.get(color) + 1);
+    }
+
+    /**
+     * Decreases the counter, of the color specified by the parameter, in the students' map.
+     * Throws the EmptyStackException if the counter is already at 0.
+     *
+     * @param color
+     * @throws EmptyStackException
+     */
+    private void takeStudent(HouseColor color) throws EmptyStackException {
+        if (students.get(color) == 0) throw new EmptyStackException();
+        students.replace(color, students.get(color) - 1);
     }
 }

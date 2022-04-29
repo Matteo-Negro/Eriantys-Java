@@ -65,6 +65,6 @@ class Matchmaking {
             return false;
         }
 
-        return false;
+        return true;
     }
 }

@@ -34,7 +34,20 @@ public class HerablistEffect extends Effect {
 
     @Override
     public void effect() {
-        takeBan();
+
+    }
+
+    /**
+     * effect() method overload.
+     * Decides to call the takeBan() method or the restoreBan() method, through a conditional branch on command parameter.
+     * @param command       The action to be performed.
+     */
+    public void effect(String command) {
+        switch (command){
+            case "take" -> takeBan();
+            case "restore" -> restoreBan();
+        }
+
     }
 
     @Override
@@ -52,7 +65,7 @@ public class HerablistEffect extends Effect {
      *
      * @return availableBans attribute.
      */
-    private int getAvailableBans() {
+    public int getAvailableBans() {
         return availableBans;
     }
 
@@ -66,7 +79,7 @@ public class HerablistEffect extends Effect {
     /**
      * Increases the number of the available bans.
      */
-    private void putBan() {
+    private void restoreBan() {
         availableBans++;
     }
 }

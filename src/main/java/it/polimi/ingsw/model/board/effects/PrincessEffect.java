@@ -51,11 +51,14 @@ public class PrincessEffect extends Effect {
 
     /**
      * effect() method overload.
-     * Calls the takeStudents(HouseColor) private method.
-     * * @param color
+     *
+     *
+     * @param toTake
+     * @param toPut
      */
-    public void effect(HouseColor color) {
-        takeStudent(color);
+    public void effect(HouseColor toTake, HouseColor toPut) {
+        if(toTake != null) takeStudent(toTake);
+        if(toPut != null) addStudent(toPut);
     }
 
     @Override
