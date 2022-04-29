@@ -260,17 +260,8 @@ public class GameController extends Thread {
             switch (command.get("from").getAsString()) {
                 case "entrance" -> this.gameModel.getPlayerByName(command.get("player").getAsString()).getSchoolBoard().removeFromEntrance(HouseColor.valueOf(command.get("color").getAsString()));
                 case "diningRoom" -> {
-                    String newProfessorOwner = this.gameModel.getGameBoard().getProfessors().get(HouseColor.valueOf(command.get("color").getAsString())).getName();
-                    int numStudent;
                     this.gameModel.getPlayerByName(command.get("player").getAsString()).getSchoolBoard().removeFromDiningRoom(HouseColor.valueOf(command.get("color").getAsString()));
-                    numStudent = this.gameModel.getPlayerByName(command.get("player").getAsString()).getSchoolBoard().getStudentsNumberOf(HouseColor.valueOf(command.get("color").getAsString()));
-                    for (Player p : this.gameModel.getPlayers()) {
-                        if (numStudent < p.getSchoolBoard().getStudentsNumberOf(HouseColor.valueOf(command.get("color").getAsString()))) {
-                            numStudent = p.getSchoolBoard().getStudentsNumberOf(HouseColor.valueOf(command.get("color").getAsString()));
-                            newProfessorOwner = p.getName();
-                        }
-                    }
-                    this.gameModel.getGameBoard().setProfessor(HouseColor.valueOf(command.get("color").getAsString()), this.gameModel.getPlayerByName(newProfessorOwner));
+                    checkProfessor(command.get("color").getAsString(), command.get("player").getAsString());
                 }
                 case "card" -> {
                     boolean check = false;
@@ -300,6 +291,8 @@ public class GameController extends Thread {
         switch (command.get("to").getAsString()) {
             case "diningRoom" -> {
                 this.gameModel.getPlayerByName(command.get("player").getAsString()).getSchoolBoard().addToDiningRoom(HouseColor.valueOf(command.get("color").getAsString()));
+
+                checkProfessor(command.get("color").getAsString(), command.get("player").getAsString());
                 if (this.gameModel.isExpert()) {
                     if (this.gameModel.getPlayerByName(command.get("player").getAsString()).getSchoolBoard().getStudentsNumberOf(HouseColor.valueOf(command.get("color").getAsString())) % 3 == 0) {
                         this.gameModel.getPlayerByName(command.get("player").getAsString()).addCoins();
@@ -423,22 +416,22 @@ public class GameController extends Thread {
                 if (player.getSchoolBoard().getTowersNumber() == 0) winners.add(player);
             }
         } else if (this.gameModel.getGameBoard().getIslands().size() == 3) {
-            end = checkForWinners();
+            end = true;
+            checkForWinners();
         } else if ((this.gameModel.getCurrentPlayer().equals(this.gameModel.getTurnOrder().get(this.expectedPlayers - 1)))) {
             if (this.gameModel.getGameBoard().getBag().isEmpty() || this.gameModel.getPlayers().get(0).getAssistants().size() == 0) {
-                end = checkForWinners();
+                end = true;
+                checkForWinners();
             }
         }
         return end;
     }
 
     /**
-     * This method is a helper for the win condition method.
-     *
-     * @return A boolean value, true whether the game will have to end.
+     * This method is a helper for the endGame method.
      */
-    private boolean checkForWinners() {
-        boolean end = false;
+    private void checkForWinners() {
+        boolean win = false;
         List<Player> winners = new ArrayList<>();
 
         Map<Player, Integer> numTowerPlayers = new HashMap<>();
@@ -448,8 +441,9 @@ public class GameController extends Thread {
         int min = Collections.min(numTowerPlayers.values());
         List<Player> possibleWinners = numTowerPlayers.entrySet().stream().filter(entry -> entry.getValue() == min).map(entry -> entry.getKey()).collect(Collectors.toList());
         if (possibleWinners.size() == 1 || (possibleWinners.size() == 2 && possibleWinners.get(0).getSchoolBoard().getTowerType().equals(possibleWinners.get(1).getSchoolBoard().getTowerType()))) {
+            win = true;
             winners.addAll(possibleWinners);
-            end = true;
+
         } else {
             Map<Player, Integer> numProfessorsPlayers = new HashMap<>();
             Player player;
@@ -461,15 +455,30 @@ public class GameController extends Thread {
             possibleWinners = numProfessorsPlayers.entrySet().stream().filter(entry -> entry.getValue() == max).map(entry -> entry.getKey()).collect(Collectors.toList());
             if (possibleWinners.size() == 1 || (possibleWinners.size() == 2 && possibleWinners.get(0).getSchoolBoard().getTowerType().equals(possibleWinners.get(1).getSchoolBoard().getTowerType()))) {
                 winners.addAll(possibleWinners);
-                end = true;
-            } else {
-                //TODO: Tie
-                end = true;
-            }
-            if (end) {
-                //TODO: notify winners
+                win = true;
             }
         }
-        return end;
+        if (win) {
+            //TODO: notify winners
+        } else {
+            //TODO: Tie
+        }
+    }
+
+    /**
+     * This method is a helper for the moveStudent method.
+     */
+    private void checkProfessor(String color, String player) {
+        String newProfessorOwner = this.gameModel.getGameBoard().getProfessors().get(HouseColor.valueOf(color)).getName();
+        int numStudent;
+
+        numStudent = this.gameModel.getPlayerByName(player).getSchoolBoard().getStudentsNumberOf(HouseColor.valueOf(color));
+        for (Player p : this.gameModel.getPlayers()) {
+            if (numStudent < p.getSchoolBoard().getStudentsNumberOf(HouseColor.valueOf(color))) {
+                numStudent = p.getSchoolBoard().getStudentsNumberOf(HouseColor.valueOf(color));
+                newProfessorOwner = p.getName();
+            }
+        }
+        this.gameModel.getGameBoard().setProfessor(HouseColor.valueOf(color), this.gameModel.getPlayerByName(newProfessorOwner));
     }
 }
