@@ -78,6 +78,10 @@ public class MessageCreator {
         return reply;
     }
 
+    /*public static JsonObject status(){
+
+    }*/
+
     /**
      * Creates the "error" message.
      *

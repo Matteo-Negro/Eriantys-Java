@@ -34,12 +34,12 @@ public class GameController extends Thread {
     private final Map<String, User> users;
     private int connectedPlayers;
     private String id;
-    private final String phase;
+    private String phase;
     private final int round;
 
-    //TODO attributes needed by run() method, indicate the actual status of a player's turn
+    //ATTRIBUTES NEEDED BY RUN() METHOD IN ORDER TO CHECK THE CURRENT PLAYER'S PROGRESSION.
     private boolean assistantPlayed;
-    private boolean motherNatureMoved;
+    private boolean cloudChosen;
 
     /**
      * The game controller constructor.
@@ -157,12 +157,12 @@ public class GameController extends Thread {
     }
 
     /**
-     * This method returns the boolean attribute which indicates if the current player has moved mother nature (this implies the end of the turn).
+     * This method returns the boolean attribute which indicates if the current player has chosen a cloud  to refill his/her entrance from (this implies the end of the turn).
      *
-     * @return The motherNatureMoved attribute.
+     * @return The cloudChosen attribute.
      */
-    private boolean isMotherNatureMoved() {
-        return this.motherNatureMoved;
+    private boolean isCloudChosen() {
+        return this.cloudChosen;
     }
 
     /**
@@ -250,19 +250,25 @@ public class GameController extends Thread {
         writer.close();
     }
 
+    /**
+     * This method is called whenever the game if full (players are all connected); it gives the input permission token to the current player, this decision is based on the turn order imposed by the model.
+     */
     public void run() {
         do {
+            //SENDING THE CURRENT GAME MODEL STATUS TO THE PLAYERS.
+            //TODO define the status message in MessageCreator
+            //for( User user : this.getUsers()) user.sendMessage(state(this.getGameModel()));
+
             switch (this.getPhase()) {
                 case "planning" -> {
                     for (Player currentPlayer : this.getGameModel().getPlayers()) {
 
-                        //ENABLING THE INPUT TO THE CURRENT USER (taken from the clockwise order).
+                        //ENABLING THE CURRENT USER INPUT (taken from the clockwise order).
                         User currentUser = getUser(currentPlayer.getName());
                         currentUser.sendMessage(MessageCreator.turnEnable(true));
 
                         //WAITING FOR ASSISTANT TO BE PLAYED
                         while (!this.isAssistantPlayed()) {
-
                             //If a disconnection occurs.
                             if (!this.isFull()) {
                                 for (User otherUser : this.getUsers()) {
@@ -273,13 +279,52 @@ public class GameController extends Thread {
                                 return;
                             }
                         }
-                        //DISABLING THE INPUT TO THE CURRENT USER.
+                        //DISABLING THE CURRENT USER'S INPUT.
                         currentUser.sendMessage(MessageCreator.turnEnable(false));
+                        this.assistantPlayed = false;
                     }
                     this.getGameModel().updateTurnOrder();
+                    //TODO update the clockwise order for next round.
+                    this.phase = "action";
+                }
+
+                case "action" -> {
+                    for (Player currentPlayer : this.getGameModel().getTurnOrder()) {
+                        //ENABLING THE INPUT OF THE CURRENT USER (taken from the clockwise order).
+                        User currentUser = getUser(currentPlayer.getName());
+                        currentUser.sendMessage(MessageCreator.turnEnable(true));
+
+                        //WAITING FOR A CLOUD TO BE CHOSEN (refill command)
+                        while (!this.isCloudChosen()) {
+                            //If a disconnection occurs.
+                            if (!this.isFull()) {
+                                for (User otherUser : this.getUsers()) {
+                                    if (!otherUser.getUsername().equals(currentUser.getUsername())) {
+                                        otherUser.sendMessage(MessageCreator.error("One or more users lost connection"));
+                                    }
+                                }
+                                return;
+                            }
+                        }
+                        try {
+                            this.getGameModel().nextTurn();
+                        } catch (RoundConcluded rc) {
+                            this.getGameModel().nextRound();
+                        }
+
+                        if (endGame()) {
+                            for (User user : this.getUsers()) {
+                                this.removeUser(user);
+                            }
+                            return;
+                        }
+
+                        //DISABLING THE INPUT OF THE CURRENT USER.
+                        currentUser.sendMessage(MessageCreator.turnEnable(false));
+                        this.cloudChosen = false;
+                    }
                 }
             }
-
         } while (isFull());
     }
 
