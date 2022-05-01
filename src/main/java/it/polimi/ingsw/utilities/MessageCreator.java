@@ -71,6 +71,13 @@ public class MessageCreator {
         return reply;
     }
 
+    public static JsonObject turnEnable(boolean enabled) {
+        JsonObject reply = new JsonObject();
+        reply.addProperty("type", "turnEnable");
+        reply.addProperty("enable", enabled);
+        return reply;
+    }
+
     /**
      * Creates the "error" message.
      *

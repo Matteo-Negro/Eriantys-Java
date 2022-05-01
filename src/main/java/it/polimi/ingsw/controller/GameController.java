@@ -34,8 +34,12 @@ public class GameController extends Thread {
     private final Map<String, User> users;
     private int connectedPlayers;
     private String id;
-    private String phase;
-    private int round;
+    private final String phase;
+    private final int round;
+
+    //TODO attributes needed by run() method, indicate the actual status of a player's turn
+    private boolean assistantPlayed;
+    private boolean motherNatureMoved;
 
     /**
      * The game controller constructor.
@@ -49,7 +53,7 @@ public class GameController extends Thread {
         this.expectedPlayers = expectedPlayers;
         this.gameModel = gameModel;
         //this.id=null;
-        //this.phase=null;
+        this.phase = "planning";
         this.round = 0;
         this.savePath = savePath;
         this.users = new HashMap<>();
@@ -144,6 +148,24 @@ public class GameController extends Thread {
     }
 
     /**
+     * This method returns the boolean attribute which indicates if the current player has played his assistant card.
+     *
+     * @return The assistantPlayed attribute.
+     */
+    private boolean isAssistantPlayed() {
+        return this.assistantPlayed;
+    }
+
+    /**
+     * This method returns the boolean attribute which indicates if the current player has moved mother nature (this implies the end of the turn).
+     *
+     * @return The motherNatureMoved attribute.
+     */
+    private boolean isMotherNatureMoved() {
+        return this.motherNatureMoved;
+    }
+
+    /**
      * This method adds user to the data structures that contains the online users.
      *
      * @param name The name of the user that will be added.
@@ -164,7 +186,7 @@ public class GameController extends Thread {
                 this.gameModel.addPlayer(name);
         }
 
-        // TODO: notify game start if full
+        if (this.isFull()) this.run();
     }
 
     /**
@@ -226,6 +248,39 @@ public class GameController extends Thread {
         BufferedWriter writer = Files.newBufferedWriter(Paths.get(this.savePath, this.id + ".json"), StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE);
         writer.write(json.toString());
         writer.close();
+    }
+
+    public void run() {
+        do {
+            switch (this.getPhase()) {
+                case "planning" -> {
+                    for (Player currentPlayer : this.getGameModel().getPlayers()) {
+
+                        //ENABLING THE INPUT TO THE CURRENT USER (taken from the clockwise order).
+                        User currentUser = getUser(currentPlayer.getName());
+                        currentUser.sendMessage(MessageCreator.turnEnable(true));
+
+                        //WAITING FOR ASSISTANT TO BE PLAYED
+                        while (!this.isAssistantPlayed()) {
+
+                            //If a disconnection occurs.
+                            if (!this.isFull()) {
+                                for (User otherUser : this.getUsers()) {
+                                    if (!otherUser.getUsername().equals(currentUser.getUsername())) {
+                                        otherUser.sendMessage(MessageCreator.error("One or more users lost connection"));
+                                    }
+                                }
+                                return;
+                            }
+                        }
+                        //DISABLING THE INPUT TO THE CURRENT USER.
+                        currentUser.sendMessage(MessageCreator.turnEnable(false));
+                    }
+                    this.getGameModel().updateTurnOrder();
+                }
+            }
+
+        } while (isFull());
     }
 
     /**
