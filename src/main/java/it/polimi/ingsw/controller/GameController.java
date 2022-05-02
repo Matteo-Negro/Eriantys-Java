@@ -368,7 +368,7 @@ public class GameController extends Thread {
                     for (SpecialCharacter c : this.gameModel.getGameBoard().getCharacters()) {
                         if (c.getId() == 1 && c.isActive()) {
                             //TODO: check for Exception??
-                            ((MonkEffect) c.getEffect()).effect(HouseColor.valueOf(command.get("color").getAsString()));
+                            ((MonkEffect) c.getEffect()).effect(HouseColor.valueOf(command.get("color").getAsString()), null);
                             check = true;
                             break;
                         } else if (c.getId() == 7 && c.isActive()) {
@@ -412,8 +412,7 @@ public class GameController extends Thread {
                 boolean check = false;
                 for (SpecialCharacter c : this.gameModel.getGameBoard().getCharacters()) {
                     if (c.getId() == 1 && c.isActive()) {
-                        ((MonkEffect) c.getEffect()).addStudent(HouseColor.valueOf(command.get("color").getAsString()));
-                        check = true;
+                        ((MonkEffect) c.getEffect()).effect(null, HouseColor.valueOf(command.get("color").getAsString()));                        check = true;
                         break;
                     } else if (c.getId() == 7 && c.isActive()) {
 
