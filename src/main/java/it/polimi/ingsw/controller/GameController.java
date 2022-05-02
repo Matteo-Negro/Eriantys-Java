@@ -400,7 +400,14 @@ public class GameController extends Thread {
                 }
             }
             case "bag" -> this.gameModel.getGameBoard().getBag().push(HouseColor.valueOf(command.get("color").getAsString()));
-            case "island" -> this.gameModel.getGameBoard().getIslands().get(command.get("toId").getAsInt()).addStudent(HouseColor.valueOf(command.get("color").getAsString()));
+            case "island" -> {
+                try {
+                    this.gameModel.getGameBoard().getIslandById(command.get("toId").getAsInt()).addStudent(HouseColor.valueOf(command.get("color").getAsString()));
+                } catch (IslandNotFoundException e) {
+                    //TODO: send it
+                    MessageCreator.error("Error: Island not find");
+                }
+            }
             case "card" -> {
                 boolean check = false;
                 for (SpecialCharacter c : this.gameModel.getGameBoard().getCharacters()) {
