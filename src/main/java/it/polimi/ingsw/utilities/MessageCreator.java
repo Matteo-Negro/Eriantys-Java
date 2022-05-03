@@ -3,6 +3,7 @@ package it.polimi.ingsw.utilities;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import it.polimi.ingsw.controller.GameController;
+import it.polimi.ingsw.utilities.parsers.ObjectsToJson;
 
 /**
  * This class generates JsonObjects for the various communication cases.
@@ -71,6 +72,12 @@ public class MessageCreator {
         return reply;
     }
 
+    /**
+     * Creates the message used to give the communication token to a specified user.
+     *
+     * @param enabled A boolean parameter which indicates the communication permission token.
+     * @return JsonObject which represents the message.
+     */
     public static JsonObject turnEnable(boolean enabled) {
         JsonObject reply = new JsonObject();
         reply.addProperty("type", "turnEnable");
@@ -78,9 +85,27 @@ public class MessageCreator {
         return reply;
     }
 
-    /*public static JsonObject status(){
-
-    }*/
+    /**
+     * Creates the message used to send the current game status to a user who just joined the game.
+     *
+     * @param game The gameController instance involved.
+     * @return JsonObject which represents the message.
+     */
+    public static JsonObject status(GameController game){
+        JsonObject reply = new JsonObject();
+        reply.addProperty("activeUser", game.getActiveUser());
+        reply.addProperty("phase", game.getPhase());
+        JsonArray subPhaseCompletion = new JsonArray();
+        for(String sp : game.getSubPhaseCompletion().keySet()){
+            JsonObject subPhase = new JsonObject();
+            subPhase.addProperty(sp,game.getSubPhaseCompletion().get(sp));
+            subPhaseCompletion.add(subPhase);
+        }
+        reply.add("subPhaseCompletion", subPhaseCompletion);
+        reply.add("players", ObjectsToJson.toJsonArray(game.getGameModel().getPlayers(),ObjectsToJson.GET_PLAYERS));
+        reply.add("gameBoard", ObjectsToJson.toJsonObject(game.getGameModel().getGameBoard()));
+        return reply;
+    }
 
     /**
      * Creates the "error" message.

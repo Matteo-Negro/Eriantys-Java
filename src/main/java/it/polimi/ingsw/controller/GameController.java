@@ -35,11 +35,11 @@ public class GameController extends Thread {
     private int connectedPlayers;
     private String id;
     private String phase;
-    private final int round;
-
-    //ATTRIBUTES NEEDED BY RUN() METHOD IN ORDER TO CHECK THE CURRENT PLAYER'S PROGRESSION.
-    private boolean assistantPlayed;
-    private boolean cloudChosen;
+    private int round;
+    private String activeUser;
+    private Map<String, Integer> subPhaseCompletion;
+    private final Object isFullLock;
+    private final Object actionNeededLock;
 
     /**
      * The game controller constructor.
@@ -57,6 +57,14 @@ public class GameController extends Thread {
         this.round = 0;
         this.savePath = savePath;
         this.users = new HashMap<>();
+        this.isFullLock = new Object();
+        this.actionNeededLock = new Object();
+        this.subPhaseCompletion = new HashMap<>();
+        this.subPhaseCompletion.put("assistantPlayed",0);
+        this.subPhaseCompletion.put("studentsMoved",0);
+        this.subPhaseCompletion.put("motherNatureMoved",0);
+        this.subPhaseCompletion.put("cloudChosen",0);
+        this.activeUser = null;
     }
 
     /**
@@ -127,8 +135,8 @@ public class GameController extends Thread {
     /**
      * This method returns the user associated to the name in the parameter.
      *
-     * @param name
-     * @return
+     * @param name  The username associated with the searched user.
+     * @return The User instance searched if present.
      */
     public User getUser(String name) {
         synchronized (this.users) {
@@ -148,21 +156,19 @@ public class GameController extends Thread {
     }
 
     /**
-     * This method returns the boolean attribute which indicates if the current player has played his assistant card.
      *
-     * @return The assistantPlayed attribute.
+     * @return the activeUser attribute.
      */
-    private boolean isAssistantPlayed() {
-        return this.assistantPlayed;
+    public String getActiveUser(){
+        return activeUser;
     }
 
     /**
-     * This method returns the boolean attribute which indicates if the current player has chosen a cloud  to refill his/her entrance from (this implies the end of the turn).
      *
-     * @return The cloudChosen attribute.
+     * @return the subPhaseCompletion map.
      */
-    private boolean isCloudChosen() {
-        return this.cloudChosen;
+    public Map<String, Integer> getSubPhaseCompletion(){
+        return subPhaseCompletion;
     }
 
     /**
@@ -170,8 +176,8 @@ public class GameController extends Thread {
      *
      * @param name The name of the user that will be added.
      * @param user The User that will be added.
-     * @throws FullGameException
-     * @throws AlreadyExistingPlayerException
+     * @throws FullGameException Thrown when the game to which the user is attempting to log in is already full and active.
+     * @throws AlreadyExistingPlayerException Thrown when the user is attempting to log into a game that has already got an active player with the same chosen username.
      */
     public void addUser(String name, User user) throws FullGameException, AlreadyExistingPlayerException {
         if (isFull()) throw new FullGameException();
@@ -186,7 +192,10 @@ public class GameController extends Thread {
                 this.gameModel.addPlayer(name);
         }
 
-        if (this.isFull()) this.run();
+        //SENDING THE CURRENT GAME MODEL STATUS TO THE PLAYER.
+        user.sendMessage(MessageCreator.status(this));
+
+        if (this.isFull()) this.isFullLock.notify();
     }
 
     /**
@@ -199,7 +208,7 @@ public class GameController extends Thread {
             if (user.getUsername() == null) return;
             this.users.replace(user.getUsername(), null);
             this.connectedPlayers--;
-            // TODO: pause game (notifyAll())
+            notifyUsers(MessageCreator.error("One or more players disconnected."));
         }
     }
 
@@ -254,78 +263,104 @@ public class GameController extends Thread {
      * This method is called whenever the game if full (players are all connected); it gives the input permission token to the current player, this decision is based on the turn order imposed by the model.
      */
     public void run() {
-        do {
-            //SENDING THE CURRENT GAME MODEL STATUS TO THE PLAYERS.
-            //TODO define the status message in MessageCreator
-            //for( User user : this.getUsers()) user.sendMessage(state(this.getGameModel()));
-
-            switch (this.getPhase()) {
-                case "planning" -> {
-                    for (Player currentPlayer : this.getGameModel().getPlayers()) {
-
-                        //ENABLING THE CURRENT USER INPUT (taken from the clockwise order).
-                        User currentUser = getUser(currentPlayer.getName());
-                        currentUser.sendMessage(MessageCreator.turnEnable(true));
-
-                        //WAITING FOR ASSISTANT TO BE PLAYED
-                        while (!this.isAssistantPlayed()) {
-                            //If a disconnection occurs.
-                            if (!this.isFull()) {
-                                for (User otherUser : this.getUsers()) {
-                                    if (!otherUser.getUsername().equals(currentUser.getUsername())) {
-                                        otherUser.sendMessage(MessageCreator.error("One or more users lost connection"));
-                                    }
-                                }
-                                return;
-                            }
-                        }
-                        //DISABLING THE CURRENT USER'S INPUT.
-                        currentUser.sendMessage(MessageCreator.turnEnable(false));
-                        this.assistantPlayed = false;
-                    }
-                    this.getGameModel().updateTurnOrder();
-                    //TODO update the clockwise order for next round.
-                    this.phase = "action";
-                }
-
-                case "action" -> {
-                    for (Player currentPlayer : this.getGameModel().getTurnOrder()) {
-                        //ENABLING THE INPUT OF THE CURRENT USER (taken from the clockwise order).
-                        User currentUser = getUser(currentPlayer.getName());
-                        currentUser.sendMessage(MessageCreator.turnEnable(true));
-
-                        //WAITING FOR A CLOUD TO BE CHOSEN (refill command)
-                        while (!this.isCloudChosen()) {
-                            //If a disconnection occurs.
-                            if (!this.isFull()) {
-                                for (User otherUser : this.getUsers()) {
-                                    if (!otherUser.getUsername().equals(currentUser.getUsername())) {
-                                        otherUser.sendMessage(MessageCreator.error("One or more users lost connection"));
-                                    }
-                                }
-                                return;
-                            }
-                        }
-                        try {
-                            this.getGameModel().nextTurn();
-                        } catch (RoundConcluded rc) {
-                            this.getGameModel().nextRound();
-                        }
-
-                        if (endGame()) {
-                            for (User user : this.getUsers()) {
-                                this.removeUser(user);
-                            }
-                            return;
-                        }
-
-                        //DISABLING THE INPUT OF THE CURRENT USER.
-                        currentUser.sendMessage(MessageCreator.turnEnable(false));
-                        this.cloudChosen = false;
-                    }
+        while(true) {
+            while(!this.isFull()) {
+                try {
+                    this.isFullLock.wait();
+                } catch (InterruptedException ie) {
+                    notifyUsers(MessageCreator.error("Game server error occurred."));
+                    for(User user : this.getUsers()) this.removeUser(user);
+                    return;
                 }
             }
-        } while (isFull());
+            switch (this.getPhase()) {
+                case "planning" -> this.planningPhase();
+                case "action" -> this.actionPhase();
+            }
+        }
+    }
+
+    /**
+     * Manages the planning phase.
+     */
+    private void planningPhase(){
+
+            Player roundWinner = this.getGameModel().getRoundWinner();
+            int indexOfRoundWinner = this.getGameModel().getPlayers().indexOf(roundWinner);
+
+            for (int i=0; i<this.getExpectedPlayers(); i++) {
+
+                Player currentPlayer = this.getGameModel().getPlayers().get((indexOfRoundWinner+i) % this.getExpectedPlayers());
+
+                //ENABLING THE CURRENT USER INPUT (taken from the clockwise order).
+                User currentUser = getUser(currentPlayer.getName());
+                this.activeUser = currentUser.getUsername();
+                currentUser.sendMessage(MessageCreator.turnEnable(true));
+
+                //WAITING FOR ASSISTANT TO BE PLAYED
+                while (this.subPhaseCompletion.get("assistantPlayed")==0 || !this.isFull()) {
+                    try {
+                        this.actionNeededLock.wait();
+                    }catch(InterruptedException ie) {
+                        notifyUsers(MessageCreator.error("Game server error occurred."));
+                        for(User user : this.getUsers()) this.removeUser(user);
+                        return;
+                    }
+                }
+                //DISABLING THE CURRENT USER'S INPUT.
+                this.activeUser = null;
+                currentUser.sendMessage(MessageCreator.turnEnable(false));
+                this.subPhaseCompletion.replace("assistantPlayed", 0);
+            }
+            this.getGameModel().updateTurnOrder();
+            this.phase = "action";
+    }
+
+    /**
+     * Manages the action phase.
+     */
+    private void actionPhase() {
+
+        for (Player currentPlayer : this.getGameModel().getTurnOrder()) {
+            //ENABLING THE INPUT OF THE CURRENT USER (taken from the turn list).
+            this.activeUser = currentPlayer.getName();
+            User currentUser = getUser(currentPlayer.getName());
+            currentUser.sendMessage(MessageCreator.turnEnable(true));
+
+            //WAITING FOR A CLOUD TO BE CHOSEN (refill command)
+            while (this.subPhaseCompletion.get("cloudChosen")==0 || !this.isFull()) {
+                try {
+                    this.actionNeededLock.wait();
+                }catch(InterruptedException ie) {
+                    notifyUsers(MessageCreator.error("Game server error occurred."));
+                    for(User user : this.getUsers()) this.removeUser(user);
+                    return;
+                }
+            }
+
+            //DISABLING THE INPUT OF THE CURRENT USER.
+            this.activeUser = null;
+            currentUser.sendMessage(MessageCreator.turnEnable(false));
+
+            try {
+                this.getGameModel().nextTurn();
+            } catch (RoundConcluded rc) {
+                this.getGameModel().nextRound();
+                this.round++;
+                this.phase = "planning";
+            }finally {
+                this.subPhaseCompletion.replace("studentsMoved", 0);
+                this.subPhaseCompletion.replace("motherNatureMoved", 0);
+                this.subPhaseCompletion.replace("cloudChosen", 0);
+            }
+
+            if (endGame()) {
+                for (User user : this.getUsers()) {
+                    this.removeUser(user);
+                }
+                return;
+            }
+        }
     }
 
     /**
@@ -338,16 +373,17 @@ public class GameController extends Thread {
         try {
             this.gameModel.getPlayerByName(player).playAssistant(assistant);
         } catch (AlreadyPlayedException e) {
-            //TODO: send message
-            e.printStackTrace();
+            this.getUsers().remove(this.getUser(player));
         }
 
         try {
             this.gameModel.getGameBoard().addPlayedAssistant(this.gameModel.getPlayerByName(player), new Assistant(assistant));
+            this.subPhaseCompletion.replace("assistantPlayed",1);
         } catch (IllegalMoveException e) {
-            //TODO: send message
-            e.printStackTrace();
+            this.getUsers().remove(this.getUser(player));
         }
+
+        this.saveGame();
     }
 
     /**
@@ -358,7 +394,17 @@ public class GameController extends Thread {
     private void moveStudent(JsonObject command) {
         try {
             switch (command.get("from").getAsString()) {
-                case "entrance" -> this.gameModel.getPlayerByName(command.get("player").getAsString()).getSchoolBoard().removeFromEntrance(HouseColor.valueOf(command.get("color").getAsString()));
+                case "entrance" -> {
+                    this.gameModel.getPlayerByName(command.get("player").getAsString()).getSchoolBoard().removeFromEntrance(HouseColor.valueOf(command.get("color").getAsString()));
+                    boolean effectActive = false;
+                    for(SpecialCharacter sc : this.getGameModel().getGameBoard().getCharacters()){
+                        if (sc.isActive()) {
+                            effectActive = true;
+                            break;
+                        }
+                    }
+                    if(!effectActive) this.subPhaseCompletion.replace("studentsMoved", this.subPhaseCompletion.get("studentsMoved")+1);
+                }
                 case "diningRoom" -> {
                     this.gameModel.getPlayerByName(command.get("player").getAsString()).getSchoolBoard().removeFromDiningRoom(HouseColor.valueOf(command.get("color").getAsString()));
                     checkProfessor(command.get("color").getAsString(), command.get("player").getAsString());
@@ -427,6 +473,8 @@ public class GameController extends Thread {
                     //TODO: send message
                     MessageCreator.error("Wrong command.");
         }
+
+        this.saveGame();
     }
 
     /**
@@ -440,7 +488,7 @@ public class GameController extends Thread {
         try {
             island = this.gameModel.getGameBoard().getIslandById(idIsland);
             this.gameModel.getGameBoard().moveMotherNature(island, this.gameModel.getGameBoard().getPlayedAssistants().get(this.gameModel.getCurrentPlayer()));
-
+            this.subPhaseCompletion.replace("motherNatureMoved",1);
         } catch (IllegalMoveException | IslandNotFoundException e) {
             //TODO: send message
             MessageCreator.error("Error");
@@ -488,6 +536,8 @@ public class GameController extends Thread {
                 }
             }
         }
+
+        this.saveGame();
     }
 
     /**
@@ -497,6 +547,9 @@ public class GameController extends Thread {
      */
     private void chooseCloud(JsonObject command) {
         this.gameModel.getPlayerByName(command.get("player").getAsString()).getSchoolBoard().addToEntrance(this.gameModel.getGameBoard().getClouds().get(command.get("cloud").getAsInt()).flush());
+        this.subPhaseCompletion.replace("cloudChosen", 1);
+
+        this.saveGame();
     }
 
     /**
@@ -506,6 +559,8 @@ public class GameController extends Thread {
      */
     private void paySpecialCharacter(int specialCharacter) {
         this.gameModel.getGameBoard().getCharacters().get(specialCharacter).activateEffect();
+
+        this.saveGame();
     }
 
     /**
@@ -586,5 +641,17 @@ public class GameController extends Thread {
             }
         }
         this.gameModel.getGameBoard().setProfessor(HouseColor.valueOf(color), this.gameModel.getPlayerByName(newProfessorOwner));
+    }
+
+    public void notifyUsers(JsonObject message){
+        for(User user : this.getUsers()){
+            user.sendMessage(message);
+        }
+    }
+
+    public void notifyUsersExcept(JsonObject message, User exception){
+        for(User user : this.getUsers()){
+            if(user.getUsername().equals(exception.getUsername())) user.sendMessage(message);
+        }
     }
 }
