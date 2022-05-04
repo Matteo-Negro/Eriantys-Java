@@ -71,7 +71,7 @@ public class PrincessEffect extends Effect {
      *
      * @return students attribute.
      */
-    private Map<HouseColor, Integer> getStudents() {
+    public Map<HouseColor, Integer> getStudents() {
         return students;
     }
 
