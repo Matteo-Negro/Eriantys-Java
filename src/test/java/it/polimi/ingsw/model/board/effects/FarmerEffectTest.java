@@ -78,9 +78,9 @@ class FarmerEffectTest {
      * @return The generated map.
      */
     private Map<HouseColor, Player> getMap() {
-        EnumMap<HouseColor, Player> stolen = new EnumMap<>(HouseColor.class);
-        stolen.put(HouseColor.BLUE, new Player("Player 1", WizardType.FUCHSIA, 6, TowerType.WHITE));
-        stolen.put(HouseColor.FUCHSIA, new Player("Player 2", WizardType.WHITE, 6, TowerType.BLACK));
-        return stolen;
+        EnumMap<HouseColor, Player> map = new EnumMap<>(HouseColor.class);
+        map.put(HouseColor.BLUE, new Player("Player 1", WizardType.FUCHSIA, 6, TowerType.WHITE));
+        map.put(HouseColor.FUCHSIA, new Player("Player 2", WizardType.WHITE, 6, TowerType.BLACK));
+        return map;
     }
 }
