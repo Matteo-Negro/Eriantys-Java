@@ -123,7 +123,6 @@ public class SpecialCharacter {
      */
     public void cleanEffect() {
         isActive = false;
-        assignedEffect.clean();
     }
 
     /**

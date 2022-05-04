@@ -39,10 +39,6 @@ public class CentaurEffect extends Effect {
     }
 
     @Override
-    public void clean() {
-    }
-
-    @Override
     public int getCost() {
         return 3;
     }

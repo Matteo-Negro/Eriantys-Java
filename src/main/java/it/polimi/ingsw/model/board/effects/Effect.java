@@ -21,11 +21,6 @@ public abstract class Effect {
     public abstract void effect();
 
     /**
-     * Deactivates the effect of the object.
-     */
-    public abstract void clean();
-
-    /**
      * returns the activation cost of the effect.
      *
      * @return cost attribute

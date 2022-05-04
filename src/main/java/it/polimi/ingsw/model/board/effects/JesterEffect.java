@@ -63,11 +63,6 @@ public class JesterEffect extends Effect {
     }
 
     @Override
-    public void clean() {
-        students = new HashMap<>();
-    }
-
-    @Override
     public int getCost() {
         return 1;
     }

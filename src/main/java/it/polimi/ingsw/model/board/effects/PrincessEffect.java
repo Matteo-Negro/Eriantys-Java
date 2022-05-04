@@ -62,11 +62,6 @@ public class PrincessEffect extends Effect {
     }
 
     @Override
-    public void clean() {
-
-    }
-
-    @Override
     public int getCost() {
         return 2;
     }

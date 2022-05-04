@@ -54,11 +54,6 @@ public class FarmerEffect extends Effect {
     }
 
     @Override
-    public void clean() {
-        returnProfessors();
-    }
-
-    @Override
     public int getCost() {
         return 2;
     }
@@ -69,7 +64,9 @@ public class FarmerEffect extends Effect {
      * @return stolenProfessors attribute.
      */
     public Map<HouseColor, Player> getStolenProfessors() {
-        return stolenProfessors;
+        Map<HouseColor, Player> professors = new HashMap<>(this.stolenProfessors);
+        stolenProfessors = new HashMap<>();
+        return professors;
     }
 
     /**
@@ -79,12 +76,5 @@ public class FarmerEffect extends Effect {
      */
     private void stealProfessors(Map<HouseColor, Player> stolen) {
         stolenProfessors = stolen;
-    }
-
-    /**
-     * Deletes the mapping defined in the stolenProfessor attribute, creating a new HashMap.
-     */
-    private void returnProfessors() {
-        stolenProfessors = new HashMap<>();
     }
 }
