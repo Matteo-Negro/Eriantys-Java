@@ -1,5 +1,7 @@
 package it.polimi.ingsw.model.board.effects;
 
+import java.util.Objects;
+
 /**
  * Specific effect n.5
  *
@@ -40,10 +42,11 @@ public class HerablistEffect extends Effect {
     /**
      * effect() method overload.
      * Decides to call the takeBan() method or the restoreBan() method, through a conditional branch on command parameter.
-     * @param command       The action to be performed.
+     *
+     * @param command The action to be performed.
      */
     public void effect(String command) {
-        switch (command){
+        switch (command) {
             case "take" -> takeBan();
             case "restore" -> restoreBan();
         }
@@ -76,5 +79,29 @@ public class HerablistEffect extends Effect {
      */
     private void restoreBan() {
         availableBans++;
+    }
+
+    /**
+     * Standard redefinition of "equals" method.
+     *
+     * @param o Object to compare.
+     * @return true if the two objects are the same.
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        HerablistEffect that = (HerablistEffect) o;
+        return availableBans == that.availableBans;
+    }
+
+    /**
+     * Calculates the hash.
+     *
+     * @return The calculated hash.
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(availableBans);
     }
 }

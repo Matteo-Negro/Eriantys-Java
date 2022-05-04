@@ -5,6 +5,7 @@ import it.polimi.ingsw.utilities.HouseColor;
 import java.util.EmptyStackException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Specific effect n.7
@@ -95,5 +96,29 @@ public class JesterEffect extends Effect {
     private void takeStudent(HouseColor color) throws EmptyStackException {
         if (students.get(color) == 0) throw new EmptyStackException();
         students.replace(color, students.get(color) - 1);
+    }
+
+    /**
+     * Standard redefinition of "equals" method.
+     *
+     * @param o Object to compare.
+     * @return true if the two objects are the same.
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        JesterEffect that = (JesterEffect) o;
+        return Objects.equals(students, that.students);
+    }
+
+    /**
+     * Calculates the hash.
+     *
+     * @return The calculated hash.
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(students);
     }
 }

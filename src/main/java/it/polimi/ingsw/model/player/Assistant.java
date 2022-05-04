@@ -1,5 +1,7 @@
 package it.polimi.ingsw.model.player;
 
+import java.util.Objects;
+
 /**
  * This class represents the Assistant (cards between 1 and 10) have to be played to define the turn order.
  *
@@ -48,5 +50,29 @@ public class Assistant {
      */
     public void setBonus() {
         bonus = true;
+    }
+
+    /**
+     * Standard redefinition of "equals" method.
+     *
+     * @param o Object to compare.
+     * @return true if the two objects are the same.
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Assistant assistant = (Assistant) o;
+        return id == assistant.id && maxDistance == assistant.maxDistance && bonus == assistant.bonus;
+    }
+
+    /**
+     * Calculates the hash.
+     *
+     * @return The calculated hash.
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, maxDistance, bonus);
     }
 }

@@ -9,6 +9,7 @@ import it.polimi.ingsw.utilities.exceptions.NotEnoughCoinsException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Contains all the data connected to the player.
@@ -154,5 +155,29 @@ public class Player {
      */
     public SchoolBoard getSchoolBoard() {
         return schoolBoard;
+    }
+
+    /**
+     * Standard redefinition of "equals" method.
+     *
+     * @param o Object to compare.
+     * @return true if the two objects are the same.
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Player player = (Player) o;
+        return coins == player.coins && Objects.equals(name, player.name) && wizardType == player.wizardType && Objects.equals(assistants, player.assistants) && Objects.equals(schoolBoard, player.schoolBoard);
+    }
+
+    /**
+     * Calculates the hash.
+     *
+     * @return The calculated hash.
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, wizardType, assistants, schoolBoard, coins);
     }
 }

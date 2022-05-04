@@ -5,6 +5,7 @@ import it.polimi.ingsw.utilities.HouseColor;
 import java.util.EmptyStackException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Specific effect n.1
@@ -52,13 +53,12 @@ public class MonkEffect extends Effect {
     /**
      * effect() method overload.
      *
-     *
-     * @param toTake    The color of the desired student.
-     * @param toPut     The color of the new student extracted from the bag.
+     * @param toTake The color of the desired student.
+     * @param toPut  The color of the new student extracted from the bag.
      */
     public void effect(HouseColor toTake, HouseColor toPut) {
-        if(toTake != null) takeStudent(toTake);
-        if(toPut != null) addStudent(toPut);
+        if (toTake != null) takeStudent(toTake);
+        if (toPut != null) addStudent(toPut);
     }
 
     @Override
@@ -94,5 +94,29 @@ public class MonkEffect extends Effect {
     private void takeStudent(HouseColor color) throws EmptyStackException {
         if (students.get(color) == 0) throw new EmptyStackException();
         students.replace(color, students.get(color) - 1);
+    }
+
+    /**
+     * Standard redefinition of "equals" method.
+     *
+     * @param o Object to compare.
+     * @return true if the two objects are the same.
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MonkEffect that = (MonkEffect) o;
+        return Objects.equals(students, that.students);
+    }
+
+    /**
+     * Calculates the hash.
+     *
+     * @return The calculated hash.
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(students);
     }
 }

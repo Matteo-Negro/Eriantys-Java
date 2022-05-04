@@ -5,6 +5,7 @@ import it.polimi.ingsw.utilities.HouseColor;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Specific effect n.2
@@ -76,5 +77,29 @@ public class FarmerEffect extends Effect {
      */
     private void stealProfessors(Map<HouseColor, Player> stolen) {
         stolenProfessors = stolen;
+    }
+
+    /**
+     * Standard redefinition of "equals" method.
+     *
+     * @param o Object to compare.
+     * @return true if the two objects are the same.
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        FarmerEffect that = (FarmerEffect) o;
+        return Objects.equals(stolenProfessors, that.stolenProfessors);
+    }
+
+    /**
+     * Calculates the hash.
+     *
+     * @return The calculated hash.
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(stolenProfessors);
     }
 }

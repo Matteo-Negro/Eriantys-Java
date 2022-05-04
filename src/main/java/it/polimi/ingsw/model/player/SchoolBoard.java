@@ -8,6 +8,7 @@ import it.polimi.ingsw.utilities.exceptions.NotEnoughTowersException;
 
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * This class represents the board on which each player has their own towers, students and professors.
@@ -167,5 +168,29 @@ public class SchoolBoard {
     public void addTowers(int number) throws NegativeException {
         if (number < 0) throw new NegativeException("Given value is negative (" + number + ")");
         towersNumber += number;
+    }
+
+    /**
+     * Standard redefinition of "equals" method.
+     *
+     * @param o Object to compare.
+     * @return true if the two objects are the same.
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SchoolBoard that = (SchoolBoard) o;
+        return towersNumber == that.towersNumber && towerType == that.towerType && Objects.equals(entrance, that.entrance) && Objects.equals(diningRoom, that.diningRoom);
+    }
+
+    /**
+     * Calculates the hash.
+     *
+     * @return The calculated hash.
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(towerType, entrance, diningRoom, towersNumber);
     }
 }
