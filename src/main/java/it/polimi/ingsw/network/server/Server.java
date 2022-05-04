@@ -9,11 +9,13 @@ import it.polimi.ingsw.controller.User;
 import it.polimi.ingsw.model.GamePlatform;
 import it.polimi.ingsw.model.player.Player;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,6 +23,7 @@ import java.util.NoSuchElementException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Stream;
 
 import static it.polimi.ingsw.utilities.parsers.JsonToObjects.*;
 
@@ -37,6 +40,8 @@ public class Server {
     private final String savePath;
     private final int port;
 
+    private final ExecutorService gameExecutor;
+
     /**
      * Class constructor.
      *
@@ -50,6 +55,7 @@ public class Server {
                 : Paths.get(new File(ServerLauncher.class.getProtectionDomain().getCodeSource().getLocation().getFile())
                 .getParent(), "database").toString();
         games = new HashMap<>();
+        gameExecutor = Executors.newCachedThreadPool();
         File directory = new File(this.savePath);
         if (!directory.exists())
             directory.mkdir();
@@ -61,18 +67,18 @@ public class Server {
 
     public void start() throws IOException {
 
-        ExecutorService executor = Executors.newCachedThreadPool();
+        ExecutorService userExecutor = Executors.newCachedThreadPool();
         try (ServerSocket serverSocket = new ServerSocket(port)) {
             System.out.println("Server up and listening on port: " + port);
             while (true) {
                 Socket socket = serverSocket.accept();
                 System.out.println("Received client connection.");
-                executor.submit(new User(socket, this));
+                userExecutor.submit(new User(socket, this));
             }
         } catch (NoSuchElementException e) {
             System.err.println(e.getMessage());
         } finally {
-            executor.shutdown();
+            userExecutor.shutdown();
             System.out.println("Socket closed.");
         }
     }
@@ -83,16 +89,16 @@ public class Server {
      * @throws IOException Thrown if there is an error while processing files.
      */
     private void loadGames() throws IOException {
-        Files.list(Paths.get(savePath))
-                .parallel()
-                .filter(file -> !Files.isDirectory(file) && file.toString().endsWith(".json"))
-                .forEach(file -> {
-                    try {
-                        loadGame(JsonParser.parseReader(Files.newBufferedReader(file)).getAsJsonObject());
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                });
+        try (Stream<Path> stream = Files.list(Paths.get(savePath)).parallel()) {
+                stream.filter(file -> !Files.isDirectory(file) && file.toString().endsWith(".json"))
+                    .forEach(file -> {
+                        try (BufferedReader bufferedReader = Files.newBufferedReader(file)) {
+                            loadGame(JsonParser.parseReader(bufferedReader).getAsJsonObject());
+                        } catch (IOException e) {
+                            System.err.println(e.getMessage());
+                        }
+                    });
+        }
     }
 
     /**
@@ -118,6 +124,8 @@ public class Server {
                 json.get("currentPlayer").getAsString()
         ), json.get("expectedPlayers").getAsInt(), savePath);
 
+        gameExecutor.submit(gameController);
+
         synchronized (games) {
             games.put(json.get("id").getAsString(), gameController);
         }
@@ -133,6 +141,7 @@ public class Server {
     public String addGame(int expectedPlayers, boolean expertMode) {
         String id;
         GameController gameController = new GameController(new GamePlatform(expectedPlayers, expertMode), expectedPlayers, savePath);
+        gameExecutor.submit(gameController);
         synchronized (games) {
             do id = getNewId();
             while (games.containsKey(id));
@@ -140,6 +149,18 @@ public class Server {
         }
         System.out.println("Created new game with id " + id);
         return id;
+    }
+
+    /**
+     * Removes a game from the map. This method has to be called when the game ends.
+     *
+     * @param id The id of the game to remove.
+     */
+    public void removeGame(String id) {
+        synchronized (games) {
+            games.get(id).interrupt();
+            games.remove(id);
+        }
     }
 
     /**

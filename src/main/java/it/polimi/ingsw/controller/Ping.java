@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 public class Ping extends Thread {
 
     private final User user;
+    private final Object lock;
 
     /**
      * Default constructor.
@@ -13,6 +14,7 @@ public class Ping extends Thread {
      */
     public Ping(User user) {
         this.user = user;
+        this.lock = new Object();
     }
 
     /**
@@ -24,13 +26,13 @@ public class Ping extends Thread {
         ping.addProperty("type", "ping");
 
         while (true) {
-            synchronized (this) {
+            synchronized (lock) {
                 user.sendMessage(ping);
-            }
-            try {
-                this.wait(1000);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                try {
+                    lock.wait(1000);
+                } catch (InterruptedException e) {
+                    this.interrupt();
+                }
             }
         }
     }

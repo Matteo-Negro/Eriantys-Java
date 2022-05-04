@@ -12,10 +12,7 @@ import it.polimi.ingsw.utilities.exceptions.AlreadyExistingPlayerException;
 import it.polimi.ingsw.utilities.exceptions.FullGameException;
 import it.polimi.ingsw.utilities.exceptions.RoundConcluded;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -217,7 +214,7 @@ public class GamePlatform {
         gameBoard.flushAssistantsList();
         gameBoard.getClouds().forEach(cloud -> {
             HouseColor houseColor;
-            Map<HouseColor, Integer> map = new HashMap<>();
+            Map<HouseColor, Integer> map = new EnumMap<>(HouseColor.class);
             for (HouseColor color : HouseColor.values())
                 map.put(color, 0);
             for (int i = 0; i < (playersNumber == 3 ? 3 : 4); i++) {
@@ -244,7 +241,7 @@ public class GamePlatform {
     public void nextTurn() throws RoundConcluded {
         String player;
         gameBoard.removeEffects();
-        player = turnOrder.get(turnOrder.indexOf(currentPlayer) + 1 % playersNumber).getName();
+        player = turnOrder.get(turnOrder.indexOf(players.get(currentPlayer)) + 1 % playersNumber).getName();
         if (player.equals(roundWinner))
             throw new RoundConcluded();
         currentPlayer = player;
@@ -284,7 +281,7 @@ public class GamePlatform {
      */
     private List<Pair<Player, Assistant>> reorderPlayedCards(String roundWinner, Map<Player, Assistant> playedAssistants) {
         Player player;
-        int roundWinnerIndex = clockwiseOrder.indexOf(roundWinner);
+        int roundWinnerIndex = clockwiseOrder.indexOf(players.get(roundWinner));
         List<Pair<Player, Assistant>> playedAssistantsOrder = new ArrayList<>();
         for (int index = 0; index < playersNumber; index++) {
             player = clockwiseOrder.get(roundWinnerIndex + index % playersNumber);

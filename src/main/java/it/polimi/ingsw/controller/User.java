@@ -7,10 +7,11 @@ import it.polimi.ingsw.utilities.MessageCreator;
 import it.polimi.ingsw.utilities.exceptions.FullGameException;
 import it.polimi.ingsw.utilities.exceptions.GameNotFoundException;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.Scanner;
 
 /**
  * The entity containing the tcp connection socket of the client connected to the game server and its input and output streams.
@@ -22,7 +23,7 @@ public class User extends Thread {
 
     private boolean connected;
     private final Object connectedLock;
-    private final Scanner inputStream;
+    private final BufferedReader inputStream;
     private final PrintWriter outputStream;
     private final Server server;
     private final Ping ping;
@@ -47,7 +48,7 @@ public class User extends Thread {
         this.username = null;
         this.logged = false;
 
-        inputStream = new Scanner(socket.getInputStream());
+        inputStream = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         outputStream = new PrintWriter(socket.getOutputStream());
         socket.setSoTimeout(10000);
     }
@@ -68,6 +69,7 @@ public class User extends Thread {
     /**
      * Every time checks if the user is online and when receives a command, processes it.
      */
+    @Override
     public void run() {
 
         JsonObject incomingMessage;
@@ -83,12 +85,12 @@ public class User extends Thread {
 
             try {
                 incomingMessage = getCommand();
+                if (!incomingMessage.get("type").getAsString().equals("pong"))
+                    manageCommand(incomingMessage);
             } catch (IOException e) {
                 // If socket time out expires.
                 disconnected();
-                break;
             }
-            manageCommand(incomingMessage);
         }
 
         ping.interrupt();
@@ -101,7 +103,7 @@ public class User extends Thread {
      * @throws IOException Thrown if an error occurs during the socket input stream read.
      */
     private synchronized JsonObject getCommand() throws IOException {
-        return JsonParser.parseString(inputStream.nextLine()).getAsJsonObject();
+        return JsonParser.parseString(inputStream.readLine()).getAsJsonObject();
     }
 
     /**
@@ -124,8 +126,6 @@ public class User extends Thread {
     private void manageCommand(JsonObject command) {
 
         switch (command.get("type").getAsString()) {
-            case "pong" -> {
-            }
             case "gameCreation" -> sendMessage(MessageCreator.gameCreation(Matchmaking.gameCreation(command, server)));
             case "enterGame" -> {
                 try {
