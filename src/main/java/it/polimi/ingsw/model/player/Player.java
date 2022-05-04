@@ -142,7 +142,7 @@ public class Player {
         try {
             takeCoins(specialCharacter.getEffectCost());
         } catch (NegativeException e) {
-            e.printStackTrace();
+            System.err.println(e.getMessage());
         }
         specialCharacter.activateEffect();
     }
