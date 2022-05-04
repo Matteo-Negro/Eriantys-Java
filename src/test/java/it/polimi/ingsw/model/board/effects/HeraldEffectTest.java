@@ -24,7 +24,7 @@ class HeraldEffectTest {
     }
 
     /**
-     * Allows the garbage collector to delete the created FarmerEffect.
+     * Allows the garbage collector to delete the created HeraldEffect.
      */
     @AfterEach
     void tearDown() {

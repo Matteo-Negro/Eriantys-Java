@@ -24,7 +24,7 @@ class CentaurEffectTest {
     }
 
     /**
-     * Allows the garbage collector to delete the created FarmerEffect.
+     * Allows the garbage collector to delete the created CentaurEffect.
      */
     @AfterEach
     void tearDown() {

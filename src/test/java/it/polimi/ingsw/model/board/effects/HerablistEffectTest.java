@@ -24,7 +24,7 @@ class HerablistEffectTest {
     }
 
     /**
-     * Allows the garbage collector to delete the created FarmerEffect.
+     * Allows the garbage collector to delete the created HerbalistEffect.
      */
     @AfterEach
     void tearDown() {
