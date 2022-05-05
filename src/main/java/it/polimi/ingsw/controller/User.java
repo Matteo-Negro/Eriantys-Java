@@ -18,15 +18,16 @@ import java.net.Socket;
  *
  * @author Riccardo Milici
  * @author Riccardo Motta
+ * @author Matteo Negro
  */
 public class User extends Thread {
 
-    private boolean connected;
     private final Object connectedLock;
     private final BufferedReader inputStream;
     private final PrintWriter outputStream;
     private final Server server;
     private final Ping ping;
+    private boolean connected;
     private GameController gameController;
     private String username;
     private boolean logged;
@@ -85,7 +86,7 @@ public class User extends Thread {
 
             try {
                 incomingMessage = getCommand();
-                if (!incomingMessage.get("type").getAsString().equals("pong"))
+                if (!incomingMessage.get("type").getAsString().equals("pong") && !incomingMessage.get("type").getAsString().equals("error"))
                     manageCommand(incomingMessage);
             } catch (IOException e) {
                 // If socket time out expires.
@@ -124,8 +125,8 @@ public class User extends Thread {
      * @param command The command to manage.
      */
     private void manageCommand(JsonObject command) {
-
         switch (command.get("type").getAsString()) {
+            case "ping" -> sendMessage(MessageCreator.pong());
             case "gameCreation" -> sendMessage(MessageCreator.gameCreation(Matchmaking.gameCreation(command, server)));
             case "enterGame" -> {
                 try {
@@ -142,6 +143,25 @@ public class User extends Thread {
                     username = command.get("name").getAsString();
             }
             case "logout" -> removeFromGame();
+            case "command" -> {
+                switch (command.get("subtype").getAsString()) {
+                    case "playAssistant" -> {
+                        this.gameController.playAssistantCard(command.get("player").getAsString(), command.get("assistant").getAsInt());
+                    }
+                    case "move" -> {
+                        switch (command.get("pawn").getAsString()) {
+                            case "professor" -> {
+                                //TODO: check for special character, @RiccardoMilici
+                            }
+                            case "student" -> this.gameController.moveStudent(command);
+                            case "motherNature" -> this.gameController.moveMotherNature(command.get("island").getAsInt());
+                        }
+                    }
+                    case "ban" -> this.gameController.setBan(command.get("island").getAsInt());
+                    case "pay" -> this.gameController.paySpecialCharacter(command.get("character").getAsInt());
+                    case "refill" -> this.gameController.chooseCloud(command);
+                }
+            }
             default -> sendMessage(MessageCreator.error("Wrong command."));
         }
     }

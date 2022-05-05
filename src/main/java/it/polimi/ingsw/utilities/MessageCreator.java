@@ -108,6 +108,17 @@ public class MessageCreator {
     }
 
     /**
+     * Creates the "pong" message.
+     *
+     * @return JsonObject which represents the message.
+     */
+    public static JsonObject pong() {
+        JsonObject reply = new JsonObject();
+        reply.addProperty("type", "pong");
+        return reply;
+    }
+
+    /**
      * Creates the "error" message.
      *
      * @param message The message to send to the client.
