@@ -119,6 +119,18 @@ public class MessageCreator {
     }
 
     /**
+     * Creates the "win" message.
+     *
+     * @return JsonObject which represents the message.
+     */
+    public static JsonObject win(String player) {
+        JsonObject reply = new JsonObject();
+        reply.addProperty("type", "win");
+        reply.addProperty("winner", player);
+        return reply;
+    }
+
+    /**
      * Creates the "error" message.
      *
      * @param message The message to send to the client.

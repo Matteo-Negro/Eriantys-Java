@@ -158,7 +158,7 @@ public class User extends Thread {
                         }
                     }
                     case "ban" -> this.gameController.setBan(command.get("island").getAsInt());
-                    case "pay" -> this.gameController.paySpecialCharacter(command.get("character").getAsInt());
+                    case "pay" -> this.gameController.paySpecialCharacter(command);
                     case "refill" -> this.gameController.chooseCloud(command);
                 }
             }

@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import it.polimi.ingsw.model.GamePlatform;
 import it.polimi.ingsw.model.board.Island;
 import it.polimi.ingsw.model.board.SpecialCharacter;
+import it.polimi.ingsw.model.board.effects.JesterEffect;
 import it.polimi.ingsw.model.board.effects.MonkEffect;
 import it.polimi.ingsw.model.player.Assistant;
 import it.polimi.ingsw.model.player.Player;
@@ -32,14 +33,14 @@ public class GameController extends Thread {
     private final GamePlatform gameModel;
     private final String savePath;
     private final Map<String, User> users;
+    private final Object isFullLock;
+    private final Object actionNeededLock;
     private int connectedPlayers;
     private String id;
     private String phase;
     private int round;
     private String activeUser;
     private Map<String, Integer> subPhaseCompletion;
-    private final Object isFullLock;
-    private final Object actionNeededLock;
 
     /**
      * The game controller constructor.
@@ -60,10 +61,10 @@ public class GameController extends Thread {
         this.isFullLock = new Object();
         this.actionNeededLock = new Object();
         this.subPhaseCompletion = new HashMap<>();
-        this.subPhaseCompletion.put("assistantPlayed",0);
-        this.subPhaseCompletion.put("studentsMoved",0);
-        this.subPhaseCompletion.put("motherNatureMoved",0);
-        this.subPhaseCompletion.put("cloudChosen",0);
+        this.subPhaseCompletion.put("assistantPlayed", 0);
+        this.subPhaseCompletion.put("studentsMoved", 0);
+        this.subPhaseCompletion.put("motherNatureMoved", 0);
+        this.subPhaseCompletion.put("cloudChosen", 0);
         this.activeUser = null;
     }
 
@@ -135,7 +136,7 @@ public class GameController extends Thread {
     /**
      * This method returns the user associated to the name in the parameter.
      *
-     * @param name  The username associated with the searched user.
+     * @param name The username associated with the searched user.
      * @return The User instance searched if present.
      */
     public User getUser(String name) {
@@ -156,18 +157,16 @@ public class GameController extends Thread {
     }
 
     /**
-     *
      * @return the activeUser attribute.
      */
-    public String getActiveUser(){
+    public String getActiveUser() {
         return activeUser;
     }
 
     /**
-     *
      * @return the subPhaseCompletion map.
      */
-    public Map<String, Integer> getSubPhaseCompletion(){
+    public Map<String, Integer> getSubPhaseCompletion() {
         return subPhaseCompletion;
     }
 
@@ -176,7 +175,7 @@ public class GameController extends Thread {
      *
      * @param name The name of the user that will be added.
      * @param user The User that will be added.
-     * @throws FullGameException Thrown when the game to which the user is attempting to log in is already full and active.
+     * @throws FullGameException              Thrown when the game to which the user is attempting to log in is already full and active.
      * @throws AlreadyExistingPlayerException Thrown when the user is attempting to log into a game that has already got an active player with the same chosen username.
      */
     public void addUser(String name, User user) throws FullGameException, AlreadyExistingPlayerException {
@@ -263,13 +262,13 @@ public class GameController extends Thread {
      * This method is called whenever the game if full (players are all connected); it gives the input permission token to the current player, this decision is based on the turn order imposed by the model.
      */
     public void run() {
-        while(true) {
-            while(!this.isFull()) {
+        while (true) {
+            while (!this.isFull()) {
                 try {
                     this.isFullLock.wait();
                 } catch (InterruptedException ie) {
                     notifyUsers(MessageCreator.error("Game server error occurred."));
-                    for(User user : this.getUsers()) this.removeUser(user);
+                    for (User user : this.getUsers()) this.removeUser(user);
                     return;
                 }
             }
@@ -283,37 +282,37 @@ public class GameController extends Thread {
     /**
      * Manages the planning phase.
      */
-    private void planningPhase(){
+    private void planningPhase() {
 
-            Player roundWinner = this.getGameModel().getRoundWinner();
-            int indexOfRoundWinner = this.getGameModel().getPlayers().indexOf(roundWinner);
+        Player roundWinner = this.getGameModel().getRoundWinner();
+        int indexOfRoundWinner = this.getGameModel().getPlayers().indexOf(roundWinner);
 
-            for (int i=0; i<this.getExpectedPlayers(); i++) {
+        for (int i = 0; i < this.getExpectedPlayers(); i++) {
 
-                Player currentPlayer = this.getGameModel().getPlayers().get((indexOfRoundWinner+i) % this.getExpectedPlayers());
+            Player currentPlayer = this.getGameModel().getPlayers().get((indexOfRoundWinner + i) % this.getExpectedPlayers());
 
-                //ENABLING THE CURRENT USER INPUT (taken from the clockwise order).
-                User currentUser = getUser(currentPlayer.getName());
-                this.activeUser = currentUser.getUsername();
-                currentUser.sendMessage(MessageCreator.turnEnable(true));
+            //ENABLING THE CURRENT USER INPUT (taken from the clockwise order).
+            User currentUser = getUser(currentPlayer.getName());
+            this.activeUser = currentUser.getUsername();
+            currentUser.sendMessage(MessageCreator.turnEnable(true));
 
-                //WAITING FOR ASSISTANT TO BE PLAYED
-                while (this.subPhaseCompletion.get("assistantPlayed")==0 || !this.isFull()) {
-                    try {
-                        this.actionNeededLock.wait();
-                    }catch(InterruptedException ie) {
-                        notifyUsers(MessageCreator.error("Game server error occurred."));
-                        for(User user : this.getUsers()) this.removeUser(user);
-                        return;
-                    }
+            //WAITING FOR ASSISTANT TO BE PLAYED
+            while (this.subPhaseCompletion.get("assistantPlayed") == 0 || !this.isFull()) {
+                try {
+                    this.actionNeededLock.wait();
+                } catch (InterruptedException ie) {
+                    notifyUsers(MessageCreator.error("Game server error occurred."));
+                    for (User user : this.getUsers()) this.removeUser(user);
+                    return;
                 }
-                //DISABLING THE CURRENT USER'S INPUT.
-                this.activeUser = null;
-                currentUser.sendMessage(MessageCreator.turnEnable(false));
-                this.subPhaseCompletion.replace("assistantPlayed", 0);
             }
-            this.getGameModel().updateTurnOrder();
-            this.phase = "action";
+            //DISABLING THE CURRENT USER'S INPUT.
+            this.activeUser = null;
+            currentUser.sendMessage(MessageCreator.turnEnable(false));
+            this.subPhaseCompletion.replace("assistantPlayed", 0);
+        }
+        this.getGameModel().updateTurnOrder();
+        this.phase = "action";
     }
 
     /**
@@ -328,12 +327,12 @@ public class GameController extends Thread {
             currentUser.sendMessage(MessageCreator.turnEnable(true));
 
             //WAITING FOR A CLOUD TO BE CHOSEN (refill command)
-            while (this.subPhaseCompletion.get("cloudChosen")==0 || !this.isFull()) {
+            while (this.subPhaseCompletion.get("cloudChosen") == 0 || !this.isFull()) {
                 try {
                     this.actionNeededLock.wait();
-                }catch(InterruptedException ie) {
+                } catch (InterruptedException ie) {
                     notifyUsers(MessageCreator.error("Game server error occurred."));
-                    for(User user : this.getUsers()) this.removeUser(user);
+                    for (User user : this.getUsers()) this.removeUser(user);
                     return;
                 }
             }
@@ -348,7 +347,7 @@ public class GameController extends Thread {
                 this.getGameModel().nextRound();
                 this.round++;
                 this.phase = "planning";
-            }finally {
+            } finally {
                 this.subPhaseCompletion.replace("studentsMoved", 0);
                 this.subPhaseCompletion.replace("motherNatureMoved", 0);
                 this.subPhaseCompletion.replace("cloudChosen", 0);
@@ -369,7 +368,7 @@ public class GameController extends Thread {
      * @param player    The name of the player that played the card.
      * @param assistant The id of the card that tha player added.
      */
-    private void playAssistantCard(String player, int assistant) {
+    public void playAssistantCard(String player, int assistant) {
         try {
             this.gameModel.getPlayerByName(player).playAssistant(assistant);
         } catch (AlreadyPlayedException e) {
@@ -378,7 +377,7 @@ public class GameController extends Thread {
 
         try {
             this.gameModel.getGameBoard().addPlayedAssistant(this.gameModel.getPlayerByName(player), new Assistant(assistant));
-            this.subPhaseCompletion.replace("assistantPlayed",1);
+            this.subPhaseCompletion.replace("assistantPlayed", 1);
         } catch (IllegalMoveException e) {
             this.getUsers().remove(this.getUser(player));
         }
@@ -391,49 +390,62 @@ public class GameController extends Thread {
      *
      * @param command The json with the directions of the movements.
      */
-    private void moveStudent(JsonObject command) {
+    public void moveStudent(JsonObject command) {
         try {
-            switch (command.get("from").getAsString()) {
-                case "entrance" -> {
-                    this.gameModel.getPlayerByName(command.get("player").getAsString()).getSchoolBoard().removeFromEntrance(HouseColor.valueOf(command.get("color").getAsString()));
-                    boolean effectActive = false;
-                    for(SpecialCharacter sc : this.getGameModel().getGameBoard().getCharacters()){
-                        if (sc.isActive()) {
-                            effectActive = true;
-                            break;
-                        }
-                    }
-                    if(!effectActive) this.subPhaseCompletion.replace("studentsMoved", this.subPhaseCompletion.get("studentsMoved")+1);
-                }
-                case "diningRoom" -> {
-                    this.gameModel.getPlayerByName(command.get("player").getAsString()).getSchoolBoard().removeFromDiningRoom(HouseColor.valueOf(command.get("color").getAsString()));
-                    checkProfessor(command.get("color").getAsString(), command.get("player").getAsString());
-                }
-                case "card" -> {
-                    boolean check = false;
-                    for (SpecialCharacter c : this.gameModel.getGameBoard().getCharacters()) {
-                        if (c.getId() == 1 && c.isActive()) {
-                            //TODO: check for Exception??
-                            ((MonkEffect) c.getEffect()).effect(HouseColor.valueOf(command.get("color").getAsString()), null);
-                            check = true;
-                            break;
-                        } else if (c.getId() == 7 && c.isActive()) {
-                            //TODO: Effect 7 (Jester)
-                        }
-                    }
-                    if (!check) {
-                        //TODO: send it
-                        MessageCreator.error("Error: card not available");
-                    }
-                }
-                default ->
-                        //TODO: send it
-                        MessageCreator.error("Wrong command.");
-            }
+            moveStudentFrom(command);
         } catch (NoStudentException e) {
             e.printStackTrace();
         }
+        moveStudentTo(command);
 
+        notifyUsersExcept(command, getUser(this.activeUser));
+
+        this.saveGame();
+    }
+
+    private void moveStudentFrom(JsonObject command) throws NoStudentException {
+        switch (command.get("from").getAsString()) {
+            case "entrance" -> {
+                this.gameModel.getPlayerByName(command.get("player").getAsString()).getSchoolBoard().removeFromEntrance(HouseColor.valueOf(command.get("color").getAsString()));
+                boolean effectActive = false;
+                for (SpecialCharacter sc : this.getGameModel().getGameBoard().getCharacters()) {
+                    if (sc.isActive()) {
+                        effectActive = true;
+                        break;
+                    }
+                }
+                if (!effectActive)
+                    this.subPhaseCompletion.replace("studentsMoved", this.subPhaseCompletion.get("studentsMoved") + 1);
+            }
+            case "diningRoom" -> {
+                this.gameModel.getPlayerByName(command.get("player").getAsString()).getSchoolBoard().removeFromDiningRoom(HouseColor.valueOf(command.get("color").getAsString()));
+                checkProfessor(command.get("color").getAsString(), command.get("player").getAsString());
+            }
+            case "card" -> {
+                boolean check = false;
+                for (SpecialCharacter c : this.gameModel.getGameBoard().getCharacters()) {
+                    if (c.getId() == 1 && c.isActive()) {
+                        ((MonkEffect) c.getEffect()).effect(HouseColor.valueOf(command.get("color").getAsString()), null);
+                        check = true;
+                        break;
+                    } else if (c.getId() == 7 && c.isActive()) {
+                        ((JesterEffect) c.getEffect()).effect(HouseColor.valueOf(command.get("color").getAsString()), null);
+                        check = true;
+                        break;
+                    }
+                }
+                if (!check) {
+                    //TODO: send it
+                    MessageCreator.error("Error: card not available");
+                }
+            }
+            default ->
+                    //TODO: send it
+                    MessageCreator.error("Wrong command.");
+        }
+    }
+
+    private void moveStudentTo(JsonObject command) {
         switch (command.get("to").getAsString()) {
             case "diningRoom" -> {
                 this.gameModel.getPlayerByName(command.get("player").getAsString()).getSchoolBoard().addToDiningRoom(HouseColor.valueOf(command.get("color").getAsString()));
@@ -458,10 +470,13 @@ public class GameController extends Thread {
                 boolean check = false;
                 for (SpecialCharacter c : this.gameModel.getGameBoard().getCharacters()) {
                     if (c.getId() == 1 && c.isActive()) {
-                        ((MonkEffect) c.getEffect()).effect(null, HouseColor.valueOf(command.get("color").getAsString()));                        check = true;
+                        ((MonkEffect) c.getEffect()).effect(null, HouseColor.valueOf(command.get("color").getAsString()));
+                        check = true;
                         break;
                     } else if (c.getId() == 7 && c.isActive()) {
-
+                        ((JesterEffect) c.getEffect()).effect(null, HouseColor.valueOf(command.get("color").getAsString()));
+                        check = true;
+                        break;
                     }
                 }
                 if (!check) {
@@ -473,8 +488,6 @@ public class GameController extends Thread {
                     //TODO: send message
                     MessageCreator.error("Wrong command.");
         }
-
-        this.saveGame();
     }
 
     /**
@@ -482,19 +495,18 @@ public class GameController extends Thread {
      *
      * @param idIsland The id of the island where mother nature will be set.
      */
-    private void moveMotherNature(int idIsland) {
+    public void moveMotherNature(int idIsland) {
         Map<Player, Integer> influence;
         Island island = null;
         try {
             island = this.gameModel.getGameBoard().getIslandById(idIsland);
             this.gameModel.getGameBoard().moveMotherNature(island, this.gameModel.getGameBoard().getPlayedAssistants().get(this.gameModel.getCurrentPlayer()));
-            this.subPhaseCompletion.replace("motherNatureMoved",1);
+            this.subPhaseCompletion.replace("motherNatureMoved", 1);
         } catch (IllegalMoveException | IslandNotFoundException e) {
             //TODO: send message
             MessageCreator.error("Error");
-            e.printStackTrace();
         }
-        if (island != null) {
+        if (island != null && !island.isBanned()) {
             influence = this.gameModel.getGameBoard().getInfluence(island);
             int max = Collections.max(influence.values());
             List<Player> mostInfluential = influence.entrySet().stream().filter(entry -> entry.getValue() == max).map(entry -> entry.getKey()).collect(Collectors.toList());
@@ -508,7 +520,6 @@ public class GameController extends Thread {
                             }
                         }
                     } catch (NotEnoughTowersException e1) {
-                        //TODO: Check for it
                         endGame();
                     } catch (NegativeException e2) {
                         MessageCreator.error("Error");
@@ -526,16 +537,15 @@ public class GameController extends Thread {
                             }
                             island.setTower(mostInfluential.get(0).getSchoolBoard().getTowerType());
                         } catch (NotEnoughTowersException e1) {
-                            //TODO: Check for it
                             endGame();
                         } catch (NegativeException e2) {
+                            //TODO: send it
                             MessageCreator.error("Error");
-                            e2.printStackTrace();
                         }
                     }
                 }
             }
-        }
+        } else if (island.isBanned()) island.removeBan();
 
         this.saveGame();
     }
@@ -545,7 +555,7 @@ public class GameController extends Thread {
      *
      * @param command The json with the information about the choosing of the cloud.
      */
-    private void chooseCloud(JsonObject command) {
+    public void chooseCloud(JsonObject command) {
         this.gameModel.getPlayerByName(command.get("player").getAsString()).getSchoolBoard().addToEntrance(this.gameModel.getGameBoard().getClouds().get(command.get("cloud").getAsInt()).flush());
         this.subPhaseCompletion.replace("cloudChosen", 1);
 
@@ -555,12 +565,21 @@ public class GameController extends Thread {
     /**
      * This method manages the payment of the special character.
      *
-     * @param specialCharacter The id of the special character that will be paid.
+     * @param command The json that contains all the information of the special character that will be paid.
      */
-    private void paySpecialCharacter(int specialCharacter) {
-        this.gameModel.getGameBoard().getCharacters().get(specialCharacter).activateEffect();
+    public void paySpecialCharacter(JsonObject command) {
+        this.gameModel.getGameBoard().getCharacters().get(command.get("island").getAsInt()).activateEffect();
+        notifyUsersExcept(command, getUser(this.activeUser));
 
         this.saveGame();
+    }
+
+    public void setBan(int island) {
+        try {
+            this.gameModel.getGameBoard().getIslandById(island).setBan();
+        } catch (IslandNotFoundException e) {
+            //TODO: sendError
+        }
     }
 
     /**
@@ -568,7 +587,7 @@ public class GameController extends Thread {
      *
      * @return A boolean value, true whether the game will have to end.
      */
-    private boolean endGame() {
+    public boolean endGame() {
         boolean end = false;
         List<Player> winners = new ArrayList<>();
         if (this.gameModel.getPlayers().stream().anyMatch(player -> player.getSchoolBoard().getTowersNumber() == 0)) {
@@ -578,21 +597,27 @@ public class GameController extends Thread {
             }
         } else if (this.gameModel.getGameBoard().getIslands().size() == 3) {
             end = true;
-            checkForWinners();
+            winners = checkForWinners();
         } else if ((this.gameModel.getCurrentPlayer().equals(this.gameModel.getTurnOrder().get(this.expectedPlayers - 1)))) {
             if (this.gameModel.getGameBoard().getBag().isEmpty() || this.gameModel.getPlayers().get(0).getAssistants().size() == 0) {
                 end = true;
-                checkForWinners();
+                winners = checkForWinners();
             }
         }
+        if(end){
+            for(Player p : this.gameModel.getPlayers()){
+                //TODO: fix
+                if (winners.contains(p)) MessageCreator.win(p.getName());
+            }
+        }
+
         return end;
     }
 
     /**
      * This method is a helper for the endGame method.
      */
-    private void checkForWinners() {
-        boolean win = false;
+    private List<Player> checkForWinners() {
         List<Player> winners = new ArrayList<>();
 
         Map<Player, Integer> numTowerPlayers = new HashMap<>();
@@ -602,7 +627,6 @@ public class GameController extends Thread {
         int min = Collections.min(numTowerPlayers.values());
         List<Player> possibleWinners = numTowerPlayers.entrySet().stream().filter(entry -> entry.getValue() == min).map(entry -> entry.getKey()).collect(Collectors.toList());
         if (possibleWinners.size() == 1 || (possibleWinners.size() == 2 && possibleWinners.get(0).getSchoolBoard().getTowerType().equals(possibleWinners.get(1).getSchoolBoard().getTowerType()))) {
-            win = true;
             winners.addAll(possibleWinners);
 
         } else {
@@ -616,14 +640,9 @@ public class GameController extends Thread {
             possibleWinners = numProfessorsPlayers.entrySet().stream().filter(entry -> entry.getValue() == max).map(entry -> entry.getKey()).collect(Collectors.toList());
             if (possibleWinners.size() == 1 || (possibleWinners.size() == 2 && possibleWinners.get(0).getSchoolBoard().getTowerType().equals(possibleWinners.get(1).getSchoolBoard().getTowerType()))) {
                 winners.addAll(possibleWinners);
-                win = true;
             }
         }
-        if (win) {
-            //TODO: notify winners
-        } else {
-            //TODO: Tie
-        }
+        return winners;
     }
 
     /**
@@ -643,15 +662,15 @@ public class GameController extends Thread {
         this.gameModel.getGameBoard().setProfessor(HouseColor.valueOf(color), this.gameModel.getPlayerByName(newProfessorOwner));
     }
 
-    public void notifyUsers(JsonObject message){
-        for(User user : this.getUsers()){
+    public void notifyUsers(JsonObject message) {
+        for (User user : this.getUsers()) {
             user.sendMessage(message);
         }
     }
 
-    public void notifyUsersExcept(JsonObject message, User exception){
-        for(User user : this.getUsers()){
-            if(user.getUsername().equals(exception.getUsername())) user.sendMessage(message);
+    public void notifyUsersExcept(JsonObject message, User exception) {
+        for (User user : this.getUsers()) {
+            if (user.getUsername().equals(exception.getUsername())) user.sendMessage(message);
         }
     }
 }
