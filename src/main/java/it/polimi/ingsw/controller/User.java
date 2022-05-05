@@ -6,6 +6,7 @@ import it.polimi.ingsw.network.server.Server;
 import it.polimi.ingsw.utilities.MessageCreator;
 import it.polimi.ingsw.utilities.exceptions.FullGameException;
 import it.polimi.ingsw.utilities.exceptions.GameNotFoundException;
+import it.polimi.ingsw.utilities.exceptions.IllegalMoveException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -54,10 +55,6 @@ public class User extends Thread {
         socket.setSoTimeout(10000);
     }
 
-    public boolean isLogged() {
-        return logged;
-    }
-
     /**
      * Returns the name associated to the user.
      *
@@ -88,7 +85,7 @@ public class User extends Thread {
                 incomingMessage = getCommand();
                 if (!incomingMessage.get("type").getAsString().equals("pong") && !incomingMessage.get("type").getAsString().equals("error"))
                     manageCommand(incomingMessage);
-            } catch (IOException e) {
+            } catch (IOException | IllegalMoveException e) {
                 // If socket time out expires.
                 disconnected();
             }
@@ -124,7 +121,7 @@ public class User extends Thread {
      *
      * @param command The command to manage.
      */
-    private void manageCommand(JsonObject command) {
+    private void manageCommand(JsonObject command) throws IllegalMoveException {
         switch (command.get("type").getAsString()) {
             case "ping" -> sendMessage(MessageCreator.pong());
             case "gameCreation" -> sendMessage(MessageCreator.gameCreation(Matchmaking.gameCreation(command, server)));

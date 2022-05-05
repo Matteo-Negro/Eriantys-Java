@@ -93,15 +93,10 @@ public class MessageCreator {
      */
     public static JsonObject status(GameController game){
         JsonObject reply = new JsonObject();
+        reply.addProperty("round", game.getRound());
         reply.addProperty("activeUser", game.getActiveUser());
         reply.addProperty("phase", game.getPhase());
-        JsonArray subPhaseCompletion = new JsonArray();
-        for(String sp : game.getSubPhaseCompletion().keySet()){
-            JsonObject subPhase = new JsonObject();
-            subPhase.addProperty(sp,game.getSubPhaseCompletion().get(sp));
-            subPhaseCompletion.add(subPhase);
-        }
-        reply.add("subPhaseCompletion", subPhaseCompletion);
+        reply.addProperty("subPhase", game.getSubPhase().toString());
         reply.add("players", ObjectsToJson.toJsonArray(game.getGameModel().getPlayers(),ObjectsToJson.GET_PLAYERS));
         reply.add("gameBoard", ObjectsToJson.toJsonObject(game.getGameModel().getGameBoard()));
         return reply;

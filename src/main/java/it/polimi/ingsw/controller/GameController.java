@@ -8,6 +8,7 @@ import it.polimi.ingsw.model.board.effects.JesterEffect;
 import it.polimi.ingsw.model.board.effects.MonkEffect;
 import it.polimi.ingsw.model.player.Assistant;
 import it.polimi.ingsw.model.player.Player;
+import it.polimi.ingsw.utilities.GameControllerStates;
 import it.polimi.ingsw.utilities.HouseColor;
 import it.polimi.ingsw.utilities.MessageCreator;
 import it.polimi.ingsw.utilities.exceptions.*;
@@ -33,14 +34,15 @@ public class GameController extends Thread {
     private final GamePlatform gameModel;
     private final String savePath;
     private final Map<String, User> users;
+    private int connectedPlayers;
+    private final String id;
+    private int round;
+    private String phase;
+    private GameControllerStates subPhase;
+    private boolean movementEffectActive;
     private final Object isFullLock;
     private final Object actionNeededLock;
-    private int connectedPlayers;
-    private String id;
-    private String phase;
-    private int round;
     private String activeUser;
-    private Map<String, Integer> subPhaseCompletion;
 
     /**
      * The game controller constructor.
@@ -53,18 +55,15 @@ public class GameController extends Thread {
         this.connectedPlayers = 0;
         this.expectedPlayers = expectedPlayers;
         this.gameModel = gameModel;
-        //this.id=null;
+        this.id=null;
         this.phase = "planning";
         this.round = 0;
         this.savePath = savePath;
         this.users = new HashMap<>();
         this.isFullLock = new Object();
         this.actionNeededLock = new Object();
-        this.subPhaseCompletion = new HashMap<>();
-        this.subPhaseCompletion.put("assistantPlayed", 0);
-        this.subPhaseCompletion.put("studentsMoved", 0);
-        this.subPhaseCompletion.put("motherNatureMoved", 0);
-        this.subPhaseCompletion.put("cloudChosen", 0);
+        this.subPhase = GameControllerStates.PLAY_ASSISTANT;
+        this.movementEffectActive = false;
         this.activeUser = null;
     }
 
@@ -157,17 +156,23 @@ public class GameController extends Thread {
     }
 
     /**
-     * @return the activeUser attribute.
+     *
+     *
      */
-    public String getActiveUser() {
-        return activeUser;
+    public GameControllerStates getSubPhase(){
+        return subPhase;
     }
 
-    /**
-     * @return the subPhaseCompletion map.
-     */
-    public Map<String, Integer> getSubPhaseCompletion() {
-        return subPhaseCompletion;
+    public String getActiveUser() {
+        return this.activeUser;
+    }
+
+    public boolean isMovementEffectActive(){
+        return this.movementEffectActive;
+    }
+
+    private void setSubPhase(GameControllerStates state){
+        this.subPhase = state;
     }
 
     /**
@@ -287,9 +292,9 @@ public class GameController extends Thread {
         Player roundWinner = this.getGameModel().getRoundWinner();
         int indexOfRoundWinner = this.getGameModel().getPlayers().indexOf(roundWinner);
 
-        for (int i = 0; i < this.getExpectedPlayers(); i++) {
+        for (int i=0; i<this.getExpectedPlayers(); i++) {
 
-            Player currentPlayer = this.getGameModel().getPlayers().get((indexOfRoundWinner + i) % this.getExpectedPlayers());
+            Player currentPlayer = this.getGameModel().getPlayers().get((indexOfRoundWinner+i) % this.getExpectedPlayers());
 
             //ENABLING THE CURRENT USER INPUT (taken from the clockwise order).
             User currentUser = getUser(currentPlayer.getName());
@@ -297,19 +302,19 @@ public class GameController extends Thread {
             currentUser.sendMessage(MessageCreator.turnEnable(true));
 
             //WAITING FOR ASSISTANT TO BE PLAYED
-            while (this.subPhaseCompletion.get("assistantPlayed") == 0 || !this.isFull()) {
+            while (this.getSubPhase()!=GameControllerStates.ASSISTANT_PLAYED || !this.isFull()) {
                 try {
                     this.actionNeededLock.wait();
-                } catch (InterruptedException ie) {
+                }catch(InterruptedException ie) {
                     notifyUsers(MessageCreator.error("Game server error occurred."));
-                    for (User user : this.getUsers()) this.removeUser(user);
+                    for(User user : this.getUsers()) this.removeUser(user);
                     return;
                 }
             }
             //DISABLING THE CURRENT USER'S INPUT.
             this.activeUser = null;
             currentUser.sendMessage(MessageCreator.turnEnable(false));
-            this.subPhaseCompletion.replace("assistantPlayed", 0);
+            this.setSubPhase(GameControllerStates.PLAY_ASSISTANT);
         }
         this.getGameModel().updateTurnOrder();
         this.phase = "action";
@@ -322,17 +327,17 @@ public class GameController extends Thread {
 
         for (Player currentPlayer : this.getGameModel().getTurnOrder()) {
             //ENABLING THE INPUT OF THE CURRENT USER (taken from the turn list).
-            this.activeUser = currentPlayer.getName();
             User currentUser = getUser(currentPlayer.getName());
+            this.activeUser = currentUser.getUsername();
             currentUser.sendMessage(MessageCreator.turnEnable(true));
 
             //WAITING FOR A CLOUD TO BE CHOSEN (refill command)
-            while (this.subPhaseCompletion.get("cloudChosen") == 0 || !this.isFull()) {
+            while (this.getSubPhase()!=GameControllerStates.END_TURN || !this.isFull()) {
                 try {
                     this.actionNeededLock.wait();
-                } catch (InterruptedException ie) {
+                }catch(InterruptedException ie) {
                     notifyUsers(MessageCreator.error("Game server error occurred."));
-                    for (User user : this.getUsers()) this.removeUser(user);
+                    for(User user : this.getUsers()) this.removeUser(user);
                     return;
                 }
             }
@@ -343,14 +348,12 @@ public class GameController extends Thread {
 
             try {
                 this.getGameModel().nextTurn();
+                this.setSubPhase(GameControllerStates.MOVE_STUDENT_1);
             } catch (RoundConcluded rc) {
                 this.getGameModel().nextRound();
                 this.round++;
                 this.phase = "planning";
-            } finally {
-                this.subPhaseCompletion.replace("studentsMoved", 0);
-                this.subPhaseCompletion.replace("motherNatureMoved", 0);
-                this.subPhaseCompletion.replace("cloudChosen", 0);
+                this.setSubPhase(GameControllerStates.PLAY_ASSISTANT);
             }
 
             if (endGame()) {
@@ -377,7 +380,7 @@ public class GameController extends Thread {
 
         try {
             this.gameModel.getGameBoard().addPlayedAssistant(this.gameModel.getPlayerByName(player), new Assistant(assistant));
-            this.subPhaseCompletion.replace("assistantPlayed", 1);
+            this.setSubPhase(GameControllerStates.ASSISTANT_PLAYED);
         } catch (IllegalMoveException e) {
             this.getUsers().remove(this.getUser(player));
         }
@@ -390,12 +393,14 @@ public class GameController extends Thread {
      *
      * @param command The json with the directions of the movements.
      */
-    public void moveStudent(JsonObject command) {
-        try {
+    public void moveStudent(JsonObject command) throws IllegalMoveException{
+
+        try{
             moveStudentFrom(command);
-        } catch (NoStudentException e) {
-            e.printStackTrace();
+        }catch(NoStudentException e){
+            throw new IllegalMoveException();
         }
+
         moveStudentTo(command);
 
         notifyUsersExcept(command, getUser(this.activeUser));
@@ -403,19 +408,27 @@ public class GameController extends Thread {
         this.saveGame();
     }
 
-    private void moveStudentFrom(JsonObject command) throws NoStudentException {
+    private void moveStudentFrom(JsonObject command) throws NoStudentException, IllegalMoveException {
         switch (command.get("from").getAsString()) {
             case "entrance" -> {
                 this.gameModel.getPlayerByName(command.get("player").getAsString()).getSchoolBoard().removeFromEntrance(HouseColor.valueOf(command.get("color").getAsString()));
-                boolean effectActive = false;
-                for (SpecialCharacter sc : this.getGameModel().getGameBoard().getCharacters()) {
-                    if (sc.isActive()) {
-                        effectActive = true;
-                        break;
+
+                //Updating subphase.
+                if(!isMovementEffectActive()) {
+                    switch (this.getSubPhase()) {
+                        case MOVE_STUDENT_1 -> this.setSubPhase(GameControllerStates.MOVE_STUDENT_2);
+                        case MOVE_STUDENT_2 -> this.setSubPhase(GameControllerStates.MOVE_STUDENT_3);
+                        case MOVE_STUDENT_3 -> {
+                            if ((this.getExpectedPlayers() == 3)) {
+                                this.setSubPhase(GameControllerStates.MOVE_STUDENT_4);
+                            } else {
+                                this.setSubPhase(GameControllerStates.MOVE_MOTHER_NATURE);
+                            }
+                        }
+                        case MOVE_STUDENT_4 -> this.setSubPhase(GameControllerStates.MOVE_MOTHER_NATURE);
+                        default -> throw new IllegalMoveException();
                     }
                 }
-                if (!effectActive)
-                    this.subPhaseCompletion.replace("studentsMoved", this.subPhaseCompletion.get("studentsMoved") + 1);
             }
             case "diningRoom" -> {
                 this.gameModel.getPlayerByName(command.get("player").getAsString()).getSchoolBoard().removeFromDiningRoom(HouseColor.valueOf(command.get("color").getAsString()));
@@ -435,17 +448,14 @@ public class GameController extends Thread {
                     }
                 }
                 if (!check) {
-                    //TODO: send it
-                    MessageCreator.error("Error: card not available");
+                    throw new IllegalMoveException();
                 }
             }
-            default ->
-                    //TODO: send it
-                    MessageCreator.error("Wrong command.");
+            default -> throw new IllegalMoveException();
         }
     }
 
-    private void moveStudentTo(JsonObject command) {
+    private void moveStudentTo(JsonObject command) throws IllegalMoveException{
         switch (command.get("to").getAsString()) {
             case "diningRoom" -> {
                 this.gameModel.getPlayerByName(command.get("player").getAsString()).getSchoolBoard().addToDiningRoom(HouseColor.valueOf(command.get("color").getAsString()));
@@ -462,8 +472,7 @@ public class GameController extends Thread {
                 try {
                     this.gameModel.getGameBoard().getIslandById(command.get("toId").getAsInt()).addStudent(HouseColor.valueOf(command.get("color").getAsString()));
                 } catch (IslandNotFoundException e) {
-                    //TODO: send it
-                    MessageCreator.error("Error: Island not find");
+                    throw new IllegalMoveException();
                 }
             }
             case "card" -> {
@@ -479,14 +488,10 @@ public class GameController extends Thread {
                         break;
                     }
                 }
-                if (!check) {
-                    //TODO: send message
-                    MessageCreator.error("Error: card not available");
-                }
+                if (!check) throw new IllegalMoveException();
+
             }
-            default ->
-                    //TODO: send message
-                    MessageCreator.error("Wrong command.");
+            default -> throw new IllegalMoveException();
         }
     }
 
@@ -495,18 +500,17 @@ public class GameController extends Thread {
      *
      * @param idIsland The id of the island where mother nature will be set.
      */
-    public void moveMotherNature(int idIsland) {
+    public void moveMotherNature(int idIsland) throws IllegalMoveException{
         Map<Player, Integer> influence;
-        Island island = null;
+        Island island;
         try {
             island = this.gameModel.getGameBoard().getIslandById(idIsland);
             this.gameModel.getGameBoard().moveMotherNature(island, this.gameModel.getGameBoard().getPlayedAssistants().get(this.gameModel.getCurrentPlayer()));
-            this.subPhaseCompletion.replace("motherNatureMoved", 1);
-        } catch (IllegalMoveException | IslandNotFoundException e) {
-            //TODO: send message
-            MessageCreator.error("Error");
+            this.setSubPhase(GameControllerStates.CHOOSE_CLOUD);
+        } catch (IslandNotFoundException e) {
+            throw new IllegalMoveException();
         }
-        if (island != null && !island.isBanned()) {
+        if (!island.isBanned()) {
             influence = this.gameModel.getGameBoard().getInfluence(island);
             int max = Collections.max(influence.values());
             List<Player> mostInfluential = influence.entrySet().stream().filter(entry -> entry.getValue() == max).map(entry -> entry.getKey()).collect(Collectors.toList());
@@ -539,13 +543,12 @@ public class GameController extends Thread {
                         } catch (NotEnoughTowersException e1) {
                             endGame();
                         } catch (NegativeException e2) {
-                            //TODO: send it
-                            MessageCreator.error("Error");
+                            throw new IllegalMoveException();
                         }
                     }
                 }
             }
-        } else if (island.isBanned()) island.removeBan();
+        } else island.removeBan();
 
         this.saveGame();
     }
@@ -557,7 +560,7 @@ public class GameController extends Thread {
      */
     public void chooseCloud(JsonObject command) {
         this.gameModel.getPlayerByName(command.get("player").getAsString()).getSchoolBoard().addToEntrance(this.gameModel.getGameBoard().getClouds().get(command.get("cloud").getAsInt()).flush());
-        this.subPhaseCompletion.replace("cloudChosen", 1);
+        this.setSubPhase(GameControllerStates.END_TURN);
 
         this.saveGame();
     }
@@ -568,17 +571,22 @@ public class GameController extends Thread {
      * @param command The json that contains all the information of the special character that will be paid.
      */
     public void paySpecialCharacter(JsonObject command) {
-        this.gameModel.getGameBoard().getCharacters().get(command.get("island").getAsInt()).activateEffect();
+        int character = command.get("character").getAsInt();
+        this.gameModel.getGameBoard().getCharacters().get(character).activateEffect();
+
+        //TODO manage the different specialCharacter effects.
+
+        if(character==1 || character==7 ||  character==10 || character==11) this.movementEffectActive = true;
         notifyUsersExcept(command, getUser(this.activeUser));
 
         this.saveGame();
     }
 
-    public void setBan(int island) {
+    public void setBan(int island) throws IllegalMoveException{
         try {
             this.gameModel.getGameBoard().getIslandById(island).setBan();
         } catch (IslandNotFoundException e) {
-            //TODO: sendError
+            throw new IllegalMoveException();
         }
     }
 
