@@ -179,7 +179,9 @@ public class JsonToObjects {
                     specialCharacter.get("effectCost").getAsInt(),
                     specialCharacter.get("alreadyPaid").getAsBoolean(),
                     specialCharacter.get("paidInRound").getAsBoolean(),
-                    specialCharacter.get("active").getAsBoolean()
+                    specialCharacter.get("active").getAsBoolean(),
+                    specialCharacter.has("containedStudents") ? parseHouseColorIntMap(specialCharacter.get("containedStudents").getAsJsonObject()) : null,
+                    specialCharacter.has("availableBans") ? specialCharacter.get("availableBans").getAsInt() : 0
             ));
         }
         return specialCharactersList;

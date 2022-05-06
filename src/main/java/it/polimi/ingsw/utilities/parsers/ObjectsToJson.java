@@ -7,6 +7,10 @@ import it.polimi.ingsw.model.board.Cloud;
 import it.polimi.ingsw.model.board.GameBoard;
 import it.polimi.ingsw.model.board.Island;
 import it.polimi.ingsw.model.board.SpecialCharacter;
+import it.polimi.ingsw.model.board.effects.HerbalistEffect;
+import it.polimi.ingsw.model.board.effects.JesterEffect;
+import it.polimi.ingsw.model.board.effects.MonkEffect;
+import it.polimi.ingsw.model.board.effects.PrincessEffect;
 import it.polimi.ingsw.model.player.Assistant;
 import it.polimi.ingsw.model.player.Player;
 import it.polimi.ingsw.model.player.SchoolBoard;
@@ -134,7 +138,16 @@ public enum ObjectsToJson {
         object.addProperty("alreadyPaid", specialCharacter.isAlreadyPaid());
         object.addProperty("paidInRound", specialCharacter.isPaidInRound());
         object.addProperty("active", specialCharacter.isActive());
-        object.add("containedStudents", parseHouseColorIntMap(specialCharacter.getEffect().getStudents()));
+        switch (specialCharacter.getEffect().getId()) {
+            case 1 ->
+                    object.add("containedStudents", parseHouseColorIntMap(((MonkEffect) specialCharacter.getEffect()).getStudents()));
+            case 5 ->
+                    object.addProperty("availableBans", ((HerbalistEffect) specialCharacter.getEffect()).getAvailableBans());
+            case 7 ->
+                    object.add("containedStudents", parseHouseColorIntMap(((JesterEffect) specialCharacter.getEffect()).getStudents()));
+            case 11 ->
+                    object.add("containedStudents", parseHouseColorIntMap(((PrincessEffect) specialCharacter.getEffect()).getStudents()));
+        }
 
         return object;
     }

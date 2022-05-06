@@ -31,7 +31,7 @@ public class SpecialCharacter {
         isActive = false;
         alreadyPaid = false;
         paidInRound = false;
-        assignedEffect = getEffectBy(id, students);
+        assignedEffect = getEffectBy(id, students, 5);
         effectCost = assignedEffect.getCost();
     }
 
@@ -44,11 +44,11 @@ public class SpecialCharacter {
      * @param statusPaidInRound True if the special character has already been payed and it's effect has already been activated during this round.
      * @param statusIsActive    True if the special character's effect is active.
      */
-    public SpecialCharacter(int statusId, int statusEffectCost, boolean statusAlreadyPaid, boolean statusPaidInRound, boolean statusIsActive, Map<HouseColor, Integer> statusStudents) {
+    public SpecialCharacter(int statusId, int statusEffectCost, boolean statusAlreadyPaid, boolean statusPaidInRound, boolean statusIsActive, Map<HouseColor, Integer> statusStudents, int bans) {
 
         this.id = statusId;
         this.effectCost = statusEffectCost;
-        this.assignedEffect = getEffectBy(statusId, statusStudents);
+        this.assignedEffect = getEffectBy(statusId, statusStudents, bans);
         this.alreadyPaid = statusAlreadyPaid;
         this.paidInRound = statusPaidInRound;
         this.isActive = statusIsActive;
@@ -60,13 +60,13 @@ public class SpecialCharacter {
      * @param id The identification number of the effect.
      * @return The required effect.
      */
-    private Effect getEffectBy(int id, Map<HouseColor, Integer> students) {
+    private Effect getEffectBy(int id, Map<HouseColor, Integer> students, int bans) {
         return switch (id) {
             case 1 -> new MonkEffect(students);
             case 2 -> new FarmerEffect();
             case 3 -> new HeraldEffect();
             case 4 -> new MessengerEffect();
-            case 5 -> new HerbalistEffect();
+            case 5 -> new HerbalistEffect(bans);
             case 6 -> new CentaurEffect();
             case 7 -> new JesterEffect(students);
             case 8 -> new KnightEffect();

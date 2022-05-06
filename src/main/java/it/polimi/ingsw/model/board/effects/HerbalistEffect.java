@@ -1,9 +1,5 @@
 package it.polimi.ingsw.model.board.effects;
 
-import it.polimi.ingsw.utilities.HouseColor;
-
-import java.util.EnumMap;
-
 /**
  * Specific effect n.5
  *
@@ -13,14 +9,6 @@ import java.util.EnumMap;
 public class HerbalistEffect extends Effect {
 
     private int availableBans;
-
-    /**
-     * Class constructor.
-     * It creates an instance of the class containing a maximum number of possible bans for the islands.
-     */
-    public HerbalistEffect() {
-        availableBans = 5;
-    }
 
     /**
      * Class constructor used to restore the game.
@@ -44,10 +32,11 @@ public class HerbalistEffect extends Effect {
     /**
      * effect() method overload.
      * Decides to call the takeBan() method or the restoreBan() method, through a conditional branch on command parameter.
-     * @param command       The action to be performed.
+     *
+     * @param command The action to be performed.
      */
     public void effect(String command) {
-        switch (command){
+        switch (command) {
             case "take" -> takeBan();
             case "restore" -> restoreBan();
         }
