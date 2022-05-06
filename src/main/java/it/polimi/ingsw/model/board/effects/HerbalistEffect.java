@@ -60,15 +60,6 @@ public class HerbalistEffect extends Effect {
     }
 
     /**
-     * Returns the map saved in the students attribute.
-     *
-     * @return students attribute.
-     */
-    public EnumMap<HouseColor, Integer> getStudents() {
-        return null;
-    }
-
-    /**
      * Returns the availableBans attribute.
      *
      * @return availableBans attribute.

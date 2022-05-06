@@ -49,7 +49,26 @@ public class GameBoard {
             for (int i = 0; i < 12; i++) randomVector.add(i);
             Collections.shuffle(randomVector);
             for (int i = 0; i < 3; i++) {
-                this.characters.add(new SpecialCharacter(i));
+                
+                Map<HouseColor, Integer> students = new EnumMap<>(HouseColor.class);
+                students.put(HouseColor.RED, 0);
+                students.put(HouseColor.BLUE, 0);
+                students.put(HouseColor.GREEN, 0);
+                students.put(HouseColor.YELLOW, 0);
+                students.put(HouseColor.FUCHSIA, 0);
+                int studentsNumber;
+
+                switch(randomVector.get(i)){
+                    case 1, 11 -> studentsNumber = 4;
+                    case 7 -> studentsNumber = 6;
+                    default -> studentsNumber = 0;
+                }
+
+                for(int c=0; c<studentsNumber; c++){
+                    HouseColor color=this.getBag().pop();
+                    students.replace(color, students.get(color)+1);
+                }
+                this.characters.add(new SpecialCharacter(randomVector.get(i), students));
             }
         }
         Arrays.stream(HouseColor.values()).forEach(color -> this.professors.put(color, null));

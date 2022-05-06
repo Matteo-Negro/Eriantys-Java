@@ -30,11 +30,4 @@ public abstract class Effect {
      * @return cost attribute
      */
     public abstract int getCost();
-
-    /**
-     * returns the students contained into the card.
-     *
-     * @return The students map.
-     */
-    public abstract EnumMap<HouseColor, Integer> getStudents();
 }
