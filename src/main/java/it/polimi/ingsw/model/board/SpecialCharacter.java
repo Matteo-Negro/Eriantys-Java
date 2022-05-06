@@ -1,6 +1,9 @@
 package it.polimi.ingsw.model.board;
 
 import it.polimi.ingsw.model.board.effects.*;
+import it.polimi.ingsw.utilities.HouseColor;
+
+import java.util.Map;
 
 /**
  * The character card containing the corresponding effect
@@ -59,19 +62,19 @@ public class SpecialCharacter {
      * @param id The identification number of the effect.
      * @return The required effect.
      */
-    private Effect getEffectBy(int id) {
+    private Effect getEffectBy(int id, Map<HouseColor, Integer> studentsStatus) {
         return switch (id) {
-            case 1 -> new MonkEffect();
+            case 1 -> new MonkEffect(studentsStatus);
             case 2 -> new FarmerEffect();
             case 3 -> new HeraldEffect();
             case 4 -> new MessengerEffect();
-            case 5 -> new HerablistEffect();
+            case 5 -> new HerbalistEffect();
             case 6 -> new CentaurEffect();
-            case 7 -> new JesterEffect();
+            case 7 -> new JesterEffect(studentsStatus);
             case 8 -> new KnightEffect();
             case 9 -> new MushroomerEffect();
             case 10 -> new MinstrelEffect();
-            case 11 -> new PrincessEffect();
+            case 11 -> new PrincessEffect(studentsStatus);
             case 12 -> new ThiefEffect();
             default -> throw new IllegalStateException("Unexpected value: " + id);
         };

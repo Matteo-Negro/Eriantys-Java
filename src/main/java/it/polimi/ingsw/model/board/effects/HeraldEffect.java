@@ -1,5 +1,9 @@
 package it.polimi.ingsw.model.board.effects;
 
+import it.polimi.ingsw.utilities.HouseColor;
+
+import java.util.EnumMap;
+
 /**
  * Specific effect n.3
  *
@@ -28,6 +32,15 @@ public class HeraldEffect extends Effect {
     @Override
     public int getCost() {
         return 3;
+    }
+
+    /**
+     * Returns the map saved in the students attribute.
+     *
+     * @return students attribute.
+     */
+    public EnumMap<HouseColor, Integer> getStudents() {
+        return null;
     }
 
 }

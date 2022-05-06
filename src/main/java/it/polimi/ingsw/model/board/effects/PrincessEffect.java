@@ -3,6 +3,7 @@ package it.polimi.ingsw.model.board.effects;
 import it.polimi.ingsw.utilities.HouseColor;
 
 import java.util.EmptyStackException;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,20 +16,6 @@ import java.util.Map;
 public class PrincessEffect extends Effect {
 
     private final Map<HouseColor, Integer> students;
-
-    /**
-     * Class constructor.
-     * It creates an instance of the class containing the map of the students put on the effect card with their respective quantity (initialized at 0).
-     */
-    public PrincessEffect() {
-        students = new HashMap<>();
-
-        students.put(HouseColor.BLUE, 0);
-        students.put(HouseColor.GREEN, 0);
-        students.put(HouseColor.FUCHSIA, 0);
-        students.put(HouseColor.RED, 0);
-        students.put(HouseColor.YELLOW, 0);
-    }
 
     /**
      * Class constructor used to restore the game.
@@ -71,8 +58,8 @@ public class PrincessEffect extends Effect {
      *
      * @return students attribute.
      */
-    private Map<HouseColor, Integer> getStudents() {
-        return students;
+    public EnumMap<HouseColor, Integer> getStudents() {
+        return new EnumMap<>(students);
     }
 
     /**

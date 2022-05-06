@@ -134,6 +134,8 @@ public enum ObjectsToJson {
         object.addProperty("alreadyPaid", specialCharacter.isAlreadyPaid());
         object.addProperty("paidInRound", specialCharacter.isPaidInRound());
         object.addProperty("active", specialCharacter.isActive());
+        object.add("containedStudents", parseHouseColorIntMap(specialCharacter.getEffect().getStudents()));
+
         return object;
     }
 

@@ -3,6 +3,7 @@ package it.polimi.ingsw.model.board.effects;
 import it.polimi.ingsw.utilities.HouseColor;
 
 import java.util.EmptyStackException;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,23 +21,8 @@ public class MonkEffect extends Effect {
      * Class constructor.
      * It creates an instance of the class containing a map of the students put on the effect card with their respective quantity (initialized at 0).
      */
-    public MonkEffect() {
-        students = new HashMap<>();
-
-        students.put(HouseColor.BLUE, 0);
-        students.put(HouseColor.GREEN, 0);
-        students.put(HouseColor.FUCHSIA, 0);
-        students.put(HouseColor.RED, 0);
-        students.put(HouseColor.YELLOW, 0);
-    }
-
-    /**
-     * Class constructor used to restore the game.
-     *
-     * @param statusStudents
-     */
-    public MonkEffect(Map<HouseColor, Integer> statusStudents) {
-        this.students = statusStudents;
+    public MonkEffect(Map<HouseColor, Integer> studentsStatus) {
+        students = new EnumMap<>(studentsStatus);
     }
 
     @Override
@@ -71,8 +57,8 @@ public class MonkEffect extends Effect {
      *
      * @return students attribute.
      */
-    public Map<HouseColor, Integer> getStudents() {
-        return students;
+    public EnumMap<HouseColor, Integer> getStudents() {
+        return new EnumMap<>(students);
     }
 
     /**

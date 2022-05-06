@@ -1,12 +1,16 @@
 package it.polimi.ingsw.model.board.effects;
 
+import it.polimi.ingsw.utilities.HouseColor;
+
+import java.util.EnumMap;
+
 /**
  * Specific effect n.5
  *
  * @author Riccardo Milici
  */
 
-public class HerablistEffect extends Effect {
+public class HerbalistEffect extends Effect {
 
     private int availableBans;
 
@@ -14,7 +18,7 @@ public class HerablistEffect extends Effect {
      * Class constructor.
      * It creates an instance of the class containing a maximum number of possible bans for the islands.
      */
-    public HerablistEffect() {
+    public HerbalistEffect() {
         availableBans = 5;
     }
 
@@ -23,7 +27,7 @@ public class HerablistEffect extends Effect {
      *
      * @param statusAvailableBans
      */
-    public HerablistEffect(int statusAvailableBans) {
+    public HerbalistEffect(int statusAvailableBans) {
         this.availableBans = statusAvailableBans;
     }
 
@@ -53,6 +57,15 @@ public class HerablistEffect extends Effect {
     @Override
     public int getCost() {
         return 2;
+    }
+
+    /**
+     * Returns the map saved in the students attribute.
+     *
+     * @return students attribute.
+     */
+    public EnumMap<HouseColor, Integer> getStudents() {
+        return null;
     }
 
     /**

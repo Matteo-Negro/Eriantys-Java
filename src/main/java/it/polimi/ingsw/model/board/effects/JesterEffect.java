@@ -3,6 +3,7 @@ package it.polimi.ingsw.model.board.effects;
 import it.polimi.ingsw.utilities.HouseColor;
 
 import java.util.EmptyStackException;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,20 +20,6 @@ public class JesterEffect extends Effect {
 
     /**
      * Class constructor.
-     * It creates an instance of the class containing a map of the HouseColors of the students and their quantity on the effect card (initialized at 0).
-     */
-    public JesterEffect() {
-        students = new HashMap<>();
-
-        students.put(HouseColor.BLUE, 0);
-        students.put(HouseColor.GREEN, 0);
-        students.put(HouseColor.FUCHSIA, 0);
-        students.put(HouseColor.RED, 0);
-        students.put(HouseColor.YELLOW, 0);
-    }
-
-    /**
-     * Class constructor used to restore the game.
      *
      * @param statusStudents
      */
@@ -68,12 +55,12 @@ public class JesterEffect extends Effect {
     }
 
     /**
-     * Returns the map saved in the student attribute.
+     * Returns the map saved in the students attribute.
      *
-     * @return student attribute.
+     * @return students attribute.
      */
-    public Map<HouseColor, Integer> getStudents() {
-        return students;
+    public EnumMap<HouseColor, Integer> getStudents() {
+        return new EnumMap<>(students);
     }
 
     /**
