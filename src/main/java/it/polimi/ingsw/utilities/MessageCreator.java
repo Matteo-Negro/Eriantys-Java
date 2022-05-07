@@ -12,6 +12,9 @@ import it.polimi.ingsw.utilities.parsers.ObjectsToJson;
  */
 public class MessageCreator {
 
+    private MessageCreator() {
+    }
+
     /**
      * Creates the reply for "gameCreation" message.
      *
