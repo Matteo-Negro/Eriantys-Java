@@ -10,16 +10,29 @@ import java.util.Map;
 
 import static it.polimi.ingsw.view.cli.Utilities.moveCursor;
 
+/**
+ * Prints the whole realm.
+ */
 public class Realm {
 
     private Realm() {
     }
 
+    /**
+     * Method that prints all the islands and then all the clouds.
+     *
+     * @param terminal Terminal where to write.
+     */
     public static void print(Terminal terminal) {
         terminal.writer().print(printIslands());
         terminal.flush();
     }
 
+    /**
+     * Prints every island.
+     *
+     * @return The Ansi stream to print to terminal.
+     */
     private static Ansi printIslands() {
 
         // Test island - Begin
