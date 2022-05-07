@@ -14,12 +14,13 @@ import java.util.*;
  * @author Matteo Negro
  */
 public class GameBoard {
-    //TODO: fix Player influencesBonus
     private final Bag bag;
     private final List<Cloud> clouds;
     private final List<Island> islands;
     private final Map<HouseColor, Player> professors;
     private final Map<Player, Assistant> playedAssistants;
+    private Player influenceBonus;
+    private Player tieWinner;
     private List<SpecialCharacter> characters;
     private Island motherNatureIsland;
     private HouseColor ignoreColor;
@@ -40,6 +41,8 @@ public class GameBoard {
         this.clouds = new ArrayList<>();
         this.characters = new ArrayList<>();
         this.professors = new HashMap<>();
+        this.influenceBonus = null;
+        this.tieWinner = null;
         temp = this.bag.boardSetUp();
         for (int i = 0; i < 12; i++) {
             if (i == 0 || i == 5) this.islands.add(new Island(null, i));
@@ -49,7 +52,6 @@ public class GameBoard {
             for (int i = 0; i < 12; i++) randomVector.add(i);
             Collections.shuffle(randomVector);
             for (int i = 0; i < 3; i++) {
-                
                 Map<HouseColor, Integer> students = new EnumMap<>(HouseColor.class);
                 students.put(HouseColor.RED, 0);
                 students.put(HouseColor.BLUE, 0);
@@ -58,15 +60,15 @@ public class GameBoard {
                 students.put(HouseColor.FUCHSIA, 0);
                 int studentsNumber;
 
-                switch(randomVector.get(i)){
+                switch (randomVector.get(i)) {
                     case 1, 11 -> studentsNumber = 4;
                     case 7 -> studentsNumber = 6;
                     default -> studentsNumber = 0;
                 }
 
-                for(int c=0; c<studentsNumber; c++){
-                    HouseColor color=this.getBag().pop();
-                    students.replace(color, students.get(color)+1);
+                for (int c = 0; c < studentsNumber; c++) {
+                    HouseColor color = this.getBag().pop();
+                    students.replace(color, students.get(color) + 1);
                 }
                 this.characters.add(new SpecialCharacter(randomVector.get(i), students));
             }
@@ -96,6 +98,8 @@ public class GameBoard {
         this.clouds = new ArrayList<>(statusClouds);
         this.professors = new HashMap<>(statusProfessors);
         this.characters = null;
+        this.influenceBonus = null;
+        this.tieWinner = null;
 
         if (isExp) {
             this.characters = new ArrayList<>(statusCharacters);
@@ -170,6 +174,8 @@ public class GameBoard {
      */
     public void removeEffects() {
         this.ignoreColor = null;
+        this.influenceBonus = null;
+        this.tieWinner = null;
     }
 
     /**
@@ -203,14 +209,23 @@ public class GameBoard {
      */
     public Map<Player, Integer> getInfluence(Island targetIsland) {
         Map<Player, Integer> result = new HashMap<>();
+        // Student contribution
         this.professors.keySet().forEach(professorColor -> {
             if (!professorColor.equals(ignoreColor)) {
                 if (!result.containsKey(this.professors.get(professorColor))) {
                     result.put(this.professors.get(professorColor), 0);
                 }
-                result.put(this.professors.get(professorColor), result.get(professorColor) + targetIsland.getStudents().get(professorColor));
+                result.put(this.professors.get(professorColor), result.get(this.professors.get(professorColor)) + targetIsland.getStudents().get(professorColor) + (influenceBonus != null && this.professors.get(professorColor).equals(this.influenceBonus) ? 2 : 0));
             }
         });
+
+        // Tower contribution
+        if (targetIsland.getTower() != null) {
+            result.keySet().forEach(player -> {
+                if (player.getSchoolBoard().getTowerType().equals(targetIsland.getTower()))
+                    result.put(player, result.get(player) + targetIsland.getSize());
+            });
+        }
 
         return result;
     }
@@ -282,6 +297,42 @@ public class GameBoard {
      */
     public Map<Player, Assistant> getPlayedAssistants() {
         return new HashMap<>(this.playedAssistants);
+    }
+
+    /**
+     * This method returns the player that has the bonus in the influence evaluation.
+     *
+     * @return The player with the bonus.
+     */
+    public Player getInfluenceBonus() {
+        return this.influenceBonus;
+    }
+
+    /**
+     * This method sets the player influences bonus.
+     *
+     * @param bonusPlayer The player that will receive the bonus.
+     */
+    public void setInfluenceBonus(Player bonusPlayer) {
+        this.influenceBonus = bonusPlayer;
+    }
+
+    /**
+     * This method returns the player that has the bonus in the count for the professors.
+     *
+     * @return The player with the bonus.
+     */
+    public Player getTieWinner() {
+        return this.tieWinner;
+    }
+
+    /**
+     * This method sets the player tie winner.
+     *
+     * @param bonusPlayer The player that will receive the bonus.
+     */
+    public void setTieWinner(Player bonusPlayer) {
+        this.tieWinner = bonusPlayer;
     }
 
     /**
