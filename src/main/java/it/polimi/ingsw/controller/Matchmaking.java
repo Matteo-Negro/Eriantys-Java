@@ -14,6 +14,9 @@ import it.polimi.ingsw.utilities.exceptions.GameNotFoundException;
  */
 class Matchmaking {
 
+    private Matchmaking() {
+    }
+
     /**
      * Calls the gameServer's "addGame(int expectedPlayers, boolean expertMode)" method, in order to create the game requested by the user.
      *
