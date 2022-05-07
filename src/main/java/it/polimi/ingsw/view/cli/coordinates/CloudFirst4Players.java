@@ -1,0 +1,45 @@
+package it.polimi.ingsw.view.cli.coordinates;
+
+import it.polimi.ingsw.view.cli.DeltaCoordinates;
+
+/**
+ * Cloud: first position in case of 4 players.
+ */
+public class CloudFirst4Players implements DeltaCoordinates {
+
+    private static CloudFirst4Players instance = null;
+
+    private CloudFirst4Players() {
+    }
+
+    /**
+     * Gets x coordinate.
+     *
+     * @return X coordinate.
+     */
+    @Override
+    public int getX() {
+        return 22;
+    }
+
+    /**
+     * Gets y coordinate.
+     *
+     * @return Y coordinate.
+     */
+    @Override
+    public int getY() {
+        return 13;
+    }
+
+    /**
+     * Gets the instance of the class instead of generating a new one every time.
+     *
+     * @return The generated instance.
+     */
+    public static CloudFirst4Players getInstance() {
+        if (instance == null)
+            instance = new CloudFirst4Players();
+        return instance;
+    }
+}

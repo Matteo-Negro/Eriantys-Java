@@ -5,7 +5,9 @@ import it.polimi.ingsw.view.cli.coordinates.*;
 import org.fusesource.jansi.Ansi;
 import org.jline.terminal.Terminal;
 
+import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 
 import static it.polimi.ingsw.view.cli.Utilities.moveCursor;
@@ -25,6 +27,8 @@ public class Realm {
      */
     public static void print(Terminal terminal) {
         terminal.writer().print(printIslands());
+        terminal.flush();
+        terminal.writer().print(printClouds(3));
         terminal.flush();
     }
 
@@ -82,6 +86,49 @@ public class Realm {
 
         moveCursor(ansi, IslandNE.getInstance());
         Island.print(ansi, 7, students, null, false, false, true, true);
+
+        moveCursor(ansi, IslandsReset.getInstance());
+
+        return ansi;
+    }
+
+    /**
+     * Prints every cloud.
+     *
+     * @return The Ansi stream to print to terminal.
+     */
+    private static Ansi printClouds(int playersNumber) {
+
+        // Test clouds - Begin
+        List<HouseColor> students = new ArrayList<>();
+        students.add(HouseColor.RED);
+        students.add(HouseColor.GREEN);
+        students.add(HouseColor.BLUE);
+        students.add(HouseColor.YELLOW);
+        int studentsNumber = playersNumber == 3 ? 4 : 3;
+        // Test clouds - End
+
+        Ansi ansi = new Ansi();
+
+        switch (playersNumber) {
+            case 2 -> moveCursor(ansi, CloudFirst2Players.getInstance());
+            case 3 -> moveCursor(ansi, CloudFirst3Players.getInstance());
+            default -> moveCursor(ansi, CloudFirst4Players.getInstance());
+        }
+
+        Cloud.print(ansi, 1, students, studentsNumber);
+
+        moveCursor(ansi, CloudE.getInstance());
+        Cloud.print(ansi, 2, null, studentsNumber);
+
+        moveCursor(ansi, CloudE.getInstance());
+        Cloud.print(ansi, 3, students, studentsNumber);
+
+        switch (playersNumber) {
+            case 2 -> moveCursor(ansi, CloudsReset2Players.getInstance());
+            case 3 -> moveCursor(ansi, CloudsReset3Players.getInstance());
+            default -> moveCursor(ansi, CloudsReset4Players.getInstance());
+        }
 
         return ansi;
     }
