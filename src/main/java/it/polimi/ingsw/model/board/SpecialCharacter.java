@@ -116,7 +116,6 @@ public class SpecialCharacter {
         alreadyPaid = true;
         paidInRound = true;
         isActive = true;
-        getEffect().effect();
     }
 
     /**

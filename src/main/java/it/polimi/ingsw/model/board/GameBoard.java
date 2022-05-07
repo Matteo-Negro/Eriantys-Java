@@ -176,6 +176,7 @@ public class GameBoard {
         this.ignoreColor = null;
         this.influenceBonus = null;
         this.tieWinner = null;
+        for(SpecialCharacter c: this.getCharacters()) c.cleanEffect();
     }
 
     /**
@@ -220,7 +221,14 @@ public class GameBoard {
         });
 
         // Tower contribution
-        if (targetIsland.getTower() != null) {
+        boolean towersAreIgnored = false;
+        for(SpecialCharacter c : this.getCharacters()){
+            if (c.getId() == 6 && c.isActive()) {
+                towersAreIgnored = true;
+                break;
+            }
+        }
+        if (targetIsland.getTower() != null && !towersAreIgnored) {
             result.keySet().forEach(player -> {
                 if (player.getSchoolBoard().getTowerType().equals(targetIsland.getTower()))
                     result.put(player, result.get(player) + targetIsland.getSize());

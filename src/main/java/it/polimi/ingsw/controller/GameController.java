@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import it.polimi.ingsw.model.GamePlatform;
 import it.polimi.ingsw.model.board.Island;
 import it.polimi.ingsw.model.board.SpecialCharacter;
+import it.polimi.ingsw.model.board.effects.HerbalistEffect;
 import it.polimi.ingsw.model.board.effects.JesterEffect;
 import it.polimi.ingsw.model.board.effects.MonkEffect;
 import it.polimi.ingsw.model.board.effects.PrincessEffect;
@@ -542,7 +543,7 @@ public class GameController extends Thread {
      * @param island The id where the mother nature action will be activated.
      * @throws IllegalMoveException This exception is thrown whether the player tries to do an illegal move.
      */
-    public void  motherNatureAction(Island island) throws IllegalMoveException{
+    public void motherNatureAction(Island island) throws IllegalMoveException {
         Map<Player, Integer> influence;
 
         influence = this.gameModel.getGameBoard().getInfluence(island);
@@ -600,13 +601,48 @@ public class GameController extends Thread {
      *
      * @param command The json that contains all the information of the special character that will be paid.
      */
-    public void paySpecialCharacter(JsonObject command) {
+    public void paySpecialCharacter(JsonObject command) throws IllegalMoveException {
         int character = command.get("character").getAsInt();
         this.gameModel.getGameBoard().getCharacters().get(character).activateEffect();
 
-        //TODO: manage the different specialCharacter effects.
+        try {
+            switch (character) {
+                case 1 -> this.movementEffectActive = true;
+                case 2 -> this.getGameModel().getGameBoard().setTieWinner(this.getGameModel().getPlayerByName(command.get("player").getAsString()));
+                case 3 -> this.getGameModel().getGameBoard().getInfluence(this.getGameModel().getGameBoard().getIslandById(command.get("island").getAsInt()));
+                case 4 -> this.getGameModel().getGameBoard().getAssistant(this.getGameModel().getPlayerByName(command.get("player").getAsString())).setBonus();
+                case 5 -> {
+                    this.getGameModel().getGameBoard().getIslandById(command.get("island").getAsInt()).setBan();
+                    ((HerbalistEffect) this.getGameModel().getGameBoard().getCharacters().get(character).getEffect()).effect("take");
+                }
+                case 6 -> {
+                }//Automatically managed by model.
+                case 7 -> this.movementEffectActive = true;
+                case 8 -> this.getGameModel().getGameBoard().setInfluenceBonus(this.getGameModel().getPlayerByName(command.get("player").getAsString()));
+                case 9 -> this.getGameModel().getGameBoard().setIgnoreColor(HouseColor.valueOf(command.get("ignoreColor").getAsString()));
+                case 10 -> this.movementEffectActive = true;
+                case 11 -> this.movementEffectActive = true;
+                case 12 -> {
+                    for (Player p : this.getGameModel().getPlayers()) {
+                        for (int i = 0; i < 3; i++) {
+                            try {
+                                p.getSchoolBoard().removeFromDiningRoom(HouseColor.valueOf(command.get("color").getAsString()));
+                            } catch (NoStudentException nse) {
+                                for (HouseColor color : HouseColor.values()) {
+                                    p.getSchoolBoard().getDiningRoom().replace(color, 0);
+                                }
+                            }
+                        }
+                        for (HouseColor color : HouseColor.values()) {
+                            this.checkProfessor(color.toString(), p.getName());
+                        }
+                    }
+                }
+            }
+        } catch (IslandNotFoundException nfe) {
+            throw new IllegalMoveException();
+        }
 
-        if (character == 1 || character == 7 || character == 10 || character == 11) this.movementEffectActive = true;
         notifyUsersExcept(command, getUser(this.activeUser));
 
         this.saveGame();

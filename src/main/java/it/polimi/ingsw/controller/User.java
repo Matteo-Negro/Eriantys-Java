@@ -147,9 +147,6 @@ public class User extends Thread {
                     }
                     case "move" -> {
                         switch (command.get("pawn").getAsString()) {
-                            case "professor" -> {
-                                //TODO: check for special character, @RiccardoMilici
-                            }
                             case "student" -> this.gameController.moveStudent(command);
                             case "motherNature" -> this.gameController.moveMotherNature(command.get("island").getAsInt());
                         }
