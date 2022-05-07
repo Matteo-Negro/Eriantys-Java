@@ -7,6 +7,11 @@ import it.polimi.ingsw.view.cli.Colour;
  */
 public class Black implements Colour {
 
+    private static Black instance = null;
+
+    private Black() {
+    }
+
     /**
      * Gets R value.
      *
@@ -35,5 +40,16 @@ public class Black implements Colour {
     @Override
     public int getB() {
         return 0;
+    }
+
+    /**
+     * Gets the instance of the class instead of generating a new one every time.
+     *
+     * @return The generated instance.
+     */
+    public static Black getInstance() {
+        if (instance == null)
+            instance = new Black();
+        return instance;
     }
 }

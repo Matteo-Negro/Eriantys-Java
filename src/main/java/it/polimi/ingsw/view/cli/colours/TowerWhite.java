@@ -7,6 +7,11 @@ import it.polimi.ingsw.view.cli.Colour;
  */
 public class TowerWhite implements Colour {
 
+    private static TowerWhite instance = null;
+
+    private TowerWhite() {
+    }
+
     /**
      * Gets R value.
      *
@@ -35,5 +40,16 @@ public class TowerWhite implements Colour {
     @Override
     public int getB() {
         return 255;
+    }
+
+    /**
+     * Gets the instance of the class instead of generating a new one every time.
+     *
+     * @return The generated instance.
+     */
+    public static TowerWhite getInstance() {
+        if (instance == null)
+            instance = new TowerWhite();
+        return instance;
     }
 }

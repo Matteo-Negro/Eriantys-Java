@@ -7,6 +7,11 @@ import it.polimi.ingsw.view.cli.Colour;
  */
 public class MotherNature implements Colour {
 
+    private static MotherNature instance = null;
+
+    private MotherNature() {
+    }
+
     /**
      * Gets R value.
      *
@@ -35,5 +40,16 @@ public class MotherNature implements Colour {
     @Override
     public int getB() {
         return 2;
+    }
+
+    /**
+     * Gets the instance of the class instead of generating a new one every time.
+     *
+     * @return The generated instance.
+     */
+    public static MotherNature getInstance() {
+        if (instance == null)
+            instance = new MotherNature();
+        return instance;
     }
 }

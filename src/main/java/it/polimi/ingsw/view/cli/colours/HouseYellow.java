@@ -7,6 +7,11 @@ import it.polimi.ingsw.view.cli.Colour;
  */
 public class HouseYellow implements Colour {
 
+    private static HouseYellow instance = null;
+
+    private HouseYellow() {
+    }
+
     /**
      * Gets R value.
      *
@@ -35,5 +40,16 @@ public class HouseYellow implements Colour {
     @Override
     public int getB() {
         return 9;
+    }
+
+    /**
+     * Gets the instance of the class instead of generating a new one every time.
+     *
+     * @return The generated instance.
+     */
+    public static HouseYellow getInstance() {
+        if (instance == null)
+            instance = new HouseYellow();
+        return instance;
     }
 }

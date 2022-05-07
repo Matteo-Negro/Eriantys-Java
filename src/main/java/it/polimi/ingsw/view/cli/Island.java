@@ -3,14 +3,14 @@ package it.polimi.ingsw.view.cli;
 import it.polimi.ingsw.utilities.HouseColor;
 import it.polimi.ingsw.utilities.TowerType;
 import it.polimi.ingsw.view.cli.colours.*;
-import it.polimi.ingsw.view.cli.coordinates.IslandCoordinates;
+import it.polimi.ingsw.view.cli.coordinates.IslandNewLine;
+import it.polimi.ingsw.view.cli.coordinates.IslandReset;
 import org.fusesource.jansi.Ansi;
 
 import java.util.EnumMap;
 import java.util.Map;
 
-import static it.polimi.ingsw.view.cli.Utilities.foreground;
-import static it.polimi.ingsw.view.cli.Utilities.getColourFrom;
+import static it.polimi.ingsw.view.cli.Utilities.*;
 
 // ╔═══[TEMPLATE_ISL]═══╗
 // ║       I···0        ║
@@ -57,7 +57,7 @@ class Island {
         String centeredDots = "        ···         ";
         String blankLine = "                    ";
 
-        foreground(ansi, new Grey());
+        foreground(ansi, Grey.getInstance());
 
         // Line #1
 
@@ -74,9 +74,9 @@ class Island {
         ansi.append(Boolean.TRUE.equals(connections.get(IslandConnection.NORTH_WEST)) ? "··  " : "    ");
         defaultForeground(ansi, ban);
         ansi.append("/‾‾‾‾‾‾‾‾‾\\");
-        foreground(ansi, new Grey());
+        foreground(ansi, Grey.getInstance());
         ansi.append(Boolean.TRUE.equals(connections.get(IslandConnection.NORTH_EAST)) ? "  ·· " : "     ");
-        foreground(ansi, new Grey());
+        foreground(ansi, Grey.getInstance());
         newLine(ansi);
 
         // Line #3
@@ -86,21 +86,21 @@ class Island {
         ansi.append("/   ");
         if (tower != null) {
             switch (tower) {
-                case BLACK -> foreground(ansi, new TowerBlack());
-                case GREY -> foreground(ansi, new TowerGrey());
-                case WHITE -> foreground(ansi, new TowerWhite());
+                case BLACK -> foreground(ansi, TowerBlack.getInstance());
+                case GREY -> foreground(ansi, TowerGrey.getInstance());
+                case WHITE -> foreground(ansi, TowerWhite.getInstance());
             }
             ansi.append("●");
             defaultForeground(ansi, ban);
         } else ansi.append(" ");
         ansi.append("   ");
         if (motherNature) {
-            foreground(ansi, new MotherNature());
+            foreground(ansi, MotherNature.getInstance());
             ansi.append("●");
             defaultForeground(ansi, ban);
         } else ansi.append(" ");
         ansi.append("   \\");
-        foreground(ansi, new Grey());
+        foreground(ansi, Grey.getInstance());
         ansi.append(Boolean.TRUE.equals(connections.get(IslandConnection.NORTH_EAST)) ? "··· " : "    ");
         newLine(ansi);
 
@@ -109,7 +109,7 @@ class Island {
         ansi.append(connections.get(IslandConnection.WEST) || connections.get(IslandConnection.NORTH_WEST) ? "··" : "  ");
         defaultForeground(ansi, ban);
         ansi.append("/             \\");
-        foreground(ansi, new Grey());
+        foreground(ansi, Grey.getInstance());
         if (Boolean.TRUE.equals(connections.get(IslandConnection.EAST)))
             ansi.append("···");
         else if (Boolean.TRUE.equals(connections.get(IslandConnection.NORTH_EAST)))
@@ -123,7 +123,7 @@ class Island {
         ansi.append(Boolean.TRUE.equals(connections.get(IslandConnection.WEST)) ? "·" : " ");
         defaultForeground(ansi, ban);
         ansi.append("/               \\");
-        foreground(ansi, new Grey());
+        foreground(ansi, Grey.getInstance());
         ansi.append(Boolean.TRUE.equals(connections.get(IslandConnection.EAST)) ? "··" : "  ");
         newLine(ansi);
 
@@ -138,7 +138,7 @@ class Island {
         ansi.append(" ");
         parseStudent(students.get(HouseColor.GREEN), HouseColor.GREEN, ansi, ban);
         ansi.append("  /");
-        foreground(ansi, new Grey());
+        foreground(ansi, Grey.getInstance());
         ansi.append(Boolean.TRUE.equals(connections.get(IslandConnection.EAST)) ? "··" : "  ");
         newLine(ansi);
 
@@ -147,7 +147,7 @@ class Island {
         ansi.append(connections.get(IslandConnection.WEST) || connections.get(IslandConnection.SOUTH_WEST) ? "··" : "  ");
         defaultForeground(ansi, ban);
         ansi.append("\\             /");
-        foreground(ansi, new Grey());
+        foreground(ansi, Grey.getInstance());
         if (Boolean.TRUE.equals(connections.get(IslandConnection.EAST)))
             ansi.append("···");
         else if (Boolean.TRUE.equals(connections.get(IslandConnection.SOUTH_EAST)))
@@ -165,7 +165,7 @@ class Island {
         ansi.append(" ");
         parseStudent(students.get(HouseColor.YELLOW), HouseColor.YELLOW, ansi, ban);
         ansi.append("  /");
-        foreground(ansi, new Grey());
+        foreground(ansi, Grey.getInstance());
         ansi.append(Boolean.TRUE.equals(connections.get(IslandConnection.SOUTH_EAST)) ? "··· " : "    ");
         newLine(ansi);
 
@@ -174,9 +174,9 @@ class Island {
         ansi.append(Boolean.TRUE.equals(connections.get(IslandConnection.SOUTH_WEST)) ? "··  " : "    ");
         defaultForeground(ansi, ban);
         ansi.append("\\_________/");
-        foreground(ansi, new Grey());
+        foreground(ansi, Grey.getInstance());
         ansi.append(Boolean.TRUE.equals(connections.get(IslandConnection.SOUTH_EAST)) ? "  ·· " : "     ");
-        foreground(ansi, new Grey());
+        foreground(ansi, Grey.getInstance());
         newLine(ansi);
 
         // Line #10
@@ -222,7 +222,7 @@ class Island {
      * @param ansi Ansi stream where to write.
      */
     private static void newLine(Ansi ansi) {
-        Utilities.newLine(ansi, new IslandCoordinates());
+        moveCursor(ansi, IslandNewLine.getInstance());
     }
 
     /**
@@ -231,7 +231,7 @@ class Island {
      * @param ansi Ansi stream where to write.
      */
     private static void resetCursor(Ansi ansi) {
-        ansi.cursorMove(-20, -10);
+        moveCursor(ansi, IslandReset.getInstance());
     }
 
     /**
@@ -242,9 +242,9 @@ class Island {
      */
     private static void defaultForeground(Ansi ansi, boolean ban) {
         if (ban)
-            foreground(ansi, new Ban());
+            foreground(ansi, Ban.getInstance());
         else
-            foreground(ansi, new White());
+            foreground(ansi, White.getInstance());
     }
 
     /**
@@ -262,7 +262,7 @@ class Island {
             defaultForeground(ansi, ban);
             ansi.append(String.format("x%01d", studentsNumber));
         } else {
-            foreground(ansi, new DarkGray());
+            foreground(ansi, DarkGray.getInstance());
             ansi.append("●x0");
             defaultForeground(ansi, ban);
         }

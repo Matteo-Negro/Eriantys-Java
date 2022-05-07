@@ -7,6 +7,11 @@ import it.polimi.ingsw.view.cli.Colour;
  */
 public class HouseFuchsia implements Colour {
 
+    private static HouseFuchsia instance = null;
+
+    private HouseFuchsia() {
+    }
+
     /**
      * Gets R value.
      *
@@ -35,5 +40,16 @@ public class HouseFuchsia implements Colour {
     @Override
     public int getB() {
         return 165;
+    }
+
+    /**
+     * Gets the instance of the class instead of generating a new one every time.
+     *
+     * @return The generated instance.
+     */
+    public static HouseFuchsia getInstance() {
+        if (instance == null)
+            instance = new HouseFuchsia();
+        return instance;
     }
 }
