@@ -29,7 +29,7 @@ public class Client {
         width = terminal.getWidth();
         clearScreen(terminal);
         Realm.print(terminal);
-        terminal.writer().print(ansi().cursorDown(terminal.getHeight() - 3));
+        terminal.writer().print(ansi().cursorDown(terminal.getHeight()));
         terminal.flush();
 //        terminal.writer().print(ansi().reset().eraseScreen());
 //        terminal.writer().print(ansi().reset().bgRed());

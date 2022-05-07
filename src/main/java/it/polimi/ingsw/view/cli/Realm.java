@@ -1,11 +1,14 @@
 package it.polimi.ingsw.view.cli;
 
 import it.polimi.ingsw.utilities.HouseColor;
+import it.polimi.ingsw.view.cli.coordinates.*;
 import org.fusesource.jansi.Ansi;
 import org.jline.terminal.Terminal;
 
 import java.util.EnumMap;
 import java.util.Map;
+
+import static it.polimi.ingsw.view.cli.Utilities.moveCursor;
 
 public class Realm {
 
@@ -29,42 +32,42 @@ public class Realm {
 
         // First half
 
-        ansi.cursorMove(0, 6);
+        moveCursor(ansi, IslandFirst.getInstance());
         Island.print(ansi, 1, students, null, true, false, true, true);
 
-        ansi.cursorMove(19, -6);
+        moveCursor(ansi, IslandNE.getInstance());
         Island.print(ansi, 2, students, null, false, false, true, true);
 
-        ansi.cursorMove(20, 0);
+        moveCursor(ansi, IslandE.getInstance());
         Island.print(ansi, 3, students, null, false, false, true, true);
 
-        ansi.cursorMove(20, 0);
+        moveCursor(ansi, IslandE.getInstance());
         Island.print(ansi, 4, students, null, false, false, true, true);
 
-        ansi.cursorMove(20, 0);
+        moveCursor(ansi, IslandE.getInstance());
         Island.print(ansi, 5, students, null, false, false, true, true);
 
-        ansi.cursorMove(19, 6);
+        moveCursor(ansi, IslandSE.getInstance());
         Island.print(ansi, 6, students, null, false, false, true, true);
 
         // Second half
 
-        ansi.cursorMove(-98, 11);
+        moveCursor(ansi, IslandLast.getInstance());
         Island.print(ansi, 12, students, null, false, false, true, true);
 
-        ansi.cursorMove(19, 6);
+        moveCursor(ansi, IslandSE.getInstance());
         Island.print(ansi, 11, students, null, false, false, true, true);
 
-        ansi.cursorMove(20, 0);
+        moveCursor(ansi, IslandE.getInstance());
         Island.print(ansi, 10, students, null, false, false, true, true);
 
-        ansi.cursorMove(20, 0);
+        moveCursor(ansi, IslandE.getInstance());
         Island.print(ansi, 9, students, null, false, false, true, true);
 
-        ansi.cursorMove(20, 0);
+        moveCursor(ansi, IslandE.getInstance());
         Island.print(ansi, 8, students, null, false, false, true, true);
 
-        ansi.cursorMove(19, -6);
+        moveCursor(ansi, IslandNE.getInstance());
         Island.print(ansi, 7, students, null, false, false, true, true);
 
         return ansi;
