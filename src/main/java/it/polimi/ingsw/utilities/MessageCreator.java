@@ -3,7 +3,11 @@ package it.polimi.ingsw.utilities;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import it.polimi.ingsw.controller.GameController;
+import it.polimi.ingsw.model.board.Island;
+import it.polimi.ingsw.model.player.Player;
 import it.polimi.ingsw.utilities.parsers.ObjectsToJson;
+
+import java.util.List;
 
 /**
  * This class generates JsonObjects for the various communication cases.
@@ -121,10 +125,40 @@ public class MessageCreator {
      *
      * @return JsonObject which represents the message.
      */
-    public static JsonObject win(String player) {
+    public static JsonObject win(List<Player> playerList) {
         JsonObject reply = new JsonObject();
+        JsonArray winners = new JsonArray();
+        for(Player player: playerList) winners.add(player.getName());
         reply.addProperty("type", "win");
-        reply.addProperty("winner", player);
+        reply.add("winners", winners);
+        return reply;
+    }
+
+    /**
+     * Creates the "moveTower" message.
+     *
+     * @param towerColor  The color of the moving tower.
+     * @param island      The island's id on which the tower is being moved.
+     * @return            JsonObject which represents the message.
+     */
+    public static JsonObject moveTower(TowerType towerColor, Island island){
+        JsonObject reply = new JsonObject();
+        reply.addProperty("towerColor", towerColor.toString());
+        reply.addProperty("island", island.getId());
+        return reply;
+    }
+
+    /**
+     * Creates the "moveProfessor" message.
+     *
+     * @param professor The color of the professor that is going to be reassigned.
+     * @param player    The name of the player to whom the professor is going to be reassigned.
+     * @return          JsonObject which represents the message.
+     */
+    public static JsonObject moveProfessor(String professor, String player){
+        JsonObject reply = new JsonObject();
+        reply.addProperty("professor", professor.toString());
+        reply.addProperty("player", player);
         return reply;
     }
 

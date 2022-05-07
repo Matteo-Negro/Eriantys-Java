@@ -552,6 +552,7 @@ public class GameController extends Thread {
         if (mostInfluential.size() == 1 || (mostInfluential.size() == 2 && mostInfluential.get(0).getSchoolBoard().getTowerType().equals(mostInfluential.get(1).getSchoolBoard().getTowerType()))) {
             if (island.getTower() == null) {
                 island.setTower(mostInfluential.get(0).getSchoolBoard().getTowerType());
+                this.notifyUsers(MessageCreator.moveTower(mostInfluential.get(0).getSchoolBoard().getTowerType(), island));
                 try {
                     for (Player player : this.gameModel.getPlayers()) {
                         if (player.getSchoolBoard().getTowerType().equals(mostInfluential.get(0).getSchoolBoard().getTowerType())) {
@@ -574,6 +575,7 @@ public class GameController extends Thread {
                             }
                         }
                         island.setTower(mostInfluential.get(0).getSchoolBoard().getTowerType());
+                        this.notifyUsers(MessageCreator.moveTower(mostInfluential.get(0).getSchoolBoard().getTowerType(), island));
                     } catch (NotEnoughTowersException e1) {
                         endGame();
                     } catch (NegativeException e2) {
@@ -685,10 +687,7 @@ public class GameController extends Thread {
             }
         }
         if (end) {
-            for (Player p : this.gameModel.getPlayers()) {
-                //TODO: send it
-                if (winners.contains(p)) MessageCreator.win(p.getName());
-            }
+            notifyUsers(MessageCreator.win(winners));
         }
 
         return end;
@@ -743,6 +742,7 @@ public class GameController extends Thread {
             }
         }
         this.gameModel.getGameBoard().setProfessor(HouseColor.valueOf(color), this.gameModel.getPlayerByName(newProfessorOwner));
+        notifyUsers(MessageCreator.moveProfessor(color,newProfessorOwner));
     }
 
     public void notifyUsers(JsonObject message) {
