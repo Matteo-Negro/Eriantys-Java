@@ -4,7 +4,6 @@ import it.polimi.ingsw.utilities.HouseColor;
 
 import java.util.EmptyStackException;
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -21,7 +20,7 @@ public class JesterEffect extends Effect {
     /**
      * Class constructor.
      *
-     * @param statusStudents
+     * @param statusStudents Indicates the student on the card, saved into the status. These are going to be stored as a Map into the students attribute.
      */
     public JesterEffect(Map<HouseColor, Integer> statusStudents) {
         this.students = statusStudents;
@@ -40,9 +39,8 @@ public class JesterEffect extends Effect {
     /**
      * effect() method overload.
      *
-     *
-     * @param toTake
-     * @param toPut
+     * @param toTake The color of the student to take from the card.
+     * @param toPut The color of the student to put on the card.
      */
     public void effect(HouseColor toTake, HouseColor toPut) {
         if(toTake != null) takeStudent(toTake);
@@ -66,7 +64,7 @@ public class JesterEffect extends Effect {
     /**
      * Increases the counter ,of the color specified by the parameter, in the students' map.
      *
-     * @param color
+     * @param color The color of the students to increase.
      */
     private void addStudent(HouseColor color) {
         students.replace(color, students.get(color) + 1);
@@ -76,8 +74,8 @@ public class JesterEffect extends Effect {
      * Decreases the counter, of the color specified by the parameter, in the students' map.
      * Throws the EmptyStackException if the counter is already at 0.
      *
-     * @param color
-     * @throws EmptyStackException
+     * @param color The color of the students to decrease.
+     * @throws EmptyStackException Thrown when there are no students of the specified color on the card.
      */
     private void takeStudent(HouseColor color) throws EmptyStackException {
         if (students.get(color) == 0) throw new EmptyStackException();

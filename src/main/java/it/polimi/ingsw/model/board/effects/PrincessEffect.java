@@ -15,12 +15,12 @@ import java.util.Map;
 
 public class PrincessEffect extends Effect {
 
-    private final Map<HouseColor, Integer> students;
+    private Map<HouseColor, Integer> students;
 
     /**
      * Class constructor used to restore the game.
      *
-     * @param statusStudents
+     * @param statusStudents Indicates the student on the card, saved into the status. These are going to be stored as a Map into the students attribute.
      */
     public PrincessEffect(Map<HouseColor, Integer> statusStudents) {
         this.students = statusStudents;
@@ -39,9 +39,8 @@ public class PrincessEffect extends Effect {
     /**
      * effect() method overload.
      *
-     *
-     * @param toTake
-     * @param toPut
+     * @param toTake The color of the student to take from the card.
+     * @param toPut The color of the student to put on the card.
      */
     public void effect(HouseColor toTake, HouseColor toPut) {
         if(toTake != null) takeStudent(toTake);
@@ -65,7 +64,7 @@ public class PrincessEffect extends Effect {
     /**
      * Adds a student, of the color specified by the parameter, to the map saved in the students attribute, increasing the counter mapped with the respective HouseColor.
      *
-     * @param color
+     * @param color The color of the students to increase.
      */
     private void addStudent(HouseColor color) {
         students.replace(color, students.get(color) + 1);
@@ -75,8 +74,8 @@ public class PrincessEffect extends Effect {
      * Deletes a student, of the color specified by the parameter, from the map saved in the students attribute, decreasing the counter mapped with the respective HouseColor.
      * Throws an EmptyStackException  if the counter is already at 0.
      *
-     * @param color
-     * @throws EmptyStackException
+     * @param color The color of the students to decrease.
+     * @throws EmptyStackException Thrown when there are no students of the specified color on the card.
      */
     private void takeStudent(HouseColor color) throws EmptyStackException {
         if (students.get(color) == 0) throw new EmptyStackException();

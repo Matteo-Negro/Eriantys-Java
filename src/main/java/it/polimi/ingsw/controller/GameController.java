@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
  *
  * @author Matteo Negro
  * @author Riccardo Motta
+ * @author Riccardo Milici
  */
 public class GameController extends Thread {
     private final int expectedPlayers;
@@ -158,20 +159,36 @@ public class GameController extends Thread {
     }
 
     /**
-     *
+     * This method returns the gameController's current state (indicated by the subPhase).
+     * @return The subPhase attribute.
      */
     public GameControllerStates getSubPhase() {
         return subPhase;
     }
 
+    /**
+     * This method is called whenever the gameController needs to change it's state, because of the execution of a certain command.
+     *
+     * @param state The state to set into the subPhase attribute.
+     */
     private void setSubPhase(GameControllerStates state) {
         this.subPhase = state;
     }
 
+    /**
+     * This method returns the user having the communication token.
+     *
+     * @return The activeUser attribute.
+     */
     public String getActiveUser() {
         return this.activeUser;
     }
 
+    /**
+     * This method is used in order to check if a special character, with a movement effect, has been paid and is now active during this turn.
+     *
+     * @return The boolean value stored into the movementEffectActive attribute.
+     */
     public boolean isMovementEffectActive() {
         return this.movementEffectActive;
     }
@@ -286,7 +303,7 @@ public class GameController extends Thread {
     }
 
     /**
-     * Manages the planning phase.
+     * This method manages the planning phase.
      */
     private void planningPhase() {
 
@@ -322,7 +339,7 @@ public class GameController extends Thread {
     }
 
     /**
-     * Manages the action phase.
+     * This method manages the action phase.
      */
     private void actionPhase() {
 
@@ -604,12 +621,21 @@ public class GameController extends Thread {
      * @param command The json that contains all the information of the special character that will be paid.
      */
     public void paySpecialCharacter(JsonObject command) throws IllegalMoveException {
+            boolean characterAlreadyPaid = false;
+            for(SpecialCharacter c : this.getGameModel().getGameBoard().getCharacters()){
+                if (c.isActive()) {
+                    characterAlreadyPaid = true;
+                    break;
+                }
+            }
+        if(characterAlreadyPaid) throw new IllegalMoveException();
+
         int character = command.get("character").getAsInt();
         this.gameModel.getGameBoard().getCharacters().get(character).activateEffect();
 
         try {
             switch (character) {
-                case 1 -> this.movementEffectActive = true;
+                case 1, 7, 10, 11 -> this.movementEffectActive = true;
                 case 2 -> this.getGameModel().getGameBoard().setTieWinner(this.getGameModel().getPlayerByName(command.get("player").getAsString()));
                 case 3 -> this.getGameModel().getGameBoard().getInfluence(this.getGameModel().getGameBoard().getIslandById(command.get("island").getAsInt()));
                 case 4 -> this.getGameModel().getGameBoard().getAssistant(this.getGameModel().getPlayerByName(command.get("player").getAsString())).setBonus();
@@ -619,11 +645,8 @@ public class GameController extends Thread {
                 }
                 case 6 -> {
                 }//Automatically managed by model.
-                case 7 -> this.movementEffectActive = true;
                 case 8 -> this.getGameModel().getGameBoard().setInfluenceBonus(this.getGameModel().getPlayerByName(command.get("player").getAsString()));
                 case 9 -> this.getGameModel().getGameBoard().setIgnoreColor(HouseColor.valueOf(command.get("ignoreColor").getAsString()));
-                case 10 -> this.movementEffectActive = true;
-                case 11 -> this.movementEffectActive = true;
                 case 12 -> {
                     for (Player p : this.getGameModel().getPlayers()) {
                         for (int i = 0; i < 3; i++) {

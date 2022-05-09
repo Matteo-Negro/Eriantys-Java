@@ -13,7 +13,7 @@ public class HerbalistEffect extends Effect {
     /**
      * Class constructor used to restore the game.
      *
-     * @param statusAvailableBans
+     * @param statusAvailableBans Indicates the bans that are still available, saved into the status. These are going to be stored into the availableBans attribute.
      */
     public HerbalistEffect(int statusAvailableBans) {
         this.availableBans = statusAvailableBans;

@@ -1,9 +1,5 @@
 package it.polimi.ingsw.model.board.effects;
 
-import it.polimi.ingsw.utilities.HouseColor;
-
-import java.util.EnumMap;
-
 /**
  * Interface used by the specific effect classes
  *

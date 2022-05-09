@@ -1,12 +1,5 @@
 package it.polimi.ingsw.model.board.effects;
 
-import it.polimi.ingsw.model.player.Player;
-import it.polimi.ingsw.utilities.HouseColor;
-
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * Specific effect n.2
  *
