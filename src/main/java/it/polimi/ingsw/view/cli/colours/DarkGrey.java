@@ -5,11 +5,11 @@ import it.polimi.ingsw.view.cli.Colour;
 /**
  * Gray colour.
  */
-public class DarkGray implements Colour {
+public class DarkGrey implements Colour {
 
-    private static DarkGray instance = null;
+    private static DarkGrey instance = null;
 
-    private DarkGray() {
+    private DarkGrey() {
     }
 
     /**
@@ -47,9 +47,9 @@ public class DarkGray implements Colour {
      *
      * @return The generated instance.
      */
-    public static DarkGray getInstance() {
+    public static DarkGrey getInstance() {
         if (instance == null)
-            instance = new DarkGray();
+            instance = new DarkGrey();
         return instance;
     }
 }

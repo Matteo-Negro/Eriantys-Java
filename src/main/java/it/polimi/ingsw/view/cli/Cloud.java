@@ -1,8 +1,7 @@
 package it.polimi.ingsw.view.cli;
 
 import it.polimi.ingsw.utilities.HouseColor;
-import it.polimi.ingsw.view.cli.colours.DarkGray;
-import it.polimi.ingsw.view.cli.colours.Grey;
+import it.polimi.ingsw.view.cli.colours.DarkGrey;
 import it.polimi.ingsw.view.cli.colours.White;
 import it.polimi.ingsw.view.cli.coordinates.CloudNewLine;
 import it.polimi.ingsw.view.cli.coordinates.CloudReset;
@@ -141,7 +140,7 @@ public class Cloud {
      */
     private static void defaultForeground(Ansi ansi, List<HouseColor> students) {
         if (students == null)
-            foreground(ansi, DarkGray.getInstance());
+            foreground(ansi, DarkGrey.getInstance());
         else
             foreground(ansi, White.getInstance());
     }

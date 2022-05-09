@@ -32,6 +32,9 @@ import static it.polimi.ingsw.view.cli.Utilities.*;
  */
 class Island {
 
+    private Island() {
+    }
+
     /**
      * Prints the island.
      *
@@ -76,7 +79,6 @@ class Island {
         ansi.append("/‾‾‾‾‾‾‾‾‾\\");
         foreground(ansi, Grey.getInstance());
         ansi.append(Boolean.TRUE.equals(connections.get(IslandConnection.NORTH_EAST)) ? "  ·· " : "     ");
-        foreground(ansi, Grey.getInstance());
         newLine(ansi);
 
         // Line #3
@@ -262,7 +264,7 @@ class Island {
             defaultForeground(ansi, ban);
             ansi.append(String.format("x%01d", studentsNumber));
         } else {
-            foreground(ansi, DarkGray.getInstance());
+            foreground(ansi, DarkGrey.getInstance());
             ansi.append("●x0");
             defaultForeground(ansi, ban);
         }

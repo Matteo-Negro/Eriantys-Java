@@ -5,8 +5,6 @@ import it.polimi.ingsw.view.cli.colours.*;
 import org.fusesource.jansi.Ansi;
 import org.jline.terminal.Terminal;
 
-import static org.fusesource.jansi.Ansi.ansi;
-
 /**
  * CLI print utilities
  */
@@ -25,13 +23,14 @@ public class Utilities {
      */
     public static void clearScreen(Terminal terminal) {
         Ansi ansi = new Ansi();
+        ansi.cursor(0, 0);
         background(ansi, Black.getInstance());
         foreground(ansi, White.getInstance());
         for (int x = 0; x < terminal.getWidth(); x++)
             for (int y = 0; y < terminal.getHeight(); y++)
                 ansi.append(" ");
+        ansi.cursor(0, 0);
         terminal.writer().print(ansi);
-        terminal.writer().print(ansi().cursor(0, 0));
         terminal.flush();
     }
 
