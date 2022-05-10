@@ -13,20 +13,20 @@ import java.util.Map;
 import static it.polimi.ingsw.view.cli.Utilities.*;
 
 // ╔═════[TEMP_SCHOOLBOARD]═════╗
-// ║  NAME                      ║1
-// ║ ┌─────┬──────┬─────┬─────┐ ║2
-// ║ │ ENT │  DR  │ PRF │ TWR │ ║3
-// ║ ├─────┼──────┼─────┼─────┤ ║4
-// ║ │ ●x0 │ ●x00 │  ●  │ ●x0 │ ║5
-// ║ │     │      │     ├─────┤ ║6
-// ║ │ ●x0 │ ●x00 │  ●  │ AST │ ║7
-// ║ │     │      │     ├─────┤ ║8
-// ║ │ ●x0 │ ●x00 │  ●  │AS-00│ ║9
-// ║ │     │      │     ├─────┤ ║10
-// ║ │ ●x0 │ ●x00 │  ●  │     │ ║11
-// ║ │     │      │     │     │ ║12
-// ║ │ ●x0 │ ●x00 │  ●  │     │ ║13
-// ║ └─────┴──────┴─────┴─────┘ ║14
+// ║  NAME                      ║
+// ║ ┌─────┬──────┬─────┬─────┐ ║
+// ║ │ ENT │  DR  │ PRF │ TWR │ ║
+// ║ ├─────┼──────┼─────┼─────┤ ║
+// ║ │ ●x0 │ ●x00 │  ●  │ ●x0 │ ║
+// ║ │     │      │     ├─────┤ ║
+// ║ │ ●x0 │ ●x00 │  ●  │ AST │ ║
+// ║ │     │      │     ├─────┤ ║
+// ║ │ ●x0 │ ●x00 │  ●  │AS-00│ ║
+// ║ │     │      │     ├─────┤ ║
+// ║ │ ●x0 │ ●x00 │  ●  │     │ ║
+// ║ │     │      │     │     │ ║
+// ║ │ ●x0 │ ●x00 │  ●  │     │ ║
+// ║ └─────┴──────┴─────┴─────┘ ║
 // ╚════════════════════════════╝
 //
 // ╔═══[TEMPL_SCHOOLBOARD_EX]═══╗
@@ -88,7 +88,7 @@ public class SchoolBoard {
     ) {
 
         int blankLineChars = 26;
-        defaultForeground(ansi, active, wizard);
+        structForeground(ansi, wizard);
 
         // Line #1
 
@@ -134,7 +134,7 @@ public class SchoolBoard {
         ansi.append("●");
         defaultForeground(ansi, active, wizard);
         ansi.append(String.format("x%01d", towersNumber));
-
+        structForeground(ansi, wizard);
         ansi.append(" │");
         newLine(ansi);
 
@@ -168,8 +168,11 @@ public class SchoolBoard {
         ansi.append(" │  ");
         parsePawn(professors.get(HouseColor.YELLOW) ? 1 : 0, HouseColor.YELLOW, ansi, 0, active, wizard);
         ansi.append("  │");
-        if (assistant != 0) ansi.append(String.format("AST%02d", assistant));
-        else ansi.append("     ");
+        if (assistant != 0) {
+            defaultForeground(ansi, active, wizard);
+            ansi.append(String.format("AST%02d", assistant));
+            structForeground(ansi, wizard);
+        } else ansi.append("     ");
         ansi.append("│");
         newLine(ansi);
 
@@ -204,8 +207,11 @@ public class SchoolBoard {
         parsePawn(diningRoom.get(HouseColor.BLUE), HouseColor.BLUE, ansi, 2, active, wizard);
         ansi.append(" │  ");
         parsePawn(professors.get(HouseColor.BLUE) ? 1 : 0, HouseColor.BLUE, ansi, 0, active, wizard);
-        if (exp) ansi.append(String.format("  │ x%02d │", coins));
-        else ansi.append(" │     │");
+        if (exp) {
+            defaultForeground(ansi, active, wizard);
+            ansi.append(String.format("  │ x%02d │", coins));
+            structForeground(ansi, wizard);
+        } else ansi.append(" │     │");
         newLine(ansi);
 
         // Line #14
@@ -249,6 +255,16 @@ public class SchoolBoard {
     }
 
     /**
+     * Gets the struct foreground for writing things.
+     *
+     * @param ansi   Ansi stream where to write.
+     * @param wizard Wizard type link to the player.
+     */
+    private static void structForeground(Ansi ansi, WizardType wizard) {
+        defaultForeground(ansi, true, wizard);
+    }
+
+    /**
      * Parses the number of students of a specific color in order to render them correctly.
      *
      * @param pawnsNumber Number of pawns.
@@ -273,7 +289,7 @@ public class SchoolBoard {
                 ansi.append(precision == 2 ? "●x00" : "●x0");
             }
         }
-        defaultForeground(ansi, active, wizard);
+        structForeground(ansi, wizard);
     }
 
     /**
