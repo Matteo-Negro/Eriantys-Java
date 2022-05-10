@@ -52,7 +52,7 @@ import static it.polimi.ingsw.view.cli.Utilities.*;
  *
  * @author Matteo Negro
  */
-class SchoolBoard {
+public class SchoolBoard {
 
     private SchoolBoard() {
     }
@@ -66,14 +66,14 @@ class SchoolBoard {
      * @param professors Map of professors are owned by the player.
      * @param tower Color of the towers belong to the player.
      * @param towersNumber Number of the towers.
-     * @param assistant Id of the played assistant.
+     * @param assistant Id of the played assistant (0, otherwise).
      * @param coins Number of coins.
      * @param name Name of the school board owner.
      * @param wizard Wizard type link to the player.
      * @param active Boolean value to set the active player.
      * @param exp Boolean value to set whether the school board is for expert game mode.
      */
-    static void print(Ansi ansi,
+    public static void print(Ansi ansi,
                       Map<HouseColor, Integer> entrance,
                       Map<HouseColor, Integer> diningRoom,
                       Map<HouseColor, Boolean> professors,
@@ -168,7 +168,8 @@ class SchoolBoard {
         ansi.append(" │ ");
         parsePawn(professors.get(HouseColor.YELLOW) ? 1 : 0, HouseColor.YELLOW, ansi, 0, active, wizard);
         ansi.append(" │");
-        ansi.append(String.format("AST%02d", assistant));
+        if(assistant!=0) ansi.append(String.format("AST%02d", assistant));
+        else ansi.append("     ");
         ansi.append("│");
         newLine(ansi);
 
