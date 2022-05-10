@@ -52,7 +52,7 @@ import static it.polimi.ingsw.view.cli.Utilities.*;
  *
  * @author Matteo Negro
  */
-public class SchoolBoard {
+class SchoolBoard {
 
     private SchoolBoard() {
     }
@@ -168,7 +168,8 @@ public class SchoolBoard {
         ansi.append(" │ ");
         parsePawn(professors.get(HouseColor.YELLOW) ? 1 : 0, HouseColor.YELLOW, ansi, 0, active, wizard);
         ansi.append(" │");
-        ansi.append(String.format("AST%02d", assistant));
+        if(assistant!=0) ansi.append(String.format("AST%02d", assistant));
+        else ansi.append("     ");
         ansi.append("│");
         newLine(ansi);
 
