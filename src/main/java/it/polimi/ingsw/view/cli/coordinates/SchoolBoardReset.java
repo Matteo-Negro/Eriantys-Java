@@ -19,7 +19,7 @@ public class SchoolBoardReset implements DeltaCoordinates {
      */
     @Override
     public int getX() {
-        return -72;
+        return -26;
     }
 
     /**

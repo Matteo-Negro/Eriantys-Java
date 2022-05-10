@@ -19,7 +19,7 @@ public class SchoolBoardNewLine implements DeltaCoordinates {
      */
     @Override
     public int getX() {
-        return -72;
+        return -26;
     }
 
     /**

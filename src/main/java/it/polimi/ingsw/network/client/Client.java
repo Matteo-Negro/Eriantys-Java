@@ -4,7 +4,6 @@ import it.polimi.ingsw.utilities.HouseColor;
 import it.polimi.ingsw.utilities.TowerType;
 import it.polimi.ingsw.utilities.WizardType;
 import it.polimi.ingsw.view.cli.SchoolBoard;
-import it.polimi.ingsw.view.cli.SplashScreen;
 import org.fusesource.jansi.Ansi;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
@@ -70,7 +69,7 @@ public class Client {
         initializeMapBoolean(professors);
         professors.put(HouseColor.FUCHSIA, true);
 
-        SchoolBoard.print(ansi, entrance, diningRoom, professors, TowerType.WHITE, 8, 3, 1, "Player 1", WizardType.GREEN, true, true);
+        SchoolBoard.print(ansi, entrance, diningRoom, professors, TowerType.WHITE, 8, 3, 1, "Player 1", WizardType.FUCHSIA, true, true);
 
         terminal.writer().print(ansi);
         terminal.flush();

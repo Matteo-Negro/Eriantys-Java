@@ -52,7 +52,7 @@ import static it.polimi.ingsw.view.cli.Utilities.*;
  *
  * @author Matteo Negro
  */
-class SchoolBoard {
+public class SchoolBoard {
 
     private SchoolBoard() {
     }
@@ -123,9 +123,9 @@ class SchoolBoard {
         parsePawn(entrance.get(HouseColor.GREEN), HouseColor.GREEN, ansi, 1, active, wizard);
         ansi.append(" │ ");
         parsePawn(diningRoom.get(HouseColor.GREEN), HouseColor.GREEN, ansi, 2, active, wizard);
-        ansi.append(" │ ");
+        ansi.append(" │  ");
         parsePawn(professors.get(HouseColor.GREEN) ? 1 : 0, HouseColor.GREEN, ansi, 0, active, wizard);
-        ansi.append(" │ ");
+        ansi.append("  │ ");
         switch (tower) {
             case BLACK -> foreground(ansi, TowerBlack.getInstance());
             case GREY -> foreground(ansi, TowerGrey.getInstance());
@@ -149,9 +149,9 @@ class SchoolBoard {
         parsePawn(entrance.get(HouseColor.RED), HouseColor.RED, ansi, 1, active, wizard);
         ansi.append(" │ ");
         parsePawn(diningRoom.get(HouseColor.RED), HouseColor.RED, ansi, 2, active, wizard);
-        ansi.append(" │ ");
+        ansi.append(" │  ");
         parsePawn(professors.get(HouseColor.RED) ? 1 : 0, HouseColor.RED, ansi, 0, active, wizard);
-        ansi.append(" │ AST │");
+        ansi.append("  │ AST │");
         newLine(ansi);
 
         // Line #8
@@ -165,10 +165,10 @@ class SchoolBoard {
         parsePawn(entrance.get(HouseColor.YELLOW), HouseColor.YELLOW, ansi, 1, active, wizard);
         ansi.append(" │ ");
         parsePawn(diningRoom.get(HouseColor.YELLOW), HouseColor.YELLOW, ansi, 2, active, wizard);
-        ansi.append(" │ ");
+        ansi.append(" │  ");
         parsePawn(professors.get(HouseColor.YELLOW) ? 1 : 0, HouseColor.YELLOW, ansi, 0, active, wizard);
-        ansi.append(" │");
-        if(assistant!=0) ansi.append(String.format("AST%02d", assistant));
+        ansi.append("  │");
+        if (assistant != 0) ansi.append(String.format("AST%02d", assistant));
         else ansi.append("     ");
         ansi.append("│");
         newLine(ansi);
@@ -184,9 +184,9 @@ class SchoolBoard {
         parsePawn(entrance.get(HouseColor.FUCHSIA), HouseColor.FUCHSIA, ansi, 1, active, wizard);
         ansi.append(" │ ");
         parsePawn(diningRoom.get(HouseColor.FUCHSIA), HouseColor.FUCHSIA, ansi, 2, active, wizard);
-        ansi.append(" │ ");
+        ansi.append(" │  ");
         parsePawn(professors.get(HouseColor.FUCHSIA) ? 1 : 0, HouseColor.FUCHSIA, ansi, 0, active, wizard);
-        if (exp) ansi.append(" │ CNS │");
+        if (exp) ansi.append("  │ CNS │");
         else ansi.append(" │     │");
         newLine(ansi);
 
@@ -202,9 +202,9 @@ class SchoolBoard {
         parsePawn(entrance.get(HouseColor.BLUE), HouseColor.BLUE, ansi, 1, active, wizard);
         ansi.append(" │ ");
         parsePawn(diningRoom.get(HouseColor.BLUE), HouseColor.BLUE, ansi, 2, active, wizard);
-        ansi.append(" │ ");
+        ansi.append(" │  ");
         parsePawn(professors.get(HouseColor.BLUE) ? 1 : 0, HouseColor.BLUE, ansi, 0, active, wizard);
-        if (exp) ansi.append(String.format(" │ x%02d │", coins));
+        if (exp) ansi.append(String.format("  │ x%02d │", coins));
         else ansi.append(" │     │");
         newLine(ansi);
 
@@ -262,8 +262,7 @@ class SchoolBoard {
         if (precision == 0) {
             foreground(ansi, (pawnsNumber != 0) ? getColourFrom(houseColor) : DarkGrey.getInstance());
             ansi.append("●");
-        }
-        else {
+        } else {
             if (pawnsNumber != 0) {
                 foreground(ansi, getColourFrom(houseColor));
                 ansi.append("●");
@@ -271,7 +270,7 @@ class SchoolBoard {
                 printStudentsNumber(ansi, precision, pawnsNumber);
             } else {
                 foreground(ansi, DarkGrey.getInstance());
-                ansi.append("●x0");
+                ansi.append(precision == 2 ? "●x00" : "●x0");
             }
         }
         defaultForeground(ansi, active, wizard);
