@@ -208,9 +208,11 @@ public class SchoolBoard {
         ansi.append(" │  ");
         parsePawn(professors.get(HouseColor.BLUE) ? 1 : 0, HouseColor.BLUE, ansi, 0, active, wizard);
         if (exp) {
+            ansi.append("  │ ");
             defaultForeground(ansi, active, wizard);
-            ansi.append(String.format("  │ x%02d │", coins));
+            ansi.append(String.format("x%02d", coins));
             structForeground(ansi, wizard);
+            ansi.append(" │");
         } else ansi.append(" │     │");
         newLine(ansi);
 
