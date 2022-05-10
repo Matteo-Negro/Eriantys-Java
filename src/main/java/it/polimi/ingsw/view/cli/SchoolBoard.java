@@ -47,10 +47,10 @@ import static it.polimi.ingsw.view.cli.Utilities.*;
 // ╚════════════════════════════╝
 
 /**
- * Class used for printing a single schoolboard.
+ * Class used for printing a single school board.
  * It always returns to the starting point.
  *
- * @Matteo Negro
+ * @author Matteo Negro
  */
 class SchoolBoard {
 
@@ -92,14 +92,14 @@ class SchoolBoard {
 
         // Line #1
 
-        String temp = " ";
+        StringBuilder temp = new StringBuilder(" ");
         if (name.length() > blankLineChars) {
-            for (int i = 0; i < blankLineChars - 1; i++) temp += name.charAt(i);
-            ansi.append(temp);
+            for (int i = 0; i < blankLineChars - 1; i++) temp.append(name.charAt(i));
+            ansi.append(temp.toString());
         } else {
-            for (int i = 0; i < blankLineChars - 1; i++) temp += (i < name.length()) ? name.charAt(i) : " ";
+            for (int i = 0; i < blankLineChars - 1; i++) temp.append((i < name.length()) ? name.charAt(i) : " ");
         }
-        ansi.append(temp);
+        ansi.append(temp.toString());
         newLine(ansi);
 
         // Line #2
