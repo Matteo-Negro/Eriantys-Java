@@ -20,12 +20,19 @@ public class Utilities {
      * Clears the screen with a default background.
      *
      * @param terminal Terminal where to execute.
+     * @param def      true if has to be reset to the default situation.
      */
-    public static void clearScreen(Terminal terminal) {
+    public static void clearScreen(Terminal terminal, boolean def) {
         Ansi ansi = new Ansi();
         ansi.cursor(0, 0);
-        background(ansi, Black.getInstance());
-        foreground(ansi, White.getInstance());
+        if (def) {
+            ansi.bgDefault();
+            ansi.fgDefault();
+            ansi.saveCursorPosition();
+        } else {
+            background(ansi, Black.getInstance());
+            foreground(ansi, White.getInstance());
+        }
         for (int x = 0; x < terminal.getWidth(); x++)
             for (int y = 0; y < terminal.getHeight(); y++)
                 ansi.append(" ");

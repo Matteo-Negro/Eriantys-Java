@@ -4,8 +4,8 @@ import it.polimi.ingsw.utilities.HouseColor;
 import it.polimi.ingsw.utilities.TowerType;
 import it.polimi.ingsw.utilities.WizardType;
 import it.polimi.ingsw.view.cli.colours.*;
-import it.polimi.ingsw.view.cli.coordinates.IslandNewLine;
-import it.polimi.ingsw.view.cli.coordinates.IslandReset;
+import it.polimi.ingsw.view.cli.coordinates.SchoolBoardNewLine;
+import it.polimi.ingsw.view.cli.coordinates.SchoolBoardReset;
 import org.fusesource.jansi.Ansi;
 
 import java.util.Map;
@@ -52,7 +52,7 @@ import static it.polimi.ingsw.view.cli.Utilities.*;
  *
  * @author Matteo Negro
  */
-class SchoolBoard {
+public class SchoolBoard {
 
     private SchoolBoard() {
     }
@@ -60,31 +60,31 @@ class SchoolBoard {
     /**
      * Print the school board.
      *
-     * @param ansi Ansi stream where to write.
-     * @param entrance Map of students which are on the entrance.
-     * @param diningRoom Map of students which are on the dining room.
-     * @param professors Map of professors are owned by the player.
-     * @param tower Color of the towers belong to the player.
+     * @param ansi         Ansi stream where to write.
+     * @param entrance     Map of students which are on the entrance.
+     * @param diningRoom   Map of students which are on the dining room.
+     * @param professors   Map of professors are owned by the player.
+     * @param tower        Color of the towers belong to the player.
      * @param towersNumber Number of the towers.
-     * @param assistant Id of the played assistant.
-     * @param coins Number of coins.
-     * @param name Name of the school board owner.
-     * @param wizard Wizard type link to the player.
-     * @param active Boolean value to set the active player.
-     * @param exp Boolean value to set whether the school board is for expert game mode.
+     * @param assistant    Id of the played assistant.
+     * @param coins        Number of coins.
+     * @param name         Name of the school board owner.
+     * @param wizard       Wizard type link to the player.
+     * @param active       Boolean value to set the active player.
+     * @param exp          Boolean value to set whether the school board is for expert game mode.
      */
-    static void print(Ansi ansi,
-                      Map<HouseColor, Integer> entrance,
-                      Map<HouseColor, Integer> diningRoom,
-                      Map<HouseColor, Boolean> professors,
-                      TowerType tower,
-                      int towersNumber,
-                      int assistant,
-                      int coins,
-                      String name,
-                      WizardType wizard,
-                      boolean active,
-                      boolean exp
+    public static void print(Ansi ansi,
+                             Map<HouseColor, Integer> entrance,
+                             Map<HouseColor, Integer> diningRoom,
+                             Map<HouseColor, Boolean> professors,
+                             TowerType tower,
+                             int towersNumber,
+                             int assistant,
+                             int coins,
+                             String name,
+                             WizardType wizard,
+                             boolean active,
+                             boolean exp
     ) {
 
         int blankLineChars = 26;
@@ -219,7 +219,7 @@ class SchoolBoard {
      * @param ansi Ansi stream where to write.
      */
     private static void newLine(Ansi ansi) {
-        moveCursor(ansi, IslandNewLine.getInstance());
+        moveCursor(ansi, SchoolBoardNewLine.getInstance());
     }
 
     /**
@@ -228,13 +228,13 @@ class SchoolBoard {
      * @param ansi Ansi stream where to write.
      */
     private static void resetCursor(Ansi ansi) {
-        moveCursor(ansi, IslandReset.getInstance());
+        moveCursor(ansi, SchoolBoardReset.getInstance());
     }
 
     /**
      * Gets the default foreground for writing things.
      *
-     * @param ansi Ansi stream where to write.
+     * @param ansi   Ansi stream where to write.
      * @param active Boolean value to set the active player.
      * @param wizard Wizard type link to the player.
      */
@@ -251,41 +251,42 @@ class SchoolBoard {
      * Parses the number of students of a specific color in order to render them correctly.
      *
      * @param pawnsNumber Number of pawns.
-     * @param houseColor Pawn color.
-     * @param ansi Ansi stream where to write.
-     * @param precision Number of digits.
-     * @param active Boolean value to set the active player.
-     * @param wizard Wizard type link to the player.
+     * @param houseColor  Pawn color.
+     * @param ansi        Ansi stream where to write.
+     * @param precision   Number of digits.
+     * @param active      Boolean value to set the active player.
+     * @param wizard      Wizard type link to the player.
      */
     private static void parsePawn(int pawnsNumber, HouseColor houseColor, Ansi ansi, int precision, boolean active, WizardType wizard) {
-        switch (precision) {
-            case 0 -> {
-                foreground(ansi, (pawnsNumber != 0) ? getColourFrom(houseColor) : DarkGrey.getInstance());
+        if (precision == 0) {
+            foreground(ansi, (pawnsNumber != 0) ? getColourFrom(houseColor) : DarkGrey.getInstance());
+            ansi.append("●");
+        }
+        else {
+            if (pawnsNumber != 0) {
+                foreground(ansi, getColourFrom(houseColor));
                 ansi.append("●");
-            }
-            case 1 -> {
-                if (pawnsNumber != 0) {
-                    foreground(ansi, getColourFrom(houseColor));
-                    ansi.append("●");
-                    defaultForeground(ansi, active, wizard);
-                    ansi.append(String.format("x%01d", pawnsNumber));
-                } else {
-                    foreground(ansi, DarkGrey.getInstance());
-                    ansi.append("●x0");
-                }
-            }
-            case 2 -> {
-                if (pawnsNumber != 0) {
-                    foreground(ansi, getColourFrom(houseColor));
-                    ansi.append("●");
-                    defaultForeground(ansi, active, wizard);
-                    ansi.append(String.format("x%02d", pawnsNumber));
-                } else {
-                    foreground(ansi, DarkGrey.getInstance());
-                    ansi.append("●x00");
-                }
+                defaultForeground(ansi, active, wizard);
+                printStudentsNumber(ansi, precision, pawnsNumber);
+            } else {
+                foreground(ansi, DarkGrey.getInstance());
+                ansi.append("●x0");
             }
         }
         defaultForeground(ansi, active, wizard);
+    }
+
+    /**
+     * Prints the number of students.
+     *
+     * @param ansi        Ansi stream where to write.
+     * @param precision   Number of digits.
+     * @param pawnsNumber Number of pawns.
+     */
+    private static void printStudentsNumber(Ansi ansi, int precision, int pawnsNumber) {
+        if (precision == 1)
+            ansi.append(String.format("x%01d", pawnsNumber));
+        else
+            ansi.append(String.format("x%02d", pawnsNumber));
     }
 }
