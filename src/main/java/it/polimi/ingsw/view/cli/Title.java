@@ -1,13 +1,11 @@
 package it.polimi.ingsw.view.cli;
 
 import it.polimi.ingsw.view.cli.colours.Subtitle;
-import it.polimi.ingsw.view.cli.colours.White;
 import it.polimi.ingsw.view.cli.coordinates.TitleNewLine;
 import it.polimi.ingsw.view.cli.coordinates.TitleReset;
 import org.fusesource.jansi.Ansi;
 
-import static it.polimi.ingsw.view.cli.Utilities.foreground;
-import static it.polimi.ingsw.view.cli.Utilities.moveCursor;
+import static it.polimi.ingsw.view.cli.Utilities.*;
 
 //  ________          __                     __
 // |        \        |  \                   |  \
@@ -97,7 +95,9 @@ public class Title {
         foreground(ansi, Subtitle.getInstance());
 
         ansi.cursorMove(14, 0);
+        bold(ansi, true);
         ansi.append("A game by Leo Colovini for 2-4 players.");
+        bold(ansi, false);
 
         ansi.cursorMove(-53, 1);
         ansi.append("Project developed by Riccardo Milici, Riccardo Motta, Matteo Negro.");
