@@ -74,6 +74,20 @@ public class Utilities {
     }
 
     /**
+     * Sets the font to bold or regular.
+     *
+     * @param ansi   Ansi stream where to write.
+     * @param enable Enable for bold, disable for regular.
+     */
+    public static void bold(Ansi ansi, boolean enable) {
+        if (enable)
+            ansi.bold();
+        else
+            ansi.boldOff();
+        ansi.saveCursorPosition();
+    }
+
+    /**
      * Gets the color of the student from HouseColor.
      *
      * @param houseColor The student's color.
