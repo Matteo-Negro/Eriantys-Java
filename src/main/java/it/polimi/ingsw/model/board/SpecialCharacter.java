@@ -33,6 +33,8 @@ public class SpecialCharacter {
         paidInRound = false;
         assignedEffect = getEffectBy(id, students, 5);
         effectCost = assignedEffect.getCost();
+
+        System.out.printf("\n *** New SpecialCharacter successfully created with id: %d", id);
     }
 
     /**
@@ -52,6 +54,8 @@ public class SpecialCharacter {
         this.alreadyPaid = statusAlreadyPaid;
         this.paidInRound = statusPaidInRound;
         this.isActive = statusIsActive;
+
+        System.out.printf("\n *** Saved SpecialCharacter successfully restored with id: %d", statusId);
     }
 
     /**

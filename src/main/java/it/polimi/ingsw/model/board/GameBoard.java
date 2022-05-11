@@ -76,6 +76,8 @@ public class GameBoard {
         Arrays.stream(HouseColor.values()).forEach(color -> this.professors.put(color, null));
         this.initializeClouds(numPlayer);
         this.motherNatureIsland = this.islands.get(0);
+
+        System.out.println("\n *** New GameBoard successfully created.");
     }
 
     /**
@@ -106,6 +108,8 @@ public class GameBoard {
         }
 
         this.motherNatureIsland = this.islands.get(idMotherNatureIsland);
+
+        System.out.println("\n *** Saved GameBoard successfully restored.");
     }
 
     /**

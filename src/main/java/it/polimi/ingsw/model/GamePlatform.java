@@ -46,6 +46,8 @@ public class GamePlatform {
         this.playersNumber = playersNumber;
         this.currentPlayer = "";
         this.roundWinner = "";
+
+        System.out.println("\n *** New GamePlatform successfully created.");
     }
 
     /**
@@ -67,6 +69,8 @@ public class GamePlatform {
         this.roundWinner = turnOrder.get(0).getName();
         this.players = new HashMap<>();
         this.clockwiseOrder.forEach(player -> this.players.put(player.getName(), player));
+
+        System.out.println("\n *** Saved GamePlatform successfully restored.");
     }
 
     /**

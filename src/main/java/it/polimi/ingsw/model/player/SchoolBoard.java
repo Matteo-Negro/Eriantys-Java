@@ -36,6 +36,8 @@ public class SchoolBoard {
             this.diningRoom.put(color, 0);
             this.entrance.put(color, 0);
         }
+
+        System.out.println("\n *** New SchoolBoard successfully created.");
     }
 
     /**
@@ -51,6 +53,8 @@ public class SchoolBoard {
         this.towerType = towerType;
         this.diningRoom = new EnumMap<>(diningRoom);
         this.entrance = new EnumMap<>(entrance);
+
+        System.out.println("\n *** Saved SchoolBoard successfully restored.");
     }
 
     /**

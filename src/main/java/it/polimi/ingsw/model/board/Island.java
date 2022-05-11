@@ -32,6 +32,8 @@ public class Island {
         this.ban = false;
         this.tower = null;
         Arrays.stream(HouseColor.values()).forEach(studentColor -> this.students.put(studentColor, studentColor.equals(color) ? 1 : 0));
+
+        System.out.printf("\n *** New Island successfully created with id: %d", idIsland);
     }
 
     /**
@@ -52,6 +54,8 @@ public class Island {
 
         for (HouseColor color : HouseColor.values())
             this.students.put(color, status.getOrDefault(color, 0));
+
+        System.out.printf("\n *** Saved Island successfully restored with id: %d", idIsland);
     }
 
     /**

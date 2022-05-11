@@ -39,6 +39,8 @@ public class Player {
         for (int index = 1; index <= 10; index++)
             assistants.add(new Assistant(index));
         this.schoolBoard = new SchoolBoard(towersNumber, towerType);
+
+        System.out.println("\n *** New Player successfully created.");
     }
 
     /**
@@ -56,6 +58,8 @@ public class Player {
         this.assistants = new ArrayList<>(assistants);
         this.coins = coins;
         this.schoolBoard = schoolBoard;
+
+        System.out.println("\n *** Saved Player successfully restored.");
     }
 
     /**

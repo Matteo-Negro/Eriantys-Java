@@ -99,6 +99,7 @@ public class Server {
                         }
                     });
         }
+        System.out.println("\n * All saved games have successfully been loaded.");
     }
 
     /**
@@ -116,7 +117,7 @@ public class Server {
         for (JsonElement player : json.getAsJsonArray("players"))
             players.put(player.getAsJsonObject().get("name").getAsString(), parsePlayer(player.getAsJsonObject()));
 
-        gameController = new GameController(new GamePlatform(
+        gameController = new GameController(json.get("id").getAsString(), new GamePlatform(
                 json.get("expert").getAsBoolean(),
                 parseGameBoard(json.getAsJsonObject("board"), json.get("expert").getAsBoolean(), players),
                 parsePlayersList(json.getAsJsonArray("clockwiseOrder"), players),
@@ -129,6 +130,7 @@ public class Server {
         synchronized (games) {
             games.put(json.get("id").getAsString(), gameController);
         }
+        System.out.println("\n * Loaded saved game  with id: " + json.get("id").getAsString());
     }
 
     /**
@@ -140,14 +142,14 @@ public class Server {
      */
     public String addGame(int expectedPlayers, boolean expertMode) {
         String id;
-        GameController gameController = new GameController(new GamePlatform(expectedPlayers, expertMode), expectedPlayers, savePath);
-        gameExecutor.submit(gameController);
         synchronized (games) {
             do id = getNewId();
             while (games.containsKey(id));
+            GameController gameController = new GameController(id, new GamePlatform(expectedPlayers, expertMode), expectedPlayers, savePath);
+            gameExecutor.submit(gameController);
             games.put(id, gameController);
         }
-        System.out.println("Created new game with id " + id);
+        System.out.println("\n * Created new game with id " + id);
         return id;
     }
 
@@ -161,6 +163,8 @@ public class Server {
             games.get(id).interrupt();
             games.remove(id);
         }
+
+        System.out.println("\n * Deleted the game with id: " + id);
     }
 
     /**

@@ -54,11 +54,11 @@ public class GameController extends Thread {
      * @param expectedPlayers The number of expected player.
      * @param savePath        The path to the location where the game will be saved.
      */
-    public GameController(GamePlatform gameModel, int expectedPlayers, String savePath) {
+    public GameController(String id, GamePlatform gameModel, int expectedPlayers, String savePath) {
         this.connectedPlayers = 0;
         this.expectedPlayers = expectedPlayers;
         this.gameModel = gameModel;
-        this.id = null;
+        this.id = id;
         this.phase = "planning";
         this.round = 0;
         this.savePath = savePath;
@@ -68,6 +68,8 @@ public class GameController extends Thread {
         this.subPhase = GameControllerStates.PLAY_ASSISTANT;
         this.movementEffectActive = false;
         this.activeUser = null;
+
+        System.out.println("\n ** New GameController successfully created with : " + id);
     }
 
     /**
