@@ -110,6 +110,17 @@ public class MessageCreator {
     }
 
     /**
+     * Creates the message used to tell the clients that the game has started running.
+     *
+     * @return JsonObject which represents the message.
+     */
+    public static JsonObject gameStart(){
+        JsonObject reply = new JsonObject();
+        reply.addProperty("type", "gameStart");
+        return reply;
+    }
+
+    /**
      * Creates the "pong" message.
      *
      * @return JsonObject which represents the message.
@@ -157,7 +168,7 @@ public class MessageCreator {
      */
     public static JsonObject moveProfessor(String professor, String player){
         JsonObject reply = new JsonObject();
-        reply.addProperty("professor", professor.toString());
+        reply.addProperty("professor", professor);
         reply.addProperty("player", player);
         return reply;
     }

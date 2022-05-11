@@ -219,7 +219,10 @@ public class GameController extends Thread {
         //SENDING THE CURRENT GAME MODEL STATUS TO THE PLAYER.
         user.sendMessage(MessageCreator.status(this));
 
-        if (this.isFull()) this.isFullLock.notify();
+        if (this.isFull()){
+            notifyUsers(MessageCreator.gameStart());
+            this.isFullLock.notify();
+        }
     }
 
     /**
@@ -393,15 +396,16 @@ public class GameController extends Thread {
      */
     public void playAssistantCard(String player, int assistant) {
         try {
-            this.gameModel.getPlayerByName(player).playAssistant(assistant);
-        } catch (AlreadyPlayedException e) {
+            this.gameModel.getGameBoard().addPlayedAssistant(this.gameModel.getPlayerByName(player), new Assistant(assistant));
+
+        } catch (IllegalMoveException e) {
             this.getUsers().remove(this.getUser(player));
         }
 
         try {
-            this.gameModel.getGameBoard().addPlayedAssistant(this.gameModel.getPlayerByName(player), new Assistant(assistant));
+            this.gameModel.getPlayerByName(player).playAssistant(assistant);
             this.setSubPhase(GameControllerStates.ASSISTANT_PLAYED);
-        } catch (IllegalMoveException e) {
+        } catch (AlreadyPlayedException e) {
             this.getUsers().remove(this.getUser(player));
         }
 
@@ -570,7 +574,7 @@ public class GameController extends Thread {
         List<Player> mostInfluential = influence.entrySet().stream().filter(entry -> entry.getValue() == max).map(Map.Entry::getKey).toList();
         if (mostInfluential.size() == 1 || (mostInfluential.size() == 2 && mostInfluential.get(0).getSchoolBoard().getTowerType().equals(mostInfluential.get(1).getSchoolBoard().getTowerType()))) {
             if (island.getTower() == null) {
-                island.setTower(mostInfluential.get(0).getSchoolBoard().getTowerType());
+                this.getGameModel().getGameBoard().setTowerOnIsland(island, mostInfluential.get(0).getSchoolBoard().getTowerType());
                 this.notifyUsers(MessageCreator.moveTower(mostInfluential.get(0).getSchoolBoard().getTowerType(), island));
                 try {
                     for (Player player : this.gameModel.getPlayers()) {
@@ -593,7 +597,7 @@ public class GameController extends Thread {
                                 player.getSchoolBoard().removeTowers(island.getSize());
                             }
                         }
-                        island.setTower(mostInfluential.get(0).getSchoolBoard().getTowerType());
+                        this.getGameModel().getGameBoard().setTowerOnIsland(island, mostInfluential.get(0).getSchoolBoard().getTowerType());
                         this.notifyUsers(MessageCreator.moveTower(mostInfluential.get(0).getSchoolBoard().getTowerType(), island));
                     } catch (NotEnoughTowersException e1) {
                         endGame();
@@ -623,7 +627,8 @@ public class GameController extends Thread {
      * @param command The json that contains all the information of the special character that will be paid.
      */
     public void paySpecialCharacter(JsonObject command) throws IllegalMoveException {
-            boolean characterAlreadyPaid = false;
+
+        boolean characterAlreadyPaid = false;
             for(SpecialCharacter c : this.getGameModel().getGameBoard().getCharacters()){
                 if (c.isActive()) {
                     characterAlreadyPaid = true;
@@ -634,6 +639,11 @@ public class GameController extends Thread {
 
         int character = command.get("character").getAsInt();
         this.gameModel.getGameBoard().getCharacters().get(character).activateEffect();
+        try{
+            this.getGameModel().getPlayerByName(command.get("player").getAsString()).paySpecialCharacter(this.getGameModel().getGameBoard().getCharacters().get(character));
+        }catch(NotEnoughCoinsException | NullPointerException ne){
+            throw new IllegalMoveException();
+        }
 
         try {
             switch (character) {

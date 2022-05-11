@@ -136,15 +136,14 @@ public class User extends Thread {
             case "login" -> {
                 logged = Matchmaking.login(gameController, command.get("name").getAsString(), this);
                 sendMessage(MessageCreator.login(logged));
-                if (logged)
+                if (logged) {
                     username = command.get("name").getAsString();
+                }
             }
             case "logout" -> removeFromGame();
             case "command" -> {
                 switch (command.get("subtype").getAsString()) {
-                    case "playAssistant" -> {
-                        this.gameController.playAssistantCard(command.get("player").getAsString(), command.get("assistant").getAsInt());
-                    }
+                    case "playAssistant" -> this.gameController.playAssistantCard(command.get("player").getAsString(), command.get("assistant").getAsInt());
                     case "move" -> {
                         switch (command.get("pawn").getAsString()) {
                             case "student" -> this.gameController.moveStudent(command);

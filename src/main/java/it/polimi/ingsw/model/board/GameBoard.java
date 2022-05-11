@@ -3,6 +3,7 @@ package it.polimi.ingsw.model.board;
 import it.polimi.ingsw.model.player.Assistant;
 import it.polimi.ingsw.model.player.Player;
 import it.polimi.ingsw.utilities.HouseColor;
+import it.polimi.ingsw.utilities.TowerType;
 import it.polimi.ingsw.utilities.exceptions.IllegalMoveException;
 import it.polimi.ingsw.utilities.exceptions.IslandNotFoundException;
 
@@ -243,6 +244,53 @@ public class GameBoard {
     }
 
     /**
+     * This method is used to set a tower of a certain type on the island given; it calls the merge() method if needed.
+     *
+     * @param island The island on which the tower is going to be put.
+     * @param tower The TowerType of the tower to put.
+     */
+    public void setTowerOnIsland(Island island, TowerType tower){
+        island.setTower(tower);
+
+        //Check if a merge to left is needed.
+        boolean mergeDone;
+        do {
+            int islandsSize = getIslands().size();
+            mergeDone = false;
+            for (int i = 0; i < islandsSize; i++) {
+                if (getIslands().get((i + islands.get(i).getSize() + 1) % 12).getId() == island.getId() && islands.get(i).getTower().equals(island.getTower())) {
+                    merge(islands.get(i), island);
+                    mergeDone = true;
+                    break;
+                }
+                if (islands.get((i - island.getSize() - 1) % 12).getId() == island.getId() && islands.get(i).getTower().equals(island.getTower())) {
+                    merge(island, islands.get(i));
+                    mergeDone = true;
+                    break;
+                }
+            }
+        }while(mergeDone);
+    }
+
+    /**
+     * This method merges two islands on the left, increasing the size and the students on the resulting island.
+     * @param leftIsland The island hosting the merge.
+     * @param rightIsland The island merging with the island on it's left.
+     */
+    private void merge(Island leftIsland, Island rightIsland){
+        leftIsland.setSize(leftIsland.getSize()+rightIsland.getSize());
+
+        Map<HouseColor, Integer> rightStudents = rightIsland.getStudents();
+
+        for(HouseColor color: rightStudents.keySet()){
+            for(int i=0; i<rightStudents.get(color); i++){
+                leftIsland.addStudent(color);
+            }
+        }
+        islands.remove(rightIsland);
+    }
+
+    /**
      * This method returns a copy of three characters.
      *
      * @return The data structure three characters.
@@ -277,10 +325,9 @@ public class GameBoard {
      * @param playedAssistant The card that the player would like to play.
      * @throws IllegalMoveException The played card is already played from another player.
      */
-    //TODO: throws exception is permitted when it is the last choice
     public void addPlayedAssistant(Player currentPlayer, Assistant playedAssistant) throws IllegalMoveException {
-        if (this.playedAssistants.keySet().stream().noneMatch(player -> this.playedAssistants.get(player) == playedAssistant)) {
-            throw new IllegalMoveException("The played card is already played from another player.");
+        if(currentPlayer.getAssistants().size()>1 && this.getPlayedAssistants().keySet().stream().anyMatch(player -> this.getPlayedAssistants().get(player).getId() == playedAssistant.getId())){
+            throw new IllegalMoveException();
         }
         this.playedAssistants.put(currentPlayer, playedAssistant);
     }

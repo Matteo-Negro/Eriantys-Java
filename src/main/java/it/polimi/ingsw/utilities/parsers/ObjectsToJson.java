@@ -130,6 +130,8 @@ public enum ObjectsToJson {
         object.add("characters", parseSpecialCharacters(gameBoard.getCharacters()));
         object.add("professors", parseProfessors(gameBoard.getProfessors()));
         object.addProperty("motherNatureIsland", gameBoard.getMotherNatureIsland().getId());
+        object.addProperty("ignoreColor", gameBoard.getIgnoreColor().toString());
+        object.addProperty("influenceBonus", gameBoard.getInfluenceBonus().getName());
         return object;
     }
 
