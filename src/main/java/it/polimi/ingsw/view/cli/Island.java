@@ -64,9 +64,11 @@ class Island {
 
         // Line #1
 
-        if (id >= 1 && id <= 6)
+        if (id >= 1 && id <= 6) {
+            bold(ansi, true);
             ansi.append("       ISL${id}        ".replace("${id}", String.format("%02d", id)));
-        else if (Boolean.TRUE.equals(connections.get(IslandConnection.NORTH)))
+            bold(ansi, false);
+        } else if (Boolean.TRUE.equals(connections.get(IslandConnection.NORTH)))
             ansi.append(centeredDots);
         else
             ansi.append(blankLine);
@@ -183,9 +185,11 @@ class Island {
 
         // Line #10
 
-        if (id >= 7 && id <= 12)
+        if (id >= 7 && id <= 12) {
+            bold(ansi, true);
             ansi.append("       ISL${id}        ".replace("${id}", String.format("%02d", id)));
-        else if (Boolean.TRUE.equals(connections.get(IslandConnection.SOUTH)))
+            bold(ansi, false);
+        } else if (Boolean.TRUE.equals(connections.get(IslandConnection.SOUTH)))
             ansi.append(centeredDots);
         else
             ansi.append(blankLine);

@@ -33,9 +33,8 @@ public class Utilities {
             background(ansi, Black.getInstance());
             foreground(ansi, White.getInstance());
         }
-        for (int x = 0; x < terminal.getWidth(); x++)
-            for (int y = 0; y < terminal.getHeight(); y++)
-                ansi.append(" ");
+        for (int index = 0; index < terminal.getWidth() * terminal.getHeight(); index++)
+            ansi.append(" ");
         ansi.cursor(0, 0);
         terminal.writer().print(ansi);
         terminal.flush();
