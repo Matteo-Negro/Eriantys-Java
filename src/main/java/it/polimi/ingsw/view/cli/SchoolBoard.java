@@ -73,22 +73,10 @@ public class SchoolBoard {
      * @param active       Boolean value to set the active player.
      * @param exp          Boolean value to set whether the school board is for expert game mode.
      */
-    public static void print(Ansi ansi,
-                             Map<HouseColor, Integer> entrance,
-                             Map<HouseColor, Integer> diningRoom,
-                             Map<HouseColor, Boolean> professors,
-                             TowerType tower,
-                             int towersNumber,
-                             int assistant,
-                             int coins,
-                             String name,
-                             WizardType wizard,
-                             boolean active,
-                             boolean exp
-    ) {
+    public static void print(Ansi ansi, Map<HouseColor, Integer> entrance, Map<HouseColor, Integer> diningRoom, Map<HouseColor, Boolean> professors, TowerType tower, int towersNumber, int assistant, int coins, String name, WizardType wizard, boolean active, boolean exp) {
 
         int blankLineChars = 26;
-        structForeground(ansi, wizard);
+        defaultForeground(ansi, active, wizard);
 
         // Line #1
 
@@ -132,9 +120,9 @@ public class SchoolBoard {
             case WHITE -> foreground(ansi, TowerWhite.getInstance());
         }
         ansi.append("●");
-        defaultForeground(ansi, active, wizard);
+        defaultForeground(ansi, true, wizard);
         ansi.append(String.format("x%01d", towersNumber));
-        structForeground(ansi, wizard);
+        defaultForeground(ansi, active, wizard);
         ansi.append(" │");
         newLine(ansi);
 
@@ -169,9 +157,9 @@ public class SchoolBoard {
         parsePawn(professors.get(HouseColor.YELLOW) ? 1 : 0, HouseColor.YELLOW, ansi, 0, active, wizard);
         ansi.append("  │");
         if (assistant != 0) {
-            defaultForeground(ansi, active, wizard);
+            defaultForeground(ansi, true, wizard);
             ansi.append(String.format("AST%02d", assistant));
-            structForeground(ansi, wizard);
+            defaultForeground(ansi, active, wizard);
         } else ansi.append("     ");
         ansi.append("│");
         newLine(ansi);
@@ -190,7 +178,7 @@ public class SchoolBoard {
         ansi.append(" │  ");
         parsePawn(professors.get(HouseColor.FUCHSIA) ? 1 : 0, HouseColor.FUCHSIA, ansi, 0, active, wizard);
         if (exp) ansi.append("  │ CNS │");
-        else ansi.append(" │     │");
+        else ansi.append("  │     │");
         newLine(ansi);
 
         // Line #12
@@ -209,11 +197,11 @@ public class SchoolBoard {
         parsePawn(professors.get(HouseColor.BLUE) ? 1 : 0, HouseColor.BLUE, ansi, 0, active, wizard);
         if (exp) {
             ansi.append("  │ ");
-            defaultForeground(ansi, active, wizard);
+            defaultForeground(ansi, true, wizard);
             ansi.append(String.format("x%02d", coins));
-            structForeground(ansi, wizard);
+            defaultForeground(ansi, active, wizard);
             ansi.append(" │");
-        } else ansi.append(" │     │");
+        } else ansi.append("  │     │");
         newLine(ansi);
 
         // Line #14
@@ -257,16 +245,6 @@ public class SchoolBoard {
     }
 
     /**
-     * Gets the struct foreground for writing things.
-     *
-     * @param ansi   Ansi stream where to write.
-     * @param wizard Wizard type link to the player.
-     */
-    private static void structForeground(Ansi ansi, WizardType wizard) {
-        defaultForeground(ansi, true, wizard);
-    }
-
-    /**
      * Parses the number of students of a specific color in order to render them correctly.
      *
      * @param pawnsNumber Number of pawns.
@@ -284,14 +262,14 @@ public class SchoolBoard {
             if (pawnsNumber != 0) {
                 foreground(ansi, getColourFrom(houseColor));
                 ansi.append("●");
-                defaultForeground(ansi, active, wizard);
+                defaultForeground(ansi, true, wizard);
                 printStudentsNumber(ansi, precision, pawnsNumber);
             } else {
                 foreground(ansi, DarkGrey.getInstance());
                 ansi.append(precision == 2 ? "●x00" : "●x0");
             }
         }
-        structForeground(ansi, wizard);
+        defaultForeground(ansi, active, wizard);
     }
 
     /**
@@ -302,9 +280,7 @@ public class SchoolBoard {
      * @param pawnsNumber Number of pawns.
      */
     private static void printStudentsNumber(Ansi ansi, int precision, int pawnsNumber) {
-        if (precision == 1)
-            ansi.append(String.format("x%01d", pawnsNumber));
-        else
-            ansi.append(String.format("x%02d", pawnsNumber));
+        if (precision == 1) ansi.append(String.format("x%01d", pawnsNumber));
+        else ansi.append(String.format("x%02d", pawnsNumber));
     }
 }

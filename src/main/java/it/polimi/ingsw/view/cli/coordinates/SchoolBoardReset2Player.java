@@ -3,13 +3,13 @@ package it.polimi.ingsw.view.cli.coordinates;
 import it.polimi.ingsw.view.cli.DeltaCoordinates;
 
 /**
- * SchoolBoard: cursor reset.
+ * SchoolBoard: cursor reset in case of 2 players.
  */
-public class SchoolBoardReset implements DeltaCoordinates {
+public class SchoolBoardReset2Player implements DeltaCoordinates {
 
-    private static SchoolBoardReset instance = null;
+    private static SchoolBoardReset2Player instance = null;
 
-    private SchoolBoardReset() {
+    private SchoolBoardReset2Player() {
     }
 
     /**
@@ -17,8 +17,8 @@ public class SchoolBoardReset implements DeltaCoordinates {
      *
      * @return The generated instance.
      */
-    public static SchoolBoardReset getInstance() {
-        if (instance == null) instance = new SchoolBoardReset();
+    public static SchoolBoardReset2Player getInstance() {
+        if (instance == null) instance = new SchoolBoardReset2Player();
         return instance;
     }
 
@@ -29,7 +29,7 @@ public class SchoolBoardReset implements DeltaCoordinates {
      */
     @Override
     public int getX() {
-        return -26;
+        return -52;
     }
 
     /**
