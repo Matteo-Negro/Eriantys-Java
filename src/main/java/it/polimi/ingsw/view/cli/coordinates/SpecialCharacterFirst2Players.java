@@ -3,13 +3,13 @@ package it.polimi.ingsw.view.cli.coordinates;
 import it.polimi.ingsw.view.cli.DeltaCoordinates;
 
 /**
- * Island: Third position (only in case of 3 players).
+ * SpecialCharacter: first position in case of 2 player.
  */
-public class SchoolBoardThird implements DeltaCoordinates {
+public class SpecialCharacterFirst2Players implements DeltaCoordinates {
 
-    private static SchoolBoardThird instance = null;
+    private static SpecialCharacterFirst2Players instance = null;
 
-    private SchoolBoardThird() {
+    private SpecialCharacterFirst2Players() {
     }
 
     /**
@@ -17,8 +17,8 @@ public class SchoolBoardThird implements DeltaCoordinates {
      *
      * @return The generated instance.
      */
-    public static SchoolBoardThird getInstance() {
-        if (instance == null) instance = new SchoolBoardThird();
+    public static SpecialCharacterFirst2Players getInstance() {
+        if (instance == null) instance = new SpecialCharacterFirst2Players();
         return instance;
     }
 
@@ -29,7 +29,7 @@ public class SchoolBoardThird implements DeltaCoordinates {
      */
     @Override
     public int getX() {
-        return 14;
+        return 13;
     }
 
     /**

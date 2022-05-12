@@ -3,13 +3,13 @@ package it.polimi.ingsw.view.cli.coordinates;
 import it.polimi.ingsw.view.cli.DeltaCoordinates;
 
 /**
- * SpecialCharacter: cursor reset.
+ * SpecialCharacters: cursor reset in case of 2 players.
  */
-public class SpecialCharacterReset implements DeltaCoordinates {
+public class SpecialCharactersReset3Players implements DeltaCoordinates {
 
-    private static SpecialCharacterReset instance = null;
+    private static SpecialCharactersReset3Players instance = null;
 
-    private SpecialCharacterReset() {
+    private SpecialCharactersReset3Players() {
     }
 
     /**
@@ -17,8 +17,8 @@ public class SpecialCharacterReset implements DeltaCoordinates {
      *
      * @return The generated instance.
      */
-    public static SpecialCharacterReset getInstance() {
-        if (instance == null) instance = new SpecialCharacterReset();
+    public static SpecialCharactersReset3Players getInstance() {
+        if (instance == null) instance = new SpecialCharactersReset3Players();
         return instance;
     }
 
@@ -29,7 +29,7 @@ public class SpecialCharacterReset implements DeltaCoordinates {
      */
     @Override
     public int getX() {
-        return 0;
+        return -47;
     }
 
     /**
@@ -39,6 +39,6 @@ public class SpecialCharacterReset implements DeltaCoordinates {
      */
     @Override
     public int getY() {
-        return -7;
+        return -16;
     }
 }

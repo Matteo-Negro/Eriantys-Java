@@ -4,10 +4,10 @@ import it.polimi.ingsw.utilities.HouseColor;
 import it.polimi.ingsw.view.cli.colours.DarkGrey;
 import it.polimi.ingsw.view.cli.colours.Grey;
 import it.polimi.ingsw.view.cli.colours.White;
-import it.polimi.ingsw.view.cli.coordinates.SpecialCharacterBanReset;
 import it.polimi.ingsw.view.cli.coordinates.SpecialCharacterNewLine;
 import it.polimi.ingsw.view.cli.coordinates.SpecialCharacterReset;
-import it.polimi.ingsw.view.cli.coordinates.SpecialCharacterStudentsReset;
+import it.polimi.ingsw.view.cli.coordinates.SpecialCharacterResetBan;
+import it.polimi.ingsw.view.cli.coordinates.SpecialCharacterResetStudents;
 import org.fusesource.jansi.Ansi;
 
 import java.util.List;
@@ -22,7 +22,8 @@ import static it.polimi.ingsw.view.cli.Utilities.*;
 // ║ │ CHR00 │ ║
 // ║ │       │ ║
 // ║ │  0CS  │ ║
-// ║ │       │ ║
+// ║ └───────┘ ║
+// ║ ┌───────┐ ║
 // ║ │ ● ● ● │ ║
 // ║ │ ● ● ● │ ║
 // ║ └───────┘ ║
@@ -36,7 +37,8 @@ import static it.polimi.ingsw.view.cli.Utilities.*;
 // ║ │ CHR00 │ ║
 // ║ │       │ ║
 // ║ │  0CS  │ ║
-// ║ │       │ ║
+// ║ └───────┘ ║
+// ║ ┌───────┐ ║
 // ║ │  !x0  │ ║
 // ║ └───────┘ ║
 // ╚═══════════╝
@@ -67,6 +69,7 @@ public class SpecialCharacter {
 
     /**
      * Print the special character.
+     * (-1 == null per il ban)
      */
     public static void print(Ansi ansi, int id, int price, boolean active, int banNumber, List<HouseColor> students) {
 
@@ -104,51 +107,78 @@ public class SpecialCharacter {
 
         // Line #7
 
-        ansi.append("│       │");
+        ansi.append("└───────┘");
         newLine(ansi);
 
-        // Line #8
+        // Print closure
 
-        if (banNumber != 0) {
-            ansi.append(String.format("│  !x%01d  │", banNumber));
-            newLine(ansi);
+        if (banNumber != -1) {
+            printBan(ansi, banNumber, active);
         } else if (students != null) {
-            ansi.append("│ ");
-            parseStudent(students.get(0), ansi, active);
-            ansi.append(" ");
-            parseStudent(students.get(1), ansi, active);
-            ansi.append(" ");
-            parseStudent(students.get(2), ansi, active);
-            ansi.append(" │");
-            newLine(ansi);
+            printStudents(ansi, students, active);
         } else {
-            ansi.append("└───────┘");
-            resetCursor(ansi, "standard");
+            resetCursor(ansi, ResetType.STANDARD);
         }
+    }
 
+    private static void printStudents(Ansi ansi, List<HouseColor> students, boolean active) {
         // Line #9
 
-        if (banNumber != 0) {
-            ansi.append("└───────┘");
-            resetCursor(ansi, "ban");
-        } else {
-            ansi.append("│ ");
-            parseStudent(students.get(3), ansi, active);
-            ansi.append(" ");
-            parseStudent(students.get(4), ansi, active);
-            ansi.append(" ");
-            parseStudent(students.get(5), ansi, active);
-            ansi.append(" │");
-            newLine(ansi);
-        }
+        ansi.append("┌───────┐");
+        newLine(ansi);
 
         // Line #10
 
-        if (students != null) {
-            ansi.append("└───────┘");
-            resetCursor(ansi, "students");
-        }
+        ansi.append("│ ");
+        parseStudent(students.get(0), ansi, active);
+        ansi.append(" ");
+        if (students.size() == 6) parseStudent(students.get(1), ansi, active);
+        else ansi.append(" ");
+        ansi.append(" ");
+        parseStudent(students.get(2), ansi, active);
+        ansi.append(" │");
+        newLine(ansi);
 
+        // Line #11
+
+        ansi.append("│ ");
+        parseStudent(students.get(3), ansi, active);
+        ansi.append(" ");
+        if (students.size() == 6) parseStudent(students.get(4), ansi, active);
+        else ansi.append(" ");
+        ansi.append(" ");
+        parseStudent(students.get(5), ansi, active);
+        ansi.append(" │");
+        newLine(ansi);
+
+        // Line #12
+
+        ansi.append("└───────┘");
+        resetCursor(ansi, ResetType.STUDENTS);
+    }
+
+    private static void printBan(Ansi ansi, int banNumber, boolean active) {
+        // Line #9
+
+        ansi.append("┌───────┐");
+        newLine(ansi);
+
+        // Line #10
+
+        if (banNumber != 0) ansi.append(String.format("│  !x%01d  │", banNumber));
+        else {
+            ansi.append("│  ");
+            foreground(ansi, DarkGrey.getInstance());
+            ansi.append(String.format("!x%01d", banNumber));
+            defaultForeground(ansi, active);
+            ansi.append("  │");
+        }
+        newLine(ansi);
+
+        // Line #11
+
+        ansi.append("└───────┘");
+        resetCursor(ansi, ResetType.BAN);
     }
 
     /**
@@ -165,10 +195,10 @@ public class SpecialCharacter {
      *
      * @param ansi Ansi stream where to write.
      */
-    private static void resetCursor(Ansi ansi, String when) {
+    private static void resetCursor(Ansi ansi, ResetType when) {
         switch (when) {
-            case "ban" -> moveCursor(ansi, SpecialCharacterBanReset.getInstance());
-            case "students" -> moveCursor(ansi, SpecialCharacterStudentsReset.getInstance());
+            case BAN -> moveCursor(ansi, SpecialCharacterResetBan.getInstance());
+            case STUDENTS -> moveCursor(ansi, SpecialCharacterResetStudents.getInstance());
             default -> moveCursor(ansi, SpecialCharacterReset.getInstance());
         }
     }
@@ -184,7 +214,6 @@ public class SpecialCharacter {
         else foreground(ansi, Grey.getInstance());
     }
 
-
     /**
      * Parses the number of students of a specific color in order to render them correctly.
      */
@@ -199,4 +228,6 @@ public class SpecialCharacter {
         }
         defaultForeground(ansi, active);
     }
+
+    private enum ResetType {BAN, STANDARD, STUDENTS}
 }

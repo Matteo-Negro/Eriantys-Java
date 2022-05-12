@@ -5,11 +5,11 @@ import it.polimi.ingsw.view.cli.DeltaCoordinates;
 /**
  * SpecialCharacter: cursor reset.
  */
-public class SpecialCharacterReset implements DeltaCoordinates {
+public class SpecialCharacterResetBan implements DeltaCoordinates {
 
-    private static SpecialCharacterReset instance = null;
+    private static SpecialCharacterResetBan instance = null;
 
-    private SpecialCharacterReset() {
+    private SpecialCharacterResetBan() {
     }
 
     /**
@@ -17,8 +17,8 @@ public class SpecialCharacterReset implements DeltaCoordinates {
      *
      * @return The generated instance.
      */
-    public static SpecialCharacterReset getInstance() {
-        if (instance == null) instance = new SpecialCharacterReset();
+    public static SpecialCharacterResetBan getInstance() {
+        if (instance == null) instance = new SpecialCharacterResetBan();
         return instance;
     }
 
@@ -29,7 +29,7 @@ public class SpecialCharacterReset implements DeltaCoordinates {
      */
     @Override
     public int getX() {
-        return 0;
+        return -9;
     }
 
     /**
@@ -39,6 +39,6 @@ public class SpecialCharacterReset implements DeltaCoordinates {
      */
     @Override
     public int getY() {
-        return -7;
+        return -9;
     }
 }
