@@ -4,9 +4,13 @@ import com.google.gson.JsonObject;
 import it.polimi.ingsw.model.GamePlatform;
 import it.polimi.ingsw.model.board.Island;
 import it.polimi.ingsw.model.board.SpecialCharacter;
+import it.polimi.ingsw.model.board.effects.HerbalistEffect;
+import it.polimi.ingsw.model.board.effects.JesterEffect;
 import it.polimi.ingsw.model.board.effects.MonkEffect;
+import it.polimi.ingsw.model.board.effects.PrincessEffect;
 import it.polimi.ingsw.model.player.Assistant;
 import it.polimi.ingsw.model.player.Player;
+import it.polimi.ingsw.utilities.GameControllerStates;
 import it.polimi.ingsw.utilities.HouseColor;
 import it.polimi.ingsw.utilities.MessageCreator;
 import it.polimi.ingsw.utilities.exceptions.*;
@@ -26,20 +30,22 @@ import java.util.stream.Collectors;
  *
  * @author Matteo Negro
  * @author Riccardo Motta
+ * @author Riccardo Milici
  */
 public class GameController extends Thread {
     private final int expectedPlayers;
     private final GamePlatform gameModel;
     private final String savePath;
     private final Map<String, User> users;
-    private int connectedPlayers;
-    private String id;
-    private String phase;
-    private int round;
-    private String activeUser;
-    private Map<String, Integer> subPhaseCompletion;
+    private final String id;
     private final Object isFullLock;
     private final Object actionNeededLock;
+    private int connectedPlayers;
+    private int round;
+    private String phase;
+    private GameControllerStates subPhase;
+    private boolean movementEffectActive;
+    private String activeUser;
 
     /**
      * The game controller constructor.
@@ -48,23 +54,22 @@ public class GameController extends Thread {
      * @param expectedPlayers The number of expected player.
      * @param savePath        The path to the location where the game will be saved.
      */
-    public GameController(GamePlatform gameModel, int expectedPlayers, String savePath) {
+    public GameController(String id, GamePlatform gameModel, int expectedPlayers, String savePath) {
         this.connectedPlayers = 0;
         this.expectedPlayers = expectedPlayers;
         this.gameModel = gameModel;
-        //this.id=null;
+        this.id = id;
         this.phase = "planning";
         this.round = 0;
         this.savePath = savePath;
         this.users = new HashMap<>();
         this.isFullLock = new Object();
         this.actionNeededLock = new Object();
-        this.subPhaseCompletion = new HashMap<>();
-        this.subPhaseCompletion.put("assistantPlayed",0);
-        this.subPhaseCompletion.put("studentsMoved",0);
-        this.subPhaseCompletion.put("motherNatureMoved",0);
-        this.subPhaseCompletion.put("cloudChosen",0);
+        this.subPhase = GameControllerStates.PLAY_ASSISTANT;
+        this.movementEffectActive = false;
         this.activeUser = null;
+
+        System.out.println("\n ** New GameController successfully created with : " + id);
     }
 
     /**
@@ -135,7 +140,7 @@ public class GameController extends Thread {
     /**
      * This method returns the user associated to the name in the parameter.
      *
-     * @param name  The username associated with the searched user.
+     * @param name The username associated with the searched user.
      * @return The User instance searched if present.
      */
     public User getUser(String name) {
@@ -156,19 +161,38 @@ public class GameController extends Thread {
     }
 
     /**
-     *
-     * @return the activeUser attribute.
+     * This method returns the gameController's current state (indicated by the subPhase).
+     * @return The subPhase attribute.
      */
-    public String getActiveUser(){
-        return activeUser;
+    public GameControllerStates getSubPhase() {
+        return subPhase;
     }
 
     /**
+     * This method is called whenever the gameController needs to change it's state, because of the execution of a certain command.
      *
-     * @return the subPhaseCompletion map.
+     * @param state The state to set into the subPhase attribute.
      */
-    public Map<String, Integer> getSubPhaseCompletion(){
-        return subPhaseCompletion;
+    private void setSubPhase(GameControllerStates state) {
+        this.subPhase = state;
+    }
+
+    /**
+     * This method returns the user having the communication token.
+     *
+     * @return The activeUser attribute.
+     */
+    public String getActiveUser() {
+        return this.activeUser;
+    }
+
+    /**
+     * This method is used in order to check if a special character, with a movement effect, has been paid and is now active during this turn.
+     *
+     * @return The boolean value stored into the movementEffectActive attribute.
+     */
+    public boolean isMovementEffectActive() {
+        return this.movementEffectActive;
     }
 
     /**
@@ -176,7 +200,7 @@ public class GameController extends Thread {
      *
      * @param name The name of the user that will be added.
      * @param user The User that will be added.
-     * @throws FullGameException Thrown when the game to which the user is attempting to log in is already full and active.
+     * @throws FullGameException              Thrown when the game to which the user is attempting to log in is already full and active.
      * @throws AlreadyExistingPlayerException Thrown when the user is attempting to log into a game that has already got an active player with the same chosen username.
      */
     public void addUser(String name, User user) throws FullGameException, AlreadyExistingPlayerException {
@@ -195,7 +219,10 @@ public class GameController extends Thread {
         //SENDING THE CURRENT GAME MODEL STATUS TO THE PLAYER.
         user.sendMessage(MessageCreator.status(this));
 
-        if (this.isFull()) this.isFullLock.notify();
+        if (this.isFull()){
+            notifyUsers(MessageCreator.gameStart());
+            this.isFullLock.notify();
+        }
     }
 
     /**
@@ -263,13 +290,13 @@ public class GameController extends Thread {
      * This method is called whenever the game if full (players are all connected); it gives the input permission token to the current player, this decision is based on the turn order imposed by the model.
      */
     public void run() {
-        while(true) {
-            while(!this.isFull()) {
+        while (true) {
+            while (!this.isFull()) {
                 try {
                     this.isFullLock.wait();
                 } catch (InterruptedException ie) {
                     notifyUsers(MessageCreator.error("Game server error occurred."));
-                    for(User user : this.getUsers()) this.removeUser(user);
+                    for (User user : this.getUsers()) this.removeUser(user);
                     return;
                 }
             }
@@ -281,59 +308,59 @@ public class GameController extends Thread {
     }
 
     /**
-     * Manages the planning phase.
+     * This method manages the planning phase.
      */
-    private void planningPhase(){
+    private void planningPhase() {
 
-            Player roundWinner = this.getGameModel().getRoundWinner();
-            int indexOfRoundWinner = this.getGameModel().getPlayers().indexOf(roundWinner);
+        Player roundWinner = this.getGameModel().getRoundWinner();
+        int indexOfRoundWinner = this.getGameModel().getPlayers().indexOf(roundWinner);
 
-            for (int i=0; i<this.getExpectedPlayers(); i++) {
+        for (int i = 0; i < this.getExpectedPlayers(); i++) {
 
-                Player currentPlayer = this.getGameModel().getPlayers().get((indexOfRoundWinner+i) % this.getExpectedPlayers());
+            Player currentPlayer = this.getGameModel().getPlayers().get((indexOfRoundWinner + i) % this.getExpectedPlayers());
 
-                //ENABLING THE CURRENT USER INPUT (taken from the clockwise order).
-                User currentUser = getUser(currentPlayer.getName());
-                this.activeUser = currentUser.getUsername();
-                currentUser.sendMessage(MessageCreator.turnEnable(true));
+            //ENABLING THE CURRENT USER INPUT (taken from the clockwise order).
+            User currentUser = getUser(currentPlayer.getName());
+            this.activeUser = currentUser.getUsername();
+            currentUser.sendMessage(MessageCreator.turnEnable(true));
 
-                //WAITING FOR ASSISTANT TO BE PLAYED
-                while (this.subPhaseCompletion.get("assistantPlayed")==0 || !this.isFull()) {
-                    try {
-                        this.actionNeededLock.wait();
-                    }catch(InterruptedException ie) {
-                        notifyUsers(MessageCreator.error("Game server error occurred."));
-                        for(User user : this.getUsers()) this.removeUser(user);
-                        return;
-                    }
+            //WAITING FOR ASSISTANT TO BE PLAYED
+            while (this.getSubPhase() != GameControllerStates.ASSISTANT_PLAYED || !this.isFull()) {
+                try {
+                    this.actionNeededLock.wait();
+                } catch (InterruptedException ie) {
+                    notifyUsers(MessageCreator.error("Game server error occurred."));
+                    for (User user : this.getUsers()) this.removeUser(user);
+                    return;
                 }
-                //DISABLING THE CURRENT USER'S INPUT.
-                this.activeUser = null;
-                currentUser.sendMessage(MessageCreator.turnEnable(false));
-                this.subPhaseCompletion.replace("assistantPlayed", 0);
             }
-            this.getGameModel().updateTurnOrder();
-            this.phase = "action";
+            //DISABLING THE CURRENT USER'S INPUT.
+            this.activeUser = null;
+            currentUser.sendMessage(MessageCreator.turnEnable(false));
+            this.setSubPhase(GameControllerStates.PLAY_ASSISTANT);
+        }
+        this.getGameModel().updateTurnOrder();
+        this.phase = "action";
     }
 
     /**
-     * Manages the action phase.
+     * This method manages the action phase.
      */
     private void actionPhase() {
 
         for (Player currentPlayer : this.getGameModel().getTurnOrder()) {
             //ENABLING THE INPUT OF THE CURRENT USER (taken from the turn list).
-            this.activeUser = currentPlayer.getName();
             User currentUser = getUser(currentPlayer.getName());
+            this.activeUser = currentUser.getUsername();
             currentUser.sendMessage(MessageCreator.turnEnable(true));
 
             //WAITING FOR A CLOUD TO BE CHOSEN (refill command)
-            while (this.subPhaseCompletion.get("cloudChosen")==0 || !this.isFull()) {
+            while (this.getSubPhase() != GameControllerStates.END_TURN || !this.isFull()) {
                 try {
                     this.actionNeededLock.wait();
-                }catch(InterruptedException ie) {
+                } catch (InterruptedException ie) {
                     notifyUsers(MessageCreator.error("Game server error occurred."));
-                    for(User user : this.getUsers()) this.removeUser(user);
+                    for (User user : this.getUsers()) this.removeUser(user);
                     return;
                 }
             }
@@ -344,14 +371,12 @@ public class GameController extends Thread {
 
             try {
                 this.getGameModel().nextTurn();
+                this.setSubPhase(GameControllerStates.MOVE_STUDENT_1);
             } catch (RoundConcluded rc) {
                 this.getGameModel().nextRound();
                 this.round++;
                 this.phase = "planning";
-            }finally {
-                this.subPhaseCompletion.replace("studentsMoved", 0);
-                this.subPhaseCompletion.replace("motherNatureMoved", 0);
-                this.subPhaseCompletion.replace("cloudChosen", 0);
+                this.setSubPhase(GameControllerStates.PLAY_ASSISTANT);
             }
 
             if (endGame()) {
@@ -369,17 +394,18 @@ public class GameController extends Thread {
      * @param player    The name of the player that played the card.
      * @param assistant The id of the card that tha player added.
      */
-    private void playAssistantCard(String player, int assistant) {
+    public void playAssistantCard(String player, int assistant) {
         try {
-            this.gameModel.getPlayerByName(player).playAssistant(assistant);
-        } catch (AlreadyPlayedException e) {
+            this.gameModel.getGameBoard().addPlayedAssistant(this.gameModel.getPlayerByName(player), new Assistant(assistant));
+
+        } catch (IllegalMoveException e) {
             this.getUsers().remove(this.getUser(player));
         }
 
         try {
-            this.gameModel.getGameBoard().addPlayedAssistant(this.gameModel.getPlayerByName(player), new Assistant(assistant));
-            this.subPhaseCompletion.replace("assistantPlayed",1);
-        } catch (IllegalMoveException e) {
+            this.gameModel.getPlayerByName(player).playAssistant(assistant);
+            this.setSubPhase(GameControllerStates.ASSISTANT_PLAYED);
+        } catch (AlreadyPlayedException e) {
             this.getUsers().remove(this.getUser(player));
         }
 
@@ -391,49 +417,85 @@ public class GameController extends Thread {
      *
      * @param command The json with the directions of the movements.
      */
-    private void moveStudent(JsonObject command) {
+    public void moveStudent(JsonObject command) throws IllegalMoveException {
         try {
-            switch (command.get("from").getAsString()) {
-                case "entrance" -> {
-                    this.gameModel.getPlayerByName(command.get("player").getAsString()).getSchoolBoard().removeFromEntrance(HouseColor.valueOf(command.get("color").getAsString()));
-                    boolean effectActive = false;
-                    for(SpecialCharacter sc : this.getGameModel().getGameBoard().getCharacters()){
-                        if (sc.isActive()) {
-                            effectActive = true;
-                            break;
-                        }
-                    }
-                    if(!effectActive) this.subPhaseCompletion.replace("studentsMoved", this.subPhaseCompletion.get("studentsMoved")+1);
-                }
-                case "diningRoom" -> {
-                    this.gameModel.getPlayerByName(command.get("player").getAsString()).getSchoolBoard().removeFromDiningRoom(HouseColor.valueOf(command.get("color").getAsString()));
-                    checkProfessor(command.get("color").getAsString(), command.get("player").getAsString());
-                }
-                case "card" -> {
-                    boolean check = false;
-                    for (SpecialCharacter c : this.gameModel.getGameBoard().getCharacters()) {
-                        if (c.getId() == 1 && c.isActive()) {
-                            //TODO: check for Exception??
-                            ((MonkEffect) c.getEffect()).effect(HouseColor.valueOf(command.get("color").getAsString()), null);
-                            check = true;
-                            break;
-                        } else if (c.getId() == 7 && c.isActive()) {
-                            //TODO: Effect 7 (Jester)
-                        }
-                    }
-                    if (!check) {
-                        //TODO: send it
-                        MessageCreator.error("Error: card not available");
-                    }
-                }
-                default ->
-                        //TODO: send it
-                        MessageCreator.error("Wrong command.");
-            }
+            moveStudentFrom(command);
         } catch (NoStudentException e) {
-            e.printStackTrace();
+            throw new IllegalMoveException();
         }
 
+        moveStudentTo(command);
+
+        notifyUsersExcept(command, getUser(this.activeUser));
+
+        this.saveGame();
+    }
+
+    /**
+     * This method is a helper for moveStudent method.
+     *
+     * @param command The json with the directions of the movements.
+     * @throws NoStudentException   This exception is thrown whether there aren't students.
+     * @throws IllegalMoveException This exception is thrown whether the player tries to do illegal move.
+     */
+    private void moveStudentFrom(JsonObject command) throws NoStudentException, IllegalMoveException {
+        switch (command.get("from").getAsString()) {
+            case "entrance" -> {
+                this.gameModel.getPlayerByName(command.get("player").getAsString()).getSchoolBoard().removeFromEntrance(HouseColor.valueOf(command.get("color").getAsString()));
+
+                //Updating sub-phase.
+                if (!isMovementEffectActive()) {
+                    switch (this.getSubPhase()) {
+                        case MOVE_STUDENT_1 -> this.setSubPhase(GameControllerStates.MOVE_STUDENT_2);
+                        case MOVE_STUDENT_2 -> this.setSubPhase(GameControllerStates.MOVE_STUDENT_3);
+                        case MOVE_STUDENT_3 -> {
+                            if ((this.getExpectedPlayers() == 3)) {
+                                this.setSubPhase(GameControllerStates.MOVE_STUDENT_4);
+                            } else {
+                                this.setSubPhase(GameControllerStates.MOVE_MOTHER_NATURE);
+                            }
+                        }
+                        case MOVE_STUDENT_4 -> this.setSubPhase(GameControllerStates.MOVE_MOTHER_NATURE);
+                        default -> throw new IllegalMoveException();
+                    }
+                }
+            }
+            case "diningRoom" -> {
+                this.gameModel.getPlayerByName(command.get("player").getAsString()).getSchoolBoard().removeFromDiningRoom(HouseColor.valueOf(command.get("color").getAsString()));
+                checkProfessor(command.get("color").getAsString(), command.get("player").getAsString());
+            }
+            case "card" -> {
+                boolean check = false;
+                for (SpecialCharacter c : this.gameModel.getGameBoard().getCharacters()) {
+                    if (c.getId() == 1 && c.isActive()) {
+                        ((MonkEffect) c.getEffect()).effect(HouseColor.valueOf(command.get("color").getAsString()), null);
+                        check = true;
+                        break;
+                    } else if (c.getId() == 7 && c.isActive()) {
+                        ((JesterEffect) c.getEffect()).effect(HouseColor.valueOf(command.get("color").getAsString()), null);
+                        check = true;
+                        break;
+                    } else if (c.getId() == 11 && c.isActive()) {
+                        ((PrincessEffect) c.getEffect()).effect(HouseColor.valueOf(command.get("color").getAsString()), null);
+                        check = true;
+                        break;
+                    }
+                }
+                if (!check) {
+                    throw new IllegalMoveException();
+                }
+            }
+            default -> throw new IllegalMoveException();
+        }
+    }
+
+    /**
+     * This method is a helper for moveStudent method.
+     *
+     * @param command The json with the directions of the movements.
+     * @throws IllegalMoveException This exception is thrown whether the player tries to do illegal move.
+     */
+    private void moveStudentTo(JsonObject command) throws IllegalMoveException {
         switch (command.get("to").getAsString()) {
             case "diningRoom" -> {
                 this.gameModel.getPlayerByName(command.get("player").getAsString()).getSchoolBoard().addToDiningRoom(HouseColor.valueOf(command.get("color").getAsString()));
@@ -450,31 +512,31 @@ public class GameController extends Thread {
                 try {
                     this.gameModel.getGameBoard().getIslandById(command.get("toId").getAsInt()).addStudent(HouseColor.valueOf(command.get("color").getAsString()));
                 } catch (IslandNotFoundException e) {
-                    //TODO: send it
-                    MessageCreator.error("Error: Island not find");
+                    throw new IllegalMoveException();
                 }
             }
             case "card" -> {
                 boolean check = false;
                 for (SpecialCharacter c : this.gameModel.getGameBoard().getCharacters()) {
                     if (c.getId() == 1 && c.isActive()) {
-                        ((MonkEffect) c.getEffect()).effect(null, HouseColor.valueOf(command.get("color").getAsString()));                        check = true;
+                        ((MonkEffect) c.getEffect()).effect(null, HouseColor.valueOf(command.get("color").getAsString()));
+                        check = true;
                         break;
                     } else if (c.getId() == 7 && c.isActive()) {
-
+                        ((JesterEffect) c.getEffect()).effect(null, HouseColor.valueOf(command.get("color").getAsString()));
+                        check = true;
+                        break;
+                    } else if (c.getId() == 11 && c.isActive()) {
+                        ((PrincessEffect) c.getEffect()).effect(null, HouseColor.valueOf(command.get("color").getAsString()));
+                        check = true;
+                        break;
                     }
                 }
-                if (!check) {
-                    //TODO: send message
-                    MessageCreator.error("Error: card not available");
-                }
-            }
-            default ->
-                    //TODO: send message
-                    MessageCreator.error("Wrong command.");
-        }
+                if (!check) throw new IllegalMoveException();
 
-        this.saveGame();
+            }
+            default -> throw new IllegalMoveException();
+        }
     }
 
     /**
@@ -482,62 +544,69 @@ public class GameController extends Thread {
      *
      * @param idIsland The id of the island where mother nature will be set.
      */
-    private void moveMotherNature(int idIsland) {
-        Map<Player, Integer> influence;
-        Island island = null;
+    public void moveMotherNature(int idIsland) throws IllegalMoveException {
+        Island targetIsland;
         try {
-            island = this.gameModel.getGameBoard().getIslandById(idIsland);
-            this.gameModel.getGameBoard().moveMotherNature(island, this.gameModel.getGameBoard().getPlayedAssistants().get(this.gameModel.getCurrentPlayer()));
-            this.subPhaseCompletion.replace("motherNatureMoved",1);
-        } catch (IllegalMoveException | IslandNotFoundException e) {
-            //TODO: send message
-            MessageCreator.error("Error");
-            e.printStackTrace();
+            targetIsland = this.gameModel.getGameBoard().getIslandById(idIsland);
+            this.gameModel.getGameBoard().moveMotherNature(targetIsland, this.gameModel.getGameBoard().getPlayedAssistants().get(this.gameModel.getCurrentPlayer()));
+            this.setSubPhase(GameControllerStates.CHOOSE_CLOUD);
+        } catch (IslandNotFoundException e) {
+            throw new IllegalMoveException();
         }
-        if (island != null) {
-            influence = this.gameModel.getGameBoard().getInfluence(island);
-            int max = Collections.max(influence.values());
-            List<Player> mostInfluential = influence.entrySet().stream().filter(entry -> entry.getValue() == max).map(entry -> entry.getKey()).collect(Collectors.toList());
-            if (mostInfluential.size() == 1 || (mostInfluential.size() == 2 && mostInfluential.get(0).getSchoolBoard().getTowerType().equals(mostInfluential.get(1).getSchoolBoard().getTowerType()))) {
-                if (island.getTower() == null) {
-                    island.setTower(mostInfluential.get(0).getSchoolBoard().getTowerType());
+        if (!targetIsland.isBanned()) {
+            motherNatureAction(targetIsland);
+        } else targetIsland.removeBan();
+
+        this.saveGame();
+    }
+
+    /**
+     * This method is a helper for moveMotherNature method.
+     *
+     * @param island The id where the mother nature action will be activated.
+     * @throws IllegalMoveException This exception is thrown whether the player tries to do an illegal move.
+     */
+    public void motherNatureAction(Island island) throws IllegalMoveException {
+        Map<Player, Integer> influence;
+
+        influence = this.gameModel.getGameBoard().getInfluence(island);
+        int max = Collections.max(influence.values());
+        List<Player> mostInfluential = influence.entrySet().stream().filter(entry -> entry.getValue() == max).map(Map.Entry::getKey).toList();
+        if (mostInfluential.size() == 1 || (mostInfluential.size() == 2 && mostInfluential.get(0).getSchoolBoard().getTowerType().equals(mostInfluential.get(1).getSchoolBoard().getTowerType()))) {
+            if (island.getTower() == null) {
+                this.getGameModel().getGameBoard().setTowerOnIsland(island, mostInfluential.get(0).getSchoolBoard().getTowerType());
+                this.notifyUsers(MessageCreator.moveTower(mostInfluential.get(0).getSchoolBoard().getTowerType(), island));
+                try {
+                    for (Player player : this.gameModel.getPlayers()) {
+                        if (player.getSchoolBoard().getTowerType().equals(mostInfluential.get(0).getSchoolBoard().getTowerType())) {
+                            player.getSchoolBoard().removeTowers(island.getSize());
+                        }
+                    }
+                } catch (NotEnoughTowersException e1) {
+                    endGame();
+                } catch (NegativeException e2) {
+                    throw new IllegalMoveException();
+                }
+            } else {
+                if (!island.getTower().equals(mostInfluential.get(0).getSchoolBoard().getTowerType())) {
                     try {
                         for (Player player : this.gameModel.getPlayers()) {
-                            if (player.getSchoolBoard().getTowerType().equals(mostInfluential.get(0).getSchoolBoard().getTowerType())) {
+                            if (island.getTower().equals(player.getSchoolBoard().getTowerType())) {
+                                player.getSchoolBoard().addTowers(island.getSize());
+                            } else if (player.getSchoolBoard().getTowerType().equals(mostInfluential.get(0).getSchoolBoard().getTowerType())) {
                                 player.getSchoolBoard().removeTowers(island.getSize());
                             }
                         }
+                        this.getGameModel().getGameBoard().setTowerOnIsland(island, mostInfluential.get(0).getSchoolBoard().getTowerType());
+                        this.notifyUsers(MessageCreator.moveTower(mostInfluential.get(0).getSchoolBoard().getTowerType(), island));
                     } catch (NotEnoughTowersException e1) {
-                        //TODO: Check for it
                         endGame();
                     } catch (NegativeException e2) {
-                        MessageCreator.error("Error");
-                        e2.printStackTrace();
-                    }
-                } else {
-                    if (!island.getTower().equals(mostInfluential.get(0).getSchoolBoard().getTowerType())) {
-                        try {
-                            for (Player player : this.gameModel.getPlayers()) {
-                                if (island.getTower().equals(player.getSchoolBoard().getTowerType())) {
-                                    player.getSchoolBoard().addTowers(island.getSize());
-                                } else if (player.getSchoolBoard().getTowerType().equals(mostInfluential.get(0).getSchoolBoard().getTowerType())) {
-                                    player.getSchoolBoard().removeTowers(island.getSize());
-                                }
-                            }
-                            island.setTower(mostInfluential.get(0).getSchoolBoard().getTowerType());
-                        } catch (NotEnoughTowersException e1) {
-                            //TODO: Check for it
-                            endGame();
-                        } catch (NegativeException e2) {
-                            MessageCreator.error("Error");
-                            e2.printStackTrace();
-                        }
+                        throw new IllegalMoveException();
                     }
                 }
             }
         }
-
-        this.saveGame();
     }
 
     /**
@@ -545,9 +614,9 @@ public class GameController extends Thread {
      *
      * @param command The json with the information about the choosing of the cloud.
      */
-    private void chooseCloud(JsonObject command) {
+    public void chooseCloud(JsonObject command) {
         this.gameModel.getPlayerByName(command.get("player").getAsString()).getSchoolBoard().addToEntrance(this.gameModel.getGameBoard().getClouds().get(command.get("cloud").getAsInt()).flush());
-        this.subPhaseCompletion.replace("cloudChosen", 1);
+        this.setSubPhase(GameControllerStates.END_TURN);
 
         this.saveGame();
     }
@@ -555,12 +624,79 @@ public class GameController extends Thread {
     /**
      * This method manages the payment of the special character.
      *
-     * @param specialCharacter The id of the special character that will be paid.
+     * @param command The json that contains all the information of the special character that will be paid.
      */
-    private void paySpecialCharacter(int specialCharacter) {
-        this.gameModel.getGameBoard().getCharacters().get(specialCharacter).activateEffect();
+    public void paySpecialCharacter(JsonObject command) throws IllegalMoveException {
+
+        boolean characterAlreadyPaid = false;
+            for(SpecialCharacter c : this.getGameModel().getGameBoard().getCharacters()){
+                if (c.isActive()) {
+                    characterAlreadyPaid = true;
+                    break;
+                }
+            }
+        if(characterAlreadyPaid) throw new IllegalMoveException();
+
+        int character = command.get("character").getAsInt();
+        this.gameModel.getGameBoard().getCharacters().get(character).activateEffect();
+        try{
+            this.getGameModel().getPlayerByName(command.get("player").getAsString()).paySpecialCharacter(this.getGameModel().getGameBoard().getCharacters().get(character));
+        }catch(NotEnoughCoinsException | NullPointerException ne){
+            throw new IllegalMoveException();
+        }
+
+        try {
+            switch (character) {
+                case 1, 7, 10, 11 -> this.movementEffectActive = true;
+                case 2 -> this.getGameModel().getGameBoard().setTieWinner(this.getGameModel().getPlayerByName(command.get("player").getAsString()));
+                case 3 -> this.getGameModel().getGameBoard().getInfluence(this.getGameModel().getGameBoard().getIslandById(command.get("island").getAsInt()));
+                case 4 -> this.getGameModel().getGameBoard().getAssistant(this.getGameModel().getPlayerByName(command.get("player").getAsString())).setBonus();
+                case 5 -> {
+                    this.getGameModel().getGameBoard().getIslandById(command.get("island").getAsInt()).setBan();
+                    ((HerbalistEffect) this.getGameModel().getGameBoard().getCharacters().get(character).getEffect()).effect("take");
+                }
+                case 6 -> {
+                }//Automatically managed by model.
+                case 8 -> this.getGameModel().getGameBoard().setInfluenceBonus(this.getGameModel().getPlayerByName(command.get("player").getAsString()));
+                case 9 -> this.getGameModel().getGameBoard().setIgnoreColor(HouseColor.valueOf(command.get("ignoreColor").getAsString()));
+                case 12 -> {
+                    for (Player p : this.getGameModel().getPlayers()) {
+                        for (int i = 0; i < 3; i++) {
+                            try {
+                                p.getSchoolBoard().removeFromDiningRoom(HouseColor.valueOf(command.get("color").getAsString()));
+                            } catch (NoStudentException nse) {
+                                for (HouseColor color : HouseColor.values()) {
+                                    p.getSchoolBoard().getDiningRoom().replace(color, 0);
+                                }
+                            }
+                        }
+                        for (HouseColor color : HouseColor.values()) {
+                            this.checkProfessor(color.toString(), p.getName());
+                        }
+                    }
+                }
+            }
+        } catch (IslandNotFoundException nfe) {
+            throw new IllegalMoveException();
+        }
+
+        notifyUsersExcept(command, getUser(this.activeUser));
 
         this.saveGame();
+    }
+
+    /**
+     * This method sets the value Ban.
+     *
+     * @param island The id of the island
+     * @throws IllegalMoveException This exception is thrown whether the player tries to do illegal move.
+     */
+    public void setBan(int island) throws IllegalMoveException {
+        try {
+            this.gameModel.getGameBoard().getIslandById(island).setBan();
+        } catch (IslandNotFoundException e) {
+            throw new IllegalMoveException();
+        }
     }
 
     /**
@@ -568,7 +704,7 @@ public class GameController extends Thread {
      *
      * @return A boolean value, true whether the game will have to end.
      */
-    private boolean endGame() {
+    public boolean endGame() {
         boolean end = false;
         List<Player> winners = new ArrayList<>();
         if (this.gameModel.getPlayers().stream().anyMatch(player -> player.getSchoolBoard().getTowersNumber() == 0)) {
@@ -578,21 +714,24 @@ public class GameController extends Thread {
             }
         } else if (this.gameModel.getGameBoard().getIslands().size() == 3) {
             end = true;
-            checkForWinners();
+            winners = checkForWinners();
         } else if ((this.gameModel.getCurrentPlayer().equals(this.gameModel.getTurnOrder().get(this.expectedPlayers - 1)))) {
             if (this.gameModel.getGameBoard().getBag().isEmpty() || this.gameModel.getPlayers().get(0).getAssistants().size() == 0) {
                 end = true;
-                checkForWinners();
+                winners = checkForWinners();
             }
         }
+        if (end) {
+            notifyUsers(MessageCreator.win(winners));
+        }
+
         return end;
     }
 
     /**
      * This method is a helper for the endGame method.
      */
-    private void checkForWinners() {
-        boolean win = false;
+    private List<Player> checkForWinners() {
         List<Player> winners = new ArrayList<>();
 
         Map<Player, Integer> numTowerPlayers = new HashMap<>();
@@ -600,9 +739,8 @@ public class GameController extends Thread {
             numTowerPlayers.put(player, player.getSchoolBoard().getTowersNumber());
         }
         int min = Collections.min(numTowerPlayers.values());
-        List<Player> possibleWinners = numTowerPlayers.entrySet().stream().filter(entry -> entry.getValue() == min).map(entry -> entry.getKey()).collect(Collectors.toList());
+        List<Player> possibleWinners = numTowerPlayers.entrySet().stream().filter(entry -> entry.getValue() == min).map(Map.Entry::getKey).collect(Collectors.toList());
         if (possibleWinners.size() == 1 || (possibleWinners.size() == 2 && possibleWinners.get(0).getSchoolBoard().getTowerType().equals(possibleWinners.get(1).getSchoolBoard().getTowerType()))) {
-            win = true;
             winners.addAll(possibleWinners);
 
         } else {
@@ -613,23 +751,18 @@ public class GameController extends Thread {
                 numProfessorsPlayers.put(player, numProfessorsPlayers.containsKey(player) ? numProfessorsPlayers.get(player) + 1 : 1);
             }
             int max = Collections.max(numProfessorsPlayers.values());
-            possibleWinners = numProfessorsPlayers.entrySet().stream().filter(entry -> entry.getValue() == max).map(entry -> entry.getKey()).collect(Collectors.toList());
+            possibleWinners = numProfessorsPlayers.entrySet().stream().filter(entry -> entry.getValue() == max).map(Map.Entry::getKey).collect(Collectors.toList());
             if (possibleWinners.size() == 1 || (possibleWinners.size() == 2 && possibleWinners.get(0).getSchoolBoard().getTowerType().equals(possibleWinners.get(1).getSchoolBoard().getTowerType()))) {
                 winners.addAll(possibleWinners);
-                win = true;
             }
         }
-        if (win) {
-            //TODO: notify winners
-        } else {
-            //TODO: Tie
-        }
+        return winners;
     }
 
     /**
      * This method is a helper for the moveStudent method.
      */
-    private void checkProfessor(String color, String player) {
+    public void checkProfessor(String color, String player) {
         String newProfessorOwner = this.gameModel.getGameBoard().getProfessors().get(HouseColor.valueOf(color)).getName();
         int numStudent;
 
@@ -638,20 +771,24 @@ public class GameController extends Thread {
             if (numStudent < p.getSchoolBoard().getStudentsNumberOf(HouseColor.valueOf(color))) {
                 numStudent = p.getSchoolBoard().getStudentsNumberOf(HouseColor.valueOf(color));
                 newProfessorOwner = p.getName();
+            } else if (this.gameModel.getGameBoard().getTieWinner().equals(p) && numStudent == p.getSchoolBoard().getStudentsNumberOf(HouseColor.valueOf(color))) {
+                numStudent = p.getSchoolBoard().getStudentsNumberOf(HouseColor.valueOf(color));
+                newProfessorOwner = p.getName();
             }
         }
         this.gameModel.getGameBoard().setProfessor(HouseColor.valueOf(color), this.gameModel.getPlayerByName(newProfessorOwner));
+        notifyUsers(MessageCreator.moveProfessor(color,newProfessorOwner));
     }
 
-    public void notifyUsers(JsonObject message){
-        for(User user : this.getUsers()){
+    public void notifyUsers(JsonObject message) {
+        for (User user : this.getUsers()) {
             user.sendMessage(message);
         }
     }
 
-    public void notifyUsersExcept(JsonObject message, User exception){
-        for(User user : this.getUsers()){
-            if(user.getUsername().equals(exception.getUsername())) user.sendMessage(message);
+    public void notifyUsersExcept(JsonObject message, User exception) {
+        for (User user : this.getUsers()) {
+            if (user.getUsername().equals(exception.getUsername())) user.sendMessage(message);
         }
     }
 }

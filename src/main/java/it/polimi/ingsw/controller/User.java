@@ -6,6 +6,7 @@ import it.polimi.ingsw.network.server.Server;
 import it.polimi.ingsw.utilities.MessageCreator;
 import it.polimi.ingsw.utilities.exceptions.FullGameException;
 import it.polimi.ingsw.utilities.exceptions.GameNotFoundException;
+import it.polimi.ingsw.utilities.exceptions.IllegalMoveException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -18,15 +19,16 @@ import java.net.Socket;
  *
  * @author Riccardo Milici
  * @author Riccardo Motta
+ * @author Matteo Negro
  */
 public class User extends Thread {
 
-    private boolean connected;
     private final Object connectedLock;
     private final BufferedReader inputStream;
     private final PrintWriter outputStream;
     private final Server server;
     private final Ping ping;
+    private boolean connected;
     private GameController gameController;
     private String username;
     private boolean logged;
@@ -51,10 +53,6 @@ public class User extends Thread {
         inputStream = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         outputStream = new PrintWriter(socket.getOutputStream());
         socket.setSoTimeout(10000);
-    }
-
-    public boolean isLogged() {
-        return logged;
     }
 
     /**
@@ -85,9 +83,9 @@ public class User extends Thread {
 
             try {
                 incomingMessage = getCommand();
-                if (!incomingMessage.get("type").getAsString().equals("pong"))
+                if (!incomingMessage.get("type").getAsString().equals("pong") && !incomingMessage.get("type").getAsString().equals("error"))
                     manageCommand(incomingMessage);
-            } catch (IOException e) {
+            } catch (IOException | IllegalMoveException e) {
                 // If socket time out expires.
                 disconnected();
             }
@@ -123,9 +121,9 @@ public class User extends Thread {
      *
      * @param command The command to manage.
      */
-    private void manageCommand(JsonObject command) {
-
+    private void manageCommand(JsonObject command) throws IllegalMoveException {
         switch (command.get("type").getAsString()) {
+            case "ping" -> sendMessage(MessageCreator.pong());
             case "gameCreation" -> sendMessage(MessageCreator.gameCreation(Matchmaking.gameCreation(command, server)));
             case "enterGame" -> {
                 try {
@@ -138,10 +136,25 @@ public class User extends Thread {
             case "login" -> {
                 logged = Matchmaking.login(gameController, command.get("name").getAsString(), this);
                 sendMessage(MessageCreator.login(logged));
-                if (logged)
+                if (logged) {
                     username = command.get("name").getAsString();
+                }
             }
             case "logout" -> removeFromGame();
+            case "command" -> {
+                switch (command.get("subtype").getAsString()) {
+                    case "playAssistant" -> this.gameController.playAssistantCard(command.get("player").getAsString(), command.get("assistant").getAsInt());
+                    case "move" -> {
+                        switch (command.get("pawn").getAsString()) {
+                            case "student" -> this.gameController.moveStudent(command);
+                            case "motherNature" -> this.gameController.moveMotherNature(command.get("island").getAsInt());
+                        }
+                    }
+                    case "ban" -> this.gameController.setBan(command.get("island").getAsInt());
+                    case "pay" -> this.gameController.paySpecialCharacter(command);
+                    case "refill" -> this.gameController.chooseCloud(command);
+                }
+            }
             default -> sendMessage(MessageCreator.error("Wrong command."));
         }
     }

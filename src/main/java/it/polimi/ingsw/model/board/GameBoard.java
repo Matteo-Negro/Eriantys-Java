@@ -3,6 +3,7 @@ package it.polimi.ingsw.model.board;
 import it.polimi.ingsw.model.player.Assistant;
 import it.polimi.ingsw.model.player.Player;
 import it.polimi.ingsw.utilities.HouseColor;
+import it.polimi.ingsw.utilities.TowerType;
 import it.polimi.ingsw.utilities.exceptions.IllegalMoveException;
 import it.polimi.ingsw.utilities.exceptions.IslandNotFoundException;
 
@@ -14,12 +15,13 @@ import java.util.*;
  * @author Matteo Negro
  */
 public class GameBoard {
-    //TODO: fix Player influencesBonus
     private final Bag bag;
     private final List<Cloud> clouds;
     private final List<Island> islands;
     private final Map<HouseColor, Player> professors;
     private final Map<Player, Assistant> playedAssistants;
+    private Player influenceBonus;
+    private Player tieWinner;
     private List<SpecialCharacter> characters;
     private Island motherNatureIsland;
     private HouseColor ignoreColor;
@@ -40,6 +42,8 @@ public class GameBoard {
         this.clouds = new ArrayList<>();
         this.characters = new ArrayList<>();
         this.professors = new HashMap<>();
+        this.influenceBonus = null;
+        this.tieWinner = null;
         temp = this.bag.boardSetUp();
         for (int i = 0; i < 12; i++) {
             if (i == 0 || i == 5) this.islands.add(new Island(null, i));
@@ -49,12 +53,32 @@ public class GameBoard {
             for (int i = 0; i < 12; i++) randomVector.add(i);
             Collections.shuffle(randomVector);
             for (int i = 0; i < 3; i++) {
-                this.characters.add(new SpecialCharacter(i));
+                Map<HouseColor, Integer> students = new EnumMap<>(HouseColor.class);
+                students.put(HouseColor.RED, 0);
+                students.put(HouseColor.BLUE, 0);
+                students.put(HouseColor.GREEN, 0);
+                students.put(HouseColor.YELLOW, 0);
+                students.put(HouseColor.FUCHSIA, 0);
+                int studentsNumber;
+
+                switch (randomVector.get(i)) {
+                    case 1, 11 -> studentsNumber = 4;
+                    case 7 -> studentsNumber = 6;
+                    default -> studentsNumber = 0;
+                }
+
+                for (int c = 0; c < studentsNumber; c++) {
+                    HouseColor color = this.getBag().pop();
+                    students.replace(color, students.get(color) + 1);
+                }
+                this.characters.add(new SpecialCharacter(randomVector.get(i), students));
             }
         }
         Arrays.stream(HouseColor.values()).forEach(color -> this.professors.put(color, null));
         this.initializeClouds(numPlayer);
         this.motherNatureIsland = this.islands.get(0);
+
+        System.out.println("\n *** New GameBoard successfully created.");
     }
 
     /**
@@ -77,12 +101,16 @@ public class GameBoard {
         this.clouds = new ArrayList<>(statusClouds);
         this.professors = new HashMap<>(statusProfessors);
         this.characters = null;
+        this.influenceBonus = null;
+        this.tieWinner = null;
 
         if (isExp) {
             this.characters = new ArrayList<>(statusCharacters);
         }
 
         this.motherNatureIsland = this.islands.get(idMotherNatureIsland);
+
+        System.out.println("\n *** Saved GameBoard successfully restored.");
     }
 
     /**
@@ -151,6 +179,9 @@ public class GameBoard {
      */
     public void removeEffects() {
         this.ignoreColor = null;
+        this.influenceBonus = null;
+        this.tieWinner = null;
+        for(SpecialCharacter c: this.getCharacters()) c.cleanEffect();
     }
 
     /**
@@ -184,16 +215,79 @@ public class GameBoard {
      */
     public Map<Player, Integer> getInfluence(Island targetIsland) {
         Map<Player, Integer> result = new HashMap<>();
+        // Student contribution
         this.professors.keySet().forEach(professorColor -> {
             if (!professorColor.equals(ignoreColor)) {
                 if (!result.containsKey(this.professors.get(professorColor))) {
                     result.put(this.professors.get(professorColor), 0);
                 }
-                result.put(this.professors.get(professorColor), result.get(professorColor) + targetIsland.getStudents().get(professorColor));
+                result.put(this.professors.get(professorColor), result.get(this.professors.get(professorColor)) + targetIsland.getStudents().get(professorColor) + (influenceBonus != null && this.professors.get(professorColor).equals(this.influenceBonus) ? 2 : 0));
             }
         });
 
+        // Tower contribution
+        boolean towersAreIgnored = false;
+        for(SpecialCharacter c : this.getCharacters()){
+            if (c.getId() == 6 && c.isActive()) {
+                towersAreIgnored = true;
+                break;
+            }
+        }
+        if (targetIsland.getTower() != null && !towersAreIgnored) {
+            result.keySet().forEach(player -> {
+                if (player.getSchoolBoard().getTowerType().equals(targetIsland.getTower()))
+                    result.put(player, result.get(player) + targetIsland.getSize());
+            });
+        }
+
         return result;
+    }
+
+    /**
+     * This method is used to set a tower of a certain type on the island given; it calls the merge() method if needed.
+     *
+     * @param island The island on which the tower is going to be put.
+     * @param tower The TowerType of the tower to put.
+     */
+    public void setTowerOnIsland(Island island, TowerType tower){
+        island.setTower(tower);
+
+        //Check if a merge to left is needed.
+        boolean mergeDone;
+        do {
+            int islandsSize = getIslands().size();
+            mergeDone = false;
+            for (int i = 0; i < islandsSize; i++) {
+                if (getIslands().get((i + islands.get(i).getSize() + 1) % 12).getId() == island.getId() && islands.get(i).getTower().equals(island.getTower())) {
+                    merge(islands.get(i), island);
+                    mergeDone = true;
+                    break;
+                }
+                if (islands.get((i - island.getSize() - 1) % 12).getId() == island.getId() && islands.get(i).getTower().equals(island.getTower())) {
+                    merge(island, islands.get(i));
+                    mergeDone = true;
+                    break;
+                }
+            }
+        }while(mergeDone);
+    }
+
+    /**
+     * This method merges two islands on the left, increasing the size and the students on the resulting island.
+     * @param leftIsland The island hosting the merge.
+     * @param rightIsland The island merging with the island on it's left.
+     */
+    private void merge(Island leftIsland, Island rightIsland){
+        leftIsland.setSize(leftIsland.getSize()+rightIsland.getSize());
+
+        Map<HouseColor, Integer> rightStudents = rightIsland.getStudents();
+
+        for(HouseColor color: rightStudents.keySet()){
+            for(int i=0; i<rightStudents.get(color); i++){
+                leftIsland.addStudent(color);
+            }
+        }
+        islands.remove(rightIsland);
     }
 
     /**
@@ -231,10 +325,9 @@ public class GameBoard {
      * @param playedAssistant The card that the player would like to play.
      * @throws IllegalMoveException The played card is already played from another player.
      */
-    //TODO: throws exception is permitted when it is the last choice
     public void addPlayedAssistant(Player currentPlayer, Assistant playedAssistant) throws IllegalMoveException {
-        if (this.playedAssistants.keySet().stream().noneMatch(player -> this.playedAssistants.get(player) == playedAssistant)) {
-            throw new IllegalMoveException("The played card is already played from another player.");
+        if(currentPlayer.getAssistants().size()>1 && this.getPlayedAssistants().keySet().stream().anyMatch(player -> this.getPlayedAssistants().get(player).getId() == playedAssistant.getId())){
+            throw new IllegalMoveException();
         }
         this.playedAssistants.put(currentPlayer, playedAssistant);
     }
@@ -263,6 +356,42 @@ public class GameBoard {
      */
     public Map<Player, Assistant> getPlayedAssistants() {
         return new HashMap<>(this.playedAssistants);
+    }
+
+    /**
+     * This method returns the player that has the bonus in the influence evaluation.
+     *
+     * @return The player with the bonus.
+     */
+    public Player getInfluenceBonus() {
+        return this.influenceBonus;
+    }
+
+    /**
+     * This method sets the player influences bonus.
+     *
+     * @param bonusPlayer The player that will receive the bonus.
+     */
+    public void setInfluenceBonus(Player bonusPlayer) {
+        this.influenceBonus = bonusPlayer;
+    }
+
+    /**
+     * This method returns the player that has the bonus in the count for the professors.
+     *
+     * @return The player with the bonus.
+     */
+    public Player getTieWinner() {
+        return this.tieWinner;
+    }
+
+    /**
+     * This method sets the player tie winner.
+     *
+     * @param bonusPlayer The player that will receive the bonus.
+     */
+    public void setTieWinner(Player bonusPlayer) {
+        this.tieWinner = bonusPlayer;
     }
 
     /**

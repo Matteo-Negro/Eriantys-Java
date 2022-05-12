@@ -3,7 +3,11 @@ package it.polimi.ingsw.utilities;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import it.polimi.ingsw.controller.GameController;
+import it.polimi.ingsw.model.board.Island;
+import it.polimi.ingsw.model.player.Player;
 import it.polimi.ingsw.utilities.parsers.ObjectsToJson;
+
+import java.util.List;
 
 /**
  * This class generates JsonObjects for the various communication cases.
@@ -11,6 +15,9 @@ import it.polimi.ingsw.utilities.parsers.ObjectsToJson;
  * @author Riccardo Motta
  */
 public class MessageCreator {
+
+    private MessageCreator() {
+    }
 
     /**
      * Creates the reply for "gameCreation" message.
@@ -93,17 +100,76 @@ public class MessageCreator {
      */
     public static JsonObject status(GameController game){
         JsonObject reply = new JsonObject();
+        reply.addProperty("round", game.getRound());
         reply.addProperty("activeUser", game.getActiveUser());
         reply.addProperty("phase", game.getPhase());
-        JsonArray subPhaseCompletion = new JsonArray();
-        for(String sp : game.getSubPhaseCompletion().keySet()){
-            JsonObject subPhase = new JsonObject();
-            subPhase.addProperty(sp,game.getSubPhaseCompletion().get(sp));
-            subPhaseCompletion.add(subPhase);
-        }
-        reply.add("subPhaseCompletion", subPhaseCompletion);
+        reply.addProperty("subPhase", game.getSubPhase().toString());
         reply.add("players", ObjectsToJson.toJsonArray(game.getGameModel().getPlayers(),ObjectsToJson.GET_PLAYERS));
         reply.add("gameBoard", ObjectsToJson.toJsonObject(game.getGameModel().getGameBoard()));
+        return reply;
+    }
+
+    /**
+     * Creates the message used to tell the clients that the game has started running.
+     *
+     * @return JsonObject which represents the message.
+     */
+    public static JsonObject gameStart(){
+        JsonObject reply = new JsonObject();
+        reply.addProperty("type", "gameStart");
+        return reply;
+    }
+
+    /**
+     * Creates the "pong" message.
+     *
+     * @return JsonObject which represents the message.
+     */
+    public static JsonObject pong() {
+        JsonObject reply = new JsonObject();
+        reply.addProperty("type", "pong");
+        return reply;
+    }
+
+    /**
+     * Creates the "win" message.
+     *
+     * @return JsonObject which represents the message.
+     */
+    public static JsonObject win(List<Player> playerList) {
+        JsonObject reply = new JsonObject();
+        JsonArray winners = new JsonArray();
+        for(Player player: playerList) winners.add(player.getName());
+        reply.addProperty("type", "win");
+        reply.add("winners", winners);
+        return reply;
+    }
+
+    /**
+     * Creates the "moveTower" message.
+     *
+     * @param towerColor  The color of the moving tower.
+     * @param island      The island's id on which the tower is being moved.
+     * @return            JsonObject which represents the message.
+     */
+    public static JsonObject moveTower(TowerType towerColor, Island island){
+        JsonObject reply = new JsonObject();
+        reply.addProperty("towerColor", towerColor.toString());
+        reply.addProperty("island", island.getId());
+        return reply;
+    }
+
+    /**
+     * Creates the "moveProfessor" message.
+     *
+     * @param professor The color of the professor that is going to be reassigned.
+     * @param player    The name of the player to whom the professor is going to be reassigned.
+     * @return          JsonObject which represents the message.
+     */
+    public static JsonObject moveProfessor(String professor, String player){
+        JsonObject reply = new JsonObject();
+        reply.addProperty("professor", professor);
+        reply.addProperty("player", player);
         return reply;
     }
 

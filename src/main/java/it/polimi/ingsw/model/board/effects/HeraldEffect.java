@@ -29,5 +29,4 @@ public class HeraldEffect extends Effect {
     public int getCost() {
         return 3;
     }
-
 }

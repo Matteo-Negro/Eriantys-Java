@@ -25,6 +25,8 @@ public class Cloud {
         this.id = idCloud;
         this.students = new HashMap<>();
         Arrays.stream(HouseColor.values()).forEach(color -> this.students.put(color, 0));
+
+        System.out.printf("\n *** New Cloud successfully created with id: %d", idCloud);
     }
 
     /**
@@ -37,6 +39,8 @@ public class Cloud {
         this.id = idCloud;
         this.students = new HashMap<>();
         Arrays.stream(HouseColor.values()).forEach(color -> this.students.put(color, status.get(color)));
+
+        System.out.printf("\n *** Saved Island successfully restored with id: %d", idCloud);
     }
 
     /**

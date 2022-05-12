@@ -27,6 +27,8 @@ public class Bag {
         });
 
         this.randomize();
+
+        System.out.println("\n *** New Bag successfully created.");
     }
 
     /**
@@ -44,6 +46,8 @@ public class Bag {
         });
 
         this.randomize();
+
+        System.out.println("\n *** Saved Bag successfully restored.");
     }
 
     /**

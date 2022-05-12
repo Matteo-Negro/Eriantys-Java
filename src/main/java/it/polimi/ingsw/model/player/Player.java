@@ -39,6 +39,8 @@ public class Player {
         for (int index = 1; index <= 10; index++)
             assistants.add(new Assistant(index));
         this.schoolBoard = new SchoolBoard(towersNumber, towerType);
+
+        System.out.println("\n *** New Player successfully created.");
     }
 
     /**
@@ -56,6 +58,8 @@ public class Player {
         this.assistants = new ArrayList<>(assistants);
         this.coins = coins;
         this.schoolBoard = schoolBoard;
+
+        System.out.println("\n *** Saved Player successfully restored.");
     }
 
     /**
@@ -119,15 +123,12 @@ public class Player {
      * Plays the selected Assistant, giving back a reference to it.
      *
      * @param id ID of the Assistant to be played.
-     * @return Chosen Assistant, if available.
      * @throws AlreadyPlayedException If the Assistant had already been played.
      */
-    public Assistant playAssistant(int id) throws AlreadyPlayedException {
+    public void playAssistant(int id) throws AlreadyPlayedException {
         if (assistants.get(id) == null)
             throw new AlreadyPlayedException("The Assistant #" + id + " has already been played.");
-        Assistant tmp = assistants.get(id);
-        assistants.set(id, null);
-        return tmp;
+        assistants.remove(id);
     }
 
     /**
