@@ -12,10 +12,8 @@ import it.polimi.ingsw.utilities.exceptions.AlreadyExistingPlayerException;
 import it.polimi.ingsw.utilities.exceptions.FullGameException;
 import it.polimi.ingsw.utilities.exceptions.RoundConcluded;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Core of the entire game structure.
@@ -48,6 +46,8 @@ public class GamePlatform {
         this.playersNumber = playersNumber;
         this.currentPlayer = "";
         this.roundWinner = "";
+
+        System.out.println("\n *** New GamePlatform successfully created.");
     }
 
     /**
@@ -69,6 +69,8 @@ public class GamePlatform {
         this.roundWinner = turnOrder.get(0).getName();
         this.players = new HashMap<>();
         this.clockwiseOrder.forEach(player -> this.players.put(player.getName(), player));
+
+        System.out.println("\n *** Saved GamePlatform successfully restored.");
     }
 
     /**
@@ -96,27 +98,70 @@ public class GamePlatform {
     /**
      * Adds a player to the game.
      *
-     * @param name         Name of the player.
-     * @param wizardType   Type of the Wizard.
-     * @param towersNumber Number of towers.
-     * @param towerType    Color of the tower.
+     * @param name Name of the player.
      * @throws AlreadyExistingPlayerException If a player with the same name already exists.
      * @throws FullGameException              If there are already enough players.
      */
-    public void addPlayer(String name, WizardType wizardType, int towersNumber, TowerType towerType)
+    public void addPlayer(String name)
             throws AlreadyExistingPlayerException, FullGameException {
         Player tmp;
         if (players.size() == playersNumber)
             throw new FullGameException("There are already " + playersNumber + "/" + playersNumber + " players.");
         if (players.containsKey(name))
             throw new AlreadyExistingPlayerException("A player with name \"" + name + "\" already exists.");
-        tmp = new Player(name, wizardType, towersNumber, towerType);
+        tmp = new Player(name, getWizardType(), getTowersNumber(), getTowerType());
         clockwiseOrder.add(tmp);
         players.put(name, tmp);
         if (players.size() == 1) {
             currentPlayer = name;
             roundWinner = name;
         }
+    }
+
+    /**
+     * Returns a random Wizard which has not yet been used.
+     *
+     * @return The chosen Wizard.
+     */
+    private WizardType getWizardType() {
+        List<WizardType> wizards = new ArrayList<>();
+        for (WizardType wizard : WizardType.values())
+            if (clockwiseOrder.stream().noneMatch(player -> player.getWizard().equals(wizard)))
+                wizards.add(wizard);
+        return wizards.get(ThreadLocalRandom.current().nextInt(0, wizards.size()));
+    }
+
+    /**
+     * Returns the number of towers for the player, according to the number of players.
+     *
+     * @return The number of towers.
+     */
+    private int getTowersNumber() {
+        return switch (playersNumber) {
+            case 2, 4 -> 8;
+            case 3 -> 6;
+            default -> 0;
+        };
+    }
+
+    /**
+     * Returns a random Tower according to game rules.
+     *
+     * @return The chosen Tower.
+     */
+    private TowerType getTowerType() {
+        List<TowerType> towers = new ArrayList<>();
+        if (playersNumber == 3) {
+            for (TowerType tower : TowerType.values())
+                if (clockwiseOrder.stream().noneMatch(player -> player.getSchoolBoard().getTowerType().equals(tower)))
+                    towers.add(tower);
+        } else {
+            for (int index = 0; index < playersNumber - (int) clockwiseOrder.stream().filter(player -> player.getSchoolBoard().getTowerType().equals(TowerType.WHITE)).count(); index++)
+                towers.add(TowerType.WHITE);
+            for (int index = 0; index < playersNumber - (int) clockwiseOrder.stream().filter(player -> player.getSchoolBoard().getTowerType().equals(TowerType.BLACK)).count(); index++)
+                towers.add(TowerType.BLACK);
+        }
+        return towers.get(ThreadLocalRandom.current().nextInt(0, towers.size()));
     }
 
     /**
@@ -173,7 +218,7 @@ public class GamePlatform {
         gameBoard.flushAssistantsList();
         gameBoard.getClouds().forEach(cloud -> {
             HouseColor houseColor;
-            Map<HouseColor, Integer> map = new HashMap<>();
+            Map<HouseColor, Integer> map = new EnumMap<>(HouseColor.class);
             for (HouseColor color : HouseColor.values())
                 map.put(color, 0);
             for (int i = 0; i < (playersNumber == 3 ? 3 : 4); i++) {
@@ -200,7 +245,7 @@ public class GamePlatform {
     public void nextTurn() throws RoundConcluded {
         String player;
         gameBoard.removeEffects();
-        player = turnOrder.get(turnOrder.indexOf(currentPlayer) + 1 % playersNumber).getName();
+        player = turnOrder.get(turnOrder.indexOf(players.get(currentPlayer)) + 1 % playersNumber).getName();
         if (player.equals(roundWinner))
             throw new RoundConcluded();
         currentPlayer = player;
@@ -240,7 +285,7 @@ public class GamePlatform {
      */
     private List<Pair<Player, Assistant>> reorderPlayedCards(String roundWinner, Map<Player, Assistant> playedAssistants) {
         Player player;
-        int roundWinnerIndex = clockwiseOrder.indexOf(roundWinner);
+        int roundWinnerIndex = clockwiseOrder.indexOf(players.get(roundWinner));
         List<Pair<Player, Assistant>> playedAssistantsOrder = new ArrayList<>();
         for (int index = 0; index < playersNumber; index++) {
             player = clockwiseOrder.get(roundWinnerIndex + index % playersNumber);

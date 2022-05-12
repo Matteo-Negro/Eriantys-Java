@@ -3,6 +3,7 @@ package it.polimi.ingsw.model.board.effects;
 import it.polimi.ingsw.utilities.HouseColor;
 
 import java.util.EmptyStackException;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,26 +15,12 @@ import java.util.Map;
 
 public class PrincessEffect extends Effect {
 
-    private final Map<HouseColor, Integer> students;
-
-    /**
-     * Class constructor.
-     * It creates an instance of the class containing the map of the students put on the effect card with their respective quantity (initialized at 0).
-     */
-    public PrincessEffect() {
-        students = new HashMap<>();
-
-        students.put(HouseColor.BLUE, 0);
-        students.put(HouseColor.GREEN, 0);
-        students.put(HouseColor.FUCHSIA, 0);
-        students.put(HouseColor.RED, 0);
-        students.put(HouseColor.YELLOW, 0);
-    }
+    private Map<HouseColor, Integer> students;
 
     /**
      * Class constructor used to restore the game.
      *
-     * @param statusStudents
+     * @param statusStudents Indicates the student on the card, saved into the status. These are going to be stored as a Map into the students attribute.
      */
     public PrincessEffect(Map<HouseColor, Integer> statusStudents) {
         this.students = statusStudents;
@@ -51,16 +38,13 @@ public class PrincessEffect extends Effect {
 
     /**
      * effect() method overload.
-     * Calls the takeStudents(HouseColor) private method.
-     * * @param color
+     *
+     * @param toTake The color of the student to take from the card.
+     * @param toPut The color of the student to put on the card.
      */
-    public void effect(HouseColor color) {
-        takeStudent(color);
-    }
-
-    @Override
-    public void clean() {
-
+    public void effect(HouseColor toTake, HouseColor toPut) {
+        if(toTake != null) takeStudent(toTake);
+        if(toPut != null) addStudent(toPut);
     }
 
     @Override
@@ -73,14 +57,14 @@ public class PrincessEffect extends Effect {
      *
      * @return students attribute.
      */
-    private Map<HouseColor, Integer> getStudents() {
-        return students;
+    public EnumMap<HouseColor, Integer> getStudents() {
+        return new EnumMap<>(students);
     }
 
     /**
      * Adds a student, of the color specified by the parameter, to the map saved in the students attribute, increasing the counter mapped with the respective HouseColor.
      *
-     * @param color
+     * @param color The color of the students to increase.
      */
     private void addStudent(HouseColor color) {
         students.replace(color, students.get(color) + 1);
@@ -90,8 +74,8 @@ public class PrincessEffect extends Effect {
      * Deletes a student, of the color specified by the parameter, from the map saved in the students attribute, decreasing the counter mapped with the respective HouseColor.
      * Throws an EmptyStackException  if the counter is already at 0.
      *
-     * @param color
-     * @throws EmptyStackException
+     * @param color The color of the students to decrease.
+     * @throws EmptyStackException Thrown when there are no students of the specified color on the card.
      */
     private void takeStudent(HouseColor color) throws EmptyStackException {
         if (students.get(color) == 0) throw new EmptyStackException();

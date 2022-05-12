@@ -26,11 +26,6 @@ public class MinstrelEffect extends Effect {
     }
 
     @Override
-    public void clean() {
-
-    }
-
-    @Override
     public int getCost() {
         return 1;
     }

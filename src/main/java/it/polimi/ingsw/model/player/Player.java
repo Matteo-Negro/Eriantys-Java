@@ -39,6 +39,8 @@ public class Player {
         for (int index = 1; index <= 10; index++)
             assistants.add(new Assistant(index));
         this.schoolBoard = new SchoolBoard(towersNumber, towerType);
+
+        System.out.println("\n *** New Player successfully created.");
     }
 
     /**
@@ -56,6 +58,8 @@ public class Player {
         this.assistants = new ArrayList<>(assistants);
         this.coins = coins;
         this.schoolBoard = schoolBoard;
+
+        System.out.println("\n *** Saved Player successfully restored.");
     }
 
     /**
@@ -86,6 +90,13 @@ public class Player {
     }
 
     /**
+     * Adds one coin to preview coin amount.
+     */
+    public void addCoins() {
+        coins += 1;
+    }
+
+    /**
      * Removes the specified number of coins. Used in combination with paySpecialCharacter.
      *
      * @param number Number of coins to spend.
@@ -93,8 +104,7 @@ public class Player {
      * @throws NotEnoughCoinsException If the number of available coins is less than the required one.
      */
     private void takeCoins(int number) throws NegativeException, NotEnoughCoinsException {
-        if (number < 0)
-            throw new NegativeException("Given value is negative (" + number + ")");
+        if (number < 0) throw new NegativeException("Given value is negative (" + number + ")");
         if (coins < number)
             throw new NotEnoughCoinsException("Required coins (" + number + ") is more than available (" + coins + ")");
         coins -= number;
@@ -113,15 +123,12 @@ public class Player {
      * Plays the selected Assistant, giving back a reference to it.
      *
      * @param id ID of the Assistant to be played.
-     * @return Chosen Assistant, if available.
      * @throws AlreadyPlayedException If the Assistant had already been played.
      */
-    public Assistant playAssistant(int id) throws AlreadyPlayedException {
+    public void playAssistant(int id) throws AlreadyPlayedException {
         if (assistants.get(id) == null)
             throw new AlreadyPlayedException("The Assistant #" + id + " has already been played.");
-        Assistant tmp = assistants.get(id);
-        assistants.set(id, null);
-        return tmp;
+        assistants.remove(id);
     }
 
     /**
@@ -132,12 +139,11 @@ public class Player {
      * @throws NullPointerException    If the argument is null.
      */
     public void paySpecialCharacter(SpecialCharacter specialCharacter) throws NotEnoughCoinsException, NullPointerException {
-        if (specialCharacter == null)
-            throw new NullPointerException();
+        if (specialCharacter == null) throw new NullPointerException();
         try {
             takeCoins(specialCharacter.getEffectCost());
         } catch (NegativeException e) {
-            e.printStackTrace();
+            System.err.println(e.getMessage());
         }
         specialCharacter.activateEffect();
     }

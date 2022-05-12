@@ -23,6 +23,8 @@ public class Assistant {
         this.id = id;
         this.maxDistance = id / 2 + 1;
         this.bonus = false;
+
+        System.out.printf("\n *** New Assistant successfully created with id: %d", id);
     }
 
     /**

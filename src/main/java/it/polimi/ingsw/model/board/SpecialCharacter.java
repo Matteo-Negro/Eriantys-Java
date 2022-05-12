@@ -1,6 +1,9 @@
 package it.polimi.ingsw.model.board;
 
 import it.polimi.ingsw.model.board.effects.*;
+import it.polimi.ingsw.utilities.HouseColor;
+
+import java.util.Map;
 
 /**
  * The character card containing the corresponding effect
@@ -23,15 +26,15 @@ public class SpecialCharacter {
      *
      * @param id The identification number of the special character card.
      */
-    public SpecialCharacter(int id) {
+    public SpecialCharacter(int id, Map<HouseColor, Integer> students) {
         this.id = id;
         isActive = false;
         alreadyPaid = false;
         paidInRound = false;
-
-        assignedEffect = getEffectBy(id);
-
+        assignedEffect = getEffectBy(id, students, 5);
         effectCost = assignedEffect.getCost();
+
+        System.out.printf("\n *** New SpecialCharacter successfully created with id: %d", id);
     }
 
     /**
@@ -43,14 +46,16 @@ public class SpecialCharacter {
      * @param statusPaidInRound True if the special character has already been payed and it's effect has already been activated during this round.
      * @param statusIsActive    True if the special character's effect is active.
      */
-    public SpecialCharacter(int statusId, int statusEffectCost, boolean statusAlreadyPaid, boolean statusPaidInRound, boolean statusIsActive) {
+    public SpecialCharacter(int statusId, int statusEffectCost, boolean statusAlreadyPaid, boolean statusPaidInRound, boolean statusIsActive, Map<HouseColor, Integer> statusStudents, int bans) {
 
         this.id = statusId;
         this.effectCost = statusEffectCost;
-        this.assignedEffect = getEffectBy(statusId);
+        this.assignedEffect = getEffectBy(statusId, statusStudents, bans);
         this.alreadyPaid = statusAlreadyPaid;
         this.paidInRound = statusPaidInRound;
         this.isActive = statusIsActive;
+
+        System.out.printf("\n *** Saved SpecialCharacter successfully restored with id: %d", statusId);
     }
 
     /**
@@ -59,19 +64,19 @@ public class SpecialCharacter {
      * @param id The identification number of the effect.
      * @return The required effect.
      */
-    private Effect getEffectBy(int id) {
+    private Effect getEffectBy(int id, Map<HouseColor, Integer> students, int bans) {
         return switch (id) {
-            case 1 -> new MonkEffect();
+            case 1 -> new MonkEffect(students);
             case 2 -> new FarmerEffect();
             case 3 -> new HeraldEffect();
             case 4 -> new MessengerEffect();
-            case 5 -> new HerablistEffect();
+            case 5 -> new HerbalistEffect(bans);
             case 6 -> new CentaurEffect();
-            case 7 -> new JesterEffect();
+            case 7 -> new JesterEffect(students);
             case 8 -> new KnightEffect();
             case 9 -> new MushroomerEffect();
             case 10 -> new MinstrelEffect();
-            case 11 -> new PrincessEffect();
+            case 11 -> new PrincessEffect(students);
             case 12 -> new ThiefEffect();
             default -> throw new IllegalStateException("Unexpected value: " + id);
         };
@@ -115,7 +120,6 @@ public class SpecialCharacter {
         alreadyPaid = true;
         paidInRound = true;
         isActive = true;
-        getEffect().effect();
     }
 
     /**
@@ -123,7 +127,6 @@ public class SpecialCharacter {
      */
     public void cleanEffect() {
         isActive = false;
-        assignedEffect.clean();
     }
 
     /**

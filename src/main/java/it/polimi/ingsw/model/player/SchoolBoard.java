@@ -6,7 +6,7 @@ import it.polimi.ingsw.utilities.exceptions.NegativeException;
 import it.polimi.ingsw.utilities.exceptions.NoStudentException;
 import it.polimi.ingsw.utilities.exceptions.NotEnoughTowersException;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 
 /**
@@ -30,12 +30,14 @@ public class SchoolBoard {
     SchoolBoard(int towersNumber, TowerType towerType) {
         this.towersNumber = towersNumber;
         this.towerType = towerType;
-        this.diningRoom = new HashMap<>();
-        this.entrance = new HashMap<>();
+        this.diningRoom = new EnumMap<>(HouseColor.class);
+        this.entrance = new EnumMap<>(HouseColor.class);
         for (HouseColor color : HouseColor.values()) {
             this.diningRoom.put(color, 0);
             this.entrance.put(color, 0);
         }
+
+        System.out.println("\n *** New SchoolBoard successfully created.");
     }
 
     /**
@@ -49,8 +51,10 @@ public class SchoolBoard {
     public SchoolBoard(int towersNumber, TowerType towerType, Map<HouseColor, Integer> diningRoom, Map<HouseColor, Integer> entrance) {
         this.towersNumber = towersNumber;
         this.towerType = towerType;
-        this.diningRoom = new HashMap<>(diningRoom);
-        this.entrance = new HashMap<>(entrance);
+        this.diningRoom = new EnumMap<>(diningRoom);
+        this.entrance = new EnumMap<>(entrance);
+
+        System.out.println("\n *** Saved SchoolBoard successfully restored.");
     }
 
     /**
@@ -77,7 +81,7 @@ public class SchoolBoard {
      * @return Map of the students at the entrance.
      */
     public Map<HouseColor, Integer> getEntrance() {
-        return new HashMap<>(entrance);
+        return new EnumMap<>(entrance);
     }
 
     /**
@@ -86,7 +90,7 @@ public class SchoolBoard {
      * @return Map of the students in the dining room.
      */
     public Map<HouseColor, Integer> getDiningRoom() {
-        return new HashMap<>(diningRoom);
+        return new EnumMap<>(diningRoom);
     }
 
     /**
@@ -150,10 +154,11 @@ public class SchoolBoard {
      * @throws NotEnoughTowersException If the number of available towers is less than required.
      */
     public void removeTowers(int number) throws NegativeException, NotEnoughTowersException {
-        if (number < 0)
-            throw new NegativeException("Given value is negative (" + number + ")");
-        if (towersNumber < number)
+        if (number < 0) throw new NegativeException("Given value is negative (" + number + ")");
+        if (towersNumber < number) {
+            towersNumber = 0;
             throw new NotEnoughTowersException("Required towers (" + number + ") is more than available (" + towersNumber + ")");
+        }
         towersNumber -= number;
     }
 
@@ -164,8 +169,7 @@ public class SchoolBoard {
      * @throws NegativeException If the number of towers is negative.
      */
     public void addTowers(int number) throws NegativeException {
-        if (number < 0)
-            throw new NegativeException("Given value is negative (" + number + ")");
+        if (number < 0) throw new NegativeException("Given value is negative (" + number + ")");
         towersNumber += number;
     }
 }
