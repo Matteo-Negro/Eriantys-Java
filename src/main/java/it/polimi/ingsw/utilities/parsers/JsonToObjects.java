@@ -23,6 +23,9 @@ import java.util.*;
  */
 public class JsonToObjects {
 
+    private JsonToObjects() {
+    }
+
     /**
      * Parses a json to get the corresponding Player.
      *
@@ -80,8 +83,8 @@ public class JsonToObjects {
         return new SchoolBoard(
                 json.get("towersNumber").getAsInt(),
                 TowerType.valueOf(json.get("towerType").getAsString()),
-                parseHouseColorIntMap(json.getAsJsonObject("diningRoom")),
-                parseHouseColorIntMap(json.getAsJsonObject("entrance"))
+                parseStudents(json.getAsJsonObject("diningRoom")),
+                parseStudents(json.getAsJsonObject("entrance"))
         );
     }
 
@@ -92,7 +95,7 @@ public class JsonToObjects {
      * @return The GameBoard that has been built.
      */
     public static GameBoard parseGameBoard(JsonObject json, boolean expert, Map<String, Player> players) {
-        Map<HouseColor, Player> professors = new HashMap<>();
+        Map<HouseColor, Player> professors = new EnumMap<>(HouseColor.class);
         JsonElement tmp;
 
         for (HouseColor color : HouseColor.values()) {
@@ -101,7 +104,7 @@ public class JsonToObjects {
         }
 
         return new GameBoard(
-                parseHouseColorIntMap(json.getAsJsonObject("bag")),
+                parseStudents(json.getAsJsonObject("bag")),
                 parsePlayedAssistants(json.getAsJsonArray("playedAssistants"), players),
                 parseIslands(json.getAsJsonArray("islands")),
                 parseClouds(json.getAsJsonArray("clouds")),
@@ -137,7 +140,7 @@ public class JsonToObjects {
         for (int index = 0; index < json.size(); index++) {
             island = json.get(index).getAsJsonObject();
             islandsList.add(new Island(
-                    parseHouseColorIntMap(island.getAsJsonObject("students")),
+                    parseStudents(island.getAsJsonObject("students")),
                     index,
                     island.get("size").getAsInt(),
                     island.get("ban").getAsBoolean(),
@@ -158,7 +161,7 @@ public class JsonToObjects {
         for (int index = 0; index < json.size(); index++)
             cloudsList.add(new Cloud(
                     index,
-                    parseHouseColorIntMap(json.get(index).getAsJsonObject())
+                    parseStudents(json.get(index).getAsJsonObject())
             ));
         return cloudsList;
     }
@@ -179,7 +182,9 @@ public class JsonToObjects {
                     specialCharacter.get("effectCost").getAsInt(),
                     specialCharacter.get("alreadyPaid").getAsBoolean(),
                     specialCharacter.get("paidInRound").getAsBoolean(),
-                    specialCharacter.get("active").getAsBoolean()
+                    specialCharacter.get("active").getAsBoolean(),
+                    specialCharacter.has("containedStudents") ? parseStudents(specialCharacter.get("containedStudents").getAsJsonObject()) : null,
+                    specialCharacter.has("availableBans") ? specialCharacter.get("availableBans").getAsInt() : 0
             ));
         }
         return specialCharactersList;
@@ -191,8 +196,8 @@ public class JsonToObjects {
      * @param json Json object which represents the map of students.
      * @return The Map that has been built.
      */
-    private static Map<HouseColor, Integer> parseHouseColorIntMap(JsonObject json) {
-        Map<HouseColor, Integer> map = new HashMap<>();
+    private static Map<HouseColor, Integer> parseStudents(JsonObject json) {
+        Map<HouseColor, Integer> map = new EnumMap<>(HouseColor.class);
         for (HouseColor color : HouseColor.values())
             map.put(color, json.get(color.name()).getAsInt());
         return map;

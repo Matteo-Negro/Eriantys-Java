@@ -7,6 +7,10 @@ import it.polimi.ingsw.model.board.Cloud;
 import it.polimi.ingsw.model.board.GameBoard;
 import it.polimi.ingsw.model.board.Island;
 import it.polimi.ingsw.model.board.SpecialCharacter;
+import it.polimi.ingsw.model.board.effects.HerbalistEffect;
+import it.polimi.ingsw.model.board.effects.JesterEffect;
+import it.polimi.ingsw.model.board.effects.MonkEffect;
+import it.polimi.ingsw.model.board.effects.PrincessEffect;
 import it.polimi.ingsw.model.player.Assistant;
 import it.polimi.ingsw.model.player.Player;
 import it.polimi.ingsw.model.player.SchoolBoard;
@@ -22,8 +26,18 @@ import java.util.Map;
  */
 public enum ObjectsToJson {
 
+    /**
+     * Possible actions when generating a JsonArray from players.
+     */
     GET_NAMES, GET_PLAYERS;
 
+    /**
+     * Decides whether to create a list of names or a list of players with connected school board.
+     *
+     * @param players Players to parse.
+     * @param action  Action to do.
+     * @return The generated JsonArray.
+     */
     public static JsonArray toJsonArray(List<Player> players, ObjectsToJson action) {
         return switch (action) {
             case GET_NAMES -> toNamesArray(players);
@@ -31,6 +45,12 @@ public enum ObjectsToJson {
         };
     }
 
+    /**
+     * Generates a list of names from the players.
+     *
+     * @param players Players to parse.
+     * @return The generated JsonArray.
+     */
     private static JsonArray toNamesArray(List<Player> players) {
         JsonArray list = new JsonArray();
         for (Player player : players)
@@ -38,6 +58,12 @@ public enum ObjectsToJson {
         return list;
     }
 
+    /**
+     * Generates a list of players with connected school board.
+     *
+     * @param players Players to parse.
+     * @return The generated JsonArray.
+     */
     private static JsonArray toPlayersArray(List<Player> players) {
         JsonArray list = new JsonArray();
         for (Player player : players)
@@ -45,6 +71,12 @@ public enum ObjectsToJson {
         return list;
     }
 
+    /**
+     * Generates the object which contains the player.
+     *
+     * @param player Player to parse.
+     * @return The generated JsonObject.
+     */
     private static JsonObject parsePlayer(Player player) {
         JsonObject object = new JsonObject();
         object.addProperty("name", player.getName());
@@ -55,6 +87,12 @@ public enum ObjectsToJson {
         return object;
     }
 
+    /**
+     * Generates a list of assistants.
+     *
+     * @param assistants Assistants to parse.
+     * @return The generated JsonArray.
+     */
     private static JsonArray parseAssistants(List<Assistant> assistants) {
         JsonArray list = new JsonArray();
         for (Assistant assistant : assistants)
@@ -62,34 +100,60 @@ public enum ObjectsToJson {
         return list;
     }
 
+    /**
+     * Generates the object which contains the school board.
+     *
+     * @param schoolBoard School board to parse.
+     * @return The generated JsonObject.
+     */
     private static JsonObject parseSchoolBoard(SchoolBoard schoolBoard) {
         JsonObject object = new JsonObject();
         object.addProperty("towerType", schoolBoard.getTowerType().name());
         object.addProperty("towersNumber", schoolBoard.getTowersNumber());
-        object.add("entrance", parseHouseColorIntMap(schoolBoard.getEntrance()));
-        object.add("diningRoom", parseHouseColorIntMap(schoolBoard.getDiningRoom()));
+        object.add("entrance", parseStudents(schoolBoard.getEntrance()));
+        object.add("diningRoom", parseStudents(schoolBoard.getDiningRoom()));
         return object;
     }
 
+    /**
+     * Generates the object which contains the whole realm.
+     *
+     * @param gameBoard The game board of the game.
+     * @return The generated JsonObject.
+     */
     public static JsonObject toJsonObject(GameBoard gameBoard) {
         JsonObject object = new JsonObject();
-        object.add("bag", parseHouseColorIntMap(gameBoard.getBag().getStatus()));
+        object.add("bag", parseStudents(gameBoard.getBag().getStatus()));
         object.add("clouds", parseClouds(gameBoard.getClouds()));
         object.add("islands", parseIslands(gameBoard.getIslands()));
         object.add("playedAssistants", parsePlayedAssistants(gameBoard.getPlayedAssistants()));
         object.add("characters", parseSpecialCharacters(gameBoard.getCharacters()));
         object.add("professors", parseProfessors(gameBoard.getProfessors()));
         object.addProperty("motherNatureIsland", gameBoard.getMotherNatureIsland().getId());
+        object.addProperty("ignoreColor", gameBoard.getIgnoreColor().toString());
+        object.addProperty("influenceBonus", gameBoard.getInfluenceBonus().getName());
         return object;
     }
 
+    /**
+     * Generates a list of clouds.
+     *
+     * @param clouds Clouds to parse.
+     * @return The generated JsonArray.
+     */
     private static JsonArray parseClouds(List<Cloud> clouds) {
         JsonArray list = new JsonArray();
         for (Cloud cloud : clouds)
-            list.add(parseHouseColorIntMap(cloud.getStudents()));
+            list.add(parseStudents(cloud.getStudents()));
         return list;
     }
 
+    /**
+     * Generates a list of Islands.
+     *
+     * @param islands Islands to parse.
+     * @return The generated JsonArray.
+     */
     private static JsonArray parseIslands(List<Island> islands) {
         JsonArray list = new JsonArray();
         for (Island island : islands)
@@ -97,22 +161,41 @@ public enum ObjectsToJson {
         return list;
     }
 
+    /**
+     * Generates the object which contains the island.
+     *
+     * @param island Island to parse.
+     * @return The generated JsonObject.
+     */
     private static JsonObject parseIsland(Island island) {
         JsonObject object = new JsonObject();
         object.addProperty("size", island.getSize());
         object.addProperty("tower", island.getTower().name());
         object.addProperty("ban", island.isBanned());
-        object.add("students", parseHouseColorIntMap(island.getStudents()));
+        object.add("students", parseStudents(island.getStudents()));
         return object;
     }
 
+    /**
+     * Generates a list of played assistants.
+     *
+     * @param playedAssistants Assistants to parse with respective player.
+     * @return The generated JsonArray.
+     */
     private static JsonArray parsePlayedAssistants(Map<Player, Assistant> playedAssistants) {
         JsonArray list = new JsonArray();
-        for (Player player : playedAssistants.keySet())
-            list.add(parsePlayedAssistant(player.getName(), playedAssistants.get(player).getId()));
+        for (Map.Entry<Player, Assistant> entry : playedAssistants.entrySet())
+            list.add(parsePlayedAssistant(entry.getKey().getName(), entry.getValue().getId()));
         return list;
     }
 
+    /**
+     * Generates the object which contains the assistant.
+     *
+     * @param name      Name of the player who played it.
+     * @param assistant Assistant connected to that player.
+     * @return The generated JsonObject.
+     */
     private static JsonObject parsePlayedAssistant(String name, int assistant) {
         JsonObject object = new JsonObject();
         object.addProperty("player", name);
@@ -120,6 +203,12 @@ public enum ObjectsToJson {
         return object;
     }
 
+    /**
+     * Generates a list of special characters.
+     *
+     * @param specialCharacters Assistants to parse.
+     * @return The generated JsonArray.
+     */
     private static JsonArray parseSpecialCharacters(List<SpecialCharacter> specialCharacters) {
         JsonArray list = new JsonArray();
         for (SpecialCharacter specialCharacter : specialCharacters)
@@ -127,16 +216,40 @@ public enum ObjectsToJson {
         return list;
     }
 
+    /**
+     * Generates the object which contains the special character.
+     *
+     * @param specialCharacter Special character to parse.
+     * @return The generated JsonObject.
+     */
     private static JsonObject parseSpecialCharacter(SpecialCharacter specialCharacter) {
         JsonObject object = new JsonObject();
+        String containedStudents = "containedStudents";
         object.addProperty("id", specialCharacter.getId());
         object.addProperty("effectCost", specialCharacter.getEffectCost());
         object.addProperty("alreadyPaid", specialCharacter.isAlreadyPaid());
         object.addProperty("paidInRound", specialCharacter.isPaidInRound());
         object.addProperty("active", specialCharacter.isActive());
+        switch (specialCharacter.getEffect().getId()) {
+            case 1 ->
+                    object.add(containedStudents, parseStudents(((MonkEffect) specialCharacter.getEffect()).getStudents()));
+            case 5 ->
+                    object.addProperty("availableBans", ((HerbalistEffect) specialCharacter.getEffect()).getAvailableBans());
+            case 7 ->
+                    object.add(containedStudents, parseStudents(((JesterEffect) specialCharacter.getEffect()).getStudents()));
+            case 11 ->
+                    object.add(containedStudents, parseStudents(((PrincessEffect) specialCharacter.getEffect()).getStudents()));
+        }
+
         return object;
     }
 
+    /**
+     * Generates the object which contains the link between the player and the professor.
+     *
+     * @param map Map with professor and respective player.
+     * @return The generated JsonObject.
+     */
     private static JsonObject parseProfessors(Map<HouseColor, Player> map) {
         JsonObject object = new JsonObject();
         for (HouseColor color : HouseColor.values())
@@ -147,7 +260,13 @@ public enum ObjectsToJson {
         return object;
     }
 
-    private static JsonObject parseHouseColorIntMap(Map<HouseColor, Integer> map) {
+    /**
+     * Generates the object which contains the amount of students for each color.
+     *
+     * @param map The students for each color.
+     * @return The generated JsonObject.
+     */
+    private static JsonObject parseStudents(Map<HouseColor, Integer> map) {
         JsonObject object = new JsonObject();
         for (HouseColor color : HouseColor.values())
             object.addProperty(color.name(), map.get(color));

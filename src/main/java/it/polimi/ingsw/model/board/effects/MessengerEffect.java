@@ -30,5 +30,4 @@ public class MessengerEffect extends Effect {
     public int getCost() {
         return 1;
     }
-
 }

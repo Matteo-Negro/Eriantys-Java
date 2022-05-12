@@ -33,9 +33,8 @@ public class Utilities {
             background(ansi, Black.getInstance());
             foreground(ansi, White.getInstance());
         }
-        for (int x = 0; x < terminal.getWidth(); x++)
-            for (int y = 0; y < terminal.getHeight(); y++)
-                ansi.append(" ");
+        for (int index = 0; index < terminal.getWidth() * terminal.getHeight(); index++)
+            ansi.append(" ");
         ansi.cursor(0, 0);
         terminal.writer().print(ansi);
         terminal.flush();
@@ -71,6 +70,44 @@ public class Utilities {
     public static void background(Ansi ansi, Colour colour) {
         ansi.bgRgb(colour.getR(), colour.getG(), colour.getB());
         ansi.saveCursorPosition();
+    }
+
+    /**
+     * Sets the font to bold or regular.
+     *
+     * @param ansi   Ansi stream where to write.
+     * @param enable Enable for bold, disable for regular.
+     */
+    public static void bold(Ansi ansi, boolean enable) {
+        if (enable)
+            ansi.bold();
+        else
+            ansi.boldOff();
+        ansi.saveCursorPosition();
+    }
+
+    /**
+     * Prints an error message on the top of the screen.
+     *
+     * @param terminal Terminal where to execute.
+     * @param message  Message to print
+     */
+    public static void printError(Terminal terminal, String message) {
+        Ansi ansi = new Ansi();
+        ansi.bgRed();
+        foreground(ansi, White.getInstance());
+        for (int index = 0; index < terminal.getWidth(); index++)
+            ansi.append(" ");
+        bold(ansi, true);
+        ansi.cursor(0, (terminal.getWidth() - message.length() - 7) / 2);
+        ansi.append("Error");
+        bold(ansi, false);
+        ansi.append(": ");
+        ansi.append(message);
+        ansi.cursor(0, 0);
+        background(ansi, Black.getInstance());
+        terminal.writer().print(ansi);
+        terminal.flush();
     }
 
     /**

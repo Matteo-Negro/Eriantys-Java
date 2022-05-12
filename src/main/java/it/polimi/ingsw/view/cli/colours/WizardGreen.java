@@ -19,7 +19,7 @@ public class WizardGreen implements Colour {
      */
     @Override
     public int getR() {
-        return 29;
+        return 41;
     }
 
     /**
@@ -29,7 +29,7 @@ public class WizardGreen implements Colour {
      */
     @Override
     public int getG() {
-        return 127;
+        return 178;
     }
 
     /**
@@ -39,7 +39,7 @@ public class WizardGreen implements Colour {
      */
     @Override
     public int getB() {
-        return 100;
+        return 139;
     }
 
     /**

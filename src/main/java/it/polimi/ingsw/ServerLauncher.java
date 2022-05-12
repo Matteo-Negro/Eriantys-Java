@@ -3,7 +3,6 @@ package it.polimi.ingsw;
 import it.polimi.ingsw.network.server.Server;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 public class ServerLauncher {
 

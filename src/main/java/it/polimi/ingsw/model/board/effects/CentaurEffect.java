@@ -1,10 +1,5 @@
 package it.polimi.ingsw.model.board.effects;
 
-import it.polimi.ingsw.model.board.Island;
-
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Specific effect n.6
  *
@@ -18,14 +13,6 @@ public class CentaurEffect extends Effect {
      * It creates an instance of the class.
      */
     public CentaurEffect() {
-    }
-
-    /**
-     * Class constructor used to restore the game.
-     *
-     * @param statusTakenTowers A map containing the towers taken from their respective
-     */
-    public CentaurEffect(List<Island> statusTakenTowers) {
     }
 
     @Override

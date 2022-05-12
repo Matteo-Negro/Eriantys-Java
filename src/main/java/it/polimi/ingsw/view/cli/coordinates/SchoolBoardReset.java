@@ -13,6 +13,16 @@ public class SchoolBoardReset implements DeltaCoordinates {
     }
 
     /**
+     * Gets the instance of the class instead of generating a new one every time.
+     *
+     * @return The generated instance.
+     */
+    public static SchoolBoardReset getInstance() {
+        if (instance == null) instance = new SchoolBoardReset();
+        return instance;
+    }
+
+    /**
      * Gets x coordinate.
      *
      * @return X coordinate.
@@ -29,17 +39,6 @@ public class SchoolBoardReset implements DeltaCoordinates {
      */
     @Override
     public int getY() {
-        return -15;
-    }
-
-    /**
-     * Gets the instance of the class instead of generating a new one every time.
-     *
-     * @return The generated instance.
-     */
-    public static SchoolBoardReset getInstance() {
-        if (instance == null)
-            instance = new SchoolBoardReset();
-        return instance;
+        return -13;
     }
 }

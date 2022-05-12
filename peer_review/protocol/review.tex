@@ -1,0 +1,65 @@
+% !TeX encoding = UTF-8
+% !TeX spellcheck = it_IT
+
+\documentclass[a4paper]{article}
+
+\pdfminorversion=7
+\pdfcompresslevel=9
+\pdfobjcompresslevel=2
+
+\usepackage[hidelinks]{hyperref}
+\usepackage[margin=60pt]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[italian]{babel}
+\usepackage{multicol}
+
+\setlength{\parindent}{0pt}
+
+\title{Peer-Review 2: Protocollo di Comunicazione}
+\author{Riccardo Milici, Riccardo Motta, Matteo Negro\\Gruppo 2}
+
+\hypersetup{
+	pdftitle={Peer-Review 2: Protocollo di Comunntation},
+	pdfauthor={Riccardo Milici, Riccardo Motta, Matteo Negro}
+}
+
+\begin{document}
+	
+	\maketitle
+	
+	Valutazione della documentazione del protocollo di comunicazione del gruppo 1.
+	
+	\section{Lati positivi}
+	
+	%Indicare in questa sezione quali sono secondo voi i lati positivi del protocollo dell'altro gruppo. Concentratevi sui sequence diagram, cercando di capire se qualche caso è stato dimenticato o se ci sono problemi che complicano l'implementazione di CLI o GUI.
+	
+	\paragraph{Completezza} Il gruppo 1 è riuscito a coprire adeguatamente tutte le casistiche di gioco.
+	
+	\paragraph{Carte speciali} Il gruppo ha dettagliato adeguatamente gli effetti delle carte speciali, con particolare riferimento a tutte le azioni che è possibile eseguire.
+	
+	\section{Lati negativi}
+	
+	%Come nella sezione precedente, indicare quali sono secondo voi i lati negativi.
+	
+	\paragraph{Porte utilizzate} Analizzando il diagramma UML del login abbiamo notato che per ogni nuova partita viene aperta una nuova porta su cui viene fatto girare un server. Questo potrebbe essere un problema se si inizia ad avere un numero esagerato di porte aperte, anche semplicemente a livello di firewall che potrebbe bloccare le richieste.
+	
+	\paragraph{Login} Nonostante pensiamo di aver compreso il motivo per il quale il gruppo 1 ha deciso di mandare due volte le informazioni di login, ci sembra una inutile complicazione che verrebbe risolta utilizzando un'unica porta per la gestione di tutte le partite.
+	
+	\paragraph{Fase di azione} Analizzando le chiamate che vengono effettuate non è stato esplicitato come facciano i vari client a sapere, ogni qualvolta viene effettuato uno spostamento di uno studente, chi ha eseguito la mossa.
+	
+	\section{Confronto}
+	
+	%Individuate i punti di forza del protocollo dell'altro gruppo rispetto alla vostra, quali sono le modifiche che potete fare al vostro protocollo per migliorarlo, e quali miglioramenti può fare l'altro gruppo.
+	
+	Guardando la documentazione del protocollo ci siamo resi conto che abbiamo una gestione completamente diversa delle partite multiple. Il gruppo 1 ha creato un nuovo server (che si mette in ascolto su una porta diversa) per ogni partita, mentre noi gestiamo tutto questo su un'unica porta. \\
+	
+	Un punto di contatto, invece, è il messaggio con il quale viene inviato l'intero stato della partita. Come loro, anche noi abbiamo sfruttato un json per il passaggio delle informazioni. \\
+	
+	Dall'analisi dei loro diagrammi UML, abbiamo apprezzato la loro gestione degli ack, in quanto loro inviano delle conferme dopo ogni mossa. Noi, d'altro canto, noi non abbiamo degli ack espliciti, bensì abbiamo esplicitato soltanto dei nack tramite dei messaggi di errore espliciti. \\
+	
+	Un altro punto di differenza tra i nostri protocolli risiede nella differente gestione dello spostamento di Madre Natura. Mentre loro inviano il numero di passi che Madre Natura deve effettuare, noi effettuiamo direttamente il calcolo dell'isola su cui Madre Natura termina il suo cammino, pertanto nel messaggio che noi inviamo inseriamo l'identificativo dell'isola su cui Madre Natura approda. \\
+	
+	L'ultima differenza che ci sentiamo di sottolineare è la gestione degli effetti dei vari personaggi speciali. Mentre loro chiamano una funzione differente per ogni personaggio, noi scomponiamo l'intera gestione in una sequenza di messaggi (pagamento, spostamento di studenti...).
+
+\end{document}

@@ -110,7 +110,9 @@ public class Cloud {
 
         // Line #8
 
+        bold(ansi, true);
         ansi.append("     CL${id}     ".replace("${id}", String.format("%01d", id)));
+        bold(ansi, false);
         resetCursor(ansi);
     }
 
