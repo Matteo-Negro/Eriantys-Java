@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  build:
+  maven:
     runs-on: ubuntu-latest
     needs: [test]
     steps:
