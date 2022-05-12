@@ -29,7 +29,7 @@ public class SchoolBoardFirst implements DeltaCoordinates {
      */
     @Override
     public int getX() {
-        return 0;
+        return 120;
     }
 
     /**
@@ -39,6 +39,6 @@ public class SchoolBoardFirst implements DeltaCoordinates {
      */
     @Override
     public int getY() {
-        return 0;
+        return 2;
     }
 }

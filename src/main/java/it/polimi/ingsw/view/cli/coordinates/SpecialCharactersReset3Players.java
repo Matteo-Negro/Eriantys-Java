@@ -29,7 +29,7 @@ public class SpecialCharactersReset3Players implements DeltaCoordinates {
      */
     @Override
     public int getX() {
-        return -47;
+        return -167;
     }
 
     /**
@@ -39,6 +39,6 @@ public class SpecialCharactersReset3Players implements DeltaCoordinates {
      */
     @Override
     public int getY() {
-        return -16;
+        return -18;
     }
 }
