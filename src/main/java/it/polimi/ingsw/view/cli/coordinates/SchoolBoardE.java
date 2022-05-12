@@ -29,7 +29,7 @@ public class SchoolBoardE implements DeltaCoordinates {
      */
     @Override
     public int getX() {
-        return 28;
+        return 29;
     }
 
     /**
