@@ -3,7 +3,14 @@ package it.polimi.ingsw.view.cli;
 import it.polimi.ingsw.utilities.HouseColor;
 import it.polimi.ingsw.view.cli.colours.*;
 import org.fusesource.jansi.Ansi;
+import org.jline.reader.LineReader;
+import org.jline.reader.LineReaderBuilder;
+import org.jline.reader.impl.completer.StringsCompleter;
 import org.jline.terminal.Terminal;
+
+import java.io.Reader;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * CLI print utilities
@@ -94,6 +101,8 @@ public class Utilities {
      */
     public static void printError(Terminal terminal, String message) {
         Ansi ansi = new Ansi();
+        ansi.cursor(0, 0);
+        ansi.saveCursorPosition();
         ansi.bgRed();
         foreground(ansi, White.getInstance());
         for (int index = 0; index < terminal.getWidth(); index++)
@@ -108,6 +117,26 @@ public class Utilities {
         background(ansi, Black.getInstance());
         terminal.writer().print(ansi);
         terminal.flush();
+    }
+
+    public static String readLine(Terminal terminal, StringsCompleter completer, boolean suggestions, String prefix) {
+        return fixString(LineReaderBuilder.builder()
+                .terminal(terminal)
+                .completer(completer)
+                .option(LineReader.Option.CASE_INSENSITIVE, suggestions)
+                .option(LineReader.Option.AUTO_MENU, !suggestions)
+                .option(LineReader.Option.AUTO_LIST, !suggestions)
+                .build().readLine(prefix));
+    }
+
+    private static String fixString(String input) {
+        Pattern start = Pattern.compile("^ +");
+        Pattern middle = Pattern.compile(" +");
+        Pattern end = Pattern.compile(" +$");
+        input = start.matcher(input).replaceAll("");
+        input = end.matcher(input).replaceAll("");
+        input = middle.matcher(input).replaceAll(" ");
+        return input;
     }
 
     /**
