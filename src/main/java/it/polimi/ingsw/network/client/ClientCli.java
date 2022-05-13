@@ -1,5 +1,6 @@
 package it.polimi.ingsw.network.client;
 
+import com.google.gson.JsonObject;
 import it.polimi.ingsw.clientController.GameServer;
 import it.polimi.ingsw.clientStatus.Status;
 import it.polimi.ingsw.utilities.ClientStates;
@@ -9,10 +10,10 @@ import it.polimi.ingsw.view.cli.SplashScreen;
 import org.jline.reader.impl.completer.StringsCompleter;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
-import org.jline.utils.Log;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.HashMap;
 import java.util.Map;
 
 import static it.polimi.ingsw.view.cli.Utilities.*;
@@ -26,6 +27,7 @@ public class ClientCli extends Thread {
     private final String phase;
     private final GameControllerStates subPhase;
     private final Terminal terminal;
+    private Map<String, String> waitingRoom;
 
     /**
      * Default constructor.
@@ -34,7 +36,7 @@ public class ClientCli extends Thread {
         this.state = ClientStates.START_SCREEN;
         this.phase = null;
         this.subPhase = null;
-
+        this.waitingRoom = new HashMap<>();
         this.terminal = TerminalBuilder.terminal();
         clearScreen(terminal, false);
         // Realm printing
@@ -57,58 +59,40 @@ public class ClientCli extends Thread {
     }
 
     public void run() {
-        System.out.println("\n * Client is attempting to connect to the server.");
-
-        /*try {
-            Socket hostSocket = new Socket(serverIp, serverPort);
-            this.gameServer = new GameServer(hostSocket, this);
-            this.gameServer.start();
-            System.out.println("\n * Client has successfully connected to the server.");
-        } catch (IOException ioe) {
-            this.setClientState(ClientStates.CONNECTION_LOST);
-        }*/
-
-        while (true) {
+        while(true){
             switch (getClientState()) {
                 case START_SCREEN -> {
                     // Splash screen printing and control
-                    SplashScreen.print(terminal);
-                    String hostIp = readLine(terminal, new StringsCompleter("localhost", "127.0.0.1"), false, " ");
-                    terminal.writer().print(ansi().restoreCursorPosition());
-                    terminal.writer().print(ansi().cursorMove(-18, 1));
-                    terminal.writer().print(ansi().saveCursorPosition());
-                    terminal.flush();
-                    int hostTcpPort = Integer.parseInt(readLine(terminal, new StringsCompleter("", "36803"), false, " "));
-                    try {
-                        this.gameServer = new GameServer(new Socket(hostIp, hostTcpPort), this);
-                        setClientState(ClientStates.MAIN_MENU);
-
-                    } catch (IOException e) {
-                        printError(terminal, "Wrong data provided or server unreachable.");
-                    }
+                   manageStartScreen();
                 }
 
                 case MAIN_MENU -> {
                     //wait for user input (game creation or join game)
+                    manageMainMenu();
                 }
+
                 case GAME_CREATION -> {
                     //wait for user input (player number and difficulty)
                     //then wait for server reply
                     //transition to game login
+                    manageGameCreation();
                 }
                 case JOIN_GAME -> {
                     //wait for user input (game code)
                     //then wait for server reply
                     //transition to game login
+                    manageJoinGame();
                 }
                 case GAME_LOGIN -> {
                     //wait for user input (username)
                     //then wait for server reply
                     //transition to game waiting room
+                    manageGameLogin();
                 }
                 case GAME_WAITINGROOM -> {
                     //wait for game start message from the server
                     //transition to game running
+                    manageWaitingRoom();
                 }
                 case GAME_RUNNING -> {
                     //manage game logic
@@ -120,18 +104,99 @@ public class ClientCli extends Thread {
                 }
             }
         }
-
-        /*while (true) {
-            while (!gameServer.isConnected()) {
-                try {
-                    gameServer.wait();
-                } catch (InterruptedException ie) {
-                    this.setClientState(ClientStates.CONNECTION_LOST);
-                    break;
-                }
-            }*/
     }
 
+    private void manageStartScreen(){
+        do{
+            SplashScreen.print(terminal);
+            String hostIp = readLine(terminal, new StringsCompleter("localhost", "127.0.0.1"), false, " ");
+            terminal.writer().print(ansi().restoreCursorPosition());
+            terminal.writer().print(ansi().cursorMove(-18, 1));
+            terminal.writer().print(ansi().saveCursorPosition());
+            terminal.flush();
+            int hostTcpPort = Integer.parseInt(readLine(terminal, new StringsCompleter("", "36803"), false, " "));
+            try{
+                Socket hostSocket = new Socket(hostIp, hostTcpPort);
+                hostSocket.setSoTimeout(10000);
+                this.gameServer = new GameServer(hostSocket, this);
+                gameServer.start();
+                setClientState(ClientStates.MAIN_MENU);
+
+            }catch(IOException e){
+                printError(terminal, "Wrong data provided or server unreachable.");
+            }
+        }while(gameServer==null);
+
+    }
+
+    private void manageMainMenu(){
+        //TODO Print main menu screen on cli.
+
+        String option = readLine(terminal, null, false, " ");
+        switch(option){
+            case "CreateGame" -> this.setClientState(ClientStates.GAME_CREATION);
+            case "JoinGame" -> this.setClientState(ClientStates.JOIN_GAME);
+            default -> printError(terminal, "Wrong command.");
+        }
+    }
+
+    private void manageGameCreation(){
+        //TODO Print game creation screen on cli.
+
+        int playersNumber = Integer.parseInt(readLine(terminal, null, false, " "));
+        String difficulty = readLine(terminal, null, false, " ");
+        //TODO create and send gameCreation command to the server.
+        //wait for server reply
+    }
+
+    private void manageJoinGame(){
+        //TODO Print join game screen on cli.
+
+        String gameCode = readLine(terminal, null, false, " ");
+        //TODO Create and send joinGame command to the server.
+        //wait for server reply
+    }
+
+    private void manageGameLogin(){
+        //TODO Print game login screen on cli.
+
+        String username;
+        username = readLine(terminal, null, false, " ");
+        while(waitingRoom.containsKey(username) && waitingRoom.get(username).equals("connected")){
+            printError(terminal,"Username not valid.");
+            username = readLine(terminal, null, false, " ");
+        }
+        //TODO Create and send login command to the server.
+        //wait for serer reply.
+    }
+
+    private void manageWaitingRoom(){
+        //TODO Print waiting room screen on cli.
+    }
+
+    private void manageGameRunning(){
+        //TODO Print current status screen on cli.
+
+        String command = readLine(terminal, null, false, " ");
+        this.manageUserCommand(command);
+    }
+
+    private void manageEndGame(){
+        //TODO Print end game screen on cli.
+
+        String command = readLine(terminal, null, false, " ");
+        while(!command.equals("exit")){
+            printError(terminal,"Wrong command.");
+            command = readLine(terminal, null, false, " ");
+        }
+        this.setClientState(ClientStates.MAIN_MENU);
+    }
+
+    public void manageMessage(JsonObject message){
+
+    }
+
+    private void manageUserCommand(String command){}
 
     public void setClientState(ClientStates newState) {
         this.state = newState;

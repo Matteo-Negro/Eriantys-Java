@@ -31,6 +31,16 @@ public class GameServer extends Thread{
         System.out.println("\nGameServer instance created");
     }
 
+    public void run(){
+        try{
+            JsonObject incomingMessage = getMessage();
+            if(!incomingMessage.get("type").getAsString().equals("ping")) client.manageMessage(incomingMessage);
+        }catch(IOException ioe){
+            //Connection to the server lost.
+            setConnected(false);
+        }
+    }
+
     public boolean isConnected(){
         return this.connected;
     }
