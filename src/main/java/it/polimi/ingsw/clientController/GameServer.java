@@ -9,18 +9,18 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+import it.polimi.ingsw.network.client.ClientCli;
 import it.polimi.ingsw.utilities.ClientStates;
-import it.polimi.ingsw.utilities.GameControllerStates;
 
 public class GameServer extends Thread{
 
     private final BufferedReader inputStream;
     private final PrintWriter outputStream;
-    private final ClientController client;
+    private final ClientCli client;
     private final Pong pong;
     private boolean connected;
 
-    public GameServer(Socket hostSocket, ClientController client) throws IOException {
+    public GameServer(Socket hostSocket, ClientCli client) throws IOException {
         this.inputStream = new BufferedReader(new InputStreamReader(hostSocket.getInputStream()));
         this.outputStream = new PrintWriter(hostSocket.getOutputStream());
         this.client = client;
