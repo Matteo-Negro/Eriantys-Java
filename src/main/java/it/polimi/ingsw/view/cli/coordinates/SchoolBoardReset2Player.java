@@ -39,6 +39,6 @@ public class SchoolBoardReset2Player implements DeltaCoordinates {
      */
     @Override
     public int getY() {
-        return -13;
+        return 0;
     }
 }

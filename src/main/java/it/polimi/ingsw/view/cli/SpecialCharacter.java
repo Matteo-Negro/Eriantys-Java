@@ -54,8 +54,6 @@ import static it.polimi.ingsw.view.cli.Utilities.*;
 // ║ └───────┘ ║
 // ╚═══════════╝
 
-// TODO: Number of student, how manage them??
-
 /**
  * Class used for printing a single special character.
  * It always returns to the starting point.
@@ -69,7 +67,13 @@ public class SpecialCharacter {
 
     /**
      * Print the special character.
-     * (-1 == null per il ban)
+     *
+     * @param ansi      Ansi stream where to write.
+     * @param id        Id of the special character.
+     * @param price     Price to activate the card.
+     * @param active    True whether the card has been paid, false otherwise.
+     * @param banNumber Number of ban (-1, otherwise).
+     * @param students  List of students on the card.
      */
     public static void print(Ansi ansi, int id, int price, boolean active, int banNumber, List<HouseColor> students) {
 
@@ -121,6 +125,13 @@ public class SpecialCharacter {
         }
     }
 
+    /**
+     * Private method to print the students on the card.
+     *
+     * @param ansi     Ansi stream where to write.
+     * @param students List of students on the card.
+     * @param active   True whether the card has been paid, false otherwise.
+     */
     private static void printStudents(Ansi ansi, List<HouseColor> students, boolean active) {
         // Line #9
 
@@ -157,6 +168,13 @@ public class SpecialCharacter {
         resetCursor(ansi, ResetType.STUDENTS);
     }
 
+    /**
+     * Private method to print the ban on the card.
+     *
+     * @param ansi      Ansi stream where to write.
+     * @param banNumber Number of ban (-1, otherwise).
+     * @param active    True whether the card has been paid, false otherwise.
+     */
     private static void printBan(Ansi ansi, int banNumber, boolean active) {
         // Line #9
 
@@ -216,6 +234,10 @@ public class SpecialCharacter {
 
     /**
      * Parses the number of students of a specific color in order to render them correctly.
+     *
+     * @param houseColor Color of the student.
+     * @param ansi       Ansi stream where to write.
+     * @param active     Boolean value to set the active card.
      */
     private static void parseStudent(HouseColor houseColor, Ansi ansi, boolean active) {
         if (houseColor != null) {
