@@ -3,13 +3,11 @@ package it.polimi.ingsw.view.cli;
 import it.polimi.ingsw.utilities.HouseColor;
 import it.polimi.ingsw.view.cli.colours.*;
 import org.fusesource.jansi.Ansi;
+import org.jline.reader.Completer;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
-import org.jline.reader.impl.completer.StringsCompleter;
 import org.jline.terminal.Terminal;
 
-import java.io.Reader;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -119,7 +117,7 @@ public class Utilities {
         terminal.flush();
     }
 
-    public static String readLine(Terminal terminal, StringsCompleter completer, boolean suggestions, String prefix) {
+    public static String readLine(Terminal terminal, Completer completer, boolean suggestions, String prefix) {
         return fixString(LineReaderBuilder.builder()
                 .terminal(terminal)
                 .completer(completer)

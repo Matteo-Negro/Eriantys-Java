@@ -6,17 +6,16 @@ import it.polimi.ingsw.utilities.ClientStates;
 import it.polimi.ingsw.utilities.GameControllerStates;
 import it.polimi.ingsw.utilities.HouseColor;
 import it.polimi.ingsw.view.cli.SplashScreen;
+import org.jline.reader.impl.completer.StringsCompleter;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
+import org.jline.utils.Log;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.rmi.UnknownHostException;
 import java.util.Map;
-import java.util.Scanner;
 
-import static it.polimi.ingsw.view.cli.Utilities.clearScreen;
-import static it.polimi.ingsw.view.cli.Utilities.printError;
+import static it.polimi.ingsw.view.cli.Utilities.*;
 import static org.fusesource.jansi.Ansi.ansi;
 
 public class ClientCli extends Thread {
@@ -27,11 +26,9 @@ public class ClientCli extends Thread {
     private final String phase;
     private final GameControllerStates subPhase;
     private final Terminal terminal;
-    private final Scanner input;
 
     /**
      * Default constructor.
-     *
      */
     public ClientCli() throws IOException {
         this.state = ClientStates.START_SCREEN;
@@ -39,7 +36,6 @@ public class ClientCli extends Thread {
         this.subPhase = null;
 
         this.terminal = TerminalBuilder.terminal();
-        this.input = new Scanner(terminal.input());
         clearScreen(terminal, false);
         // Realm printing
         // Realm.print(terminal);
@@ -72,54 +68,56 @@ public class ClientCli extends Thread {
             this.setClientState(ClientStates.CONNECTION_LOST);
         }*/
 
-        switch (getClientState()) {
-            case START_SCREEN -> {
-                // Splash screen printing and control
-                SplashScreen.print(terminal);
-                String hostIp = input.nextLine();
-                terminal.writer().print(ansi().restoreCursorPosition());
-                terminal.writer().print(ansi().cursorMove(-18, 1));
-                terminal.writer().print(ansi().saveCursorPosition());
-                terminal.flush();
-                int hostTcpPort = Integer.parseInt(input.nextLine());
-                try{
-                    this.gameServer = new GameServer(new Socket(hostIp, hostTcpPort), this);
-                    setClientState(ClientStates.MAIN_MENU);
+        while (true) {
+            switch (getClientState()) {
+                case START_SCREEN -> {
+                    // Splash screen printing and control
+                    SplashScreen.print(terminal);
+                    String hostIp = readLine(terminal, new StringsCompleter("localhost", "127.0.0.1"), false, " ");
+                    terminal.writer().print(ansi().restoreCursorPosition());
+                    terminal.writer().print(ansi().cursorMove(-18, 1));
+                    terminal.writer().print(ansi().saveCursorPosition());
+                    terminal.flush();
+                    int hostTcpPort = Integer.parseInt(readLine(terminal, new StringsCompleter("", "36803"), false, " "));
+                    try {
+                        this.gameServer = new GameServer(new Socket(hostIp, hostTcpPort), this);
+                        setClientState(ClientStates.MAIN_MENU);
 
-                }catch(IOException e){
-                    printError(terminal, "Wrong data provided or server unreachable.");
+                    } catch (IOException e) {
+                        printError(terminal, "Wrong data provided or server unreachable.");
+                    }
                 }
-            }
 
-            case MAIN_MENU -> {
-                //wait for user input (game creation or join game)
-            }
-            case GAME_CREATION -> {
-                //wait for user input (player number and difficulty)
-                //then wait for server reply
-                //transition to game login
-            }
-            case JOIN_GAME -> {
-                //wait for user input (game code)
-                //then wait for server reply
-                //transition to game login
-            }
-            case GAME_LOGIN -> {
-                //wait for user input (username)
-                //then wait for server reply
-                //transition to game waiting room
-            }
-            case GAME_WAITINGROOM -> {
-                //wait for game start message from the server
-                //transition to game running
-            }
-            case GAME_RUNNING -> {
-                //manage game logic
-                //when end game message arrives from the server -> transition to end game
-            }
-            case END_GAME -> {
-                //visualize end game screen
-                //transition to main menu
+                case MAIN_MENU -> {
+                    //wait for user input (game creation or join game)
+                }
+                case GAME_CREATION -> {
+                    //wait for user input (player number and difficulty)
+                    //then wait for server reply
+                    //transition to game login
+                }
+                case JOIN_GAME -> {
+                    //wait for user input (game code)
+                    //then wait for server reply
+                    //transition to game login
+                }
+                case GAME_LOGIN -> {
+                    //wait for user input (username)
+                    //then wait for server reply
+                    //transition to game waiting room
+                }
+                case GAME_WAITINGROOM -> {
+                    //wait for game start message from the server
+                    //transition to game running
+                }
+                case GAME_RUNNING -> {
+                    //manage game logic
+                    //when end game message arrives from the server -> transition to end game
+                }
+                case END_GAME -> {
+                    //visualize end game screen
+                    //transition to main menu
+                }
             }
         }
 
@@ -132,10 +130,7 @@ public class ClientCli extends Thread {
                     break;
                 }
             }*/
-
-
     }
-
 
 
     public void setClientState(ClientStates newState) {
