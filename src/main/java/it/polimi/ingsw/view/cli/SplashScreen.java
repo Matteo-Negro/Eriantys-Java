@@ -154,9 +154,9 @@ public class SplashScreen {
 
         ansi.append("┌─────────────────────────────────────────────────────────────────┐");
         newLine(ansi, false);
-        ansi.append("│ Server address (IP or domain):                                  │");
+        ansi.append("  Server address (IP or domain):                                   ");
         newLine(ansi, false);
-        ansi.append("│ Server port:                                                    │");
+        ansi.append("  Server port:                                                     ");
         newLine(ansi, false);
         ansi.append("└─────────────────────────────────────────────────────────────────┘");
         moveCursor(ansi, ServerSettingsFirstInput.getInstance());

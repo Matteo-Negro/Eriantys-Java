@@ -19,7 +19,7 @@ public class ServerSettingsFirstInput implements DeltaCoordinates {
      */
     @Override
     public int getX() {
-        return -34;
+        return -35;
     }
 
     /**
