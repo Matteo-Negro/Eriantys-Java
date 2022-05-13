@@ -13,6 +13,17 @@ public class MotherNature implements Colour {
     }
 
     /**
+     * Gets the instance of the class instead of generating a new one every time.
+     *
+     * @return The generated instance.
+     */
+    public static MotherNature getInstance() {
+        if (instance == null)
+            instance = new MotherNature();
+        return instance;
+    }
+
+    /**
      * Gets R value.
      *
      * @return R value.
@@ -40,16 +51,5 @@ public class MotherNature implements Colour {
     @Override
     public int getB() {
         return 2;
-    }
-
-    /**
-     * Gets the instance of the class instead of generating a new one every time.
-     *
-     * @return The generated instance.
-     */
-    public static MotherNature getInstance() {
-        if (instance == null)
-            instance = new MotherNature();
-        return instance;
     }
 }

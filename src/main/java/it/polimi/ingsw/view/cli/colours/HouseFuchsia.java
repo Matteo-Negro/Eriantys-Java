@@ -13,6 +13,17 @@ public class HouseFuchsia implements Colour {
     }
 
     /**
+     * Gets the instance of the class instead of generating a new one every time.
+     *
+     * @return The generated instance.
+     */
+    public static HouseFuchsia getInstance() {
+        if (instance == null)
+            instance = new HouseFuchsia();
+        return instance;
+    }
+
+    /**
      * Gets R value.
      *
      * @return R value.
@@ -40,16 +51,5 @@ public class HouseFuchsia implements Colour {
     @Override
     public int getB() {
         return 165;
-    }
-
-    /**
-     * Gets the instance of the class instead of generating a new one every time.
-     *
-     * @return The generated instance.
-     */
-    public static HouseFuchsia getInstance() {
-        if (instance == null)
-            instance = new HouseFuchsia();
-        return instance;
     }
 }

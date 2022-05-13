@@ -13,6 +13,17 @@ public class Ban implements Colour {
     }
 
     /**
+     * Gets the instance of the class instead of generating a new one every time.
+     *
+     * @return The generated instance.
+     */
+    public static Ban getInstance() {
+        if (instance == null)
+            instance = new Ban();
+        return instance;
+    }
+
+    /**
      * Gets R value.
      *
      * @return R value.
@@ -40,16 +51,5 @@ public class Ban implements Colour {
     @Override
     public int getB() {
         return 28;
-    }
-
-    /**
-     * Gets the instance of the class instead of generating a new one every time.
-     *
-     * @return The generated instance.
-     */
-    public static Ban getInstance() {
-        if (instance == null)
-            instance = new Ban();
-        return instance;
     }
 }

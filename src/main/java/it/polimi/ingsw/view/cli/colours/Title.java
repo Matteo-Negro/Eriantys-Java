@@ -13,6 +13,17 @@ public class Title implements Colour {
     }
 
     /**
+     * Gets the instance of the class instead of generating a new one every time.
+     *
+     * @return The generated instance.
+     */
+    public static Title getInstance() {
+        if (instance == null)
+            instance = new Title();
+        return instance;
+    }
+
+    /**
      * Gets R value.
      *
      * @return R value.
@@ -40,16 +51,5 @@ public class Title implements Colour {
     @Override
     public int getB() {
         return 244;
-    }
-
-    /**
-     * Gets the instance of the class instead of generating a new one every time.
-     *
-     * @return The generated instance.
-     */
-    public static Title getInstance() {
-        if (instance == null)
-            instance = new Title();
-        return instance;
     }
 }

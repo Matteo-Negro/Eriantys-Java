@@ -13,6 +13,17 @@ public class DarkGrey implements Colour {
     }
 
     /**
+     * Gets the instance of the class instead of generating a new one every time.
+     *
+     * @return The generated instance.
+     */
+    public static DarkGrey getInstance() {
+        if (instance == null)
+            instance = new DarkGrey();
+        return instance;
+    }
+
+    /**
      * Gets R value.
      *
      * @return R value.
@@ -40,16 +51,5 @@ public class DarkGrey implements Colour {
     @Override
     public int getB() {
         return 50;
-    }
-
-    /**
-     * Gets the instance of the class instead of generating a new one every time.
-     *
-     * @return The generated instance.
-     */
-    public static DarkGrey getInstance() {
-        if (instance == null)
-            instance = new DarkGrey();
-        return instance;
     }
 }

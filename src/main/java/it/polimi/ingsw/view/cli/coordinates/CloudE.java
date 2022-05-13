@@ -13,6 +13,17 @@ public class CloudE implements DeltaCoordinates {
     }
 
     /**
+     * Gets the instance of the class instead of generating a new one every time.
+     *
+     * @return The generated instance.
+     */
+    public static CloudE getInstance() {
+        if (instance == null)
+            instance = new CloudE();
+        return instance;
+    }
+
+    /**
      * Gets x coordinate.
      *
      * @return X coordinate.
@@ -30,16 +41,5 @@ public class CloudE implements DeltaCoordinates {
     @Override
     public int getY() {
         return 0;
-    }
-
-    /**
-     * Gets the instance of the class instead of generating a new one every time.
-     *
-     * @return The generated instance.
-     */
-    public static CloudE getInstance() {
-        if (instance == null)
-            instance = new CloudE();
-        return instance;
     }
 }

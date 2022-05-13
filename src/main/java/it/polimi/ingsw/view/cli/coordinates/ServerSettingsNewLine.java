@@ -13,6 +13,17 @@ public class ServerSettingsNewLine implements DeltaCoordinates {
     }
 
     /**
+     * Gets the instance of the class instead of generating a new one every time.
+     *
+     * @return The generated instance.
+     */
+    public static ServerSettingsNewLine getInstance() {
+        if (instance == null)
+            instance = new ServerSettingsNewLine();
+        return instance;
+    }
+
+    /**
      * Gets x coordinate.
      *
      * @return X coordinate.
@@ -30,16 +41,5 @@ public class ServerSettingsNewLine implements DeltaCoordinates {
     @Override
     public int getY() {
         return 1;
-    }
-
-    /**
-     * Gets the instance of the class instead of generating a new one every time.
-     *
-     * @return The generated instance.
-     */
-    public static ServerSettingsNewLine getInstance() {
-        if (instance == null)
-            instance = new ServerSettingsNewLine();
-        return instance;
     }
 }

@@ -181,7 +181,7 @@ public class GameBoard {
         this.ignoreColor = null;
         this.influenceBonus = null;
         this.tieWinner = null;
-        for(SpecialCharacter c: this.getCharacters()) c.cleanEffect();
+        for (SpecialCharacter c : this.getCharacters()) c.cleanEffect();
     }
 
     /**
@@ -227,7 +227,7 @@ public class GameBoard {
 
         // Tower contribution
         boolean towersAreIgnored = false;
-        for(SpecialCharacter c : this.getCharacters()){
+        for (SpecialCharacter c : this.getCharacters()) {
             if (c.getId() == 6 && c.isActive()) {
                 towersAreIgnored = true;
                 break;
@@ -247,9 +247,9 @@ public class GameBoard {
      * This method is used to set a tower of a certain type on the island given; it calls the merge() method if needed.
      *
      * @param island The island on which the tower is going to be put.
-     * @param tower The TowerType of the tower to put.
+     * @param tower  The TowerType of the tower to put.
      */
-    public void setTowerOnIsland(Island island, TowerType tower){
+    public void setTowerOnIsland(Island island, TowerType tower) {
         island.setTower(tower);
 
         //Check if a merge to left is needed.
@@ -269,21 +269,22 @@ public class GameBoard {
                     break;
                 }
             }
-        }while(mergeDone);
+        } while (mergeDone);
     }
 
     /**
      * This method merges two islands on the left, increasing the size and the students on the resulting island.
-     * @param leftIsland The island hosting the merge.
+     *
+     * @param leftIsland  The island hosting the merge.
      * @param rightIsland The island merging with the island on it's left.
      */
-    private void merge(Island leftIsland, Island rightIsland){
-        leftIsland.setSize(leftIsland.getSize()+rightIsland.getSize());
+    private void merge(Island leftIsland, Island rightIsland) {
+        leftIsland.setSize(leftIsland.getSize() + rightIsland.getSize());
 
         Map<HouseColor, Integer> rightStudents = rightIsland.getStudents();
 
-        for(HouseColor color: rightStudents.keySet()){
-            for(int i=0; i<rightStudents.get(color); i++){
+        for (HouseColor color : rightStudents.keySet()) {
+            for (int i = 0; i < rightStudents.get(color); i++) {
                 leftIsland.addStudent(color);
             }
         }
@@ -326,7 +327,7 @@ public class GameBoard {
      * @throws IllegalMoveException The played card is already played from another player.
      */
     public void addPlayedAssistant(Player currentPlayer, Assistant playedAssistant) throws IllegalMoveException {
-        if(currentPlayer.getAssistants().size()>1 && this.getPlayedAssistants().keySet().stream().anyMatch(player -> this.getPlayedAssistants().get(player).getId() == playedAssistant.getId())){
+        if (currentPlayer.getAssistants().size() > 1 && this.getPlayedAssistants().keySet().stream().anyMatch(player -> this.getPlayedAssistants().get(player).getId() == playedAssistant.getId())) {
             throw new IllegalMoveException();
         }
         this.playedAssistants.put(currentPlayer, playedAssistant);

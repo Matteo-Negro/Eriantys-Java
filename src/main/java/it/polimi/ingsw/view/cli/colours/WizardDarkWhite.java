@@ -13,6 +13,17 @@ public class WizardDarkWhite implements Colour {
     }
 
     /**
+     * Gets the instance of the class instead of generating a new one every time.
+     *
+     * @return The generated instance.
+     */
+    public static WizardDarkWhite getInstance() {
+        if (instance == null)
+            instance = new WizardDarkWhite();
+        return instance;
+    }
+
+    /**
      * Gets R value.
      *
      * @return R value.
@@ -40,16 +51,5 @@ public class WizardDarkWhite implements Colour {
     @Override
     public int getB() {
         return 116;
-    }
-
-    /**
-     * Gets the instance of the class instead of generating a new one every time.
-     *
-     * @return The generated instance.
-     */
-    public static WizardDarkWhite getInstance() {
-        if (instance == null)
-            instance = new WizardDarkWhite();
-        return instance;
     }
 }

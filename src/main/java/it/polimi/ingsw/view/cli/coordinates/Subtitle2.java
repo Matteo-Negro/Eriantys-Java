@@ -13,6 +13,17 @@ public class Subtitle2 implements DeltaCoordinates {
     }
 
     /**
+     * Gets the instance of the class instead of generating a new one every time.
+     *
+     * @return The generated instance.
+     */
+    public static Subtitle2 getInstance() {
+        if (instance == null)
+            instance = new Subtitle2();
+        return instance;
+    }
+
+    /**
      * Gets x coordinate.
      *
      * @return X coordinate.
@@ -30,16 +41,5 @@ public class Subtitle2 implements DeltaCoordinates {
     @Override
     public int getY() {
         return 1;
-    }
-
-    /**
-     * Gets the instance of the class instead of generating a new one every time.
-     *
-     * @return The generated instance.
-     */
-    public static Subtitle2 getInstance() {
-        if (instance == null)
-            instance = new Subtitle2();
-        return instance;
     }
 }

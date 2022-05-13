@@ -90,7 +90,7 @@ public class Server {
      */
     private void loadGames() throws IOException {
         try (Stream<Path> stream = Files.list(Paths.get(savePath)).parallel()) {
-                stream.filter(file -> !Files.isDirectory(file) && file.toString().endsWith(".json"))
+            stream.filter(file -> !Files.isDirectory(file) && file.toString().endsWith(".json"))
                     .forEach(file -> {
                         try (BufferedReader bufferedReader = Files.newBufferedReader(file)) {
                             loadGame(JsonParser.parseReader(bufferedReader).getAsJsonObject());

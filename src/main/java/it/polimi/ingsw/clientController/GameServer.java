@@ -2,6 +2,8 @@ package it.polimi.ingsw.clientController;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import it.polimi.ingsw.network.client.ClientCli;
+import it.polimi.ingsw.utilities.ClientStates;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -9,10 +11,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-import it.polimi.ingsw.network.client.ClientCli;
-import it.polimi.ingsw.utilities.ClientStates;
-
-public class GameServer extends Thread{
+public class GameServer extends Thread {
 
     private final BufferedReader inputStream;
     private final PrintWriter outputStream;
@@ -31,34 +30,34 @@ public class GameServer extends Thread{
         System.out.println("\nGameServer instance created");
     }
 
-    public void run(){
-        try{
+    public void run() {
+        try {
             JsonObject incomingMessage = getMessage();
-            if(!incomingMessage.get("type").getAsString().equals("ping")) client.manageMessage(incomingMessage);
-        }catch(IOException ioe){
+            if (!incomingMessage.get("type").getAsString().equals("ping")) client.manageMessage(incomingMessage);
+        } catch (IOException ioe) {
             //Connection to the server lost.
             setConnected(false);
         }
     }
 
-    public boolean isConnected(){
+    public boolean isConnected() {
         return this.connected;
     }
 
-    public void setConnected(boolean connectionStatus){
+    public void setConnected(boolean connectionStatus) {
         this.connected = connectionStatus;
     }
 
-    public JsonObject getMessage() throws IOException{
+    public JsonObject getMessage() throws IOException {
         return JsonParser.parseString(this.inputStream.readLine()).getAsJsonObject();
     }
 
-    public void sendCommand(JsonObject command){
+    public void sendCommand(JsonObject command) {
         this.outputStream.println(command.toString());
         outputStream.flush();
     }
 
-    private void disconnected(){
+    private void disconnected() {
         setConnected(false);
         this.client.setClientState(ClientStates.CONNECTION_LOST);
     }

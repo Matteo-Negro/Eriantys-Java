@@ -13,6 +13,17 @@ public class IslandSE implements DeltaCoordinates {
     }
 
     /**
+     * Gets the instance of the class instead of generating a new one every time.
+     *
+     * @return The generated instance.
+     */
+    public static IslandSE getInstance() {
+        if (instance == null)
+            instance = new IslandSE();
+        return instance;
+    }
+
+    /**
      * Gets x coordinate.
      *
      * @return X coordinate.
@@ -30,16 +41,5 @@ public class IslandSE implements DeltaCoordinates {
     @Override
     public int getY() {
         return 6;
-    }
-
-    /**
-     * Gets the instance of the class instead of generating a new one every time.
-     *
-     * @return The generated instance.
-     */
-    public static IslandSE getInstance() {
-        if (instance == null)
-            instance = new IslandSE();
-        return instance;
     }
 }

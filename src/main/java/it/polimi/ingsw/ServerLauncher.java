@@ -4,7 +4,6 @@ import it.polimi.ingsw.network.server.Server;
 import it.polimi.ingsw.utilities.Pair;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 public class ServerLauncher {
 

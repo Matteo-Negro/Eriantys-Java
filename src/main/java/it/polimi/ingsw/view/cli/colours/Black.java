@@ -13,6 +13,17 @@ public class Black implements Colour {
     }
 
     /**
+     * Gets the instance of the class instead of generating a new one every time.
+     *
+     * @return The generated instance.
+     */
+    public static Black getInstance() {
+        if (instance == null)
+            instance = new Black();
+        return instance;
+    }
+
+    /**
      * Gets R value.
      *
      * @return R value.
@@ -40,16 +51,5 @@ public class Black implements Colour {
     @Override
     public int getB() {
         return 0;
-    }
-
-    /**
-     * Gets the instance of the class instead of generating a new one every time.
-     *
-     * @return The generated instance.
-     */
-    public static Black getInstance() {
-        if (instance == null)
-            instance = new Black();
-        return instance;
     }
 }

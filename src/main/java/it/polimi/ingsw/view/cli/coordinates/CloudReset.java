@@ -13,6 +13,17 @@ public class CloudReset implements DeltaCoordinates {
     }
 
     /**
+     * Gets the instance of the class instead of generating a new one every time.
+     *
+     * @return The generated instance.
+     */
+    public static CloudReset getInstance() {
+        if (instance == null)
+            instance = new CloudReset();
+        return instance;
+    }
+
+    /**
      * Gets x coordinate.
      *
      * @return X coordinate.
@@ -30,16 +41,5 @@ public class CloudReset implements DeltaCoordinates {
     @Override
     public int getY() {
         return -7;
-    }
-
-    /**
-     * Gets the instance of the class instead of generating a new one every time.
-     *
-     * @return The generated instance.
-     */
-    public static CloudReset getInstance() {
-        if (instance == null)
-            instance = new CloudReset();
-        return instance;
     }
 }

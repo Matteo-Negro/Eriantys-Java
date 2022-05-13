@@ -13,6 +13,17 @@ public class IslandLast implements DeltaCoordinates {
     }
 
     /**
+     * Gets the instance of the class instead of generating a new one every time.
+     *
+     * @return The generated instance.
+     */
+    public static IslandLast getInstance() {
+        if (instance == null)
+            instance = new IslandLast();
+        return instance;
+    }
+
+    /**
      * Gets x coordinate.
      *
      * @return X coordinate.
@@ -30,16 +41,5 @@ public class IslandLast implements DeltaCoordinates {
     @Override
     public int getY() {
         return 11;
-    }
-
-    /**
-     * Gets the instance of the class instead of generating a new one every time.
-     *
-     * @return The generated instance.
-     */
-    public static IslandLast getInstance() {
-        if (instance == null)
-            instance = new IslandLast();
-        return instance;
     }
 }

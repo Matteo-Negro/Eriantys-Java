@@ -12,11 +12,11 @@ public class ClientLauncher {
     public static void main(String[] args) {
         try {
             //new Client(parseArgument(args));
-            try{
-                if(parseArgument((args)).equals(GraphicsType.CLI)){
+            try {
+                if (parseArgument((args)).equals(GraphicsType.CLI)) {
                     new Thread(new ClientCli()).start();
                 }
-            }catch(IOException ioe){
+            } catch (IOException ioe) {
                 System.err.println("An error occurred while creating the controller class.");
             }
             /*else{

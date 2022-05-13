@@ -13,6 +13,17 @@ public class TowerWhite implements Colour {
     }
 
     /**
+     * Gets the instance of the class instead of generating a new one every time.
+     *
+     * @return The generated instance.
+     */
+    public static TowerWhite getInstance() {
+        if (instance == null)
+            instance = new TowerWhite();
+        return instance;
+    }
+
+    /**
      * Gets R value.
      *
      * @return R value.
@@ -40,16 +51,5 @@ public class TowerWhite implements Colour {
     @Override
     public int getB() {
         return 255;
-    }
-
-    /**
-     * Gets the instance of the class instead of generating a new one every time.
-     *
-     * @return The generated instance.
-     */
-    public static TowerWhite getInstance() {
-        if (instance == null)
-            instance = new TowerWhite();
-        return instance;
     }
 }

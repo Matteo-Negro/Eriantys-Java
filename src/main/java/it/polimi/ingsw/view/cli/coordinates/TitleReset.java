@@ -13,6 +13,17 @@ public class TitleReset implements DeltaCoordinates {
     }
 
     /**
+     * Gets the instance of the class instead of generating a new one every time.
+     *
+     * @return The generated instance.
+     */
+    public static TitleReset getInstance() {
+        if (instance == null)
+            instance = new TitleReset();
+        return instance;
+    }
+
+    /**
      * Gets x coordinate.
      *
      * @return X coordinate.
@@ -30,16 +41,5 @@ public class TitleReset implements DeltaCoordinates {
     @Override
     public int getY() {
         return -12;
-    }
-
-    /**
-     * Gets the instance of the class instead of generating a new one every time.
-     *
-     * @return The generated instance.
-     */
-    public static TitleReset getInstance() {
-        if (instance == null)
-            instance = new TitleReset();
-        return instance;
     }
 }

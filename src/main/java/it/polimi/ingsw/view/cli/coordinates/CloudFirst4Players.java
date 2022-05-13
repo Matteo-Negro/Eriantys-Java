@@ -13,6 +13,17 @@ public class CloudFirst4Players implements DeltaCoordinates {
     }
 
     /**
+     * Gets the instance of the class instead of generating a new one every time.
+     *
+     * @return The generated instance.
+     */
+    public static CloudFirst4Players getInstance() {
+        if (instance == null)
+            instance = new CloudFirst4Players();
+        return instance;
+    }
+
+    /**
      * Gets x coordinate.
      *
      * @return X coordinate.
@@ -30,16 +41,5 @@ public class CloudFirst4Players implements DeltaCoordinates {
     @Override
     public int getY() {
         return 13;
-    }
-
-    /**
-     * Gets the instance of the class instead of generating a new one every time.
-     *
-     * @return The generated instance.
-     */
-    public static CloudFirst4Players getInstance() {
-        if (instance == null)
-            instance = new CloudFirst4Players();
-        return instance;
     }
 }

@@ -13,6 +13,17 @@ public class CloudsReset2Players implements DeltaCoordinates {
     }
 
     /**
+     * Gets the instance of the class instead of generating a new one every time.
+     *
+     * @return The generated instance.
+     */
+    public static CloudsReset2Players getInstance() {
+        if (instance == null)
+            instance = new CloudsReset2Players();
+        return instance;
+    }
+
+    /**
      * Gets x coordinate.
      *
      * @return X coordinate.
@@ -30,16 +41,5 @@ public class CloudsReset2Players implements DeltaCoordinates {
     @Override
     public int getY() {
         return -13;
-    }
-
-    /**
-     * Gets the instance of the class instead of generating a new one every time.
-     *
-     * @return The generated instance.
-     */
-    public static CloudsReset2Players getInstance() {
-        if (instance == null)
-            instance = new CloudsReset2Players();
-        return instance;
     }
 }

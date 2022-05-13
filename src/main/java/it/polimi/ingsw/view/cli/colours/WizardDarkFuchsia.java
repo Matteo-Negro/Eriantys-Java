@@ -13,6 +13,17 @@ public class WizardDarkFuchsia implements Colour {
     }
 
     /**
+     * Gets the instance of the class instead of generating a new one every time.
+     *
+     * @return The generated instance.
+     */
+    public static WizardDarkFuchsia getInstance() {
+        if (instance == null)
+            instance = new WizardDarkFuchsia();
+        return instance;
+    }
+
+    /**
      * Gets R value.
      *
      * @return R value.
@@ -40,16 +51,5 @@ public class WizardDarkFuchsia implements Colour {
     @Override
     public int getB() {
         return 85;
-    }
-
-    /**
-     * Gets the instance of the class instead of generating a new one every time.
-     *
-     * @return The generated instance.
-     */
-    public static WizardDarkFuchsia getInstance() {
-        if (instance == null)
-            instance = new WizardDarkFuchsia();
-        return instance;
     }
 }

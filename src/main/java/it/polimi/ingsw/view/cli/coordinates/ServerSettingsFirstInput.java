@@ -13,6 +13,17 @@ public class ServerSettingsFirstInput implements DeltaCoordinates {
     }
 
     /**
+     * Gets the instance of the class instead of generating a new one every time.
+     *
+     * @return The generated instance.
+     */
+    public static ServerSettingsFirstInput getInstance() {
+        if (instance == null)
+            instance = new ServerSettingsFirstInput();
+        return instance;
+    }
+
+    /**
      * Gets x coordinate.
      *
      * @return X coordinate.
@@ -30,16 +41,5 @@ public class ServerSettingsFirstInput implements DeltaCoordinates {
     @Override
     public int getY() {
         return -2;
-    }
-
-    /**
-     * Gets the instance of the class instead of generating a new one every time.
-     *
-     * @return The generated instance.
-     */
-    public static ServerSettingsFirstInput getInstance() {
-        if (instance == null)
-            instance = new ServerSettingsFirstInput();
-        return instance;
     }
 }

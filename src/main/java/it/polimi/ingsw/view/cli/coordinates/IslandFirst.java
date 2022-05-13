@@ -13,6 +13,17 @@ public class IslandFirst implements DeltaCoordinates {
     }
 
     /**
+     * Gets the instance of the class instead of generating a new one every time.
+     *
+     * @return The generated instance.
+     */
+    public static IslandFirst getInstance() {
+        if (instance == null)
+            instance = new IslandFirst();
+        return instance;
+    }
+
+    /**
      * Gets x coordinate.
      *
      * @return X coordinate.
@@ -30,16 +41,5 @@ public class IslandFirst implements DeltaCoordinates {
     @Override
     public int getY() {
         return 6;
-    }
-
-    /**
-     * Gets the instance of the class instead of generating a new one every time.
-     *
-     * @return The generated instance.
-     */
-    public static IslandFirst getInstance() {
-        if (instance == null)
-            instance = new IslandFirst();
-        return instance;
     }
 }

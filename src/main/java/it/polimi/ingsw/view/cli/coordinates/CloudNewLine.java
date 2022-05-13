@@ -13,6 +13,17 @@ public class CloudNewLine implements DeltaCoordinates {
     }
 
     /**
+     * Gets the instance of the class instead of generating a new one every time.
+     *
+     * @return The generated instance.
+     */
+    public static CloudNewLine getInstance() {
+        if (instance == null)
+            instance = new CloudNewLine();
+        return instance;
+    }
+
+    /**
      * Gets x coordinate.
      *
      * @return X coordinate.
@@ -30,16 +41,5 @@ public class CloudNewLine implements DeltaCoordinates {
     @Override
     public int getY() {
         return 1;
-    }
-
-    /**
-     * Gets the instance of the class instead of generating a new one every time.
-     *
-     * @return The generated instance.
-     */
-    public static CloudNewLine getInstance() {
-        if (instance == null)
-            instance = new CloudNewLine();
-        return instance;
     }
 }

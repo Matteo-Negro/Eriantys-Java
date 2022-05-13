@@ -14,11 +14,12 @@ import java.util.Map;
 
 public class MonkEffect extends Effect {
 
-    private Map<HouseColor, Integer> students;
+    private final Map<HouseColor, Integer> students;
 
     /**
      * Class constructor.
      * It creates an instance of the class containing a map of the students put on the effect card with their respective quantity (initialized at 0).
+     *
      * @param studentsStatus Indicates the student on the card, saved into the status. These are going to be stored as a Map into the students attribute.
      */
     public MonkEffect(Map<HouseColor, Integer> studentsStatus) {
@@ -38,12 +39,12 @@ public class MonkEffect extends Effect {
     /**
      * effect() method overload.
      *
-     * @param toTake    The color of the student to take from the card.
-     * @param toPut     The color of the student to put on the card.
+     * @param toTake The color of the student to take from the card.
+     * @param toPut  The color of the student to put on the card.
      */
     public void effect(HouseColor toTake, HouseColor toPut) {
-        if(toTake != null) takeStudent(toTake);
-        if(toPut != null) addStudent(toPut);
+        if (toTake != null) takeStudent(toTake);
+        if (toPut != null) addStudent(toPut);
     }
 
     @Override

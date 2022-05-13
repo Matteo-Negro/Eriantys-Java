@@ -13,6 +13,17 @@ public class HouseYellow implements Colour {
     }
 
     /**
+     * Gets the instance of the class instead of generating a new one every time.
+     *
+     * @return The generated instance.
+     */
+    public static HouseYellow getInstance() {
+        if (instance == null)
+            instance = new HouseYellow();
+        return instance;
+    }
+
+    /**
      * Gets R value.
      *
      * @return R value.
@@ -40,16 +51,5 @@ public class HouseYellow implements Colour {
     @Override
     public int getB() {
         return 9;
-    }
-
-    /**
-     * Gets the instance of the class instead of generating a new one every time.
-     *
-     * @return The generated instance.
-     */
-    public static HouseYellow getInstance() {
-        if (instance == null)
-            instance = new HouseYellow();
-        return instance;
     }
 }
