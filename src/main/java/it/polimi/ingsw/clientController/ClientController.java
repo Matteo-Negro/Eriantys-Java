@@ -2,15 +2,16 @@ package it.polimi.ingsw.clientController;
 
 import it.polimi.ingsw.clientStatus.Status;
 import it.polimi.ingsw.utilities.ClientStates;
+import it.polimi.ingsw.utilities.GameControllerStates;
 
 import java.io.IOException;
 import java.net.Socket;
 
-public class ClientController {
+public class ClientController extends Thread{
     private String userName;
     private GameServer gameServer;
-    private String serverIp;
-    private int serverPort;
+    private final String serverIp;
+    private final int serverPort;
     private Status status;
     private ClientStates state;
     private String phase;
@@ -30,9 +31,10 @@ public class ClientController {
         try{
             Socket hostSocket = new Socket(serverIp, serverPort);
             this.gameServer = new GameServer(hostSocket, this);
+            this.gameServer.start();
             System.out.println("\n * Client has successfully connected to the server.");
         }catch(IOException ioe){
-            this.setState(ClientStates.CONNECTION_LOST);
+            this.setClientState(ClientStates.CONNECTION_LOST);
         }
 
         while(true){
@@ -40,24 +42,24 @@ public class ClientController {
                 try{
                     gameServer.wait();
                 }catch(InterruptedException ie){
-                    this.setState(ClientStates.CONNECTION_LOST);
+                    this.setClientState(ClientStates.CONNECTION_LOST);
                     break;
                 }
             }
 
-            switch(getState()){
-                //TODO manage different client's states.
+            switch(getClientState()){
+                //case MAIN_MENU ->
             }
         }
 
 
     }
 
-    private void setState(ClientStates newState){
+    public void setClientState(ClientStates newState){
         this.state = newState;
     }
 
-    private ClientStates getState(){
+    public ClientStates getClientState(){
         return this.state;
     }
 

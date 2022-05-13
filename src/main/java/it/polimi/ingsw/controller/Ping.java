@@ -15,6 +15,7 @@ public class Ping extends Thread {
     public Ping(User user) {
         this.user = user;
         this.lock = new Object();
+        System.out.println("\nPing instance created");
     }
 
     /**
@@ -24,7 +25,7 @@ public class Ping extends Thread {
     public void run() {
         JsonObject ping = new JsonObject();
         ping.addProperty("type", "ping");
-
+        System.out.println("\nPing running");
         while (true) {
             synchronized (lock) {
                 user.sendMessage(ping);

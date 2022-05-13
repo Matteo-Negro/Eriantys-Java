@@ -9,12 +9,15 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-public class GameServer {
+import it.polimi.ingsw.utilities.ClientStates;
+import it.polimi.ingsw.utilities.GameControllerStates;
 
-    private BufferedReader inputStream;
-    private PrintWriter outputStream;
-    private ClientController client;
-    private Pong pong;
+public class GameServer extends Thread{
+
+    private final BufferedReader inputStream;
+    private final PrintWriter outputStream;
+    private final ClientController client;
+    private final Pong pong;
     private boolean connected;
 
     public GameServer(Socket hostSocket, ClientController client) throws IOException {
@@ -23,6 +26,9 @@ public class GameServer {
         this.client = client;
         this.pong = new Pong(this);
         this.connected = true;
+
+        pong.start();
+        System.out.println("\nGameServer instance created");
     }
 
     public boolean isConnected(){
@@ -42,31 +48,9 @@ public class GameServer {
         outputStream.flush();
     }
 
-    public void run(){
-        JsonObject incomingMessage;
-        while(true){
-            if(!this.isConnected()) break;
-
-            try{
-                incomingMessage = this.getMessage();
-                if(!incomingMessage.get("type").getAsString().equals("ping")) manageMessage(incomingMessage);
-            }catch(IOException ioe){
-                disconnected();
-            }
-        }
-    }
-    
-    private void manageMessage(JsonObject message){
-
-            switch (message.get("type").getAsString()){
-                //TODO manage different server messages.
-            }
-
-    }
-
     private void disconnected(){
         setConnected(false);
-        //TODO manage server disconnection into the ClientController
+        this.client.setClientState(ClientStates.CONNECTION_LOST);
     }
 
 }

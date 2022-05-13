@@ -1,9 +1,11 @@
 package it.polimi.ingsw.network.client;
 
+import it.polimi.ingsw.clientController.ClientController;
 import it.polimi.ingsw.utilities.HouseColor;
 import it.polimi.ingsw.utilities.TowerType;
 import it.polimi.ingsw.utilities.WizardType;
 import it.polimi.ingsw.view.cli.SchoolBoard;
+import it.polimi.ingsw.view.cli.SplashScreen;
 import org.fusesource.jansi.Ansi;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
@@ -18,6 +20,7 @@ import static org.fusesource.jansi.Ansi.ansi;
 
 public class Client {
 
+    private ClientController controller;
     /**
      * Graphics types: CLI or GUI.
      */
@@ -30,6 +33,7 @@ public class Client {
      */
     public Client(GraphicsType graphicsType) throws IOException {
         if (graphicsType.equals(GraphicsType.CLI)) {
+
             Terminal terminal = TerminalBuilder.terminal();
             Scanner input = new Scanner(terminal.input());
             clearScreen(terminal, false);
@@ -37,18 +41,21 @@ public class Client {
             // Realm.print(terminal);
 
             // Splash screen printing and control
-//            SplashScreen.print(terminal);
-//            input.nextLine();
-//            terminal.writer().print(ansi().restoreCursorPosition());
-//            terminal.writer().print(ansi().cursorMove(-18, 1));
-//            terminal.writer().print(ansi().saveCursorPosition());
-//            terminal.flush();
-//            input.nextLine();
-
+            SplashScreen.print(terminal);
+            String hostIp = input.nextLine();
+            terminal.writer().print(ansi().restoreCursorPosition());
+            terminal.writer().print(ansi().cursorMove(-18, 1));
+            terminal.writer().print(ansi().saveCursorPosition());
+            terminal.flush();
+            int hostTcpPort = Integer.parseInt(input.nextLine());
+            this.controller = new ClientController(hostIp, hostTcpPort);
+            controller.start();
             // SchoolBoard
-            test(terminal);
+            //test(terminal);
 
             // clearScreen(terminal, true);
+
+
         }
     }
 
