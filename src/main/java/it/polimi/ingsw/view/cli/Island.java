@@ -29,6 +29,8 @@ import static it.polimi.ingsw.view.cli.Utilities.*;
 /**
  * Class used for printing a single island.
  * It always returns to the starting point.
+ *
+ * @author Riccardo Motta
  */
 class Island {
 
@@ -45,6 +47,7 @@ class Island {
      * @param ban          Indicates whether the island has been banned or not.
      * @param next         Indicates whether the island is connected to the next one or not.
      * @param prev         Indicates whether the island is connected to the previous one or not.
+     * @return The Ansi stream to print to terminal.
      */
     static Ansi print(int id,
                       Map<HouseColor, Integer> students,
@@ -225,6 +228,8 @@ class Island {
 
     /**
      * Moves the cursor in order to write a new line.
+     *
+     * @return Ansi stream.
      */
     private static Ansi newLine() {
         return moveCursor(IslandNewLine.getInstance());
@@ -232,6 +237,8 @@ class Island {
 
     /**
      * Moves the cursor to the original position.
+     *
+     * @return The Ansi stream to print to terminal.
      */
     private static Ansi resetCursor() {
         return moveCursor(IslandReset.getInstance());
@@ -241,6 +248,7 @@ class Island {
      * Gets the default foreground for writing things.
      *
      * @param ban true if the island has been banned.
+     * @return The Ansi stream to print to terminal.
      */
     private static Ansi defaultForeground(boolean ban) {
         if (ban)
@@ -255,6 +263,7 @@ class Island {
      * @param studentsNumber The number of students of a specific color.
      * @param houseColor     The color of the students.
      * @param ban            true if the island has been banned.
+     * @return The Ansi stream to print to terminal.
      */
     private static Ansi parseStudent(int studentsNumber, HouseColor houseColor, boolean ban) {
         Ansi ansi = new Ansi();

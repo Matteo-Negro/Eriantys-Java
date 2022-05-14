@@ -122,6 +122,16 @@ public class Utilities {
         terminal.flush();
     }
 
+    /**
+     * Reads a line from the terminal with autocompletion.
+     *
+     * @param prefix      Prefix string to put before reading.
+     * @param terminal    Terminal where to read and write.
+     * @param completer   Completer for autocompletion.
+     * @param suggestions Enables suggestions.
+     * @param history     History where to write commands for future use
+     * @return String to write.
+     */
     public static String readLine(String prefix, Terminal terminal, Completer completer, boolean suggestions, History history) {
         return fixString(LineReaderBuilder.builder()
                 .terminal(terminal)
@@ -133,6 +143,12 @@ public class Utilities {
                 .build().readLine(prefix));
     }
 
+    /**
+     * Removes extra spaces
+     *
+     * @param input Input string.
+     * @return Cleaned string.
+     */
     private static String fixString(String input) {
         Pattern start = Pattern.compile("^ +");
         Pattern middle = Pattern.compile(" +");

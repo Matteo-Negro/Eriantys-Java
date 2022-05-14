@@ -34,7 +34,7 @@ public class SplashScreen {
      */
     public static void print(Terminal terminal) {
         terminal.writer().print(ansi().cursor((terminal.getHeight() - 21) / 2, (terminal.getWidth() - 67) / 2));
-        terminal.writer().print(print());
+        terminal.writer().print(printSplashScreen());
         terminal.flush();
     }
 
@@ -43,7 +43,7 @@ public class SplashScreen {
      *
      * @return The generated Ansi stream.
      */
-    private static Ansi print() {
+    private static Ansi printSplashScreen() {
         Ansi ansi = new Ansi();
         ansi.a(printTitle());
         ansi.a(moveCursor(it.polimi.ingsw.view.cli.coordinates.Subtitle.getInstance()));

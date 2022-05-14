@@ -71,6 +71,7 @@ public class SchoolBoard {
      * @param wizard       Wizard type link to the player.
      * @param active       Boolean value to set the active player.
      * @param exp          Boolean value to set whether the school board is for expert game mode.
+     * @return The Ansi stream to print to terminal.
      */
     public static Ansi print(Map<HouseColor, Integer> entrance, Map<HouseColor, Integer> diningRoom, Map<HouseColor, Boolean> professors, TowerType tower, int towersNumber, int assistant, int coins, String name, WizardType wizard, boolean active, boolean exp) {
 
@@ -217,6 +218,8 @@ public class SchoolBoard {
 
     /**
      * Moves the cursor in order to write a new line.
+     *
+     * @return The Ansi stream to print to terminal.
      */
     private static Ansi newLine() {
         return moveCursor(SchoolBoardNewLine.getInstance());
@@ -224,6 +227,8 @@ public class SchoolBoard {
 
     /**
      * Moves the cursor to the original position.
+     *
+     * @return The Ansi stream to print to terminal.
      */
     private static Ansi resetCursor() {
         return moveCursor(SchoolBoardReset.getInstance());
@@ -234,6 +239,7 @@ public class SchoolBoard {
      *
      * @param active Boolean value to set the active player.
      * @param wizard Wizard type link to the player.
+     * @return The Ansi stream to print to terminal.
      */
     private static Ansi defaultForeground(boolean active, WizardType wizard) {
         return switch (wizard) {
@@ -252,6 +258,7 @@ public class SchoolBoard {
      * @param precision   Number of digits.
      * @param active      Boolean value to set the active player.
      * @param wizard      Wizard type link to the player.
+     * @return The Ansi stream to print to terminal.
      */
     private static Ansi parsePawn(int pawnsNumber, HouseColor houseColor, int precision, boolean active, WizardType wizard) {
 
@@ -281,6 +288,7 @@ public class SchoolBoard {
      *
      * @param precision   Number of digits.
      * @param pawnsNumber Number of pawns.
+     * @return The String to print to terminal.
      */
     private static String printStudentsNumber(int precision, int pawnsNumber) {
         if (precision == 1) return String.format("x%01d", pawnsNumber);

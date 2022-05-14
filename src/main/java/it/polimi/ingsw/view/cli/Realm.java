@@ -14,6 +14,8 @@ import static it.polimi.ingsw.view.cli.Utilities.moveCursor;
 
 /**
  * Prints the whole realm.
+ *
+ * @author Riccardo Motta
  */
 public class Realm {
 

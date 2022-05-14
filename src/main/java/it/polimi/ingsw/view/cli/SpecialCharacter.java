@@ -73,6 +73,7 @@ public class SpecialCharacter {
      * @param active    True whether the card has been paid, false otherwise.
      * @param banNumber Number of ban (-1, otherwise).
      * @param students  List of students on the card.
+     * @return The Ansi stream to print to terminal.
      */
     public static Ansi print(int id, int price, boolean active, int banNumber, List<HouseColor> students) {
 
@@ -133,6 +134,7 @@ public class SpecialCharacter {
      *
      * @param students List of students on the card.
      * @param active   True whether the card has been paid, false otherwise.
+     * @return The Ansi stream to print to terminal.
      */
     private static Ansi printStudents(List<HouseColor> students, boolean active) {
 
@@ -180,6 +182,7 @@ public class SpecialCharacter {
      *
      * @param banNumber Number of ban (-1, otherwise).
      * @param active    True whether the card has been paid, false otherwise.
+     * @return The Ansi stream to print to terminal.
      */
     private static Ansi printBan(int banNumber, boolean active) {
 
@@ -212,6 +215,8 @@ public class SpecialCharacter {
 
     /**
      * Moves the cursor in order to write a new line.
+     *
+     * @return The Ansi stream to print to terminal.
      */
     private static Ansi newLine() {
         return moveCursor(SpecialCharacterNewLine.getInstance());
@@ -219,6 +224,8 @@ public class SpecialCharacter {
 
     /**
      * Moves the cursor to the original position.
+     *
+     * @return The Ansi stream to print to terminal.
      */
     private static Ansi resetCursor(ResetType when) {
         return switch (when) {
@@ -232,6 +239,7 @@ public class SpecialCharacter {
      * Gets the default foreground for writing things.
      *
      * @param active Boolean value to set the active card.
+     * @return The Ansi stream to print to terminal.
      */
     private static Ansi defaultForeground(boolean active) {
         if (active) return foreground(White.getInstance());
@@ -243,6 +251,7 @@ public class SpecialCharacter {
      *
      * @param houseColor Color of the student.
      * @param active     Boolean value to set the active card.
+     * @return The Ansi stream to print to terminal.
      */
     private static Ansi parseStudent(HouseColor houseColor, boolean active) {
 

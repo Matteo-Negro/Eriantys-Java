@@ -25,6 +25,8 @@ import static it.polimi.ingsw.view.cli.Utilities.*;
 /**
  * Class used for printing a single cloud.
  * It always returns to the starting point.
+ *
+ * @author Riccardo Motta
  */
 public class Cloud {
 
@@ -37,6 +39,7 @@ public class Cloud {
      * @param id             Id of the cloud.
      * @param students       List of students which are on the cloud.
      * @param studentsNumber Number of students that should be at most on the cloud.
+     * @return The Ansi stream to print to terminal.
      */
     static Ansi print(int id, List<HouseColor> students, int studentsNumber) {
 
@@ -121,6 +124,8 @@ public class Cloud {
 
     /**
      * Moves the cursor in order to write a new line.
+     *
+     * @return The Ansi stream to print to terminal.
      */
     private static Ansi newLine() {
         return moveCursor(CloudNewLine.getInstance());
@@ -128,6 +133,8 @@ public class Cloud {
 
     /**
      * Moves the cursor to the original position.
+     *
+     * @return The Ansi stream to print to terminal.
      */
     private static Ansi resetCursor() {
         return moveCursor(CloudReset.getInstance());
@@ -137,6 +144,7 @@ public class Cloud {
      * Gets the default foreground for writing things.
      *
      * @param students List of students on the cloud.
+     * @return The Ansi stream to print to terminal.
      */
     private static Ansi defaultForeground(List<HouseColor> students) {
         if (students == null)
