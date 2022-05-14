@@ -15,10 +15,12 @@ import org.jline.utils.Log;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static it.polimi.ingsw.view.cli.Utilities.*;
 import static org.fusesource.jansi.Ansi.ansi;
+import static org.jline.builtins.Completers.TreeCompleter.node;
 
 public class ClientCli extends Thread {
     private final String phase;
@@ -97,12 +99,12 @@ public class ClientCli extends Thread {
     private void manageStartScreen() {
         do {
             SplashScreen.print(terminal);
-            String hostIp = readLine(" ", terminal, new StringsCompleter("localhost", "127.0.0.1"), false, null);
+            String hostIp = readLine(" ", terminal, List.of(node("localhost"), node("127.0.0.1")), false, null);
             terminal.writer().print(ansi().restoreCursorPosition());
             terminal.writer().print(ansi().cursorMove(-18, 1));
             terminal.writer().print(ansi().saveCursorPosition());
             terminal.flush();
-            int hostTcpPort = Integer.parseInt(readLine(" ", terminal, new StringsCompleter("", "36803"), false, null));
+            int hostTcpPort = Integer.parseInt(readLine(" ", terminal, List.of(node("36803")), false, null));
             try (Socket hostSocket = new Socket(hostIp, hostTcpPort)) {
                 hostSocket.setSoTimeout(10000);
                 this.gameServer = new GameServer(hostSocket, this);
@@ -119,7 +121,7 @@ public class ClientCli extends Thread {
         MainMenu.print(terminal);
         int option;
         try {
-            option = Integer.parseInt(readLine(" ", terminal, null, false, null));
+            option = Integer.parseInt(readLine(" ", terminal, List.of(node("1"), node("2")), false, null));
         } catch (NumberFormatException e) {
             option = 0;
         }
