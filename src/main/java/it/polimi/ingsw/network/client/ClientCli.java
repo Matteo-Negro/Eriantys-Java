@@ -5,7 +5,6 @@ import it.polimi.ingsw.clientController.GameServer;
 import it.polimi.ingsw.clientStatus.Status;
 import it.polimi.ingsw.utilities.ClientStates;
 import it.polimi.ingsw.utilities.GameControllerStates;
-import it.polimi.ingsw.utilities.HouseColor;
 import it.polimi.ingsw.view.cli.SplashScreen;
 import org.jline.reader.impl.completer.StringsCompleter;
 import org.jline.terminal.Terminal;
@@ -23,11 +22,11 @@ public class ClientCli extends Thread {
     private final String phase;
     private final GameControllerStates subPhase;
     private final Terminal terminal;
+    private final Map<String, String> waitingRoom;
     private String userName;
     private GameServer gameServer;
     private Status status;
     private ClientStates state;
-    private final Map<String, String> waitingRoom;
 
     /**
      * Default constructor.
@@ -107,7 +106,6 @@ public class ClientCli extends Thread {
                 this.gameServer = new GameServer(hostSocket, this);
                 gameServer.start();
                 setClientState(ClientStates.MAIN_MENU);
-
             } catch (IOException e) {
                 printError(terminal, "Wrong data provided or server unreachable.");
             }

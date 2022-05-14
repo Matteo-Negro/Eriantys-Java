@@ -240,7 +240,7 @@ class Island {
     /**
      * Gets the default foreground for writing things.
      *
-     * @param ban  true if the island has been banned.
+     * @param ban true if the island has been banned.
      */
     private static Ansi defaultForeground(boolean ban) {
         if (ban)

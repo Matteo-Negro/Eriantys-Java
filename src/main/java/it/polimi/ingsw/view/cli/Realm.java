@@ -125,11 +125,11 @@ public class Realm {
         ansi.a(Cloud.print(3, students, studentsNumber));
 
         ansi.a(
-            switch (playersNumber) {
-                case 2 -> moveCursor(CloudsReset2Players.getInstance());
-                case 3 -> moveCursor(CloudsReset3Players.getInstance());
-                default -> moveCursor(CloudsReset4Players.getInstance());
-            }
+                switch (playersNumber) {
+                    case 2 -> moveCursor(CloudsReset2Players.getInstance());
+                    case 3 -> moveCursor(CloudsReset3Players.getInstance());
+                    default -> moveCursor(CloudsReset4Players.getInstance());
+                }
         );
 
         return ansi;
