@@ -122,14 +122,19 @@ public class Utilities {
         terminal.flush();
     }
 
-    public static Ansi printTile(String[] title) {
+    /**
+     * Prints a block of text.
+     * @param text Text to print.
+     * @return The Ansi
+     */
+    public static Ansi printText(String[] text) {
         Ansi ansi = new Ansi();
-        int length = title[0].length();
-        for (String line : title) {
+        int length = text[0].length();
+        for (String line : text) {
             ansi.a(line);
             ansi.cursorMove(-length, 1);
         }
-        ansi.cursorUp(title.length);
+        ansi.cursorUp(text.length);
         return ansi;
     }
 

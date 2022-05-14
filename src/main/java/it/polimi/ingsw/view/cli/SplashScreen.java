@@ -38,6 +38,12 @@ public class SplashScreen {
             "                                                 \\██    ██         ",
             "                                                  \\██████          "
     };
+    private static final String[] settings = {
+            "┌─────────────────────────────────────────────────────────────────┐",
+            "  Server address (IP or domain):                                   ",
+            "  Server port:                                                     ",
+            "└─────────────────────────────────────────────────────────────────┘"
+    };
 
     private SplashScreen() {
     }
@@ -70,19 +76,23 @@ public class SplashScreen {
 
     /**
      * Prints the title.
+     *
+     * @return The generated Ansi stream.
      */
     static Ansi printTitle() {
 
         Ansi ansi = new Ansi();
 
         ansi.a(foreground(it.polimi.ingsw.view.cli.colours.Title.getInstance()));
-        ansi.a(printTile(title));
+        ansi.a(printText(title));
 
         return ansi;
     }
 
     /**
      * Prints the subtitle.
+     *
+     * @return The generated Ansi stream.
      */
     static Ansi printSubtitle() {
 
@@ -98,45 +108,22 @@ public class SplashScreen {
         ansi.a(moveCursor(Subtitle2.getInstance()));
         ansi.a("Project developed by Riccardo Milici, Riccardo Motta, Matteo Negro.");
 
-        ansi.a(resetCursor());
+        ansi.a(moveCursor(SubtitleReset.getInstance()));
 
         return ansi;
     }
 
     /**
      * Prints the server settings.
+     *
+     * @return The generated Ansi stream.
      */
     static Ansi printSettings() {
-
         Ansi ansi = new Ansi();
-
         ansi.a(foreground(Grey.getInstance()));
-
-        ansi.a("┌─────────────────────────────────────────────────────────────────┐");
-        ansi.a(newLine());
-        ansi.a("  Server address (IP or domain):                                   ");
-        ansi.a(newLine());
-        ansi.a("  Server port:                                                     ");
-        ansi.a(newLine());
-        ansi.a("└─────────────────────────────────────────────────────────────────┘");
+        ansi.a(printText(settings));
         ansi.a(moveCursor(ServerSettingsFirstInput.getInstance()));
-
         ansi.a(foreground(White.getInstance()));
-
         return ansi;
-    }
-
-    /**
-     * Moves the cursor in order to write a new line.
-     */
-    private static Ansi newLine() {
-        return moveCursor(ServerSettingsNewLine.getInstance());
-    }
-
-    /**
-     * Moves the cursor to the original position.
-     */
-    private static Ansi resetCursor() {
-        return moveCursor(SubtitleReset.getInstance());
     }
 }

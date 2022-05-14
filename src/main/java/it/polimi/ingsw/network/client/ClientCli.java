@@ -5,10 +5,12 @@ import it.polimi.ingsw.clientController.GameServer;
 import it.polimi.ingsw.clientStatus.Status;
 import it.polimi.ingsw.utilities.ClientStates;
 import it.polimi.ingsw.utilities.GameControllerStates;
+import it.polimi.ingsw.view.cli.MainMenu;
 import it.polimi.ingsw.view.cli.SplashScreen;
 import org.jline.reader.impl.completer.StringsCompleter;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
+import org.jline.utils.Log;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -110,17 +112,24 @@ public class ClientCli extends Thread {
                 printError(terminal, "Wrong data provided or server unreachable.");
             }
         } while (gameServer == null);
+        clearScreen(terminal, false);
     }
 
     private void manageMainMenu() {
-        //TODO Print main menu screen on cli.
-
-        String option = readLine(" ", terminal, null, false, null);
+        MainMenu.print(terminal);
+        int option;
+        try {
+            option = Integer.parseInt(readLine(" ", terminal, null, false, null));
+        } catch (NumberFormatException e) {
+            option = 0;
+        }
         switch (option) {
-            case "CreateGame" -> this.setClientState(ClientStates.GAME_CREATION);
-            case "JoinGame" -> this.setClientState(ClientStates.JOIN_GAME);
+            case 1 -> this.setClientState(ClientStates.GAME_CREATION);
+            case 2 -> this.setClientState(ClientStates.JOIN_GAME);
             default -> printError(terminal, "Wrong command.");
         }
+        if (!this.getClientState().equals(ClientStates.MAIN_MENU))
+            clearScreen(terminal, false);
     }
 
     private void manageGameCreation() {
