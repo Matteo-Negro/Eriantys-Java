@@ -185,4 +185,21 @@ public class MessageCreator {
         reply.addProperty("message", message);
         return reply;
     }
+
+    public static JsonObject gameCreation(int playersNumber, boolean expert){
+        JsonObject command = new JsonObject();
+        command.addProperty("type", "gameCreation");
+        command.addProperty("playersNumber", playersNumber);
+        command.addProperty("expert", expert);
+
+        return command;
+    }
+
+    public static JsonObject EnterGame(String code){
+        JsonObject command = new JsonObject();
+        command.addProperty("type", "enterGame");
+        command.addProperty("code", code);
+
+        return command;
+    }
 }

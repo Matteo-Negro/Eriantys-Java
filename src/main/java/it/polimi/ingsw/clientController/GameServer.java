@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import it.polimi.ingsw.network.client.ClientCli;
 import it.polimi.ingsw.utilities.ClientStates;
+import org.jline.builtins.Completers;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -33,11 +34,15 @@ public class GameServer extends Thread {
     public void run() {
         try {
             JsonObject incomingMessage = getMessage();
-            if (!incomingMessage.get("type").getAsString().equals("ping")) client.manageMessage(incomingMessage);
+            if (!incomingMessage.get("type").getAsString().equals("ping")) manageMessage(incomingMessage);
         } catch (IOException ioe) {
             //Connection to the server lost.
             setConnected(false);
         }
+    }
+
+    private void manageMessage(JsonObject incomingMessage){
+
     }
 
     public boolean isConnected() {

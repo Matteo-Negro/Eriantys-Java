@@ -6,6 +6,10 @@ import it.polimi.ingsw.clientStatus.Status;
 import it.polimi.ingsw.utilities.ClientStates;
 import it.polimi.ingsw.utilities.GameControllerStates;
 import it.polimi.ingsw.utilities.HouseColor;
+import it.polimi.ingsw.utilities.MessageCreator;
+import it.polimi.ingsw.view.cli.GameCreationScreen;
+import it.polimi.ingsw.view.cli.JoinGameScreen;
+import it.polimi.ingsw.view.cli.MainMenuScreen;
 import it.polimi.ingsw.view.cli.SplashScreen;
 import org.jline.reader.impl.completer.StringsCompleter;
 import org.jline.terminal.Terminal;
@@ -13,7 +17,9 @@ import org.jline.terminal.TerminalBuilder;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static it.polimi.ingsw.view.cli.Utilities.*;
@@ -94,6 +100,7 @@ public class ClientCli extends Thread {
     }
 
     private void manageStartScreen() {
+        System.out.print("\033[H\033[2J"); //clean terminal.
         do {
             SplashScreen.print(terminal);
             String hostIp = readLine(terminal, new StringsCompleter("localhost", "127.0.0.1"), false, " ");
@@ -101,45 +108,88 @@ public class ClientCli extends Thread {
             terminal.writer().print(ansi().cursorMove(-18, 1));
             terminal.writer().print(ansi().saveCursorPosition());
             terminal.flush();
-            int hostTcpPort = Integer.parseInt(readLine(terminal, new StringsCompleter("", "36803"), false, " "));
-            try (Socket hostSocket = new Socket(hostIp, hostTcpPort)) {
+            try {
+                int hostTcpPort = Integer.parseInt(readLine(terminal, new StringsCompleter("", "36803"), false, " "));
+                Socket hostSocket = new Socket(hostIp, hostTcpPort);
                 hostSocket.setSoTimeout(10000);
                 this.gameServer = new GameServer(hostSocket, this);
                 gameServer.start();
                 setClientState(ClientStates.MAIN_MENU);
-
-            } catch (IOException e) {
+            } catch (IOException | NumberFormatException e) {
                 printError(terminal, "Wrong data provided or server unreachable.");
             }
         } while (gameServer == null);
     }
 
     private void manageMainMenu() {
-        //TODO Print main menu screen on cli.
-
-        String option = readLine(terminal, null, false, " ");
-        switch (option) {
-            case "CreateGame" -> this.setClientState(ClientStates.GAME_CREATION);
-            case "JoinGame" -> this.setClientState(ClientStates.JOIN_GAME);
-            default -> printError(terminal, "Wrong command.");
-        }
+        System.out.print("\033[H\033[2J");
+        do {
+            MainMenuScreen.print(terminal);
+            String option = readLine(terminal, new StringsCompleter("createGame", "joinGame"), false, " ");
+            terminal.flush();
+            switch (option) {
+                case "createGame" -> this.setClientState(ClientStates.GAME_CREATION);
+                case "joinGame" -> this.setClientState(ClientStates.JOIN_GAME);
+                case "esc" -> this.setClientState(ClientStates.START_SCREEN);
+                default -> printError(terminal, "Wrong command.");
+            }
+        } while (this.getClientState() == ClientStates.MAIN_MENU);
     }
 
     private void manageGameCreation() {
-        //TODO Print game creation screen on cli.
+        System.out.print("\033[H\033[2J");
+        String playersNumber;
+        String difficulty;
+        int expectedPlayers = 2;
+        boolean expert = false;
 
-        int playersNumber = Integer.parseInt(readLine(terminal, null, false, " "));
-        String difficulty = readLine(terminal, null, false, " ");
-        //TODO create and send gameCreation command to the server.
-        //wait for server reply
+        boolean wrongCommand = true;
+        do {
+            GameCreationScreen.print(terminal);
+            playersNumber = readLine(terminal, new StringsCompleter("2", "3", "4"), false, " ");
+            terminal.writer().print(ansi().restoreCursorPosition());
+            terminal.writer().print(ansi().cursorMove(-4, 1));
+            terminal.writer().print(ansi().saveCursorPosition());
+            terminal.flush();
+            switch (playersNumber) {
+                case "2", "3", "4" -> {
+                    wrongCommand = false;
+                    expectedPlayers = Integer.parseInt(playersNumber);
+                }
+                case "esc" -> {
+                    this.setClientState(ClientStates.MAIN_MENU);
+                    return;
+                }
+            }
+
+
+            difficulty = readLine(terminal, new StringsCompleter("easy", "expert"), false, " ");
+
+            switch (difficulty) {
+                case "easy" -> expert = false;
+                case"expert" -> expert = true;
+                case "esc" -> {
+                    this.setClientState(ClientStates.MAIN_MENU);
+                    return;
+                }
+                default -> wrongCommand = true;
+            }
+            if (wrongCommand) printError(terminal, "Wrong command.");
+        } while (wrongCommand);
+
+        this.setClientState(ClientStates.GAME_LOGIN);
+
+        this.gameServer.sendCommand(MessageCreator.gameCreation(expectedPlayers, expert));
     }
 
     private void manageJoinGame() {
-        //TODO Print join game screen on cli.
-
+        System.out.print("\033[H\033[2J");
+        JoinGameScreen.print(terminal);
         String gameCode = readLine(terminal, null, false, " ");
-        //TODO Create and send joinGame command to the server.
-        //wait for server reply
+        terminal.flush();
+
+        if(gameCode.equals("esc")) this.setClientState(ClientStates.MAIN_MENU);
+        else this.gameServer.sendCommand(MessageCreator.EnterGame(gameCode));
     }
 
     private void manageGameLogin() {
@@ -170,15 +220,11 @@ public class ClientCli extends Thread {
         //TODO Print end game screen on cli.
 
         String command = readLine(terminal, null, false, " ");
-        while (!command.equals("exit")) {
+        while (!command.equals("esc")) {
             printError(terminal, "Wrong command.");
             command = readLine(terminal, null, false, " ");
         }
         this.setClientState(ClientStates.MAIN_MENU);
-    }
-
-    public void manageMessage(JsonObject message) {
-
     }
 
     private void manageUserCommand(String command) {

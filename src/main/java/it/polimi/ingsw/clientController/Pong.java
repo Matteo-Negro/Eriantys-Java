@@ -11,13 +11,13 @@ public class Pong extends Thread {
         this.host = host;
         this.lock = new Object();
 
-        System.out.println("\nPong instance created");
+        //System.out.println("\nPong instance created");
     }
 
     public void run() {
         JsonObject pongMessage = new JsonObject();
         pongMessage.addProperty("type", "pong");
-        System.out.println("\nPong running");
+        //System.out.println("\nPong running");
         while (true) {
             synchronized (lock) {
                 //System.out.println("\nPong sent");
