@@ -14,6 +14,8 @@ import static it.polimi.ingsw.view.cli.Utilities.moveCursor;
 
 /**
  * Prints the whole realm.
+ *
+ * @author Riccardo Motta
  */
 public class Realm {
 
@@ -49,45 +51,45 @@ public class Realm {
 
         // First half
 
-        moveCursor(ansi, IslandFirst.getInstance());
-        Island.print(ansi, 1, students, null, true, false, true, true);
+        ansi.a(moveCursor(IslandFirst.getInstance()));
+        ansi.a(Island.print(1, students, null, true, false, true, true));
 
-        moveCursor(ansi, IslandNE.getInstance());
-        Island.print(ansi, 2, students, null, false, false, true, true);
+        ansi.a(moveCursor(IslandNE.getInstance()));
+        ansi.a(Island.print(2, students, null, false, false, true, true));
 
-        moveCursor(ansi, IslandE.getInstance());
-        Island.print(ansi, 3, students, null, false, false, true, true);
+        ansi.a(moveCursor(IslandE.getInstance()));
+        ansi.a(Island.print(3, students, null, false, false, true, true));
 
-        moveCursor(ansi, IslandE.getInstance());
-        Island.print(ansi, 4, students, null, false, false, true, true);
+        ansi.a(moveCursor(IslandE.getInstance()));
+        ansi.a(Island.print(4, students, null, false, false, true, true));
 
-        moveCursor(ansi, IslandE.getInstance());
-        Island.print(ansi, 5, students, null, false, false, true, true);
+        ansi.a(moveCursor(IslandE.getInstance()));
+        ansi.a(Island.print(5, students, null, false, false, true, true));
 
-        moveCursor(ansi, IslandSE.getInstance());
-        Island.print(ansi, 6, students, null, false, false, true, true);
+        ansi.a(moveCursor(IslandSE.getInstance()));
+        ansi.a(Island.print(6, students, null, false, false, true, true));
 
         // Second half
 
-        moveCursor(ansi, IslandLast.getInstance());
-        Island.print(ansi, 12, students, null, false, false, true, true);
+        ansi.a(moveCursor(IslandLast.getInstance()));
+        ansi.a(Island.print(12, students, null, false, false, true, true));
 
-        moveCursor(ansi, IslandSE.getInstance());
-        Island.print(ansi, 11, students, null, false, false, true, true);
+        ansi.a(moveCursor(IslandE.getInstance()));
+        ansi.a(Island.print(11, students, null, false, false, true, true));
 
-        moveCursor(ansi, IslandE.getInstance());
-        Island.print(ansi, 10, students, null, false, false, true, true);
+        ansi.a(moveCursor(IslandE.getInstance()));
+        ansi.a(Island.print(10, students, null, false, false, true, true));
 
-        moveCursor(ansi, IslandE.getInstance());
-        Island.print(ansi, 9, students, null, false, false, true, true);
+        ansi.a(moveCursor(IslandE.getInstance()));
+        ansi.a(Island.print(9, students, null, false, false, true, true));
 
-        moveCursor(ansi, IslandE.getInstance());
-        Island.print(ansi, 8, students, null, false, false, true, true);
+        ansi.a(moveCursor(IslandE.getInstance()));
+        ansi.a(Island.print(8, students, null, false, false, true, true));
 
-        moveCursor(ansi, IslandNE.getInstance());
-        Island.print(ansi, 7, students, null, false, false, true, true);
+        ansi.a(moveCursor(IslandNE.getInstance()));
+        ansi.a(Island.print(7, students, null, false, false, true, true));
 
-        moveCursor(ansi, IslandsReset.getInstance());
+        ansi.a(moveCursor(IslandReset.getInstance()));
 
         return ansi;
     }
@@ -110,25 +112,27 @@ public class Realm {
 
         Ansi ansi = new Ansi();
 
-        switch (playersNumber) {
-            case 2 -> moveCursor(ansi, CloudFirst2Players.getInstance());
-            case 3 -> moveCursor(ansi, CloudFirst3Players.getInstance());
-            default -> moveCursor(ansi, CloudFirst4Players.getInstance());
-        }
+        ansi.a(switch (playersNumber) {
+            case 2 -> moveCursor(CloudFirst2Players.getInstance());
+            case 3 -> moveCursor(CloudFirst3Players.getInstance());
+            default -> moveCursor(CloudFirst4Players.getInstance());
+        });
 
-        Cloud.print(ansi, 1, students, studentsNumber);
+        ansi.a(Cloud.print(1, students, studentsNumber));
 
-        moveCursor(ansi, CloudE.getInstance());
-        Cloud.print(ansi, 2, null, studentsNumber);
+        ansi.a(moveCursor(CloudE.getInstance()));
+        ansi.a(Cloud.print(2, null, studentsNumber));
 
-        moveCursor(ansi, CloudE.getInstance());
-        Cloud.print(ansi, 3, students, studentsNumber);
+        ansi.a(moveCursor(CloudE.getInstance()));
+        ansi.a(Cloud.print(3, students, studentsNumber));
 
-        switch (playersNumber) {
-            case 2 -> moveCursor(ansi, CloudsReset2Players.getInstance());
-            case 3 -> moveCursor(ansi, CloudsReset3Players.getInstance());
-            default -> moveCursor(ansi, CloudsReset4Players.getInstance());
-        }
+        ansi.a(
+                switch (playersNumber) {
+                    case 2 -> moveCursor(CloudsReset2Players.getInstance());
+                    case 3 -> moveCursor(CloudsReset3Players.getInstance());
+                    default -> moveCursor(CloudsReset4Players.getInstance());
+                }
+        );
 
         return ansi;
     }

@@ -8,6 +8,7 @@ import it.polimi.ingsw.controller.GameController;
 import it.polimi.ingsw.controller.User;
 import it.polimi.ingsw.model.GamePlatform;
 import it.polimi.ingsw.model.player.Player;
+import org.jline.utils.Log;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -60,26 +61,26 @@ public class Server {
         if (!directory.exists())
             directory.mkdir();
 
-        System.out.println("Loading games...");
+        Log.info("Loading games...\n");
         loadGames();
-        System.out.println("Load completed.\n");
+        Log.info("Load completed.\n");
     }
 
     public void start() throws IOException {
 
         ExecutorService userExecutor = Executors.newCachedThreadPool();
         try (ServerSocket serverSocket = new ServerSocket(port)) {
-            System.out.println("Server up and listening on port: " + port);
+            Log.info("Server up and listening on port: " + port + "\n");
             while (true) {
                 Socket socket = serverSocket.accept();
-                System.out.println("Received client connection.");
+                Log.info("Received client connection from " + socket.getRemoteSocketAddress().toString().substring(1) + "\n");
                 userExecutor.submit(new User(socket, this));
             }
         } catch (NoSuchElementException e) {
-            System.err.println(e.getMessage());
+            Log.error(e.getMessage() + "\n");
         } finally {
             userExecutor.shutdown();
-            System.out.println("Socket closed.");
+            Log.info("Socket closed.\n");
         }
     }
 
@@ -95,11 +96,10 @@ public class Server {
                         try (BufferedReader bufferedReader = Files.newBufferedReader(file)) {
                             loadGame(JsonParser.parseReader(bufferedReader).getAsJsonObject());
                         } catch (IOException e) {
-                            System.err.println(e.getMessage());
+                            Log.error(e.getMessage() + "\n");
                         }
                     });
         }
-        System.out.println("\n * All saved games have successfully been loaded.");
     }
 
     /**
@@ -109,7 +109,7 @@ public class Server {
      */
     private void loadGame(JsonObject json) {
 
-        System.out.println("Loading game \"" + json.get("id").getAsString() + "\"");
+        Log.info("Loading game \"" + json.get("id").getAsString() + "\"...\n");
 
         Map<String, Player> players = new HashMap<>();
         GameController gameController;
@@ -130,7 +130,7 @@ public class Server {
         synchronized (games) {
             games.put(json.get("id").getAsString(), gameController);
         }
-        System.out.println("\n * Loaded saved game  with id: " + json.get("id").getAsString());
+        Log.info("Loaded " + json.get("id").getAsString() + "\n");
     }
 
     /**
@@ -149,7 +149,7 @@ public class Server {
             gameExecutor.submit(gameController);
             games.put(id, gameController);
         }
-        System.out.println("\n * Created new game with id " + id);
+        Log.info("Created new game with id " + id + "\n");
         return id;
     }
 
@@ -164,7 +164,7 @@ public class Server {
             games.remove(id);
         }
 
-        System.out.println("\n * Deleted the game with id: " + id);
+        Log.info("Deleted the game with id: " + id + "\n");
     }
 
     /**

@@ -30,7 +30,7 @@ public class ServerSettingsFirstInput implements DeltaCoordinates {
      */
     @Override
     public int getX() {
-        return -35;
+        return 32;
     }
 
     /**
@@ -40,6 +40,6 @@ public class ServerSettingsFirstInput implements DeltaCoordinates {
      */
     @Override
     public int getY() {
-        return -2;
+        return 1;
     }
 }

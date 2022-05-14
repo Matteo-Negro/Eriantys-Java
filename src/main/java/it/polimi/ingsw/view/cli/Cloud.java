@@ -25,6 +25,8 @@ import static it.polimi.ingsw.view.cli.Utilities.*;
 /**
  * Class used for printing a single cloud.
  * It always returns to the starting point.
+ *
+ * @author Riccardo Motta
  */
 public class Cloud {
 
@@ -34,116 +36,120 @@ public class Cloud {
     /**
      * Prints the cloud.
      *
-     * @param ansi           Ansi stream where to write.
      * @param id             Id of the cloud.
      * @param students       List of students which are on the cloud.
      * @param studentsNumber Number of students that should be at most on the cloud.
+     * @return The Ansi stream to print to terminal.
      */
-    static void print(Ansi ansi, int id, List<HouseColor> students, int studentsNumber) {
+    static Ansi print(int id, List<HouseColor> students, int studentsNumber) {
 
-        defaultForeground(ansi, students);
+        Ansi ansi = new Ansi();
+
+        ansi.a(defaultForeground(students));
 
         // Line #1
 
-        ansi.append("   ·······   ");
-        newLine(ansi);
+        ansi.a("   ·······   ");
+        ansi.a(newLine());
 
         // Line #2
 
-        ansi.append(" ··       ·· ");
-        newLine(ansi);
+        ansi.a(" ··       ·· ");
+        ansi.a(newLine());
 
         // Line #3
 
         if (students != null) {
             if (studentsNumber == 4) {
-                ansi.append("·   ");
-                foreground(ansi, getColourFrom(students.get(0)));
-                ansi.append("●");
-                defaultForeground(ansi, students);
-                ansi.append("   ");
-                foreground(ansi, getColourFrom(students.get(1)));
-                ansi.append("●");
-                defaultForeground(ansi, students);
-                ansi.append("   ·");
+                ansi.a("·   ");
+                ansi.a(foreground(getColourFrom(students.get(0))));
+                ansi.a("●");
+                ansi.a(defaultForeground(students));
+                ansi.a("   ");
+                ansi.a(foreground(getColourFrom(students.get(1))));
+                ansi.a("●");
+                ansi.a(defaultForeground(students));
+                ansi.a("   ·");
             } else {
-                ansi.append("·     ");
-                foreground(ansi, getColourFrom(students.get(0)));
-                ansi.append("●");
-                defaultForeground(ansi, students);
-                ansi.append("     ·");
+                ansi.a("·     ");
+                ansi.a(foreground(getColourFrom(students.get(0))));
+                ansi.a("●");
+                ansi.a(defaultForeground(students));
+                ansi.a("     ·");
             }
         } else
-            ansi.append(studentsNumber == 4 ? "·   ●   ●   ·" : "·     ●     ·");
-        newLine(ansi);
+            ansi.a(studentsNumber == 4 ? "·   ●   ●   ·" : "·     ●     ·");
+        ansi.a(newLine());
 
         // Line #4
 
-        ansi.append("·           ·");
-        newLine(ansi);
+        ansi.a("·           ·");
+        ansi.a(newLine());
 
         // Line #5
 
         if (students != null) {
-            ansi.append("·   ");
-            foreground(ansi, getColourFrom(students.get(studentsNumber == 4 ? 2 : 1)));
-            ansi.append("●");
-            defaultForeground(ansi, students);
-            ansi.append("   ");
-            foreground(ansi, getColourFrom(students.get(studentsNumber == 4 ? 3 : 2)));
-            ansi.append("●");
-            defaultForeground(ansi, students);
-            ansi.append("   ·");
+            ansi.a("·   ");
+            ansi.a(foreground(getColourFrom(students.get(studentsNumber == 4 ? 2 : 1))));
+            ansi.a("●");
+            ansi.a(defaultForeground(students));
+            ansi.a("   ");
+            ansi.a(foreground(getColourFrom(students.get(studentsNumber == 4 ? 3 : 2))));
+            ansi.a("●");
+            ansi.a(defaultForeground(students));
+            ansi.a("   ·");
         } else
-            ansi.append("·   ●   ●   ·");
-        newLine(ansi);
+            ansi.a("·   ●   ●   ·");
+        ansi.a(newLine());
 
         // Line #6
 
-        ansi.append(" ··       ·· ");
-        newLine(ansi);
+        ansi.a(" ··       ·· ");
+        ansi.a(newLine());
 
         // Line #7
 
-        ansi.append("   ·······   ");
-        newLine(ansi);
+        ansi.a("   ·······   ");
+        ansi.a(newLine());
 
         // Line #8
 
-        bold(ansi, true);
-        ansi.append("     CL${id}     ".replace("${id}", String.format("%01d", id)));
-        bold(ansi, false);
-        resetCursor(ansi);
+        ansi.a(bold(true));
+        ansi.a("     CL${id}     ".replace("${id}", String.format("%01d", id)));
+        ansi.a(bold(false));
+        ansi.a(resetCursor());
+
+        return ansi;
     }
 
     /**
      * Moves the cursor in order to write a new line.
      *
-     * @param ansi Ansi stream where to write.
+     * @return The Ansi stream to print to terminal.
      */
-    private static void newLine(Ansi ansi) {
-        moveCursor(ansi, CloudNewLine.getInstance());
+    private static Ansi newLine() {
+        return moveCursor(CloudNewLine.getInstance());
     }
 
     /**
      * Moves the cursor to the original position.
      *
-     * @param ansi Ansi stream where to write.
+     * @return The Ansi stream to print to terminal.
      */
-    private static void resetCursor(Ansi ansi) {
-        moveCursor(ansi, CloudReset.getInstance());
+    private static Ansi resetCursor() {
+        return moveCursor(CloudReset.getInstance());
     }
 
     /**
      * Gets the default foreground for writing things.
      *
-     * @param ansi     Ansi stream where to write.
      * @param students List of students on the cloud.
+     * @return The Ansi stream to print to terminal.
      */
-    private static void defaultForeground(Ansi ansi, List<HouseColor> students) {
+    private static Ansi defaultForeground(List<HouseColor> students) {
         if (students == null)
-            foreground(ansi, DarkGrey.getInstance());
+            return foreground(DarkGrey.getInstance());
         else
-            foreground(ansi, White.getInstance());
+            return foreground(White.getInstance());
     }
 }

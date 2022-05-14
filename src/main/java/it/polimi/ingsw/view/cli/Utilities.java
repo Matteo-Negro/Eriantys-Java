@@ -4,11 +4,14 @@ import it.polimi.ingsw.utilities.HouseColor;
 import it.polimi.ingsw.view.cli.colours.*;
 import org.fusesource.jansi.Ansi;
 import org.jline.reader.Completer;
+import org.jline.reader.History;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
 import org.jline.terminal.Terminal;
 
 import java.util.regex.Pattern;
+
+import static org.fusesource.jansi.Ansi.ansi;
 
 /**
  * CLI print utilities
@@ -35,8 +38,8 @@ public class Utilities {
             ansi.fgDefault();
             ansi.saveCursorPosition();
         } else {
-            background(ansi, Black.getInstance());
-            foreground(ansi, White.getInstance());
+            ansi.a(background(Black.getInstance()));
+            ansi.a(foreground(White.getInstance()));
         }
         for (int index = 0; index < terminal.getWidth() * terminal.getHeight(); index++)
             ansi.append(" ");
@@ -48,47 +51,49 @@ public class Utilities {
     /**
      * Moves the cursor to a specific position.
      *
-     * @param ansi  Ansi stream where to write.
      * @param delta Delta coordinates.
      */
-    public static void moveCursor(Ansi ansi, DeltaCoordinates delta) {
-        ansi.cursorMove(delta.getX(), delta.getY());
+    public static Ansi moveCursor(DeltaCoordinates delta) {
+        return ansi().cursorMove(delta.getX(), delta.getY());
     }
 
     /**
      * Sets the foreground colour.
      *
-     * @param ansi   Ansi stream where to write.
      * @param colour Colour to set.
      */
-    public static void foreground(Ansi ansi, Colour colour) {
+    public static Ansi foreground(Colour colour) {
+        Ansi ansi = new Ansi();
         ansi.fgRgb(colour.getR(), colour.getG(), colour.getB());
         ansi.saveCursorPosition();
+        return ansi;
     }
 
     /**
      * Sets the background colour.
      *
-     * @param ansi   Ansi stream where to write.
      * @param colour Colour to set.
      */
-    public static void background(Ansi ansi, Colour colour) {
+    public static Ansi background(Colour colour) {
+        Ansi ansi = new Ansi();
         ansi.bgRgb(colour.getR(), colour.getG(), colour.getB());
         ansi.saveCursorPosition();
+        return ansi;
     }
 
     /**
      * Sets the font to bold or regular.
      *
-     * @param ansi   Ansi stream where to write.
      * @param enable Enable for bold, disable for regular.
      */
-    public static void bold(Ansi ansi, boolean enable) {
+    public static Ansi bold(boolean enable) {
+        Ansi ansi = new Ansi();
         if (enable)
             ansi.bold();
         else
             ansi.boldOff();
         ansi.saveCursorPosition();
+        return ansi;
     }
 
     /**
@@ -102,31 +107,64 @@ public class Utilities {
         ansi.cursor(0, 0);
         ansi.saveCursorPosition();
         ansi.bgRed();
-        foreground(ansi, White.getInstance());
+        ansi.a(foreground(White.getInstance()));
         for (int index = 0; index < terminal.getWidth(); index++)
             ansi.append(" ");
-        bold(ansi, true);
+        ansi.a(bold(true));
         ansi.cursor(0, (terminal.getWidth() - message.length() - 7) / 2);
         ansi.append("Error");
-        bold(ansi, false);
+        ansi.a(bold(false));
         ansi.append(": ");
         ansi.append(message);
         ansi.cursor(0, 0);
-        background(ansi, Black.getInstance());
+        ansi.a(background(Black.getInstance()));
         terminal.writer().print(ansi);
         terminal.flush();
     }
 
-    public static String readLine(Terminal terminal, Completer completer, boolean suggestions, String prefix) {
+    /**
+     * Prints a block of text.
+     * @param text Text to print.
+     * @return The Ansi
+     */
+    public static Ansi printText(String[] text) {
+        Ansi ansi = new Ansi();
+        int length = text[0].length();
+        for (String line : text) {
+            ansi.a(line);
+            ansi.cursorMove(-length, 1);
+        }
+        ansi.cursorUp(text.length);
+        return ansi;
+    }
+
+    /**
+     * Reads a line from the terminal with autocompletion.
+     *
+     * @param prefix      Prefix string to put before reading.
+     * @param terminal    Terminal where to read and write.
+     * @param completer   Completer for autocompletion.
+     * @param suggestions Enables suggestions.
+     * @param history     History where to write commands for future use
+     * @return String to write.
+     */
+    public static String readLine(String prefix, Terminal terminal, Completer completer, boolean suggestions, History history) {
         return fixString(LineReaderBuilder.builder()
                 .terminal(terminal)
                 .completer(completer)
-                .option(LineReader.Option.CASE_INSENSITIVE, suggestions)
-                .option(LineReader.Option.AUTO_MENU, !suggestions)
-                .option(LineReader.Option.AUTO_LIST, !suggestions)
+                .option(LineReader.Option.CASE_INSENSITIVE, true)
+                .option(LineReader.Option.AUTO_MENU, suggestions)
+                .option(LineReader.Option.AUTO_LIST, suggestions)
+                .history(history)
                 .build().readLine(prefix));
     }
 
+    /**
+     * Removes extra spaces
+     *
+     * @param input Input string.
+     * @return Cleaned string.
+     */
     private static String fixString(String input) {
         Pattern start = Pattern.compile("^ +");
         Pattern middle = Pattern.compile(" +");

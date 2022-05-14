@@ -3,13 +3,13 @@ package it.polimi.ingsw.view.cli.coordinates;
 import it.polimi.ingsw.view.cli.DeltaCoordinates;
 
 /**
- * Title: cursor reset.
+ * Options: cursor position for input.
  */
-public class TitleReset implements DeltaCoordinates {
+public class OptionsInput implements DeltaCoordinates {
 
-    private static TitleReset instance = null;
+    private static OptionsInput instance = null;
 
-    private TitleReset() {
+    private OptionsInput() {
     }
 
     /**
@@ -17,9 +17,9 @@ public class TitleReset implements DeltaCoordinates {
      *
      * @return The generated instance.
      */
-    public static TitleReset getInstance() {
+    public static OptionsInput getInstance() {
         if (instance == null)
-            instance = new TitleReset();
+            instance = new OptionsInput();
         return instance;
     }
 
@@ -30,7 +30,7 @@ public class TitleReset implements DeltaCoordinates {
      */
     @Override
     public int getX() {
-        return -67;
+        return 18;
     }
 
     /**
@@ -40,6 +40,6 @@ public class TitleReset implements DeltaCoordinates {
      */
     @Override
     public int getY() {
-        return -12;
+        return 4;
     }
 }
