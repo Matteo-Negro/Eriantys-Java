@@ -24,6 +24,21 @@ import static org.fusesource.jansi.Ansi.ansi;
 
 public class SplashScreen {
 
+    private static final String[] title = {
+            " ________          __                     __                       ",
+            "|        \\        |  \\                   |  \\                      ",
+            "| ████████ ______  \\██ ______  _______  _| ██_   __    __  _______ ",
+            "| ██__    /      \\|  \\|      \\|       \\|   ██ \\ |  \\  |  \\/       \\",
+            "| ██  \\  |  ██████\\ ██ \\██████\\ ███████\\\\██████ | ██  | ██  ███████",
+            "| █████  | ██   \\██ ██/      ██ ██  | ██ | ██ __| ██  | ██\\██    \\ ",
+            "| ██_____| ██     | ██  ███████ ██  | ██ | ██|  \\ ██__/ ██_\\██████\\",
+            "| ██     \\ ██     | ██\\██    ██ ██  | ██  \\██  ██\\██    ██       ██",
+            " \\████████\\██      \\██ \\███████\\██   \\██   \\████ _\\███████\\███████ ",
+            "                                                |  \\__| ██         ",
+            "                                                 \\██    ██         ",
+            "                                                  \\██████          "
+    };
+
     private SplashScreen() {
     }
 
@@ -61,66 +76,7 @@ public class SplashScreen {
         Ansi ansi = new Ansi();
 
         ansi.a(foreground(it.polimi.ingsw.view.cli.colours.Title.getInstance()));
-
-        // Line #1
-
-        ansi.a(" ________          __                     __                       ");
-        ansi.a(newLine(true));
-
-        // Line #2
-
-        ansi.a("|        \\        |  \\                   |  \\                      ");
-        ansi.a(newLine(true));
-
-        // Line #3
-
-        ansi.a("| ████████ ______  \\██ ______  _______  _| ██_   __    __  _______ ");
-        ansi.a(newLine(true));
-
-        // Line #4
-
-        ansi.a("| ██__    /      \\|  \\|      \\|       \\|   ██ \\ |  \\  |  \\/       \\");
-        ansi.a(newLine(true));
-
-        // Line #5
-
-        ansi.a("| ██  \\  |  ██████\\ ██ \\██████\\ ███████\\\\██████ | ██  | ██  ███████");
-        ansi.a(newLine(true));
-
-        // Line #6
-
-        ansi.a("| █████  | ██   \\██ ██/      ██ ██  | ██ | ██ __| ██  | ██\\██    \\ ");
-        ansi.a(newLine(true));
-
-        // Line #7
-
-        ansi.a("| ██_____| ██     | ██  ███████ ██  | ██ | ██|  \\ ██__/ ██_\\██████\\");
-        ansi.a(newLine(true));
-
-        // Line #8
-
-        ansi.a("| ██     \\ ██     | ██\\██    ██ ██  | ██  \\██  ██\\██    ██       ██");
-        ansi.a(newLine(true));
-
-        // Line #9
-
-        ansi.a(" \\████████\\██      \\██ \\███████\\██   \\██   \\████ _\\███████\\███████ ");
-        ansi.a(newLine(true));
-
-        // Line #10
-
-        ansi.a("                                                |  \\__| ██         ");
-        ansi.a(newLine(true));
-
-        // Line #11
-
-        ansi.a("                                                 \\██    ██         ");
-        ansi.a(newLine(true));
-
-        // Line #12
-
-        ansi.a("                                                  \\██████          ");
-        ansi.a(resetCursor(true));
+        ansi.a(printTile(title));
 
         return ansi;
     }
@@ -142,7 +98,7 @@ public class SplashScreen {
         ansi.a(moveCursor(Subtitle2.getInstance()));
         ansi.a("Project developed by Riccardo Milici, Riccardo Motta, Matteo Negro.");
 
-        ansi.a(resetCursor(false));
+        ansi.a(resetCursor());
 
         return ansi;
     }
@@ -157,11 +113,11 @@ public class SplashScreen {
         ansi.a(foreground(Grey.getInstance()));
 
         ansi.a("┌─────────────────────────────────────────────────────────────────┐");
-        ansi.a(newLine(false));
+        ansi.a(newLine());
         ansi.a("  Server address (IP or domain):                                   ");
-        ansi.a(newLine(false));
+        ansi.a(newLine());
         ansi.a("  Server port:                                                     ");
-        ansi.a(newLine(false));
+        ansi.a(newLine());
         ansi.a("└─────────────────────────────────────────────────────────────────┘");
         ansi.a(moveCursor(ServerSettingsFirstInput.getInstance()));
 
@@ -172,25 +128,15 @@ public class SplashScreen {
 
     /**
      * Moves the cursor in order to write a new line.
-     *
-     * @param title True if title, false otherwise.
      */
-    private static Ansi newLine(boolean title) {
-        if (title)
-            return moveCursor(TitleNewLine.getInstance());
-        else
-            return moveCursor(ServerSettingsNewLine.getInstance());
+    private static Ansi newLine() {
+        return moveCursor(ServerSettingsNewLine.getInstance());
     }
 
     /**
      * Moves the cursor to the original position.
-     *
-     * @param title True if title, false otherwise.
      */
-    private static Ansi resetCursor(boolean title) {
-        if (title)
-            return moveCursor(TitleReset.getInstance());
-        else
-            return moveCursor(SubtitleReset.getInstance());
+    private static Ansi resetCursor() {
+        return moveCursor(SubtitleReset.getInstance());
     }
 }

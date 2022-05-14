@@ -122,6 +122,17 @@ public class Utilities {
         terminal.flush();
     }
 
+    public static Ansi printTile(String[] title) {
+        Ansi ansi = new Ansi();
+        int length = title[0].length();
+        for (String line : title) {
+            ansi.a(line);
+            ansi.cursorMove(-length, 1);
+        }
+        ansi.cursorUp(title.length);
+        return ansi;
+    }
+
     /**
      * Reads a line from the terminal with autocompletion.
      *
