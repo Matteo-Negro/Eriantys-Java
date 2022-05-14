@@ -45,148 +45,152 @@ public class SplashScreen {
      */
     private static Ansi printSplashScreen() {
         Ansi ansi = new Ansi();
-        printTitle(ansi);
-        moveCursor(ansi, it.polimi.ingsw.view.cli.coordinates.Subtitle.getInstance());
-        printSubtitle(ansi);
-        moveCursor(ansi, ServerSettings.getInstance());
-        printSettings(ansi);
+        ansi.a(printTitle());
+        ansi.a(moveCursor(it.polimi.ingsw.view.cli.coordinates.Subtitle.getInstance()));
+        ansi.a(printSubtitle());
+        ansi.a(moveCursor(ServerSettings.getInstance()));
+        ansi.a(printSettings());
         return ansi;
     }
 
     /**
      * Prints the title.
-     *
-     * @param ansi Ansi stream where to write.
      */
-    static void printTitle(Ansi ansi) {
+    static Ansi printTitle() {
 
-        foreground(ansi, it.polimi.ingsw.view.cli.colours.Title.getInstance());
+        Ansi ansi = new Ansi();
+
+        ansi.a(foreground(it.polimi.ingsw.view.cli.colours.Title.getInstance()));
 
         // Line #1
 
-        ansi.append(" ________          __                     __                       ");
-        newLine(ansi, true);
+        ansi.a(" ________          __                     __                       ");
+        ansi.a(newLine(true));
 
         // Line #2
 
-        ansi.append("|        \\        |  \\                   |  \\                      ");
-        newLine(ansi, true);
+        ansi.a("|        \\        |  \\                   |  \\                      ");
+        ansi.a(newLine(true));
 
         // Line #3
 
-        ansi.append("| ████████ ______  \\██ ______  _______  _| ██_   __    __  _______ ");
-        newLine(ansi, true);
+        ansi.a("| ████████ ______  \\██ ______  _______  _| ██_   __    __  _______ ");
+        ansi.a(newLine(true));
 
         // Line #4
 
-        ansi.append("| ██__    /      \\|  \\|      \\|       \\|   ██ \\ |  \\  |  \\/       \\");
-        newLine(ansi, true);
+        ansi.a("| ██__    /      \\|  \\|      \\|       \\|   ██ \\ |  \\  |  \\/       \\");
+        ansi.a(newLine(true));
 
         // Line #5
 
-        ansi.append("| ██  \\  |  ██████\\ ██ \\██████\\ ███████\\\\██████ | ██  | ██  ███████");
-        newLine(ansi, true);
+        ansi.a("| ██  \\  |  ██████\\ ██ \\██████\\ ███████\\\\██████ | ██  | ██  ███████");
+        ansi.a(newLine(true));
 
         // Line #6
 
-        ansi.append("| █████  | ██   \\██ ██/      ██ ██  | ██ | ██ __| ██  | ██\\██    \\ ");
-        newLine(ansi, true);
+        ansi.a("| █████  | ██   \\██ ██/      ██ ██  | ██ | ██ __| ██  | ██\\██    \\ ");
+        ansi.a(newLine(true));
 
         // Line #7
 
-        ansi.append("| ██_____| ██     | ██  ███████ ██  | ██ | ██|  \\ ██__/ ██_\\██████\\");
-        newLine(ansi, true);
+        ansi.a("| ██_____| ██     | ██  ███████ ██  | ██ | ██|  \\ ██__/ ██_\\██████\\");
+        ansi.a(newLine(true));
 
         // Line #8
 
-        ansi.append("| ██     \\ ██     | ██\\██    ██ ██  | ██  \\██  ██\\██    ██       ██");
-        newLine(ansi, true);
+        ansi.a("| ██     \\ ██     | ██\\██    ██ ██  | ██  \\██  ██\\██    ██       ██");
+        ansi.a(newLine(true));
 
         // Line #9
 
-        ansi.append(" \\████████\\██      \\██ \\███████\\██   \\██   \\████ _\\███████\\███████ ");
-        newLine(ansi, true);
+        ansi.a(" \\████████\\██      \\██ \\███████\\██   \\██   \\████ _\\███████\\███████ ");
+        ansi.a(newLine(true));
 
         // Line #10
 
-        ansi.append("                                                |  \\__| ██         ");
-        newLine(ansi, true);
+        ansi.a("                                                |  \\__| ██         ");
+        ansi.a(newLine(true));
 
         // Line #11
 
-        ansi.append("                                                 \\██    ██         ");
-        newLine(ansi, true);
+        ansi.a("                                                 \\██    ██         ");
+        ansi.a(newLine(true));
 
         // Line #12
 
-        ansi.append("                                                  \\██████          ");
-        resetCursor(ansi, true);
+        ansi.a("                                                  \\██████          ");
+        ansi.a(resetCursor(true));
+
+        return ansi;
     }
 
     /**
      * Prints the subtitle.
-     *
-     * @param ansi Ansi stream where to write.
      */
-    static void printSubtitle(Ansi ansi) {
+    static Ansi printSubtitle() {
 
-        foreground(ansi, it.polimi.ingsw.view.cli.colours.Subtitle.getInstance());
+        Ansi ansi = new Ansi();
 
-        moveCursor(ansi, Subtitle1.getInstance());
-        bold(ansi, true);
-        ansi.append("A game by Leo Colovini for 2-4 players.");
-        bold(ansi, false);
+        ansi.a(foreground(it.polimi.ingsw.view.cli.colours.Subtitle.getInstance()));
 
-        moveCursor(ansi, Subtitle2.getInstance());
-        ansi.append("Project developed by Riccardo Milici, Riccardo Motta, Matteo Negro.");
+        ansi.a(moveCursor(Subtitle1.getInstance()));
+        ansi.a(bold(true));
+        ansi.a("A game by Leo Colovini for 2-4 players.");
+        ansi.a(bold(false));
 
-        resetCursor(ansi, false);
+        ansi.a(moveCursor(Subtitle2.getInstance()));
+        ansi.a("Project developed by Riccardo Milici, Riccardo Motta, Matteo Negro.");
+
+        ansi.a(resetCursor(false));
+
+        return ansi;
     }
 
     /**
      * Prints the server settings.
-     *
-     * @param ansi Ansi stream where to write.
      */
-    static void printSettings(Ansi ansi) {
+    static Ansi printSettings() {
 
-        foreground(ansi, Grey.getInstance());
+        Ansi ansi = new Ansi();
 
-        ansi.append("┌─────────────────────────────────────────────────────────────────┐");
-        newLine(ansi, false);
-        ansi.append("  Server address (IP or domain):                                   ");
-        newLine(ansi, false);
-        ansi.append("  Server port:                                                     ");
-        newLine(ansi, false);
-        ansi.append("└─────────────────────────────────────────────────────────────────┘");
-        moveCursor(ansi, ServerSettingsFirstInput.getInstance());
+        ansi.a(foreground(Grey.getInstance()));
 
-        foreground(ansi, White.getInstance());
+        ansi.a("┌─────────────────────────────────────────────────────────────────┐");
+        ansi.a(newLine(false));
+        ansi.a("  Server address (IP or domain):                                   ");
+        ansi.a(newLine(false));
+        ansi.a("  Server port:                                                     ");
+        ansi.a(newLine(false));
+        ansi.a("└─────────────────────────────────────────────────────────────────┘");
+        ansi.a(moveCursor(ServerSettingsFirstInput.getInstance()));
+
+        ansi.a(foreground(White.getInstance()));
+
+        return ansi;
     }
 
     /**
      * Moves the cursor in order to write a new line.
      *
-     * @param ansi  Ansi stream where to write.
      * @param title True if title, false otherwise.
      */
-    private static void newLine(Ansi ansi, boolean title) {
+    private static Ansi newLine(boolean title) {
         if (title)
-            moveCursor(ansi, TitleNewLine.getInstance());
+            return moveCursor(TitleNewLine.getInstance());
         else
-            moveCursor(ansi, ServerSettingsNewLine.getInstance());
+            return moveCursor(ServerSettingsNewLine.getInstance());
     }
 
     /**
      * Moves the cursor to the original position.
      *
-     * @param ansi  Ansi stream where to write.
      * @param title True if title, false otherwise.
      */
-    private static void resetCursor(Ansi ansi, boolean title) {
+    private static Ansi resetCursor(boolean title) {
         if (title)
-            moveCursor(ansi, TitleReset.getInstance());
+            return moveCursor(TitleReset.getInstance());
         else
-            moveCursor(ansi, SubtitleReset.getInstance());
+            return moveCursor(SubtitleReset.getInstance());
     }
 }

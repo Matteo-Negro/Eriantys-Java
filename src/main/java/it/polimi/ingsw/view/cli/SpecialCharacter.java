@@ -68,187 +68,197 @@ public class SpecialCharacter {
     /**
      * Print the special character.
      *
-     * @param ansi      Ansi stream where to write.
      * @param id        Id of the special character.
      * @param price     Price to activate the card.
      * @param active    True whether the card has been paid, false otherwise.
      * @param banNumber Number of ban (-1, otherwise).
      * @param students  List of students on the card.
      */
-    public static void print(Ansi ansi, int id, int price, boolean active, int banNumber, List<HouseColor> students) {
+    public static Ansi print(int id, int price, boolean active, int banNumber, List<HouseColor> students) {
 
-        defaultForeground(ansi, active);
+        Ansi ansi = new Ansi();
+
+        ansi.a(defaultForeground(active));
 
         // Line #1
 
-        ansi.append("┌───────┐");
-        newLine(ansi);
+        ansi.a("┌───────┐");
+        ansi.a(newLine());
 
         // Line #2
 
-        ansi.append("│  CHR  │");
-        newLine(ansi);
+        ansi.a("│  CHR  │");
+        ansi.a(newLine());
 
         // Line #3
 
-        ansi.append("├───────┤");
-        newLine(ansi);
+        ansi.a("├───────┤");
+        ansi.a(newLine());
 
         // Line #4
 
-        ansi.append(String.format("│ CHR%02d │", id));
-        newLine(ansi);
+        ansi.a(String.format("│ CHR%02d │", id));
+        ansi.a(newLine());
 
         // Line #5
 
-        ansi.append("│       │");
-        newLine(ansi);
+        ansi.a("│       │");
+        ansi.a(newLine());
 
         // Line #6
 
-        ansi.append(String.format("│  %01dCS  │", price));
-        newLine(ansi);
+        ansi.a(String.format("│  %01dCS  │", price));
+        ansi.a(newLine());
 
         // Line #7
 
-        ansi.append("└───────┘");
-        newLine(ansi);
+        ansi.a("└───────┘");
+        ansi.a(newLine());
 
         // Print closure
 
         if (banNumber != -1) {
-            printBan(ansi, banNumber, active);
+            ansi.a(printBan(banNumber, active));
         } else if (students != null) {
-            printStudents(ansi, students, active);
+            ansi.a(printStudents(students, active));
         } else {
-            resetCursor(ansi, ResetType.STANDARD);
+            ansi.a(resetCursor(ResetType.STANDARD));
         }
+
+        return ansi;
     }
 
     /**
      * Private method to print the students on the card.
      *
-     * @param ansi     Ansi stream where to write.
      * @param students List of students on the card.
      * @param active   True whether the card has been paid, false otherwise.
      */
-    private static void printStudents(Ansi ansi, List<HouseColor> students, boolean active) {
+    private static Ansi printStudents(List<HouseColor> students, boolean active) {
+
+        Ansi ansi = new Ansi();
+
         // Line #9
 
-        ansi.append("┌───────┐");
-        newLine(ansi);
+        ansi.a("┌───────┐");
+        ansi.a(newLine());
 
         // Line #10
 
-        ansi.append("│ ");
-        parseStudent(students.get(0), ansi, active);
-        ansi.append(" ");
-        if (students.size() == 6) parseStudent(students.get(1), ansi, active);
-        else ansi.append(" ");
-        ansi.append(" ");
-        parseStudent(students.get(2), ansi, active);
-        ansi.append(" │");
-        newLine(ansi);
+        ansi.a("│ ");
+        ansi.a(parseStudent(students.get(0), active));
+        ansi.a(" ");
+        if (students.size() == 6) ansi.a(parseStudent(students.get(1), active));
+        else ansi.a(" ");
+        ansi.a(" ");
+        ansi.a(parseStudent(students.get(2), active));
+        ansi.a(" │");
+        ansi.a(newLine());
 
         // Line #11
 
-        ansi.append("│ ");
-        parseStudent(students.get(3), ansi, active);
-        ansi.append(" ");
-        if (students.size() == 6) parseStudent(students.get(4), ansi, active);
-        else ansi.append(" ");
-        ansi.append(" ");
-        parseStudent(students.get(5), ansi, active);
-        ansi.append(" │");
-        newLine(ansi);
+        ansi.a("│ ");
+        ansi.a(parseStudent(students.get(3), active));
+        ansi.a(" ");
+        if (students.size() == 6) ansi.a(parseStudent(students.get(4), active));
+        else ansi.a(" ");
+        ansi.a(" ");
+        ansi.a(parseStudent(students.get(5), active));
+        ansi.a(" │");
+        ansi.a(newLine());
 
         // Line #12
 
-        ansi.append("└───────┘");
-        resetCursor(ansi, ResetType.STUDENTS);
+        ansi.a("└───────┘");
+        ansi.a(resetCursor(ResetType.STUDENTS));
+
+        return ansi;
     }
 
     /**
      * Private method to print the ban on the card.
      *
-     * @param ansi      Ansi stream where to write.
      * @param banNumber Number of ban (-1, otherwise).
      * @param active    True whether the card has been paid, false otherwise.
      */
-    private static void printBan(Ansi ansi, int banNumber, boolean active) {
+    private static Ansi printBan(int banNumber, boolean active) {
+
+        Ansi ansi = new Ansi();
+
         // Line #9
 
-        ansi.append("┌───────┐");
-        newLine(ansi);
+        ansi.a("┌───────┐");
+        ansi.a(newLine());
 
         // Line #10
 
-        if (banNumber != 0) ansi.append(String.format("│  !x%01d  │", banNumber));
+        if (banNumber != 0) ansi.a(String.format("│  !x%01d  │", banNumber));
         else {
-            ansi.append("│  ");
-            foreground(ansi, DarkGrey.getInstance());
-            ansi.append(String.format("!x%01d", banNumber));
-            defaultForeground(ansi, active);
-            ansi.append("  │");
+            ansi.a("│  ");
+            ansi.a(foreground(DarkGrey.getInstance()));
+            ansi.a(String.format("!x%01d", banNumber));
+            ansi.a(defaultForeground(active));
+            ansi.a("  │");
         }
-        newLine(ansi);
+        ansi.a(newLine());
 
         // Line #11
 
-        ansi.append("└───────┘");
-        resetCursor(ansi, ResetType.BAN);
+        ansi.a("└───────┘");
+        ansi.a(resetCursor(ResetType.BAN));
+
+        return ansi;
     }
 
     /**
      * Moves the cursor in order to write a new line.
-     *
-     * @param ansi Ansi stream where to write.
      */
-    private static void newLine(Ansi ansi) {
-        moveCursor(ansi, SpecialCharacterNewLine.getInstance());
+    private static Ansi newLine() {
+        return moveCursor(SpecialCharacterNewLine.getInstance());
     }
 
     /**
      * Moves the cursor to the original position.
-     *
-     * @param ansi Ansi stream where to write.
      */
-    private static void resetCursor(Ansi ansi, ResetType when) {
-        switch (when) {
-            case BAN -> moveCursor(ansi, SpecialCharacterResetBan.getInstance());
-            case STUDENTS -> moveCursor(ansi, SpecialCharacterResetStudents.getInstance());
-            default -> moveCursor(ansi, SpecialCharacterReset.getInstance());
-        }
+    private static Ansi resetCursor(ResetType when) {
+        return switch (when) {
+            case BAN -> moveCursor(SpecialCharacterResetBan.getInstance());
+            case STUDENTS -> moveCursor(SpecialCharacterResetStudents.getInstance());
+            default -> moveCursor(SpecialCharacterReset.getInstance());
+        };
     }
 
     /**
      * Gets the default foreground for writing things.
      *
-     * @param ansi   Ansi stream where to write.
      * @param active Boolean value to set the active card.
      */
-    private static void defaultForeground(Ansi ansi, boolean active) {
-        if (active) foreground(ansi, White.getInstance());
-        else foreground(ansi, Grey.getInstance());
+    private static Ansi defaultForeground(boolean active) {
+        if (active) return foreground(White.getInstance());
+        else return foreground(Grey.getInstance());
     }
 
     /**
      * Parses the number of students of a specific color in order to render them correctly.
      *
      * @param houseColor Color of the student.
-     * @param ansi       Ansi stream where to write.
      * @param active     Boolean value to set the active card.
      */
-    private static void parseStudent(HouseColor houseColor, Ansi ansi, boolean active) {
+    private static Ansi parseStudent(HouseColor houseColor, boolean active) {
+
+        Ansi ansi = new Ansi();
+
         if (houseColor != null) {
-            foreground(ansi, getColourFrom(houseColor));
-            ansi.append("●");
+            ansi.a(foreground(getColourFrom(houseColor)));
+            ansi.a("●");
         } else {
-            foreground(ansi, DarkGrey.getInstance());
-            ansi.append("●");
+            ansi.a(foreground(DarkGrey.getInstance()));
+            ansi.a("●");
 
         }
-        defaultForeground(ansi, active);
+        ansi.a(defaultForeground(active));
+
+        return ansi;
     }
 
     private enum ResetType {BAN, STANDARD, STUDENTS}

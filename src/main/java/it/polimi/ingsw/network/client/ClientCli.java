@@ -96,12 +96,12 @@ public class ClientCli extends Thread {
     private void manageStartScreen() {
         do {
             SplashScreen.print(terminal);
-            String hostIp = readLine(terminal, new StringsCompleter("localhost", "127.0.0.1"), false, " ");
+            String hostIp = readLine(" ", terminal, new StringsCompleter("localhost", "127.0.0.1"), false, null);
             terminal.writer().print(ansi().restoreCursorPosition());
             terminal.writer().print(ansi().cursorMove(-18, 1));
             terminal.writer().print(ansi().saveCursorPosition());
             terminal.flush();
-            int hostTcpPort = Integer.parseInt(readLine(terminal, new StringsCompleter("", "36803"), false, " "));
+            int hostTcpPort = Integer.parseInt(readLine(" ", terminal, new StringsCompleter("", "36803"), false, null));
             try (Socket hostSocket = new Socket(hostIp, hostTcpPort)) {
                 hostSocket.setSoTimeout(10000);
                 this.gameServer = new GameServer(hostSocket, this);
@@ -117,7 +117,7 @@ public class ClientCli extends Thread {
     private void manageMainMenu() {
         //TODO Print main menu screen on cli.
 
-        String option = readLine(terminal, null, false, " ");
+        String option = readLine(" ", terminal, null, false, null);
         switch (option) {
             case "CreateGame" -> this.setClientState(ClientStates.GAME_CREATION);
             case "JoinGame" -> this.setClientState(ClientStates.JOIN_GAME);
@@ -128,8 +128,8 @@ public class ClientCli extends Thread {
     private void manageGameCreation() {
         //TODO Print game creation screen on cli.
 
-        int playersNumber = Integer.parseInt(readLine(terminal, null, false, " "));
-        String difficulty = readLine(terminal, null, false, " ");
+        int playersNumber = Integer.parseInt(readLine(" ", terminal, null, false, null));
+        String difficulty = readLine(" ", terminal, null, false, null);
         //TODO create and send gameCreation command to the server.
         //wait for server reply
     }
@@ -137,7 +137,7 @@ public class ClientCli extends Thread {
     private void manageJoinGame() {
         //TODO Print join game screen on cli.
 
-        String gameCode = readLine(terminal, null, false, " ");
+        String gameCode = readLine(" ", terminal, null, false, null);
         //TODO Create and send joinGame command to the server.
         //wait for server reply
     }
@@ -146,10 +146,10 @@ public class ClientCli extends Thread {
         //TODO Print game login screen on cli.
 
         String username;
-        username = readLine(terminal, null, false, " ");
+        username = readLine(" ", terminal, null, false, null);
         while (waitingRoom.containsKey(username) && waitingRoom.get(username).equals("connected")) {
             printError(terminal, "Username not valid.");
-            username = readLine(terminal, null, false, " ");
+            username = readLine(" ", terminal, null, false, null);
         }
         //TODO Create and send login command to the server.
         //wait for serer reply.
@@ -162,17 +162,17 @@ public class ClientCli extends Thread {
     private void manageGameRunning() {
         //TODO Print current status screen on cli.
 
-        String command = readLine(terminal, null, false, " ");
+        String command = readLine(" ", terminal, null, false, null);
         this.manageUserCommand(command);
     }
 
     private void manageEndGame() {
         //TODO Print end game screen on cli.
 
-        String command = readLine(terminal, null, false, " ");
+        String command = readLine(" ", terminal, null, false, null);
         while (!command.equals("exit")) {
             printError(terminal, "Wrong command.");
-            command = readLine(terminal, null, false, " ");
+            command = readLine(" ", terminal, null, false, null);
         }
         this.setClientState(ClientStates.MAIN_MENU);
     }

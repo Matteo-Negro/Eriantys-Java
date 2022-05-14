@@ -38,7 +38,6 @@ class Island {
     /**
      * Prints the island.
      *
-     * @param ansi         Ansi stream where to write.
      * @param id           Id of the island.
      * @param students     Map of students which are on the island.
      * @param tower        Tower which is on the island (null, otherwise).
@@ -47,8 +46,7 @@ class Island {
      * @param next         Indicates whether the island is connected to the next one or not.
      * @param prev         Indicates whether the island is connected to the previous one or not.
      */
-    static void print(Ansi ansi,
-                      int id,
+    static Ansi print(int id,
                       Map<HouseColor, Integer> students,
                       TowerType tower,
                       boolean motherNature,
@@ -56,149 +54,152 @@ class Island {
                       boolean next,
                       boolean prev) {
 
+        Ansi ansi = new Ansi();
         Map<IslandConnection, Boolean> connections = parseConnections(id, next, prev);
         String centeredDots = "        ···         ";
         String blankLine = "                    ";
 
-        foreground(ansi, Grey.getInstance());
+        ansi.a(foreground(Grey.getInstance()));
 
         // Line #1
 
         if (id >= 1 && id <= 6) {
-            bold(ansi, true);
-            ansi.append("       ISL${id}        ".replace("${id}", String.format("%02d", id)));
-            bold(ansi, false);
+            ansi.a(bold(true));
+            ansi.a("       ISL${id}        ".replace("${id}", String.format("%02d", id)));
+            ansi.a(bold(false));
         } else if (Boolean.TRUE.equals(connections.get(IslandConnection.NORTH)))
-            ansi.append(centeredDots);
+            ansi.a(centeredDots);
         else
-            ansi.append(blankLine);
-        newLine(ansi);
+            ansi.a(blankLine);
+        ansi.a(newLine());
 
         // Line #2
 
-        ansi.append(Boolean.TRUE.equals(connections.get(IslandConnection.NORTH_WEST)) ? "··  " : "    ");
-        defaultForeground(ansi, ban);
-        ansi.append("/‾‾‾‾‾‾‾‾‾\\");
-        foreground(ansi, Grey.getInstance());
-        ansi.append(Boolean.TRUE.equals(connections.get(IslandConnection.NORTH_EAST)) ? "  ·· " : "     ");
-        newLine(ansi);
+        ansi.a(Boolean.TRUE.equals(connections.get(IslandConnection.NORTH_WEST)) ? "··  " : "    ");
+        ansi.a(defaultForeground(ban));
+        ansi.a("/‾‾‾‾‾‾‾‾‾\\");
+        ansi.a(foreground(Grey.getInstance()));
+        ansi.a(Boolean.TRUE.equals(connections.get(IslandConnection.NORTH_EAST)) ? "  ·· " : "     ");
+        ansi.a(newLine());
 
         // Line #3
 
-        ansi.append(Boolean.TRUE.equals(connections.get(IslandConnection.NORTH_WEST)) ? "···" : "   ");
-        defaultForeground(ansi, ban);
-        ansi.append("/   ");
+        ansi.a(Boolean.TRUE.equals(connections.get(IslandConnection.NORTH_WEST)) ? "···" : "   ");
+        ansi.a(defaultForeground(ban));
+        ansi.a("/   ");
         if (tower != null) {
             switch (tower) {
-                case BLACK -> foreground(ansi, TowerBlack.getInstance());
-                case GREY -> foreground(ansi, TowerGrey.getInstance());
-                case WHITE -> foreground(ansi, TowerWhite.getInstance());
+                case BLACK -> ansi.a(foreground(TowerBlack.getInstance()));
+                case GREY -> ansi.a(foreground(TowerGrey.getInstance()));
+                case WHITE -> ansi.a(foreground(TowerWhite.getInstance()));
             }
-            ansi.append("●");
-            defaultForeground(ansi, ban);
-        } else ansi.append(" ");
-        ansi.append("   ");
+            ansi.a("●");
+            ansi.a(defaultForeground(ban));
+        } else ansi.a(" ");
+        ansi.a("   ");
         if (motherNature) {
-            foreground(ansi, MotherNature.getInstance());
-            ansi.append("●");
-            defaultForeground(ansi, ban);
-        } else ansi.append(" ");
-        ansi.append("   \\");
-        foreground(ansi, Grey.getInstance());
-        ansi.append(Boolean.TRUE.equals(connections.get(IslandConnection.NORTH_EAST)) ? "··· " : "    ");
-        newLine(ansi);
+            ansi.a(foreground(MotherNature.getInstance()));
+            ansi.a("●");
+            ansi.a(defaultForeground(ban));
+        } else ansi.a(" ");
+        ansi.a("   \\");
+        ansi.a(foreground(Grey.getInstance()));
+        ansi.a(Boolean.TRUE.equals(connections.get(IslandConnection.NORTH_EAST)) ? "··· " : "    ");
+        ansi.a(newLine());
 
         // Line #4
 
-        ansi.append(connections.get(IslandConnection.WEST) || connections.get(IslandConnection.NORTH_WEST) ? "··" : "  ");
-        defaultForeground(ansi, ban);
-        ansi.append("/             \\");
-        foreground(ansi, Grey.getInstance());
+        ansi.a(connections.get(IslandConnection.WEST) || connections.get(IslandConnection.NORTH_WEST) ? "··" : "  ");
+        ansi.a(defaultForeground(ban));
+        ansi.a("/             \\");
+        ansi.a(foreground(Grey.getInstance()));
         if (Boolean.TRUE.equals(connections.get(IslandConnection.EAST)))
-            ansi.append("···");
+            ansi.a("···");
         else if (Boolean.TRUE.equals(connections.get(IslandConnection.NORTH_EAST)))
-            ansi.append("·· ");
+            ansi.a("·· ");
         else
-            ansi.append("   ");
-        newLine(ansi);
+            ansi.a("   ");
+        ansi.a(newLine());
 
         // Line #5
 
-        ansi.append(Boolean.TRUE.equals(connections.get(IslandConnection.WEST)) ? "·" : " ");
-        defaultForeground(ansi, ban);
-        ansi.append("/               \\");
-        foreground(ansi, Grey.getInstance());
-        ansi.append(Boolean.TRUE.equals(connections.get(IslandConnection.EAST)) ? "··" : "  ");
-        newLine(ansi);
+        ansi.a(Boolean.TRUE.equals(connections.get(IslandConnection.WEST)) ? "·" : " ");
+        ansi.a(defaultForeground(ban));
+        ansi.a("/               \\");
+        ansi.a(foreground(Grey.getInstance()));
+        ansi.a(Boolean.TRUE.equals(connections.get(IslandConnection.EAST)) ? "··" : "  ");
+        ansi.a(newLine());
 
         // Line #6
 
-        ansi.append(Boolean.TRUE.equals(connections.get(IslandConnection.WEST)) ? "·" : " ");
-        defaultForeground(ansi, ban);
-        ansi.append("\\  ");
-        parseStudent(students.get(HouseColor.BLUE), HouseColor.BLUE, ansi, ban);
-        ansi.append(" ");
-        parseStudent(students.get(HouseColor.FUCHSIA), HouseColor.FUCHSIA, ansi, ban);
-        ansi.append(" ");
-        parseStudent(students.get(HouseColor.GREEN), HouseColor.GREEN, ansi, ban);
-        ansi.append("  /");
-        foreground(ansi, Grey.getInstance());
-        ansi.append(Boolean.TRUE.equals(connections.get(IslandConnection.EAST)) ? "··" : "  ");
-        newLine(ansi);
+        ansi.a(Boolean.TRUE.equals(connections.get(IslandConnection.WEST)) ? "·" : " ");
+        ansi.a(defaultForeground(ban));
+        ansi.a("\\  ");
+        ansi.a(parseStudent(students.get(HouseColor.BLUE), HouseColor.BLUE, ban));
+        ansi.a(" ");
+        ansi.a(parseStudent(students.get(HouseColor.FUCHSIA), HouseColor.FUCHSIA, ban));
+        ansi.a(" ");
+        ansi.a(parseStudent(students.get(HouseColor.GREEN), HouseColor.GREEN, ban));
+        ansi.a("  /");
+        ansi.a(foreground(Grey.getInstance()));
+        ansi.a(Boolean.TRUE.equals(connections.get(IslandConnection.EAST)) ? "··" : "  ");
+        ansi.a(newLine());
 
         // Line #7
 
-        ansi.append(connections.get(IslandConnection.WEST) || connections.get(IslandConnection.SOUTH_WEST) ? "··" : "  ");
-        defaultForeground(ansi, ban);
-        ansi.append("\\             /");
-        foreground(ansi, Grey.getInstance());
+        ansi.a(connections.get(IslandConnection.WEST) || connections.get(IslandConnection.SOUTH_WEST) ? "··" : "  ");
+        ansi.a(defaultForeground(ban));
+        ansi.a("\\             /");
+        ansi.a(foreground(Grey.getInstance()));
         if (Boolean.TRUE.equals(connections.get(IslandConnection.EAST)))
-            ansi.append("···");
+            ansi.a("···");
         else if (Boolean.TRUE.equals(connections.get(IslandConnection.SOUTH_EAST)))
-            ansi.append("·· ");
+            ansi.a("·· ");
         else
-            ansi.append("   ");
-        newLine(ansi);
+            ansi.a("   ");
+        ansi.a(newLine());
 
         // Line #8
 
-        ansi.append(Boolean.TRUE.equals(connections.get(IslandConnection.SOUTH_WEST)) ? "···" : "   ");
-        defaultForeground(ansi, ban);
-        ansi.append("\\  ");
-        parseStudent(students.get(HouseColor.RED), HouseColor.RED, ansi, ban);
-        ansi.append(" ");
-        parseStudent(students.get(HouseColor.YELLOW), HouseColor.YELLOW, ansi, ban);
-        ansi.append("  /");
-        foreground(ansi, Grey.getInstance());
-        ansi.append(Boolean.TRUE.equals(connections.get(IslandConnection.SOUTH_EAST)) ? "··· " : "    ");
-        newLine(ansi);
+        ansi.a(Boolean.TRUE.equals(connections.get(IslandConnection.SOUTH_WEST)) ? "···" : "   ");
+        ansi.a(defaultForeground(ban));
+        ansi.a("\\  ");
+        ansi.a(parseStudent(students.get(HouseColor.RED), HouseColor.RED, ban));
+        ansi.a(" ");
+        ansi.a(parseStudent(students.get(HouseColor.YELLOW), HouseColor.YELLOW, ban));
+        ansi.a("  /");
+        ansi.a(foreground(Grey.getInstance()));
+        ansi.a(Boolean.TRUE.equals(connections.get(IslandConnection.SOUTH_EAST)) ? "··· " : "    ");
+        ansi.a(newLine());
 
         // Line #9
 
-        ansi.append(Boolean.TRUE.equals(connections.get(IslandConnection.SOUTH_WEST)) ? "··  " : "    ");
-        defaultForeground(ansi, ban);
-        ansi.append("\\_________/");
-        foreground(ansi, Grey.getInstance());
-        ansi.append(Boolean.TRUE.equals(connections.get(IslandConnection.SOUTH_EAST)) ? "  ·· " : "     ");
-        foreground(ansi, Grey.getInstance());
-        newLine(ansi);
+        ansi.a(Boolean.TRUE.equals(connections.get(IslandConnection.SOUTH_WEST)) ? "··  " : "    ");
+        ansi.a(defaultForeground(ban));
+        ansi.a("\\_________/");
+        ansi.a(foreground(Grey.getInstance()));
+        ansi.a(Boolean.TRUE.equals(connections.get(IslandConnection.SOUTH_EAST)) ? "  ·· " : "     ");
+        ansi.a(foreground(Grey.getInstance()));
+        ansi.a(newLine());
 
         // Line #10
 
         if (id >= 7 && id <= 12) {
-            bold(ansi, true);
-            ansi.append("       ISL${id}        ".replace("${id}", String.format("%02d", id)));
-            bold(ansi, false);
+            ansi.a(bold(true));
+            ansi.a("       ISL${id}        ".replace("${id}", String.format("%02d", id)));
+            ansi.a(bold(false));
         } else if (Boolean.TRUE.equals(connections.get(IslandConnection.SOUTH)))
-            ansi.append(centeredDots);
+            ansi.a(centeredDots);
         else
-            ansi.append(blankLine);
-        newLine(ansi);
+            ansi.a(blankLine);
+        ansi.a(newLine());
 
         // Line #11
 
-        ansi.append(Boolean.TRUE.equals(connections.get(IslandConnection.SOUTH)) ? centeredDots : blankLine);
-        resetCursor(ansi);
+        ansi.a(Boolean.TRUE.equals(connections.get(IslandConnection.SOUTH)) ? centeredDots : blankLine);
+        ansi.a(resetCursor());
+
+        return ansi;
     }
 
     /**
@@ -224,33 +225,28 @@ class Island {
 
     /**
      * Moves the cursor in order to write a new line.
-     *
-     * @param ansi Ansi stream where to write.
      */
-    private static void newLine(Ansi ansi) {
-        moveCursor(ansi, IslandNewLine.getInstance());
+    private static Ansi newLine() {
+        return moveCursor(IslandNewLine.getInstance());
     }
 
     /**
      * Moves the cursor to the original position.
-     *
-     * @param ansi Ansi stream where to write.
      */
-    private static void resetCursor(Ansi ansi) {
-        moveCursor(ansi, IslandReset.getInstance());
+    private static Ansi resetCursor() {
+        return moveCursor(IslandReset.getInstance());
     }
 
     /**
      * Gets the default foreground for writing things.
      *
-     * @param ansi Ansi stream where to write.
      * @param ban  true if the island has been banned.
      */
-    private static void defaultForeground(Ansi ansi, boolean ban) {
+    private static Ansi defaultForeground(boolean ban) {
         if (ban)
-            foreground(ansi, Ban.getInstance());
+            return foreground(Ban.getInstance());
         else
-            foreground(ansi, White.getInstance());
+            return foreground(White.getInstance());
     }
 
     /**
@@ -258,20 +254,21 @@ class Island {
      *
      * @param studentsNumber The number of students of a specific color.
      * @param houseColor     The color of the students.
-     * @param ansi           Ansi stream where to write.
      * @param ban            true if the island has been banned.
      */
-    private static void parseStudent(int studentsNumber, HouseColor houseColor, Ansi ansi, boolean ban) {
+    private static Ansi parseStudent(int studentsNumber, HouseColor houseColor, boolean ban) {
+        Ansi ansi = new Ansi();
         if (studentsNumber != 0) {
-            foreground(ansi, getColourFrom(houseColor));
-            ansi.append("●");
-            defaultForeground(ansi, ban);
-            ansi.append(String.format("x%01d", studentsNumber));
+            ansi.a(foreground(getColourFrom(houseColor)));
+            ansi.a("●");
+            ansi.a(defaultForeground(ban));
+            ansi.a(String.format("x%01d", studentsNumber));
         } else {
-            foreground(ansi, DarkGrey.getInstance());
-            ansi.append("●x0");
-            defaultForeground(ansi, ban);
+            ansi.a(foreground(DarkGrey.getInstance()));
+            ansi.a("●x0");
+            ansi.a(defaultForeground(ban));
         }
+        return ansi;
     }
 
     /**

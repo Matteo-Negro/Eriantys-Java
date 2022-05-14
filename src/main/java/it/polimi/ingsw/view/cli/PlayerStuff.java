@@ -60,32 +60,28 @@ public class PlayerStuff {
 
         // Draw
 
-        moveCursor(ansi, SchoolBoardFirst.getInstance());
-        SchoolBoard.print(ansi, entrance, diningRoom, professors, TowerType.BLACK, 5, 0, 3, "Matteo", WizardType.YELLOW, true, false);
+        ansi.a(moveCursor(SchoolBoardFirst.getInstance()));
+        ansi.a(SchoolBoard.print(entrance, diningRoom, professors, TowerType.BLACK, 5, 0, 3, "Matteo", WizardType.YELLOW, true, false));
 
-        moveCursor(ansi, SchoolBoardE.getInstance());
-        SchoolBoard.print(ansi, entrance, diningRoom, professors, TowerType.WHITE, 3, 4, 0, "Motta", WizardType.WHITE, false, true);
+        ansi.a(moveCursor(SchoolBoardE.getInstance()));
+        ansi.a(SchoolBoard.print(entrance, diningRoom, professors, TowerType.WHITE, 3, 4, 0, "Motta", WizardType.WHITE, false, true));
 
-        moveCursor(ansi, SchoolBoardReset2Player.getInstance());
+        ansi.a(moveCursor(SchoolBoardReset2Player.getInstance()));
 
-        switch (playersNumber) {
-            case 3 -> {
-                moveCursor(ansi, SchoolBoardS.getInstance());
-                SchoolBoard.print(ansi, entrance, diningRoom, professors, TowerType.BLACK, 6, 5, 10, "Milici", WizardType.FUCHSIA, false, true);
-                moveCursor(ansi, SchoolBoardReset3Player.getInstance());
-            }
-            case 4 -> {
-                moveCursor(ansi, SchoolBoardS.getInstance());
-                SchoolBoard.print(ansi, entrance, diningRoom, professors, TowerType.BLACK, 6, 5, 10, "Milici", WizardType.FUCHSIA, false, true);
+        if (playersNumber == 3) {
+            ansi.a(moveCursor(SchoolBoardS.getInstance()));
+            ansi.a(SchoolBoard.print(entrance, diningRoom, professors, TowerType.BLACK, 6, 5, 10, "Milici", WizardType.FUCHSIA, false, true));
+            ansi.a(moveCursor(SchoolBoardReset3Player.getInstance()));
+        } else {
+            ansi.a(moveCursor(SchoolBoardS.getInstance()));
+            ansi.a(SchoolBoard.print(entrance, diningRoom, professors, TowerType.BLACK, 6, 5, 10, "Milici", WizardType.FUCHSIA, false, true));
 
-                moveCursor(ansi, SchoolBoardE.getInstance());
-                SchoolBoard.print(ansi, entrance, diningRoom, professors, TowerType.WHITE, 2, 10, 0, "Lazzarin", WizardType.GREEN, false, false);
+            ansi.a(moveCursor(SchoolBoardE.getInstance()));
+            ansi.a(SchoolBoard.print(entrance, diningRoom, professors, TowerType.WHITE, 2, 10, 0, "Lazzarin", WizardType.GREEN, false, false));
 
-                moveCursor(ansi, SchoolBoardReset4Player.getInstance());
-            }
-            default -> {
-            }
+            ansi.a(moveCursor(SchoolBoardReset4Player.getInstance()));
         }
+
         return ansi;
     }
 
@@ -111,22 +107,25 @@ public class PlayerStuff {
 
         // Draw
 
-        if (playersNumber == 2) moveCursor(ansi, SpecialCharacterFirst2Players.getInstance());
-        else if (playersNumber == 3) moveCursor(ansi, SpecialCharacterFirst3Players.getInstance());
-        else moveCursor(ansi, SpecialCharacterFirst4Players.getInstance());
+        ansi.a(switch (playersNumber) {
+            case 2 -> moveCursor(SpecialCharacterFirst2Players.getInstance());
+            case 3 -> moveCursor(SpecialCharacterFirst3Players.getInstance());
+            default -> moveCursor(SpecialCharacterFirst4Players.getInstance());
+        });
 
-        SpecialCharacter.print(ansi, 3, 1, false, 5, null);
+        ansi.a(SpecialCharacter.print(3, 1, false, 5, null));
 
-        moveCursor(ansi, SpecialCharacterE.getInstance());
-        SpecialCharacter.print(ansi, 12, 4, true, -1, studentsSix);
+        ansi.a(moveCursor(SpecialCharacterE.getInstance()));
+        ansi.a(SpecialCharacter.print(12, 4, true, -1, studentsSix));
 
-        moveCursor(ansi, SpecialCharacterE.getInstance());
-        SpecialCharacter.print(ansi, 7, 3, false, -1, null);
+        ansi.a(moveCursor(SpecialCharacterE.getInstance()));
+        ansi.a(SpecialCharacter.print(7, 3, false, -1, null));
 
-        if (playersNumber == 2) moveCursor(ansi, SpecialCharactersReset2Players.getInstance());
-        else if (playersNumber == 3) {
-            moveCursor(ansi, SpecialCharactersReset3Players.getInstance());
-        } else moveCursor(ansi, SpecialCharactersReset4Players.getInstance());
+        ansi.a(switch (playersNumber) {
+            case 2 -> moveCursor(SpecialCharactersReset2Players.getInstance());
+            case 3 -> moveCursor(SpecialCharactersReset3Players.getInstance());
+            default -> moveCursor(SpecialCharactersReset4Players.getInstance());
+        });
 
         return ansi;
     }
