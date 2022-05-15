@@ -1,4 +1,4 @@
-package it.polimi.ingsw.view.cli;
+package it.polimi.ingsw.view.cli.pages;
 
 import it.polimi.ingsw.view.cli.colours.Grey;
 import it.polimi.ingsw.view.cli.colours.White;
@@ -65,7 +65,7 @@ public class MainMenu {
      *
      * @return The generated Ansi stream.
      */
-    static Ansi printTitle() {
+    private static Ansi printTitle() {
         Ansi ansi = new Ansi();
         ansi.a(foreground(it.polimi.ingsw.view.cli.colours.Title.getInstance()));
         ansi.a(printText(title));
@@ -77,7 +77,7 @@ public class MainMenu {
      *
      * @return The generated Ansi stream.
      */
-    static Ansi printOptions() {
+    private static Ansi printOptions() {
         Ansi ansi = new Ansi();
         ansi.a(foreground(Grey.getInstance()));
         ansi.a(printText(options));

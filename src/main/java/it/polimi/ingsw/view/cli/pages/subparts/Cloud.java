@@ -1,4 +1,4 @@
-package it.polimi.ingsw.view.cli;
+package it.polimi.ingsw.view.cli.pages.subparts;
 
 import it.polimi.ingsw.utilities.HouseColor;
 import it.polimi.ingsw.view.cli.colours.DarkGrey;
@@ -41,7 +41,7 @@ public class Cloud {
      * @param studentsNumber Number of students that should be at most on the cloud.
      * @return The Ansi stream to print to terminal.
      */
-    static Ansi print(int id, List<HouseColor> students, int studentsNumber) {
+    public static Ansi print(int id, List<HouseColor> students, int studentsNumber) {
 
         Ansi ansi = new Ansi();
 
