@@ -3,24 +3,19 @@ package it.polimi.ingsw.network.client;
 import com.google.gson.JsonObject;
 import it.polimi.ingsw.clientController.GameServer;
 import it.polimi.ingsw.clientController.GameStatus;
-import it.polimi.ingsw.clientStatus.Status;
 import it.polimi.ingsw.utilities.ClientStates;
-import it.polimi.ingsw.utilities.GameControllerStates;
 import it.polimi.ingsw.utilities.MessageCreator;
 import it.polimi.ingsw.view.cli.GameCreation;
 import it.polimi.ingsw.view.cli.JoinGame;
 import it.polimi.ingsw.view.cli.MainMenu;
 import it.polimi.ingsw.view.cli.SplashScreen;
-import org.jline.reader.impl.completer.StringsCompleter;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 import org.jline.utils.Log;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static it.polimi.ingsw.view.cli.Utilities.*;
 import static org.fusesource.jansi.Ansi.ansi;
@@ -32,7 +27,7 @@ public class ClientCli extends Thread {
     private GameServer gameServer;
     private GameStatus gameStatus;
     private ClientStates state;
-    private Object serverReplyLock;
+    private final Object serverReplyLock;
 
     /**
      * Default constructor.
@@ -72,19 +67,19 @@ public class ClientCli extends Thread {
                             manageMainMenu();
 
                     case GAME_CREATION -> //wait for user input (player number and difficulty)
-                            //then wait for server reply
-                            //transition to game login
+                        //then wait for server reply
+                        //transition to game login
                             manageGameCreation();
                     case JOIN_GAME -> //wait for user input (game code)
-                            //then wait for server reply
-                            //transition to game login
+                        //then wait for server reply
+                        //transition to game login
                             manageJoinGame();
                     case GAME_LOGIN -> //wait for user input (username)
-                            //then wait for server reply
-                            //transition to game waiting room
+                        //then wait for server reply
+                        //transition to game waiting room
                             manageGameLogin();
                     case GAME_WAITINGROOM -> //wait for game start message from the server
-                            //transition to game running
+                        //transition to game running
                             manageWaitingRoom();
                     case GAME_RUNNING -> {
                         //manage game logic
@@ -153,10 +148,10 @@ public class ClientCli extends Thread {
         do {
             wrongCommand = false;
             GameCreation.print(terminal);
-            String playersNumber = readLine(" ", terminal, List.of(node("2"), node("3"), node("4"), node("esc")), false, null);
+            String playersNumber = readLine(" ", terminal, List.of(node("2"), node("3"), node("4"), node("exit")), false, null);
             switch (playersNumber) {
                 case "2", "3", "4" -> expectedPlayers = Integer.parseInt(playersNumber);
-                case "esc" -> {
+                case "exit" -> {
                     this.setClientState(ClientStates.MAIN_MENU);
                     this.resetGame();
                     return;
@@ -168,11 +163,11 @@ public class ClientCli extends Thread {
             terminal.writer().print(ansi().cursorMove(-1, 1));
             terminal.writer().print(ansi().saveCursorPosition());
             terminal.flush();
-            String difficulty = readLine(" ", terminal, List.of(node("normal"), node("expert"), node("esc")), false, null);
+            String difficulty = readLine(" ", terminal, List.of(node("normal"), node("expert"), node("exit")), false, null);
             switch (difficulty) {
                 case "normal" -> expert = false;
                 case "expert" -> expert = true;
-                case "esc" -> {
+                case "exit" -> {
                     this.setClientState(ClientStates.MAIN_MENU);
                     this.resetGame();
                     return;
@@ -202,8 +197,8 @@ public class ClientCli extends Thread {
         JoinGame.print(terminal);
 
 
-        String gameCode = readLine("", terminal, List.of(node("esc")), false, null);
-        if ("esc".equals(gameCode)) {
+        String gameCode = readLine(" ", terminal, List.of(node("exit")), false, null);
+        if ("exit".equals(gameCode)) {
             this.setClientState(ClientStates.MAIN_MENU);
             this.resetGame();
             return;
