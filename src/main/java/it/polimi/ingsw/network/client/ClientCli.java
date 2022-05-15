@@ -2,23 +2,19 @@ package it.polimi.ingsw.network.client;
 
 import com.google.gson.JsonObject;
 import it.polimi.ingsw.clientController.GameServer;
-import it.polimi.ingsw.clientController.GameStatus;
-import it.polimi.ingsw.clientStatus.Status;
+import it.polimi.ingsw.clientController.status.GameStatus;
 import it.polimi.ingsw.utilities.ClientStates;
-import it.polimi.ingsw.utilities.GameControllerStates;
 import it.polimi.ingsw.utilities.MessageCreator;
 import it.polimi.ingsw.view.cli.GameCreation;
 import it.polimi.ingsw.view.cli.JoinGame;
 import it.polimi.ingsw.view.cli.MainMenu;
 import it.polimi.ingsw.view.cli.SplashScreen;
-import org.jline.reader.impl.completer.StringsCompleter;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 import org.jline.utils.Log;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -55,37 +51,25 @@ public class ClientCli extends Thread {
         return this.gameStatus;
     }
 
+    public Object getServerReplyLock() {
+        return serverReplyLock;
+    }
+
     public String getUserName() {
         return this.userName;
     }
-
 
     public void run() {
         boolean process = true;
         try {
             while (process) {
                 switch (getClientState()) {
-                    case START_SCREEN -> // Splash screen printing and control
-                            manageStartScreen();
-
-                    case MAIN_MENU -> //wait for user input (game creation or join game)
-                            manageMainMenu();
-
-                    case GAME_CREATION -> //wait for user input (player number and difficulty)
-                            //then wait for server reply
-                            //transition to game login
-                            manageGameCreation();
-                    case JOIN_GAME -> //wait for user input (game code)
-                            //then wait for server reply
-                            //transition to game login
-                            manageJoinGame();
-                    case GAME_LOGIN -> //wait for user input (username)
-                            //then wait for server reply
-                            //transition to game waiting room
-                            manageGameLogin();
-                    case GAME_WAITINGROOM -> //wait for game start message from the server
-                            //transition to game running
-                            manageWaitingRoom();
+                    case START_SCREEN -> manageStartScreen();
+                    case MAIN_MENU -> manageMainMenu();
+                    case GAME_CREATION -> manageGameCreation();
+                    case JOIN_GAME -> manageJoinGame();
+                    case GAME_LOGIN -> manageGameLogin();
+                    case GAME_WAITINGROOM -> manageWaitingRoom();
                     case GAME_RUNNING -> {
                         //manage game logic
                         //when end game message arrives from the server -> transition to end game
@@ -93,8 +77,8 @@ public class ClientCli extends Thread {
                     case END_GAME -> {
                         //visualize end game screen
                         //transition to main menu
-
                     }
+                    case CONNECTION_LOST -> manageConnectionLost();
                     case EXIT -> process = false;
                 }
             }
@@ -120,7 +104,7 @@ public class ClientCli extends Thread {
                 Socket hostSocket = new Socket(hostIp, hostTcpPort);
                 hostSocket.setSoTimeout(10000);
                 this.gameServer = new GameServer(hostSocket, this);
-                gameServer.start();
+                this.gameServer.start();
                 setClientState(ClientStates.MAIN_MENU);
             } catch (IOException | NumberFormatException e) {
                 printError(terminal, "Wrong data provided or server unreachable.");
@@ -184,13 +168,14 @@ public class ClientCli extends Thread {
 
         //Send command to the server and wait for a response.
         this.gameServer.sendCommand(MessageCreator.gameCreation(expectedPlayers, expert));
-        try {
-            this.serverReplyLock.wait(10000);
+        System.out.println("gameCreation request");
+        while(this.getClientState().equals(ClientStates.GAME_CREATION));
+        /*try {
+            this.getGameServer().wait(10000);
         } catch (InterruptedException ie) {
             printError(terminal, "Connection error.");
             this.resetGame();
-
-        }
+        }*/
         if (this.getClientState().equals(ClientStates.GAME_CREATION)) {
             printError(terminal, "Connection error.");
             this.resetGame();
@@ -210,7 +195,7 @@ public class ClientCli extends Thread {
         }
 
         //Send command to the server and wait for a response.
-        this.gameServer.sendCommand(MessageCreator.EnterGame(gameCode));
+        this.gameServer.sendCommand(MessageCreator.enterGame(gameCode));
 
         try {
             this.serverReplyLock.wait(10000);
@@ -226,6 +211,7 @@ public class ClientCli extends Thread {
 
     private void manageGameLogin() {
         clearScreen(terminal, false);
+        JoinGame.print(terminal);
         //TODO Print game login screen on cli.
 
         String username;
@@ -253,6 +239,7 @@ public class ClientCli extends Thread {
             printError(terminal, "Connection error.");
             this.resetGame();
         }
+
         if (this.getClientState().equals(ClientStates.GAME_LOGIN)) {
             printError(terminal, "Connection error.");
             this.resetGame();
@@ -261,6 +248,7 @@ public class ClientCli extends Thread {
 
     private void manageWaitingRoom() {
         clearScreen(terminal, false);
+        System.out.println("* waitingRoom screen.");
         //TODO Print waiting room screen on cli.
 
 
@@ -279,11 +267,11 @@ public class ClientCli extends Thread {
     }
 
     private void manageGameRunning() {
-        clearScreen(terminal, false);
+        /* clearScreen(terminal, false);
         //TODO Print current status screen on cli.
 
         String command = readLine(" ", terminal, null, false, null);
-        this.manageUserCommand(command);
+        */
     }
 
     private void manageEndGame() {
@@ -303,11 +291,11 @@ public class ClientCli extends Thread {
         } while (this.getClientState().equals(ClientStates.END_GAME));
     }
 
-    public void manageMessage(JsonObject message) {
-
-    }
-
-    private void manageUserCommand(String command) {
+    public void manageConnectionLost() {
+        this.resetGame();
+        this.getGameServer().interrupt();
+        this.gameServer = null;
+        this.setClientState(ClientStates.START_SCREEN);
     }
 
     public ClientStates getClientState() {
@@ -318,10 +306,12 @@ public class ClientCli extends Thread {
         this.state = newState;
     }
 
+    public void initializeGameStatus(GameStatus newGameStatus){
+        this.gameStatus = newGameStatus;
+    }
+
     private void resetGame() {
         this.setClientState(ClientStates.MAIN_MENU);
-        if (this.gameStatus != null) {
-            this.gameStatus = null;
-        }
+        this.gameStatus = null;
     }
 }

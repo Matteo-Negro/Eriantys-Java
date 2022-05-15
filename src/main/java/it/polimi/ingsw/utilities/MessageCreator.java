@@ -208,7 +208,7 @@ public class MessageCreator {
      * @param code The gamecode of the game the player wants to join.
      * @return JsonObject which represents the message.
      */
-    public static JsonObject EnterGame(String code){
+    public static JsonObject enterGame(String code){
         JsonObject command = new JsonObject();
         command.addProperty("type", "enterGame");
         command.addProperty("code", code);

@@ -44,15 +44,26 @@ public class GameBoard {
         this.professors = new HashMap<>();
         this.influenceBonus = null;
         this.tieWinner = null;
+        System.out.println("0");
         temp = this.bag.boardSetUp();
+        System.out.println("1");
         for (int i = 0; i < 12; i++) {
-            if (i == 0 || i == 5) this.islands.add(new Island(null, i));
-            else this.islands.add(new Island(temp.get(i < 5 ? i : i - 1), i));
+            System.out.println("2");
+            if (i == 0 || i == 6){
+                System.out.println("3");
+                this.islands.add(new Island(null, i));
+            }
+            else this.islands.add(new Island(temp.get(i < 6 ? i - 1 : i - 2), i));
+            System.out.println("4");
         }
+
         if (isExp) {
+
             for (int i = 0; i < 12; i++) randomVector.add(i);
+
             Collections.shuffle(randomVector);
             for (int i = 0; i < 3; i++) {
+
                 Map<HouseColor, Integer> students = new EnumMap<>(HouseColor.class);
                 students.put(HouseColor.RED, 0);
                 students.put(HouseColor.BLUE, 0);

@@ -69,13 +69,13 @@ public class User extends Thread {
      */
     @Override
     public void run() {
-
+        System.out.println("\n User running");
         JsonObject incomingMessage;
 
-        new Thread(ping).start();
+        this.ping.start();
 
         while (true) {
-
+            System.out.println("\n check");
             synchronized (connectedLock) {
                 if (!connected)
                     break;
@@ -83,15 +83,15 @@ public class User extends Thread {
 
             try {
                 incomingMessage = getCommand();
+                System.out.println("\n message arrived");
                 if (!incomingMessage.get("type").getAsString().equals("pong") && !incomingMessage.get("type").getAsString().equals("error"))
                     manageCommand(incomingMessage);
             } catch (IOException | IllegalMoveException e) {
                 // If socket time out expires.
+                System.out.println("\n exception");
                 disconnected();
             }
         }
-
-        ping.interrupt();
     }
 
     /**
@@ -123,9 +123,16 @@ public class User extends Thread {
      */
     private void manageCommand(JsonObject command) throws IllegalMoveException {
         switch (command.get("type").getAsString()) {
-            case "ping" -> sendMessage(MessageCreator.pong());
-            case "gameCreation" -> sendMessage(MessageCreator.gameCreation(Matchmaking.gameCreation(command, server)));
+            /*case "pong" -> {
+                System.out.println("\n pong arrived");
+            }*/
+            case "gameCreation" -> {
+                System.out.println("\n GameCreation message arrived");
+                sendMessage(MessageCreator.gameCreation(Matchmaking.gameCreation(command, server)));
+                System.out.println("\n GameCreation reply sent");
+            }
             case "enterGame" -> {
+                System.out.println("\n enterGame message arrived");
                 try {
                     gameController = Matchmaking.enterGame(command.get("code").getAsString(), server);
                 } catch (FullGameException | GameNotFoundException e) {
@@ -134,6 +141,7 @@ public class User extends Thread {
                 sendMessage(MessageCreator.enterGame(gameController));
             }
             case "login" -> {
+                System.out.println("\n login message message arrived");
                 logged = Matchmaking.login(gameController, command.get("name").getAsString(), this);
                 sendMessage(MessageCreator.login(logged));
                 if (logged) {
@@ -168,6 +176,7 @@ public class User extends Thread {
         synchronized (connectedLock) {
             connected = false;
         }
+        this.ping.stopPing();
         removeFromGame();
     }
 
@@ -175,6 +184,7 @@ public class User extends Thread {
      * If the user was in a game, s/he's removed from the game and the username is reset.
      */
     private void removeFromGame() {
+        System.out.println("\nUser disconnected");
         if (gameController == null)
             return;
         gameController.removeUser(this);
