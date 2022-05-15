@@ -5,6 +5,7 @@ import it.polimi.ingsw.clientController.GameServer;
 import it.polimi.ingsw.clientStatus.Status;
 import it.polimi.ingsw.utilities.ClientStates;
 import it.polimi.ingsw.utilities.GameControllerStates;
+import it.polimi.ingsw.view.cli.GameCreation;
 import it.polimi.ingsw.view.cli.MainMenu;
 import it.polimi.ingsw.view.cli.SplashScreen;
 import org.jline.reader.impl.completer.StringsCompleter;
@@ -45,54 +46,62 @@ public class ClientCli extends Thread {
     }
 
     public void run() {
-        while (true) {
-            switch (getClientState()) {
-                case START_SCREEN -> {
-                    // Splash screen printing and control
-                    manageStartScreen();
-                }
+        boolean process = true;
+        try {
+            while (process) {
+                switch (getClientState()) {
+                    case START_SCREEN -> {
+                        // Splash screen printing and control
+                        manageStartScreen();
+                    }
 
-                case MAIN_MENU -> {
-                    //wait for user input (game creation or join game)
-                    manageMainMenu();
-                }
+                    case MAIN_MENU -> {
+                        //wait for user input (game creation or join game)
+                        manageMainMenu();
+                    }
 
-                case GAME_CREATION -> {
-                    //wait for user input (player number and difficulty)
-                    //then wait for server reply
-                    //transition to game login
-                    manageGameCreation();
-                }
-                case JOIN_GAME -> {
-                    //wait for user input (game code)
-                    //then wait for server reply
-                    //transition to game login
-                    manageJoinGame();
-                }
-                case GAME_LOGIN -> {
-                    //wait for user input (username)
-                    //then wait for server reply
-                    //transition to game waiting room
-                    manageGameLogin();
-                }
-                case GAME_WAITINGROOM -> {
-                    //wait for game start message from the server
-                    //transition to game running
-                    manageWaitingRoom();
-                }
-                case GAME_RUNNING -> {
-                    //manage game logic
-                    //when end game message arrives from the server -> transition to end game
-                }
-                case END_GAME -> {
-                    //visualize end game screen
-                    //transition to main menu
-                }
-                case EXIT -> {
-                    clearScreen(terminal, true);
-                    return;
+                    case GAME_CREATION -> {
+                        //wait for user input (player number and difficulty)
+                        //then wait for server reply
+                        //transition to game login
+                        manageGameCreation();
+                    }
+                    case JOIN_GAME -> {
+                        //wait for user input (game code)
+                        //then wait for server reply
+                        //transition to game login
+                        manageJoinGame();
+                    }
+                    case GAME_LOGIN -> {
+                        //wait for user input (username)
+                        //then wait for server reply
+                        //transition to game waiting room
+                        manageGameLogin();
+                    }
+                    case GAME_WAITINGROOM -> {
+                        //wait for game start message from the server
+                        //transition to game running
+                        manageWaitingRoom();
+                    }
+                    case GAME_RUNNING -> {
+                        //manage game logic
+                        //when end game message arrives from the server -> transition to end game
+                    }
+                    case END_GAME -> {
+                        //visualize end game screen
+                        //transition to main menu
+
+                    }
+                    case EXIT -> {
+                        process = false;
+                    }
                 }
             }
+        } catch (Exception e) {
+            Log.error(e.getMessage());
+        } finally {
+            clearScreen(terminal, true);
+            // System.exit(0);
         }
     }
 
@@ -137,8 +146,14 @@ public class ClientCli extends Thread {
     private void manageGameCreation() {
         //TODO Print game creation screen on cli.
 
-        int playersNumber = Integer.parseInt(readLine(" ", terminal, null, false, null));
-        String difficulty = readLine(" ", terminal, null, false, null);
+        GameCreation.print(terminal);
+
+        int playersNumber = Integer.parseInt(readLine(" ", terminal, List.of(node("2"), node("3"), node("4")), false, null));
+        terminal.writer().print(ansi().restoreCursorPosition());
+        terminal.writer().print(ansi().cursorMove(-1, 1));
+        terminal.writer().print(ansi().saveCursorPosition());
+        terminal.flush();
+        String difficulty = readLine(" ", terminal, List.of(node("normal"), node("expert")), false, null);
         //TODO create and send gameCreation command to the server.
         //wait for server reply
     }
