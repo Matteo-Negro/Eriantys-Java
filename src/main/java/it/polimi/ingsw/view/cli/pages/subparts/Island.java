@@ -1,4 +1,4 @@
-package it.polimi.ingsw.view.cli;
+package it.polimi.ingsw.view.cli.pages.subparts;
 
 import it.polimi.ingsw.utilities.HouseColor;
 import it.polimi.ingsw.utilities.TowerType;
@@ -32,7 +32,7 @@ import static it.polimi.ingsw.view.cli.Utilities.*;
  *
  * @author Riccardo Motta
  */
-class Island {
+public class Island {
 
     private Island() {
     }
@@ -49,7 +49,7 @@ class Island {
      * @param prev         Indicates whether the island is connected to the previous one or not.
      * @return The Ansi stream to print to terminal.
      */
-    static Ansi print(int id,
+    public static Ansi print(int id,
                       Map<HouseColor, Integer> students,
                       TowerType tower,
                       boolean motherNature,

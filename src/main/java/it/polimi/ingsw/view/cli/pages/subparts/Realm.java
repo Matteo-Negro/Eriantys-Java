@@ -1,7 +1,9 @@
-package it.polimi.ingsw.view.cli;
+package it.polimi.ingsw.view.cli.pages.subparts;
 
 import it.polimi.ingsw.utilities.HouseColor;
 import it.polimi.ingsw.view.cli.coordinates.*;
+import it.polimi.ingsw.view.cli.pages.subparts.Cloud;
+import it.polimi.ingsw.view.cli.pages.subparts.Island;
 import org.fusesource.jansi.Ansi;
 import org.jline.terminal.Terminal;
 

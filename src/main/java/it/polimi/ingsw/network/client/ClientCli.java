@@ -2,9 +2,14 @@ package it.polimi.ingsw.network.client;
 
 import com.google.gson.JsonObject;
 import it.polimi.ingsw.clientController.GameServer;
+import it.polimi.ingsw.clientController.GameStatus;
 import it.polimi.ingsw.clientController.status.GameStatus;
 import it.polimi.ingsw.utilities.ClientStates;
 import it.polimi.ingsw.utilities.MessageCreator;
+import it.polimi.ingsw.view.cli.pages.GameCreation;
+import it.polimi.ingsw.view.cli.pages.JoinGame;
+import it.polimi.ingsw.view.cli.pages.MainMenu;
+import it.polimi.ingsw.view.cli.pages.SplashScreen;
 import it.polimi.ingsw.view.cli.GameCreation;
 import it.polimi.ingsw.view.cli.JoinGame;
 import it.polimi.ingsw.view.cli.MainMenu;
@@ -16,7 +21,6 @@ import org.jline.utils.Log;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.List;
-import java.util.Map;
 
 import static it.polimi.ingsw.view.cli.Utilities.*;
 import static org.fusesource.jansi.Ansi.ansi;
@@ -28,7 +32,7 @@ public class ClientCli extends Thread {
     private GameServer gameServer;
     private GameStatus gameStatus;
     private ClientStates state;
-    private Object serverReplyLock;
+    private final Object serverReplyLock;
 
     /**
      * Default constructor.
@@ -137,10 +141,10 @@ public class ClientCli extends Thread {
         do {
             wrongCommand = false;
             GameCreation.print(terminal);
-            String playersNumber = readLine(" ", terminal, List.of(node("2"), node("3"), node("4"), node("esc")), false, null);
+            String playersNumber = readLine(" ", terminal, List.of(node("2"), node("3"), node("4"), node("exit")), false, null);
             switch (playersNumber) {
                 case "2", "3", "4" -> expectedPlayers = Integer.parseInt(playersNumber);
-                case "esc" -> {
+                case "exit" -> {
                     this.setClientState(ClientStates.MAIN_MENU);
                     this.resetGame();
                     return;
@@ -152,11 +156,11 @@ public class ClientCli extends Thread {
             terminal.writer().print(ansi().cursorMove(-1, 1));
             terminal.writer().print(ansi().saveCursorPosition());
             terminal.flush();
-            String difficulty = readLine(" ", terminal, List.of(node("normal"), node("expert"), node("esc")), false, null);
+            String difficulty = readLine(" ", terminal, List.of(node("normal"), node("expert"), node("exit")), false, null);
             switch (difficulty) {
                 case "normal" -> expert = false;
                 case "expert" -> expert = true;
-                case "esc" -> {
+                case "exit" -> {
                     this.setClientState(ClientStates.MAIN_MENU);
                     this.resetGame();
                     return;
@@ -187,8 +191,8 @@ public class ClientCli extends Thread {
         JoinGame.print(terminal);
 
 
-        String gameCode = readLine("", terminal, List.of(node("esc")), false, null);
-        if ("esc".equals(gameCode)) {
+        String gameCode = readLine(" ", terminal, List.of(node("exit")), false, null);
+        if ("exit".equals(gameCode)) {
             this.setClientState(ClientStates.MAIN_MENU);
             this.resetGame();
             return;
@@ -211,7 +215,6 @@ public class ClientCli extends Thread {
 
     private void manageGameLogin() {
         clearScreen(terminal, false);
-        JoinGame.print(terminal);
         //TODO Print game login screen on cli.
 
         String username;

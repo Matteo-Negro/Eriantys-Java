@@ -183,7 +183,7 @@ public class Utilities {
      * @param houseColor The student's color.
      * @return The corresponding color.
      */
-    static Colour getColourFrom(HouseColor houseColor) {
+    public static Colour getColourFrom(HouseColor houseColor) {
         return switch (houseColor) {
             case BLUE -> HouseBlue.getInstance();
             case FUCHSIA -> HouseFuchsia.getInstance();
