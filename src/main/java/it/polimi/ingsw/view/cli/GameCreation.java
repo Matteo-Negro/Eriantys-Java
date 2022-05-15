@@ -34,7 +34,7 @@ public class GameCreation {
     }
 
     /**
-     * Prints the whole game selection centering it.
+     * Prints the whole game creation centering it.
      *
      * @param terminal Terminal where to write.
      */
@@ -45,7 +45,7 @@ public class GameCreation {
     }
 
     /**
-     * Prints the whole game selection.
+     * Prints the whole game creation.
      *
      * @return The generated Ansi stream.
      */

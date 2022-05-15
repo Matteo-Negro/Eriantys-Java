@@ -6,6 +6,7 @@ import it.polimi.ingsw.clientStatus.Status;
 import it.polimi.ingsw.utilities.ClientStates;
 import it.polimi.ingsw.utilities.GameControllerStates;
 import it.polimi.ingsw.view.cli.GameCreation;
+import it.polimi.ingsw.view.cli.JoinGame;
 import it.polimi.ingsw.view.cli.MainMenu;
 import it.polimi.ingsw.view.cli.SplashScreen;
 import org.jline.reader.impl.completer.StringsCompleter;
@@ -160,6 +161,8 @@ public class ClientCli extends Thread {
 
     private void manageJoinGame() {
         //TODO Print join game screen on cli.
+
+        JoinGame.print(terminal);
 
         String gameCode = readLine(" ", terminal, null, false, null);
         //TODO Create and send joinGame command to the server.
