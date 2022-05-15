@@ -3,12 +3,13 @@ package it.polimi.ingsw.view.cli;
 import it.polimi.ingsw.utilities.HouseColor;
 import it.polimi.ingsw.view.cli.colours.*;
 import org.fusesource.jansi.Ansi;
-import org.jline.reader.Completer;
+import org.jline.builtins.Completers.TreeCompleter;
 import org.jline.reader.History;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
 import org.jline.terminal.Terminal;
 
+import java.util.List;
 import java.util.regex.Pattern;
 
 import static org.fusesource.jansi.Ansi.ansi;
@@ -124,6 +125,7 @@ public class Utilities {
 
     /**
      * Prints a block of text.
+     *
      * @param text Text to print.
      * @return The Ansi
      */
@@ -143,15 +145,15 @@ public class Utilities {
      *
      * @param prefix      Prefix string to put before reading.
      * @param terminal    Terminal where to read and write.
-     * @param completer   Completer for autocompletion.
+     * @param completers  Completers for autocompletion.
      * @param suggestions Enables suggestions.
      * @param history     History where to write commands for future use
      * @return String to write.
      */
-    public static String readLine(String prefix, Terminal terminal, Completer completer, boolean suggestions, History history) {
+    public static String readLine(String prefix, Terminal terminal, List<TreeCompleter.Node> completers, boolean suggestions, History history) {
         return fixString(LineReaderBuilder.builder()
                 .terminal(terminal)
-                .completer(completer)
+                .completer(completers != null ? new TreeCompleter(completers) : null)
                 .option(LineReader.Option.CASE_INSENSITIVE, true)
                 .option(LineReader.Option.AUTO_MENU, suggestions)
                 .option(LineReader.Option.AUTO_LIST, suggestions)
