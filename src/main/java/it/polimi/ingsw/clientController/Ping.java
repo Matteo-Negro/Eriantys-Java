@@ -18,11 +18,11 @@ public class Ping extends Thread {
 
     public void run() {
         JsonObject pongMessage = new JsonObject();
-        //pongMessage.addProperty("type", "pong");
+        pongMessage.addProperty("type", "pong");
         //System.out.println("\nPong running");
         while (!stop) {
             synchronized (lock) {
-                System.out.println("\nPong sent");
+                //System.out.println("\nPong sent");
                 this.host.sendCommand(pongMessage);
                 try {
                     lock.wait(1000);

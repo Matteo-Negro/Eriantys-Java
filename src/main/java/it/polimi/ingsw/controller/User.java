@@ -75,7 +75,6 @@ public class User extends Thread {
         this.ping.start();
 
         while (true) {
-            System.out.println("\n check");
             synchronized (connectedLock) {
                 if (!connected)
                     break;
@@ -83,14 +82,13 @@ public class User extends Thread {
 
             try {
                 incomingMessage = getCommand();
-                System.out.println("\n message arrived");
                 if (!incomingMessage.get("type").getAsString().equals("pong") && !incomingMessage.get("type").getAsString().equals("error"))
                     manageCommand(incomingMessage);
             } catch (IOException | IllegalMoveException e) {
                 // If socket time out expires.
-                System.out.println("\n exception");
                 disconnected();
             }
+
         }
     }
 
@@ -123,9 +121,6 @@ public class User extends Thread {
      */
     private void manageCommand(JsonObject command) throws IllegalMoveException {
         switch (command.get("type").getAsString()) {
-            /*case "pong" -> {
-                System.out.println("\n pong arrived");
-            }*/
             case "gameCreation" -> {
                 System.out.println("\n GameCreation message arrived");
                 sendMessage(MessageCreator.gameCreation(Matchmaking.gameCreation(command, server)));

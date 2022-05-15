@@ -52,7 +52,7 @@ public class GameServer extends Thread {
 
             try {
                 incomingMessage = getMessage();
-                System.out.println(incomingMessage.get("type").getAsString());
+                //System.out.println(incomingMessage.get("type").getAsString());
                 manageMessage(incomingMessage);
             } catch (IOException ioe) {
                 this.disconnected();
@@ -92,7 +92,7 @@ public class GameServer extends Thread {
                 int expectedPlayers = message.get("expectedPlayers").getAsInt();
                 JsonArray players = message.get("players").getAsJsonArray();
 
-                for (int i = 0; i < expectedPlayers; i++) {
+                for (int i = 0; i < players.size(); i++) {
 
                     String player = players.get(i).getAsJsonObject().get("name").getAsString();
                     boolean online = players.get(i).getAsJsonObject().get("online").getAsBoolean();
@@ -101,10 +101,10 @@ public class GameServer extends Thread {
 
                 }
                 GameStatus newGameStatus = new GameStatus(expectedPlayers, waitingRoom);
-
+                this.client.initializeGameStatus(newGameStatus);
                 this.client.setClientState(ClientStates.GAME_LOGIN);
             }
-            this.notify();
+            //this.notify();
         }
         else disconnected();
     }

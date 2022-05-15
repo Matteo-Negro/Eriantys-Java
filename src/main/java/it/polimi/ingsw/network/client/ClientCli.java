@@ -2,7 +2,6 @@ package it.polimi.ingsw.network.client;
 
 import com.google.gson.JsonObject;
 import it.polimi.ingsw.clientController.GameServer;
-import it.polimi.ingsw.clientController.GameStatus;
 import it.polimi.ingsw.clientController.status.GameStatus;
 import it.polimi.ingsw.utilities.ClientStates;
 import it.polimi.ingsw.utilities.MessageCreator;
@@ -10,10 +9,6 @@ import it.polimi.ingsw.view.cli.pages.GameCreation;
 import it.polimi.ingsw.view.cli.pages.JoinGame;
 import it.polimi.ingsw.view.cli.pages.MainMenu;
 import it.polimi.ingsw.view.cli.pages.SplashScreen;
-import it.polimi.ingsw.view.cli.GameCreation;
-import it.polimi.ingsw.view.cli.JoinGame;
-import it.polimi.ingsw.view.cli.MainMenu;
-import it.polimi.ingsw.view.cli.SplashScreen;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 import org.jline.utils.Log;
