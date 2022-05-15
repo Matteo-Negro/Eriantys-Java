@@ -186,6 +186,13 @@ public class MessageCreator {
         return reply;
     }
 
+    /**
+     * Creates the "gameCreation" request message.
+     *
+     * @param playersNumber The players number of the game.
+     * @param expert A boolean parameter which indicates the difficulty of the desired game.
+     * @return JsonObject which represents the message.
+     */
     public static JsonObject gameCreation(int playersNumber, boolean expert){
         JsonObject command = new JsonObject();
         command.addProperty("type", "gameCreation");
@@ -195,10 +202,42 @@ public class MessageCreator {
         return command;
     }
 
+    /**
+     * Creates the "enterGame" request message.
+     *
+     * @param code The gamecode of the game the player wants to join.
+     * @return JsonObject which represents the message.
+     */
     public static JsonObject EnterGame(String code){
         JsonObject command = new JsonObject();
         command.addProperty("type", "enterGame");
         command.addProperty("code", code);
+
+        return command;
+    }
+
+    /**
+     * Creates the "login" request message.
+     *
+     * @param username The name of the player who wants to join the game.
+     * @return JsonObject which represents the message.
+     */
+    public static JsonObject login(String username){
+        JsonObject command = new JsonObject();
+        command.addProperty("type", "login");
+        command.addProperty("name", username);
+
+        return command;
+    }
+
+    /**
+     * Creates the "logout" request message.
+     *
+     * @return JsonObject which represents the message.
+     */
+    public static JsonObject logout(){
+        JsonObject command = new JsonObject();
+        command.addProperty("type", "logout");
 
         return command;
     }

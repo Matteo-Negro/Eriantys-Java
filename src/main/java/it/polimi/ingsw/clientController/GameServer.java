@@ -62,8 +62,9 @@ public class GameServer extends Thread {
         outputStream.flush();
     }
 
-    private void disconnected() {
+    public void disconnected() {
         setConnected(false);
+        this.pong.interrupt();
         this.client.setClientState(ClientStates.CONNECTION_LOST);
     }
 

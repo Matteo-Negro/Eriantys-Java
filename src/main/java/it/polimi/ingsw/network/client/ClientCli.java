@@ -2,9 +2,11 @@ package it.polimi.ingsw.network.client;
 
 import com.google.gson.JsonObject;
 import it.polimi.ingsw.clientController.GameServer;
+import it.polimi.ingsw.clientController.GameStatus;
 import it.polimi.ingsw.clientStatus.Status;
 import it.polimi.ingsw.utilities.ClientStates;
 import it.polimi.ingsw.utilities.GameControllerStates;
+import it.polimi.ingsw.utilities.MessageCreator;
 import it.polimi.ingsw.view.cli.GameCreation;
 import it.polimi.ingsw.view.cli.JoinGame;
 import it.polimi.ingsw.view.cli.MainMenu;
@@ -25,65 +27,65 @@ import static org.fusesource.jansi.Ansi.ansi;
 import static org.jline.builtins.Completers.TreeCompleter.node;
 
 public class ClientCli extends Thread {
-    private final String phase;
-    private final GameControllerStates subPhase;
     private final Terminal terminal;
-    private final Map<String, String> waitingRoom;
     private String userName;
     private GameServer gameServer;
-    private Status status;
+    private GameStatus gameStatus;
     private ClientStates state;
+    private Object serverReplyLock;
 
     /**
      * Default constructor.
      */
     public ClientCli() throws IOException {
         this.state = ClientStates.START_SCREEN;
-        this.phase = null;
-        this.subPhase = null;
-        this.waitingRoom = new HashMap<>();
+        this.gameServer = null;
+        this.gameStatus = null;
+        this.userName = null;
+        this.serverReplyLock = new Object();
         this.terminal = TerminalBuilder.terminal();
         clearScreen(terminal, false);
     }
+
+    public GameServer getGameServer() {
+        return this.gameServer;
+    }
+
+    public GameStatus getGameStatus() {
+        return this.gameStatus;
+    }
+
+    public String getUserName() {
+        return this.userName;
+    }
+
 
     public void run() {
         boolean process = true;
         try {
             while (process) {
                 switch (getClientState()) {
-                    case START_SCREEN -> {
-                        // Splash screen printing and control
-                        manageStartScreen();
-                    }
+                    case START_SCREEN -> // Splash screen printing and control
+                            manageStartScreen();
 
-                    case MAIN_MENU -> {
-                        //wait for user input (game creation or join game)
-                        manageMainMenu();
-                    }
+                    case MAIN_MENU -> //wait for user input (game creation or join game)
+                            manageMainMenu();
 
-                    case GAME_CREATION -> {
-                        //wait for user input (player number and difficulty)
-                        //then wait for server reply
-                        //transition to game login
-                        manageGameCreation();
-                    }
-                    case JOIN_GAME -> {
-                        //wait for user input (game code)
-                        //then wait for server reply
-                        //transition to game login
-                        manageJoinGame();
-                    }
-                    case GAME_LOGIN -> {
-                        //wait for user input (username)
-                        //then wait for server reply
-                        //transition to game waiting room
-                        manageGameLogin();
-                    }
-                    case GAME_WAITINGROOM -> {
-                        //wait for game start message from the server
-                        //transition to game running
-                        manageWaitingRoom();
-                    }
+                    case GAME_CREATION -> //wait for user input (player number and difficulty)
+                            //then wait for server reply
+                            //transition to game login
+                            manageGameCreation();
+                    case JOIN_GAME -> //wait for user input (game code)
+                            //then wait for server reply
+                            //transition to game login
+                            manageJoinGame();
+                    case GAME_LOGIN -> //wait for user input (username)
+                            //then wait for server reply
+                            //transition to game waiting room
+                            manageGameLogin();
+                    case GAME_WAITINGROOM -> //wait for game start message from the server
+                            //transition to game running
+                            manageWaitingRoom();
                     case GAME_RUNNING -> {
                         //manage game logic
                         //when end game message arrives from the server -> transition to end game
@@ -93,9 +95,7 @@ public class ClientCli extends Thread {
                         //transition to main menu
 
                     }
-                    case EXIT -> {
-                        process = false;
-                    }
+                    case EXIT -> process = false;
                 }
             }
         } catch (Exception e) {
@@ -107,6 +107,7 @@ public class ClientCli extends Thread {
     }
 
     private void manageStartScreen() {
+        clearScreen(terminal, false);
         do {
             SplashScreen.print(terminal);
             String hostIp = readLine(" ", terminal, List.of(node("localhost"), node("127.0.0.1")), false, null);
@@ -114,79 +115,171 @@ public class ClientCli extends Thread {
             terminal.writer().print(ansi().cursorMove(-18, 1));
             terminal.writer().print(ansi().saveCursorPosition());
             terminal.flush();
-            int hostTcpPort = Integer.parseInt(readLine(" ", terminal, List.of(node("36803")), false, null));
-            try (Socket hostSocket = new Socket(hostIp, hostTcpPort)) {
+            try {
+                int hostTcpPort = Integer.parseInt(readLine(" ", terminal, List.of(node("36803")), false, null));
+                Socket hostSocket = new Socket(hostIp, hostTcpPort);
                 hostSocket.setSoTimeout(10000);
                 this.gameServer = new GameServer(hostSocket, this);
                 gameServer.start();
                 setClientState(ClientStates.MAIN_MENU);
-            } catch (IOException e) {
+            } catch (IOException | NumberFormatException e) {
                 printError(terminal, "Wrong data provided or server unreachable.");
             }
         } while (gameServer == null);
-        clearScreen(terminal, false);
     }
 
     private void manageMainMenu() {
-        MainMenu.print(terminal);
-        int option;
-        try {
-            option = Integer.parseInt(readLine(" ", terminal, List.of(node("1"), node("2")), false, null));
-        } catch (NumberFormatException e) {
-            option = 0;
-        }
-        switch (option) {
-            case 1 -> this.setClientState(ClientStates.GAME_CREATION);
-            case 2 -> this.setClientState(ClientStates.JOIN_GAME);
-            default -> printError(terminal, "Wrong command.");
-        }
-        if (!this.getClientState().equals(ClientStates.MAIN_MENU))
-            clearScreen(terminal, false);
+        clearScreen(terminal, false);
+        String option;
+
+        do {
+            MainMenu.print(terminal);
+            option = readLine(" ", terminal, List.of(node("1"), node("2")), false, null);
+
+            switch (option) {
+                case "1" -> this.setClientState(ClientStates.GAME_CREATION);
+                case "2" -> this.setClientState(ClientStates.JOIN_GAME);
+                default -> printError(terminal, "Wrong command.");
+            }
+        } while (this.getClientState().equals(ClientStates.MAIN_MENU));
     }
 
     private void manageGameCreation() {
-        //TODO Print game creation screen on cli.
+        clearScreen(terminal, false);
 
-        GameCreation.print(terminal);
+        boolean wrongCommand;
+        int expectedPlayers = 2;
+        boolean expert = false;
+        do {
+            wrongCommand = false;
+            GameCreation.print(terminal);
+            String playersNumber = readLine(" ", terminal, List.of(node("2"), node("3"), node("4"), node("esc")), false, null);
+            switch (playersNumber) {
+                case "2", "3", "4" -> expectedPlayers = Integer.parseInt(playersNumber);
+                case "esc" -> {
+                    this.setClientState(ClientStates.MAIN_MENU);
+                    this.resetGame();
+                    return;
+                }
+                default -> wrongCommand = true;
+            }
 
-        int playersNumber = Integer.parseInt(readLine(" ", terminal, List.of(node("2"), node("3"), node("4")), false, null));
-        terminal.writer().print(ansi().restoreCursorPosition());
-        terminal.writer().print(ansi().cursorMove(-1, 1));
-        terminal.writer().print(ansi().saveCursorPosition());
-        terminal.flush();
-        String difficulty = readLine(" ", terminal, List.of(node("normal"), node("expert")), false, null);
-        //TODO create and send gameCreation command to the server.
-        //wait for server reply
+            terminal.writer().print(ansi().restoreCursorPosition());
+            terminal.writer().print(ansi().cursorMove(-1, 1));
+            terminal.writer().print(ansi().saveCursorPosition());
+            terminal.flush();
+            String difficulty = readLine(" ", terminal, List.of(node("normal"), node("expert"), node("esc")), false, null);
+            switch (difficulty) {
+                case "normal" -> expert = false;
+                case "expert" -> expert = true;
+                case "esc" -> {
+                    this.setClientState(ClientStates.MAIN_MENU);
+                    this.resetGame();
+                    return;
+                }
+                default -> wrongCommand = true;
+            }
+            if (wrongCommand) printError(terminal, "Wrong command.");
+        } while (wrongCommand);
+
+        //Send command to the server and wait for a response.
+        this.gameServer.sendCommand(MessageCreator.gameCreation(expectedPlayers, expert));
+        try {
+            this.serverReplyLock.wait(10000);
+        } catch (InterruptedException ie) {
+            printError(terminal, "Connection error.");
+            this.resetGame();
+
+        }
+        if (this.getClientState().equals(ClientStates.GAME_CREATION)) {
+            printError(terminal, "Connection error.");
+            this.resetGame();
+        }
     }
 
     private void manageJoinGame() {
-        //TODO Print join game screen on cli.
-
+        clearScreen(terminal, false);
         JoinGame.print(terminal);
 
-        String gameCode = readLine(" ", terminal, null, false, null);
-        //TODO Create and send joinGame command to the server.
-        //wait for server reply
+
+        String gameCode = readLine("", terminal, List.of(node("esc")), false, null);
+        if ("esc".equals(gameCode)) {
+            this.setClientState(ClientStates.MAIN_MENU);
+            this.resetGame();
+            return;
+        }
+
+        //Send command to the server and wait for a response.
+        this.gameServer.sendCommand(MessageCreator.EnterGame(gameCode));
+
+        try {
+            this.serverReplyLock.wait(10000);
+        } catch (InterruptedException ie) {
+            printError(terminal, "Connection error.");
+            this.resetGame();
+        }
+        if (this.getClientState().equals(ClientStates.JOIN_GAME)) {
+            printError(terminal, "Connection error.");
+            this.resetGame();
+        }
     }
 
     private void manageGameLogin() {
+        clearScreen(terminal, false);
         //TODO Print game login screen on cli.
 
         String username;
-        username = readLine(" ", terminal, null, false, null);
-        while (waitingRoom.containsKey(username) && waitingRoom.get(username).equals("connected")) {
-            printError(terminal, "Username not valid.");
-            username = readLine(" ", terminal, null, false, null);
+        boolean usernameIsValid = true;
+        do {
+            username = readLine(" ", terminal, List.of(node("esc")), false, null);
+            if ("esc".equals(username)) {
+                this.setClientState(ClientStates.MAIN_MENU);
+                this.resetGame();
+                return;
+            }
+            if (this.getGameStatus().getWaitingRoom().containsKey(username) && this.getGameStatus().getWaitingRoom().get(username).equals("connected")) {
+                usernameIsValid = false;
+                printError(terminal, "Username not valid.");
+            }
+        } while (!usernameIsValid);
+
+        this.userName = username;
+        //Send command to the server and wait for a response.
+        this.gameServer.sendCommand(MessageCreator.login(username));
+
+        try {
+            this.serverReplyLock.wait(10000);
+        } catch (InterruptedException ie) {
+            printError(terminal, "Connection error.");
+            this.resetGame();
         }
-        //TODO Create and send login command to the server.
-        //wait for serer reply.
+        if (this.getClientState().equals(ClientStates.GAME_LOGIN)) {
+            printError(terminal, "Connection error.");
+            this.resetGame();
+        }
     }
 
     private void manageWaitingRoom() {
+        clearScreen(terminal, false);
         //TODO Print waiting room screen on cli.
+
+
+        String command;
+        do {
+            command = readLine(" ", terminal, List.of(node("esc")), false, null);
+            if (command.equals("esc")) {
+                this.setClientState(ClientStates.MAIN_MENU);
+                this.resetGame();
+                return;
+            } else {
+                printError(terminal, "Wrong command.");
+            }
+        } while (this.getClientState().equals(ClientStates.GAME_WAITINGROOM));
+
     }
 
     private void manageGameRunning() {
+        clearScreen(terminal, false);
         //TODO Print current status screen on cli.
 
         String command = readLine(" ", terminal, null, false, null);
@@ -194,14 +287,20 @@ public class ClientCli extends Thread {
     }
 
     private void manageEndGame() {
+        clearScreen(terminal, false);
         //TODO Print end game screen on cli.
 
-        String command = readLine(" ", terminal, null, false, null);
-        while (!command.equals("exit")) {
-            printError(terminal, "Wrong command.");
-            command = readLine(" ", terminal, null, false, null);
-        }
-        this.setClientState(ClientStates.MAIN_MENU);
+        String command;
+        do {
+            command = readLine(" ", terminal, List.of(node("esc")), false, null);
+            if (command.equals("esc")) {
+                this.setClientState(ClientStates.MAIN_MENU);
+                this.resetGame();
+                return;
+            } else {
+                printError(terminal, "Wrong command.");
+            }
+        } while (this.getClientState().equals(ClientStates.END_GAME));
     }
 
     public void manageMessage(JsonObject message) {
@@ -219,4 +318,10 @@ public class ClientCli extends Thread {
         this.state = newState;
     }
 
+    private void resetGame() {
+        this.setClientState(ClientStates.MAIN_MENU);
+        if (this.gameStatus != null) {
+            this.gameStatus = null;
+        }
+    }
 }
