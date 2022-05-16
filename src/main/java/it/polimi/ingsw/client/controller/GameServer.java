@@ -21,7 +21,6 @@ public class GameServer extends Thread {
     private final BufferedReader inputStream;
     private final PrintWriter outputStream;
     private final ClientCli client;
-    private final Ping ping;
     private final Object connectedLock;
     private boolean connected;
 
@@ -29,11 +28,10 @@ public class GameServer extends Thread {
         this.inputStream = new BufferedReader(new InputStreamReader(hostSocket.getInputStream()));
         this.outputStream = new PrintWriter(hostSocket.getOutputStream());
         this.client = client;
-        this.ping = new Ping(this);
         this.connected = true;
         this.connectedLock = new Object();
 
-        this.ping.start();
+        new Thread(new Ping(this)).start();
         hostSocket.setSoTimeout(10000);
         //System.out.println("\nGameServer instance created");
     }
@@ -77,10 +75,9 @@ public class GameServer extends Thread {
                 manageLogin(incomingMessage);
             }
             //TODO modify turnEnable message with current player's name
-            case "turnEnable" -> {
+            case "turnEnable", "command" -> {
             }//manage turn enable
-            case "command" -> {
-            } //manage command
+            //manage command
 
         }
     }
@@ -103,9 +100,13 @@ public class GameServer extends Thread {
                 GameModel newGameModel = new GameModel(expectedPlayers, waitingRoom);
                 this.client.initializeGameStatus(newGameModel);
                 this.client.setClientState(ClientStates.GAME_LOGIN);
+                System.out.println("changed state");
             }
-            //this.notify();
         } else disconnected();
+
+        synchronized (this.client.getServerReplyLock()){
+            this.client.getServerReplyLock().notify();
+        }
     }
 
     private void manageLogin(JsonObject message) {
@@ -114,8 +115,10 @@ public class GameServer extends Thread {
                 this.client.setClientState(ClientStates.GAME_WAITINGROOM);
 
             }
-            this.client.getServerReplyLock().notify();
         } else disconnected();
+        synchronized (this.client.getServerReplyLock()){
+            this.client.getServerReplyLock().notify();
+        }
     }
 
     public boolean isConnected() {
@@ -144,7 +147,6 @@ public class GameServer extends Thread {
         synchronized (this.connectedLock) {
             setConnected(false);
         }
-        this.ping.stopPing();
         this.client.setClientState(ClientStates.CONNECTION_LOST);
     }
 

@@ -2,10 +2,7 @@ package it.polimi.ingsw.client;
 
 import it.polimi.ingsw.client.controller.GameServer;
 import it.polimi.ingsw.client.model.GameModel;
-import it.polimi.ingsw.client.view.cli.pages.GameCreation;
-import it.polimi.ingsw.client.view.cli.pages.JoinGame;
-import it.polimi.ingsw.client.view.cli.pages.MainMenu;
-import it.polimi.ingsw.client.view.cli.pages.SplashScreen;
+import it.polimi.ingsw.client.view.cli.pages.*;
 import it.polimi.ingsw.utilities.ClientStates;
 import it.polimi.ingsw.utilities.MessageCreator;
 import org.jline.terminal.Terminal;
@@ -45,7 +42,7 @@ public class ClientCli extends Thread {
         return this.gameServer;
     }
 
-    public GameModel getGameStatus() {
+    public GameModel getGameModel() {
         return this.gameModel;
     }
 
@@ -102,7 +99,7 @@ public class ClientCli extends Thread {
                 Socket hostSocket = new Socket(hostIp, hostTcpPort);
                 hostSocket.setSoTimeout(10000);
                 this.gameServer = new GameServer(hostSocket, this);
-                this.gameServer.start();
+                new Thread(this.gameServer).start();
                 setClientState(ClientStates.MAIN_MENU);
             } catch (IOException | NumberFormatException e) {
                 printError(terminal, "Wrong data provided or server unreachable.");
@@ -166,14 +163,17 @@ public class ClientCli extends Thread {
 
         //Send command to the server and wait for a response.
         this.gameServer.sendCommand(MessageCreator.gameCreation(expectedPlayers, expert));
-        System.out.println("gameCreation request");
-        while (this.getClientState().equals(ClientStates.GAME_CREATION)) ;
-        /*try {
-            this.getGameServer().wait(10000);
-        } catch (InterruptedException ie) {
-            printError(terminal, "Connection error.");
-            this.resetGame();
-        }*/
+        //System.out.println("gameCreation request");
+
+        synchronized (this.serverReplyLock){
+            try {
+                this.serverReplyLock.wait(10000);
+            } catch (InterruptedException ie) {
+                printError(terminal, "Connection error.");
+                this.resetGame();
+            }
+        }
+
         if (this.getClientState().equals(ClientStates.GAME_CREATION)) {
             printError(terminal, "Connection error.");
             this.resetGame();
@@ -195,11 +195,13 @@ public class ClientCli extends Thread {
         //Send command to the server and wait for a response.
         this.gameServer.sendCommand(MessageCreator.enterGame(gameCode));
 
-        try {
-            this.serverReplyLock.wait(10000);
-        } catch (InterruptedException ie) {
-            printError(terminal, "Connection error.");
-            this.resetGame();
+        synchronized (this.serverReplyLock){
+            try {
+                this.serverReplyLock.wait(10000);
+            } catch (InterruptedException ie) {
+                printError(terminal, "Connection error.");
+                this.resetGame();
+            }
         }
         if (this.getClientState().equals(ClientStates.JOIN_GAME)) {
             printError(terminal, "Connection error.");
@@ -209,18 +211,18 @@ public class ClientCli extends Thread {
 
     private void manageGameLogin() {
         clearScreen(terminal, false);
-        //TODO Print game login screen on cli.
+        Login.print(terminal, this.getGameModel().getWaitingRoom());
 
         String username;
         boolean usernameIsValid = true;
         do {
-            username = readLine(" ", terminal, List.of(node("esc")), false, null);
-            if ("esc".equals(username)) {
+            username = readLine(" ", terminal, List.of(node("exit")), false, null);
+            if ("exit".equals(username)) {
                 this.setClientState(ClientStates.MAIN_MENU);
                 this.resetGame();
                 return;
             }
-            if (this.getGameStatus().getWaitingRoom().containsKey(username) && this.getGameStatus().getWaitingRoom().get(username).equals("connected")) {
+            if (this.getGameModel().getWaitingRoom().containsKey(username) && this.getGameModel().getWaitingRoom().get(username).equals("online")) {
                 usernameIsValid = false;
                 printError(terminal, "Username not valid.");
             }
@@ -230,11 +232,13 @@ public class ClientCli extends Thread {
         //Send command to the server and wait for a response.
         this.gameServer.sendCommand(MessageCreator.login(username));
 
-        try {
-            this.serverReplyLock.wait(10000);
-        } catch (InterruptedException ie) {
-            printError(terminal, "Connection error.");
-            this.resetGame();
+        synchronized (this.serverReplyLock){
+            try {
+                this.serverReplyLock.wait(10000);
+            } catch (InterruptedException ie) {
+                printError(terminal, "Connection error.");
+                this.resetGame();
+            }
         }
 
         if (this.getClientState().equals(ClientStates.GAME_LOGIN)) {
@@ -261,6 +265,14 @@ public class ClientCli extends Thread {
             }
         } while (this.getClientState().equals(ClientStates.GAME_WAITINGROOM));
 
+        synchronized (this.serverReplyLock){
+            try {
+                this.serverReplyLock.wait(10000);
+            } catch (InterruptedException ie) {
+                printError(terminal, "Connection error.");
+                this.resetGame();
+            }
+        }
     }
 
     private void manageGameRunning() {
@@ -301,6 +313,7 @@ public class ClientCli extends Thread {
 
     public void setClientState(ClientStates newState) {
         this.state = newState;
+        //this.serverReplyLock.notify();
     }
 
     public void initializeGameStatus(GameModel newGameModel) {

@@ -20,8 +20,8 @@ public class GameModel {
         this.currentPlayer = null;
     }
 
-    public GameModel(int statusPlayersNumber, boolean statusExpert, Player statusCurrentPlayer, List<Player> statusPlayers, GameBoard statusGameBoard, List<SpecialCharacter> statusSpecialCharacters) {
-        this.waitingRoom = null;
+    public GameModel(Map<String, String> statusWaitingRoom, int statusPlayersNumber, boolean statusExpert, Player statusCurrentPlayer, List<Player> statusPlayers, GameBoard statusGameBoard, List<SpecialCharacter> statusSpecialCharacters) {
+        this.waitingRoom = statusWaitingRoom;
         this.playersNumber = statusPlayersNumber;
         this.expert = statusExpert;
         this.currentPlayer = statusCurrentPlayer;
