@@ -1,11 +1,11 @@
-package it.polimi.ingsw.client.controller.status;
+package it.polimi.ingsw.client.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class GameStatus {
+public class GameModel {
     private final int playersNumber;
     private final Map<String, String> waitingRoom;
     private final Player currentPlayer;
@@ -14,13 +14,13 @@ public class GameStatus {
     private GameBoard gameBoard;
     private List<SpecialCharacter> specialCharacters;
 
-    public GameStatus(int expectedPlayers, Map<String, String> waitingRoom) {
+    public GameModel(int expectedPlayers, Map<String, String> waitingRoom) {
         this.waitingRoom = new HashMap<>(waitingRoom);
         this.playersNumber = expectedPlayers;
         this.currentPlayer = null;
     }
 
-    public GameStatus(int statusPlayersNumber, boolean statusExpert, Player statusCurrentPlayer, List<Player> statusPlayers, GameBoard statusGameBoard, List<SpecialCharacter> statusSpecialCharacters) {
+    public GameModel(int statusPlayersNumber, boolean statusExpert, Player statusCurrentPlayer, List<Player> statusPlayers, GameBoard statusGameBoard, List<SpecialCharacter> statusSpecialCharacters) {
         this.waitingRoom = null;
         this.playersNumber = statusPlayersNumber;
         this.expert = statusExpert;

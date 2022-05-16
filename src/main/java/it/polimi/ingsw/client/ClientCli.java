@@ -1,7 +1,7 @@
 package it.polimi.ingsw.client;
 
 import it.polimi.ingsw.client.controller.GameServer;
-import it.polimi.ingsw.client.controller.status.GameStatus;
+import it.polimi.ingsw.client.model.GameModel;
 import it.polimi.ingsw.client.view.cli.pages.GameCreation;
 import it.polimi.ingsw.client.view.cli.pages.JoinGame;
 import it.polimi.ingsw.client.view.cli.pages.MainMenu;
@@ -25,7 +25,7 @@ public class ClientCli extends Thread {
     private final Object serverReplyLock;
     private String userName;
     private GameServer gameServer;
-    private GameStatus gameStatus;
+    private GameModel gameModel;
     private ClientStates state;
 
     /**
@@ -34,7 +34,7 @@ public class ClientCli extends Thread {
     public ClientCli() throws IOException {
         this.state = ClientStates.START_SCREEN;
         this.gameServer = null;
-        this.gameStatus = null;
+        this.gameModel = null;
         this.userName = null;
         this.serverReplyLock = new Object();
         this.terminal = TerminalBuilder.terminal();
@@ -45,8 +45,8 @@ public class ClientCli extends Thread {
         return this.gameServer;
     }
 
-    public GameStatus getGameStatus() {
-        return this.gameStatus;
+    public GameModel getGameStatus() {
+        return this.gameModel;
     }
 
     public Object getServerReplyLock() {
@@ -303,12 +303,12 @@ public class ClientCli extends Thread {
         this.state = newState;
     }
 
-    public void initializeGameStatus(GameStatus newGameStatus) {
-        this.gameStatus = newGameStatus;
+    public void initializeGameStatus(GameModel newGameModel) {
+        this.gameModel = newGameModel;
     }
 
     private void resetGame() {
         this.setClientState(ClientStates.MAIN_MENU);
-        this.gameStatus = null;
+        this.gameModel = null;
     }
 }

@@ -4,7 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import it.polimi.ingsw.client.ClientCli;
-import it.polimi.ingsw.client.controller.status.GameStatus;
+import it.polimi.ingsw.client.model.GameModel;
 import it.polimi.ingsw.utilities.ClientStates;
 import it.polimi.ingsw.utilities.MessageCreator;
 
@@ -100,8 +100,8 @@ public class GameServer extends Thread {
                     else waitingRoom.put(player, "offline");
 
                 }
-                GameStatus newGameStatus = new GameStatus(expectedPlayers, waitingRoom);
-                this.client.initializeGameStatus(newGameStatus);
+                GameModel newGameModel = new GameModel(expectedPlayers, waitingRoom);
+                this.client.initializeGameStatus(newGameModel);
                 this.client.setClientState(ClientStates.GAME_LOGIN);
             }
             //this.notify();
