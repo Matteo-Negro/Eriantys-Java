@@ -9,6 +9,7 @@ import it.polimi.ingsw.utilities.exceptions.NotEnoughCoinsException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Contains all the data connected to the player.
@@ -39,8 +40,6 @@ public class Player {
         for (int index = 1; index <= 10; index++)
             assistants.add(new Assistant(index));
         this.schoolBoard = new SchoolBoard(towersNumber, towerType);
-
-        System.out.println("\n *** New Player successfully created.");
     }
 
     /**
@@ -58,8 +57,6 @@ public class Player {
         this.assistants = new ArrayList<>(assistants);
         this.coins = coins;
         this.schoolBoard = schoolBoard;
-
-        System.out.println("\n *** Saved Player successfully restored.");
     }
 
     /**
@@ -123,12 +120,15 @@ public class Player {
      * Plays the selected Assistant, giving back a reference to it.
      *
      * @param id ID of the Assistant to be played.
+     * @return Chosen Assistant, if available.
      * @throws AlreadyPlayedException If the Assistant had already been played.
      */
-    public void playAssistant(int id) throws AlreadyPlayedException {
+    public Assistant playAssistant(int id) throws AlreadyPlayedException {
         if (assistants.get(id) == null)
             throw new AlreadyPlayedException("The Assistant #" + id + " has already been played.");
-        assistants.remove(id);
+        Assistant tmp = assistants.get(id - 1);
+        assistants.set(id - 1, null);
+        return tmp;
     }
 
     /**
@@ -155,5 +155,29 @@ public class Player {
      */
     public SchoolBoard getSchoolBoard() {
         return schoolBoard;
+    }
+
+    /**
+     * Standard redefinition of "equals" method.
+     *
+     * @param o Object to compare.
+     * @return true if the two objects are the same.
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Player player = (Player) o;
+        return coins == player.coins && Objects.equals(name, player.name) && wizardType == player.wizardType && Objects.equals(assistants, player.assistants) && Objects.equals(schoolBoard, player.schoolBoard);
+    }
+
+    /**
+     * Calculates the hash.
+     *
+     * @return The calculated hash.
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, wizardType, assistants, schoolBoard, coins);
     }
 }

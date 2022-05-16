@@ -1,5 +1,7 @@
 package it.polimi.ingsw.model.board.effects;
 
+import java.util.Objects;
+
 /**
  * Specific effect n.5
  *
@@ -69,5 +71,29 @@ public class HerbalistEffect extends Effect {
      */
     private void restoreBan() {
         availableBans++;
+    }
+
+    /**
+     * Standard redefinition of "equals" method.
+     *
+     * @param o Object to compare.
+     * @return true if the two objects are the same.
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        HerablistEffect that = (HerablistEffect) o;
+        return availableBans == that.availableBans;
+    }
+
+    /**
+     * Calculates the hash.
+     *
+     * @return The calculated hash.
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(availableBans);
     }
 }

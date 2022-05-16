@@ -2,9 +2,7 @@ package it.polimi.ingsw.model.board.effects;
 
 import it.polimi.ingsw.utilities.HouseColor;
 
-import java.util.EmptyStackException;
-import java.util.EnumMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Specific effect n.1
@@ -14,15 +12,29 @@ import java.util.Map;
 
 public class MonkEffect extends Effect {
 
-    private Map<HouseColor, Integer> students;
+    private final Map<HouseColor, Integer> students;
 
     /**
      * Class constructor.
      * It creates an instance of the class containing a map of the students put on the effect card with their respective quantity (initialized at 0).
-     * @param studentsStatus Indicates the student on the card, saved into the status. These are going to be stored as a Map into the students attribute.
      */
-    public MonkEffect(Map<HouseColor, Integer> studentsStatus) {
-        students = new EnumMap<>(studentsStatus);
+    public MonkEffect() {
+        students = new HashMap<>();
+
+        students.put(HouseColor.BLUE, 0);
+        students.put(HouseColor.GREEN, 0);
+        students.put(HouseColor.FUCHSIA, 0);
+        students.put(HouseColor.RED, 0);
+        students.put(HouseColor.YELLOW, 0);
+    }
+
+    /**
+     * Class constructor used to restore the game.
+     *
+     * @param statusStudents
+     */
+    public MonkEffect(Map<HouseColor, Integer> statusStudents) {
+        this.students = statusStudents;
     }
 
     @Override
@@ -38,12 +50,12 @@ public class MonkEffect extends Effect {
     /**
      * effect() method overload.
      *
-     * @param toTake    The color of the student to take from the card.
-     * @param toPut     The color of the student to put on the card.
+     * @param toTake The color of the desired student.
+     * @param toPut  The color of the new student extracted from the bag.
      */
     public void effect(HouseColor toTake, HouseColor toPut) {
-        if(toTake != null) takeStudent(toTake);
-        if(toPut != null) addStudent(toPut);
+        if (toTake != null) takeStudent(toTake);
+        if (toPut != null) addStudent(toPut);
     }
 
     @Override
@@ -56,7 +68,7 @@ public class MonkEffect extends Effect {
      *
      * @return students attribute.
      */
-    public EnumMap<HouseColor, Integer> getStudents() {
+    public Map<HouseColor, Integer> getStudents() {
         return new EnumMap<>(students);
     }
 
@@ -79,5 +91,29 @@ public class MonkEffect extends Effect {
     private void takeStudent(HouseColor color) throws EmptyStackException {
         if (students.get(color) == 0) throw new EmptyStackException();
         students.replace(color, students.get(color) - 1);
+    }
+
+    /**
+     * Standard redefinition of "equals" method.
+     *
+     * @param o Object to compare.
+     * @return true if the two objects are the same.
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MonkEffect that = (MonkEffect) o;
+        return Objects.equals(students, that.students);
+    }
+
+    /**
+     * Calculates the hash.
+     *
+     * @return The calculated hash.
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(students);
     }
 }
