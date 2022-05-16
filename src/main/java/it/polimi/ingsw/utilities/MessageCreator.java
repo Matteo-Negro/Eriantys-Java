@@ -98,13 +98,13 @@ public class MessageCreator {
      * @param game The gameController instance involved.
      * @return JsonObject which represents the message.
      */
-    public static JsonObject status(GameController game){
+    public static JsonObject status(GameController game) {
         JsonObject reply = new JsonObject();
         reply.addProperty("round", game.getRound());
         reply.addProperty("activeUser", game.getActiveUser());
         reply.addProperty("phase", game.getPhase());
         reply.addProperty("subPhase", game.getSubPhase().toString());
-        reply.add("players", ObjectsToJson.toJsonArray(game.getGameModel().getPlayers(),ObjectsToJson.GET_PLAYERS));
+        reply.add("players", ObjectsToJson.toJsonArray(game.getGameModel().getPlayers(), ObjectsToJson.GET_PLAYERS));
         reply.add("gameBoard", ObjectsToJson.toJsonObject(game.getGameModel().getGameBoard()));
         return reply;
     }
@@ -114,7 +114,7 @@ public class MessageCreator {
      *
      * @return JsonObject which represents the message.
      */
-    public static JsonObject gameStart(){
+    public static JsonObject gameStart() {
         JsonObject reply = new JsonObject();
         reply.addProperty("type", "gameStart");
         return reply;
@@ -139,7 +139,7 @@ public class MessageCreator {
     public static JsonObject win(List<Player> playerList) {
         JsonObject reply = new JsonObject();
         JsonArray winners = new JsonArray();
-        for(Player player: playerList) winners.add(player.getName());
+        for (Player player : playerList) winners.add(player.getName());
         reply.addProperty("type", "win");
         reply.add("winners", winners);
         return reply;
@@ -148,11 +148,11 @@ public class MessageCreator {
     /**
      * Creates the "moveTower" message.
      *
-     * @param towerColor  The color of the moving tower.
-     * @param island      The island's id on which the tower is being moved.
-     * @return            JsonObject which represents the message.
+     * @param towerColor The color of the moving tower.
+     * @param island     The island's id on which the tower is being moved.
+     * @return JsonObject which represents the message.
      */
-    public static JsonObject moveTower(TowerType towerColor, Island island){
+    public static JsonObject moveTower(TowerType towerColor, Island island) {
         JsonObject reply = new JsonObject();
         reply.addProperty("towerColor", towerColor.toString());
         reply.addProperty("island", island.getId());
@@ -164,9 +164,9 @@ public class MessageCreator {
      *
      * @param professor The color of the professor that is going to be reassigned.
      * @param player    The name of the player to whom the professor is going to be reassigned.
-     * @return          JsonObject which represents the message.
+     * @return JsonObject which represents the message.
      */
-    public static JsonObject moveProfessor(String professor, String player){
+    public static JsonObject moveProfessor(String professor, String player) {
         JsonObject reply = new JsonObject();
         reply.addProperty("professor", professor);
         reply.addProperty("player", player);
@@ -184,5 +184,61 @@ public class MessageCreator {
         reply.addProperty("type", "error");
         reply.addProperty("message", message);
         return reply;
+    }
+
+    /**
+     * Creates the "gameCreation" request message.
+     *
+     * @param playersNumber The players number of the game.
+     * @param expert A boolean parameter which indicates the difficulty of the desired game.
+     * @return JsonObject which represents the message.
+     */
+    public static JsonObject gameCreation(int playersNumber, boolean expert){
+        JsonObject command = new JsonObject();
+        command.addProperty("type", "gameCreation");
+        command.addProperty("playersNumber", playersNumber);
+        command.addProperty("expert", expert);
+
+        return command;
+    }
+
+    /**
+     * Creates the "enterGame" request message.
+     *
+     * @param code The gamecode of the game the player wants to join.
+     * @return JsonObject which represents the message.
+     */
+    public static JsonObject enterGame(String code){
+        JsonObject command = new JsonObject();
+        command.addProperty("type", "enterGame");
+        command.addProperty("code", code);
+
+        return command;
+    }
+
+    /**
+     * Creates the "login" request message.
+     *
+     * @param username The name of the player who wants to join the game.
+     * @return JsonObject which represents the message.
+     */
+    public static JsonObject login(String username){
+        JsonObject command = new JsonObject();
+        command.addProperty("type", "login");
+        command.addProperty("name", username);
+
+        return command;
+    }
+
+    /**
+     * Creates the "logout" request message.
+     *
+     * @return JsonObject which represents the message.
+     */
+    public static JsonObject logout(){
+        JsonObject command = new JsonObject();
+        command.addProperty("type", "logout");
+
+        return command;
     }
 }

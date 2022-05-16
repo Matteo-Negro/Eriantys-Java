@@ -162,6 +162,7 @@ public class GameController extends Thread {
 
     /**
      * This method returns the gameController's current state (indicated by the subPhase).
+     *
      * @return The subPhase attribute.
      */
     public GameControllerStates getSubPhase() {
@@ -219,7 +220,7 @@ public class GameController extends Thread {
         //SENDING THE CURRENT GAME MODEL STATUS TO THE PLAYER.
         user.sendMessage(MessageCreator.status(this));
 
-        if (this.isFull()){
+        if (this.isFull()) {
             notifyUsers(MessageCreator.gameStart());
             this.isFullLock.notify();
         }
@@ -507,7 +508,8 @@ public class GameController extends Thread {
                     }
                 }
             }
-            case "bag" -> this.gameModel.getGameBoard().getBag().push(HouseColor.valueOf(command.get("color").getAsString()));
+            case "bag" ->
+                    this.gameModel.getGameBoard().getBag().push(HouseColor.valueOf(command.get("color").getAsString()));
             case "island" -> {
                 try {
                     this.gameModel.getGameBoard().getIslandById(command.get("toId").getAsInt()).addStudent(HouseColor.valueOf(command.get("color").getAsString()));
@@ -629,36 +631,41 @@ public class GameController extends Thread {
     public void paySpecialCharacter(JsonObject command) throws IllegalMoveException {
 
         boolean characterAlreadyPaid = false;
-            for(SpecialCharacter c : this.getGameModel().getGameBoard().getCharacters()){
-                if (c.isActive()) {
-                    characterAlreadyPaid = true;
-                    break;
-                }
+        for (SpecialCharacter c : this.getGameModel().getGameBoard().getCharacters()) {
+            if (c.isActive()) {
+                characterAlreadyPaid = true;
+                break;
             }
-        if(characterAlreadyPaid) throw new IllegalMoveException();
+        }
+        if (characterAlreadyPaid) throw new IllegalMoveException();
 
         int character = command.get("character").getAsInt();
         this.gameModel.getGameBoard().getCharacters().get(character).activateEffect();
-        try{
+        try {
             this.getGameModel().getPlayerByName(command.get("player").getAsString()).paySpecialCharacter(this.getGameModel().getGameBoard().getCharacters().get(character));
-        }catch(NotEnoughCoinsException | NullPointerException ne){
+        } catch (NotEnoughCoinsException | NullPointerException ne) {
             throw new IllegalMoveException();
         }
 
         try {
             switch (character) {
                 case 1, 7, 10, 11 -> this.movementEffectActive = true;
-                case 2 -> this.getGameModel().getGameBoard().setTieWinner(this.getGameModel().getPlayerByName(command.get("player").getAsString()));
-                case 3 -> this.getGameModel().getGameBoard().getInfluence(this.getGameModel().getGameBoard().getIslandById(command.get("island").getAsInt()));
-                case 4 -> this.getGameModel().getGameBoard().getAssistant(this.getGameModel().getPlayerByName(command.get("player").getAsString())).setBonus();
+                case 2 ->
+                        this.getGameModel().getGameBoard().setTieWinner(this.getGameModel().getPlayerByName(command.get("player").getAsString()));
+                case 3 ->
+                        this.getGameModel().getGameBoard().getInfluence(this.getGameModel().getGameBoard().getIslandById(command.get("island").getAsInt()));
+                case 4 ->
+                        this.getGameModel().getGameBoard().getAssistant(this.getGameModel().getPlayerByName(command.get("player").getAsString())).setBonus();
                 case 5 -> {
                     this.getGameModel().getGameBoard().getIslandById(command.get("island").getAsInt()).setBan();
                     ((HerbalistEffect) this.getGameModel().getGameBoard().getCharacters().get(character).getEffect()).effect("take");
                 }
                 case 6 -> {
                 }//Automatically managed by model.
-                case 8 -> this.getGameModel().getGameBoard().setInfluenceBonus(this.getGameModel().getPlayerByName(command.get("player").getAsString()));
-                case 9 -> this.getGameModel().getGameBoard().setIgnoreColor(HouseColor.valueOf(command.get("ignoreColor").getAsString()));
+                case 8 ->
+                        this.getGameModel().getGameBoard().setInfluenceBonus(this.getGameModel().getPlayerByName(command.get("player").getAsString()));
+                case 9 ->
+                        this.getGameModel().getGameBoard().setIgnoreColor(HouseColor.valueOf(command.get("ignoreColor").getAsString()));
                 case 12 -> {
                     for (Player p : this.getGameModel().getPlayers()) {
                         for (int i = 0; i < 3; i++) {
@@ -777,7 +784,7 @@ public class GameController extends Thread {
             }
         }
         this.gameModel.getGameBoard().setProfessor(HouseColor.valueOf(color), this.gameModel.getPlayerByName(newProfessorOwner));
-        notifyUsers(MessageCreator.moveProfessor(color,newProfessorOwner));
+        notifyUsers(MessageCreator.moveProfessor(color, newProfessorOwner));
     }
 
     public void notifyUsers(JsonObject message) {

@@ -2,7 +2,10 @@ package it.polimi.ingsw.model.board.effects;
 
 import it.polimi.ingsw.utilities.HouseColor;
 
-import java.util.*;
+import java.util.EmptyStackException;
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Specific effect n.1
@@ -17,24 +20,11 @@ public class MonkEffect extends Effect {
     /**
      * Class constructor.
      * It creates an instance of the class containing a map of the students put on the effect card with their respective quantity (initialized at 0).
-     */
-    public MonkEffect() {
-        students = new HashMap<>();
-
-        students.put(HouseColor.BLUE, 0);
-        students.put(HouseColor.GREEN, 0);
-        students.put(HouseColor.FUCHSIA, 0);
-        students.put(HouseColor.RED, 0);
-        students.put(HouseColor.YELLOW, 0);
-    }
-
-    /**
-     * Class constructor used to restore the game.
      *
-     * @param statusStudents
+     * @param studentsStatus Indicates the student on the card, saved into the status. These are going to be stored as a Map into the students attribute.
      */
-    public MonkEffect(Map<HouseColor, Integer> statusStudents) {
-        this.students = statusStudents;
+    public MonkEffect(Map<HouseColor, Integer> studentsStatus) {
+        students = new EnumMap<>(studentsStatus);
     }
 
     @Override
@@ -50,8 +40,8 @@ public class MonkEffect extends Effect {
     /**
      * effect() method overload.
      *
-     * @param toTake The color of the desired student.
-     * @param toPut  The color of the new student extracted from the bag.
+     * @param toTake The color of the student to take from the card.
+     * @param toPut  The color of the student to put on the card.
      */
     public void effect(HouseColor toTake, HouseColor toPut) {
         if (toTake != null) takeStudent(toTake);

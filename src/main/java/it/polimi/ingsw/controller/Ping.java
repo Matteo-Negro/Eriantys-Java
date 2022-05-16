@@ -6,6 +6,7 @@ public class Ping extends Thread {
 
     private final User user;
     private final Object lock;
+    private boolean stop;
 
     /**
      * Default constructor.
@@ -15,6 +16,8 @@ public class Ping extends Thread {
     public Ping(User user) {
         this.user = user;
         this.lock = new Object();
+        this.stop = false;
+        System.out.println("\nPing instance created");
     }
 
     /**
@@ -24,16 +27,21 @@ public class Ping extends Thread {
     public void run() {
         JsonObject ping = new JsonObject();
         ping.addProperty("type", "ping");
-
-        while (true) {
+        System.out.println("\nPing running");
+        while (!stop) {
             synchronized (lock) {
                 user.sendMessage(ping);
+                //System.out.println("\nPing");
                 try {
                     lock.wait(1000);
                 } catch (InterruptedException e) {
-                    this.interrupt();
+                    this.stopPing();
                 }
             }
         }
+    }
+
+    public void stopPing(){
+        this.stop = true;
     }
 }

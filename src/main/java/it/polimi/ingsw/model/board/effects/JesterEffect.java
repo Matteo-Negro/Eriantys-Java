@@ -15,7 +15,7 @@ import java.util.Objects;
 
 public class JesterEffect extends Effect {
 
-    private Map<HouseColor, Integer> students;
+    private final Map<HouseColor, Integer> students;
 
 
     /**
@@ -41,11 +41,11 @@ public class JesterEffect extends Effect {
      * effect() method overload.
      *
      * @param toTake The color of the student to take from the card.
-     * @param toPut The color of the student to put on the card.
+     * @param toPut  The color of the student to put on the card.
      */
     public void effect(HouseColor toTake, HouseColor toPut) {
-        if(toTake != null) takeStudent(toTake);
-        if(toPut != null) addStudent(toPut);
+        if (toTake != null) takeStudent(toTake);
+        if (toPut != null) addStudent(toPut);
     }
 
     @Override

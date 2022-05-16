@@ -4,6 +4,7 @@ import it.polimi.ingsw.utilities.HouseColor;
 import it.polimi.ingsw.utilities.TowerType;
 
 import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,9 +32,10 @@ public class Island {
         this.size = 1;
         this.ban = false;
         this.tower = null;
-        Arrays.stream(HouseColor.values()).forEach(studentColor -> this.students.put(studentColor, studentColor.equals(color) ? 1 : 0));
-
-        System.out.printf("\n *** New Island successfully created with id: %d", idIsland);
+        this.students = new EnumMap<HouseColor, Integer>(HouseColor.class);
+        if(color==null) Arrays.stream(HouseColor.values()).forEach(studentColor -> this.students.put(studentColor, 0));
+        else Arrays.stream(HouseColor.values()).forEach(studentColor -> this.students.put(studentColor, studentColor.equals(color) ? 1 : 0));
+        System.out.println("\n *** New Island successfully created with id: " + idIsland);
     }
 
     /**

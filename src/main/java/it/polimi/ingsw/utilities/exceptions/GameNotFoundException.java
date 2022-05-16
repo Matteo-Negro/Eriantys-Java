@@ -5,7 +5,7 @@ package it.polimi.ingsw.utilities.exceptions;
  *
  * @author Riccardo Milici
  */
-public class GameNotFoundException extends Exception{
+public class GameNotFoundException extends Exception {
 
     public GameNotFoundException() {
         super();
