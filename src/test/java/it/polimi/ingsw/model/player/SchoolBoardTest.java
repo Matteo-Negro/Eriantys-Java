@@ -2,7 +2,9 @@ package it.polimi.ingsw.model.player;
 
 import it.polimi.ingsw.utilities.HouseColor;
 import it.polimi.ingsw.utilities.TowerType;
+import it.polimi.ingsw.utilities.exceptions.NegativeException;
 import it.polimi.ingsw.utilities.exceptions.NoStudentException;
+import it.polimi.ingsw.utilities.exceptions.NotEnoughTowersException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -143,15 +145,21 @@ class SchoolBoardTest {
      * Tests whether removes towers from the school board.
      */
     @Test
-    void removeTowers() {
-        // TODO: method to check the number of towers
+    void removeTowers() throws NotEnoughTowersException, NegativeException {
+        int removeTowers = 1;
+
+        this.schoolBoard.removeTowers(removeTowers);
+        assertEquals(this.towersNumber - removeTowers, this.schoolBoard.getTowersNumber());
     }
 
     /**
      * Tests whether adds towers to the school board.
      */
     @Test
-    void addTowers() {
-        // TODO: method to check the number of towers
+    void addTowers() throws NegativeException {
+        int addTowers = 1;
+
+        this.schoolBoard.addTowers(addTowers);
+        assertEquals(this.towersNumber + addTowers, this.schoolBoard.getTowersNumber());
     }
 }
