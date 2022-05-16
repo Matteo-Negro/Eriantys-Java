@@ -2,9 +2,9 @@ package it.polimi.ingsw.utilities;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import it.polimi.ingsw.controller.GameController;
-import it.polimi.ingsw.model.board.Island;
-import it.polimi.ingsw.model.player.Player;
+import it.polimi.ingsw.server.controller.GameController;
+import it.polimi.ingsw.server.model.board.Island;
+import it.polimi.ingsw.server.model.player.Player;
 import it.polimi.ingsw.utilities.parsers.ObjectsToJson;
 
 import java.util.List;
@@ -190,10 +190,10 @@ public class MessageCreator {
      * Creates the "gameCreation" request message.
      *
      * @param playersNumber The players number of the game.
-     * @param expert A boolean parameter which indicates the difficulty of the desired game.
+     * @param expert        A boolean parameter which indicates the difficulty of the desired game.
      * @return JsonObject which represents the message.
      */
-    public static JsonObject gameCreation(int playersNumber, boolean expert){
+    public static JsonObject gameCreation(int playersNumber, boolean expert) {
         JsonObject command = new JsonObject();
         command.addProperty("type", "gameCreation");
         command.addProperty("playersNumber", playersNumber);
@@ -208,7 +208,7 @@ public class MessageCreator {
      * @param code The gamecode of the game the player wants to join.
      * @return JsonObject which represents the message.
      */
-    public static JsonObject enterGame(String code){
+    public static JsonObject enterGame(String code) {
         JsonObject command = new JsonObject();
         command.addProperty("type", "enterGame");
         command.addProperty("code", code);
@@ -222,7 +222,7 @@ public class MessageCreator {
      * @param username The name of the player who wants to join the game.
      * @return JsonObject which represents the message.
      */
-    public static JsonObject login(String username){
+    public static JsonObject login(String username) {
         JsonObject command = new JsonObject();
         command.addProperty("type", "login");
         command.addProperty("name", username);
@@ -235,7 +235,7 @@ public class MessageCreator {
      *
      * @return JsonObject which represents the message.
      */
-    public static JsonObject logout(){
+    public static JsonObject logout() {
         JsonObject command = new JsonObject();
         command.addProperty("type", "logout");
 

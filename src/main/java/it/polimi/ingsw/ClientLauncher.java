@@ -1,6 +1,6 @@
 package it.polimi.ingsw;
 
-import it.polimi.ingsw.network.client.ClientCli;
+import it.polimi.ingsw.client.ClientCli;
 import it.polimi.ingsw.utilities.GraphicsType;
 
 import java.io.IOException;
