@@ -1,6 +1,5 @@
 package it.polimi.ingsw.server.model.board.effects;
 
-import it.polimi.ingsw.server.model.board.effects.MonkEffect;
 import it.polimi.ingsw.utilities.HouseColor;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

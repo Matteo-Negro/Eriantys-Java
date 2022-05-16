@@ -8,8 +8,8 @@ import java.util.Map;
 public class GameStatus {
     private final int playersNumber;
     private final Map<String, String> waitingRoom;
-    private boolean expert;
     private final Player currentPlayer;
+    private boolean expert;
     private List<Player> players;
     private GameBoard gameBoard;
     private List<SpecialCharacter> specialCharacters;

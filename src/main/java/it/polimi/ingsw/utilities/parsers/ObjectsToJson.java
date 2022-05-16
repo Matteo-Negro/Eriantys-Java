@@ -3,12 +3,12 @@ package it.polimi.ingsw.utilities.parsers;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
-import it.polimi.ingsw.server.model.board.effects.JesterEffect;
 import it.polimi.ingsw.server.model.board.Cloud;
 import it.polimi.ingsw.server.model.board.GameBoard;
 import it.polimi.ingsw.server.model.board.Island;
 import it.polimi.ingsw.server.model.board.SpecialCharacter;
 import it.polimi.ingsw.server.model.board.effects.HerbalistEffect;
+import it.polimi.ingsw.server.model.board.effects.JesterEffect;
 import it.polimi.ingsw.server.model.board.effects.MonkEffect;
 import it.polimi.ingsw.server.model.board.effects.PrincessEffect;
 import it.polimi.ingsw.server.model.player.Assistant;
@@ -231,10 +231,14 @@ public enum ObjectsToJson {
         object.addProperty("paidInRound", specialCharacter.isPaidInRound());
         object.addProperty("active", specialCharacter.isActive());
         switch (specialCharacter.getEffect().getId()) {
-            case 1 -> object.add(containedStudents, parseStudents(((MonkEffect) specialCharacter.getEffect()).getStudents()));
-            case 5 -> object.addProperty("availableBans", ((HerbalistEffect) specialCharacter.getEffect()).getAvailableBans());
-            case 7 -> object.add(containedStudents, parseStudents(((JesterEffect) specialCharacter.getEffect()).getStudents()));
-            case 11 -> object.add(containedStudents, parseStudents(((PrincessEffect) specialCharacter.getEffect()).getStudents()));
+            case 1 ->
+                    object.add(containedStudents, parseStudents(((MonkEffect) specialCharacter.getEffect()).getStudents()));
+            case 5 ->
+                    object.addProperty("availableBans", ((HerbalistEffect) specialCharacter.getEffect()).getAvailableBans());
+            case 7 ->
+                    object.add(containedStudents, parseStudents(((JesterEffect) specialCharacter.getEffect()).getStudents()));
+            case 11 ->
+                    object.add(containedStudents, parseStudents(((PrincessEffect) specialCharacter.getEffect()).getStudents()));
         }
 
         return object;

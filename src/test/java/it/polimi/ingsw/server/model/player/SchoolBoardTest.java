@@ -1,6 +1,5 @@
 package it.polimi.ingsw.server.model.player;
 
-import it.polimi.ingsw.server.model.player.SchoolBoard;
 import it.polimi.ingsw.utilities.HouseColor;
 import it.polimi.ingsw.utilities.TowerType;
 import it.polimi.ingsw.utilities.exceptions.NegativeException;

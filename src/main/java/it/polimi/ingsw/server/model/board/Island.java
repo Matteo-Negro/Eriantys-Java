@@ -16,10 +16,10 @@ import java.util.Map;
 
 public class Island {
     private final int id;
+    private final Map<HouseColor, Integer> students;
     private int size;
     private boolean ban;
     private TowerType tower;
-    private final Map<HouseColor, Integer> students;
 
     /**
      * Island Constructor, all the attributes are initialized.

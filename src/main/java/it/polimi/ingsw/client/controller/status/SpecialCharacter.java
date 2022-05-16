@@ -8,11 +8,10 @@ import java.util.Map;
 
 public class SpecialCharacter {
     private final int id;
-    private boolean active;
-    private boolean alreadyPaid;
-
     //Specialized attributes.
     private final Map<HouseColor, Integer> students;
+    private boolean active;
+    private boolean alreadyPaid;
     private Integer availableBans;
 
     public SpecialCharacter(int statusId, boolean statusActive, boolean statusAlreadyPaid, Map<HouseColor, Integer> statusStudents, int statusAvailableBans) {

@@ -1,6 +1,5 @@
 package it.polimi.ingsw.server.model.board.effects;
 
-import it.polimi.ingsw.server.model.board.effects.HeraldEffect;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

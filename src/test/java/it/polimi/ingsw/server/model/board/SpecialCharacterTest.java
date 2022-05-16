@@ -1,6 +1,5 @@
-package it.polimi.ingsw.server.model.board.effects;
+package it.polimi.ingsw.server.model.board;
 
-import it.polimi.ingsw.server.model.board.SpecialCharacter;
 import it.polimi.ingsw.server.model.board.effects.MonkEffect;
 import it.polimi.ingsw.utilities.HouseColor;
 import org.junit.jupiter.api.AfterEach;
@@ -27,8 +26,7 @@ class SpecialCharacterTest {
     @BeforeEach
     void setUp() {
         Map<HouseColor, Integer> students = new EnumMap<>(HouseColor.class);
-
-        for (HouseColor c : HouseColor.values()) students.put(c, 1);
+        for (HouseColor color : HouseColor.values()) students.put(color, 0);
         specialCharacter = new SpecialCharacter(1, students);
     }
 
