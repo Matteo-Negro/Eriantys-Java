@@ -116,11 +116,7 @@ public class ClientCli extends Thread {
         } catch (IOException e) {
             clearScreen(terminal, false);
             printError(terminal, "Wrong data provided or server unreachable.");
-            return;
         }
-
-        if (!this.getClientState().equals(ClientStates.START_SCREEN))
-            clearScreen(terminal, false);
     }
 
     private void manageMainMenu() {
@@ -131,19 +127,20 @@ public class ClientCli extends Thread {
             case "1" -> this.setClientState(ClientStates.GAME_CREATION);
             case "2" -> this.setClientState(ClientStates.JOIN_GAME);
             case "exit" -> {
-                if (this.gameServer != null)
+                if (this.gameServer != null) {
                     this.gameServer.disconnected();
+                    this.gameServer = null;
+                }
                 this.setClientState(ClientStates.START_SCREEN);
-                gameModel = null;
             }
             default -> {
                 printError(terminal, "Wrong command.");
                 this.setClientState(ClientStates.MAIN_MENU);
+                return;
             }
         }
 
-        if (!this.getClientState().equals(ClientStates.MAIN_MENU))
-            clearScreen(terminal, false);
+        clearScreen(terminal, false);
     }
 
     private void manageGameCreation() {
