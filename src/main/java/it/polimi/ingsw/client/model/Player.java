@@ -20,6 +20,8 @@ public class Player {
     private final SchoolBoard schoolBoard;
     private final List<Assistant> hand;
     private int coins;
+    private boolean active;
+    private Assistant currentPlayedAssistant;
 
     /**
      * Class constructor used to restore the game.
@@ -36,6 +38,7 @@ public class Player {
         this.coins = coins;
         this.schoolBoard = schoolBoard;
         this.hand = new ArrayList<>(hand);
+        this.currentPlayedAssistant = null;
     }
 
     /**
@@ -105,6 +108,22 @@ public class Player {
     }
 
     /**
+     * Gets the assistant that was played in the current turn.
+     *
+     * @return The played assistant.
+     */
+    public Assistant getCurrentPlayedAssistant() {
+        return this.currentPlayedAssistant;
+    }
+
+    /**
+     * Cleans at the end of the turn the assistant that was played in the current turn.
+     */
+    public void cleanCurrentPlayedAssitant() {
+        this.currentPlayedAssistant = null;
+    }
+
+    /**
      * Plays the selected Assistant, giving back a reference to it.
      *
      * @param id ID of the Assistant to be played.
@@ -114,9 +133,9 @@ public class Player {
     public Assistant playAssistant(int id) throws AlreadyPlayedException {
         if (this.hand.get(id) == null)
             throw new AlreadyPlayedException("The Assistant #" + id + " has already been played.");
-        Assistant tmp = this.hand.get(id - 1);
+        this.currentPlayedAssistant = this.hand.get(id - 1);
         this.hand.set(id - 1, null);
-        return tmp;
+        return this.currentPlayedAssistant;
     }
 
     /**
@@ -134,5 +153,23 @@ public class Player {
             System.err.println(e.getMessage());
         }
         specialCharacter.activateEffect();
+    }
+
+    /**
+     * Returns the state of the player, true whether it's the current player.
+     *
+     * @return
+     */
+    public boolean isActive() {
+        return this.active;
+    }
+
+    /**
+     * Sets the value of active.
+     *
+     * @param active True whether the player is the current player.
+     */
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }

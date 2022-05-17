@@ -11,7 +11,10 @@ import it.polimi.ingsw.client.view.cli.coordinates.SpecialCharacterResetStudents
 import it.polimi.ingsw.utilities.HouseColor;
 import org.fusesource.jansi.Ansi;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 // ╔[CHARACTER]╗
 // ║           ║
@@ -71,10 +74,10 @@ public class SpecialCharacter {
      * @param price     Price to activate the card.
      * @param active    True whether the card has been paid, false otherwise.
      * @param banNumber Number of ban (-1, otherwise).
-     * @param students  List of students on the card.
+     * @param students  Map of students on the card.
      * @return The Ansi stream to print to terminal.
      */
-    public static Ansi print(int id, int price, boolean active, int banNumber, List<HouseColor> students) {
+    public static Ansi print(int id, int price, boolean active, int banNumber, Map<HouseColor, Integer> students) {
 
         Ansi ansi = new Ansi();
 
@@ -131,13 +134,18 @@ public class SpecialCharacter {
     /**
      * Private method to print the students on the card.
      *
-     * @param students List of students on the card.
+     * @param students Map of students on the card.
      * @param active   True whether the card has been paid, false otherwise.
      * @return The Ansi stream to print to terminal.
      */
-    private static Ansi printStudents(List<HouseColor> students, boolean active) {
+    private static Ansi printStudents(Map<HouseColor, Integer> students, boolean active) {
 
         Ansi ansi = new Ansi();
+
+        List<HouseColor> tmp = new ArrayList<>();
+        Arrays.stream(HouseColor.values()).forEach(color -> {
+            for (int i = 0; i < students.get(color); i++) tmp.add(color);
+        });
 
         // Line #9
 
@@ -147,24 +155,24 @@ public class SpecialCharacter {
         // Line #10
 
         ansi.a("│ ");
-        ansi.a(parseStudent(students.get(0), active));
+        ansi.a(parseStudent(tmp.get(0), active));
         ansi.a(" ");
-        if (students.size() == 6) ansi.a(parseStudent(students.get(1), active));
+        if (students.size() == 6) ansi.a(parseStudent(tmp.get(4), active));
         else ansi.a(" ");
         ansi.a(" ");
-        ansi.a(parseStudent(students.get(2), active));
+        ansi.a(parseStudent(tmp.get(1), active));
         ansi.a(" │");
         ansi.a(newLine());
 
         // Line #11
 
         ansi.a("│ ");
-        ansi.a(parseStudent(students.get(3), active));
+        ansi.a(parseStudent(tmp.get(2), active));
         ansi.a(" ");
-        if (students.size() == 6) ansi.a(parseStudent(students.get(4), active));
+        if (students.size() == 6) ansi.a(parseStudent(tmp.get(5), active));
         else ansi.a(" ");
         ansi.a(" ");
-        ansi.a(parseStudent(students.get(5), active));
+        ansi.a(parseStudent(tmp.get(3), active));
         ansi.a(" │");
         ansi.a(newLine());
 

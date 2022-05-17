@@ -18,6 +18,7 @@ public class SchoolBoard {
     private final TowerType towerType;
     private final Map<HouseColor, Integer> entrance;
     private final Map<HouseColor, Integer> diningRoom;
+    private final Map<HouseColor, Boolean> professors;
     private int towersNumber;
 
     /**
@@ -27,12 +28,14 @@ public class SchoolBoard {
      * @param towerType    Color of the tower.
      * @param diningRoom   Students in the dining room.
      * @param entrance     Students at the entrance.
+     * @param professors   Professor is owned by the player
      */
-    public SchoolBoard(TowerType towerType, int towersNumber, Map<HouseColor, Integer> entrance, Map<HouseColor, Integer> diningRoom) {
+    public SchoolBoard(TowerType towerType, int towersNumber, Map<HouseColor, Integer> entrance, Map<HouseColor, Integer> diningRoom, Map<HouseColor, Boolean> professors) {
         this.towerType = towerType;
         this.towersNumber = towersNumber;
         this.entrance = new EnumMap<>(entrance);
         this.diningRoom = new EnumMap<>(diningRoom);
+        this.professors = new EnumMap<>(professors);
     }
 
     /**
@@ -49,7 +52,7 @@ public class SchoolBoard {
      *
      * @return Number of towers already on the board.
      */
-    public int getTowersNumber(int towersNumber) {
+    public int getTowersNumber() {
         return this.towersNumber;
     }
 
@@ -139,5 +142,30 @@ public class SchoolBoard {
         if (this.diningRoom.get(student) == 0)
             throw new NoStudentException("The required student (" + student + ") is not present.");
         this.diningRoom.replace(student, this.diningRoom.get(student) - 1);
+    }
+
+    /**
+     * Gets a map of the professors.
+     */
+    public Map<HouseColor, Boolean> getProfessors() {
+        return new EnumMap<>(this.professors);
+    }
+
+    /**
+     * Adds a student to the dining room.
+     *
+     * @param professor The color of the professor.
+     */
+    public void addProfessor(HouseColor professor) {
+        this.professors.put(professor, true);
+    }
+
+    /**
+     * Removes a student to the dining room.
+     *
+     * @param professor The color of the professor.
+     */
+    public void removeProfessor(HouseColor professor) {
+        this.professors.put(professor, false);
     }
 }

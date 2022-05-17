@@ -1,17 +1,14 @@
 package it.polimi.ingsw.client.view.cli.pages.subparts;
 
+import it.polimi.ingsw.client.model.Player;
 import it.polimi.ingsw.client.view.cli.Utilities;
 import it.polimi.ingsw.client.view.cli.coordinates.*;
 import it.polimi.ingsw.utilities.HouseColor;
-import it.polimi.ingsw.utilities.TowerType;
-import it.polimi.ingsw.utilities.WizardType;
 import org.fusesource.jansi.Ansi;
 import org.jline.terminal.Terminal;
 
 import java.util.ArrayList;
-import java.util.EnumMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Prints the whole player platform.
@@ -28,57 +25,49 @@ public class PlayerStuff {
      *
      * @param terminal Terminal where to write.
      */
-    public static void print(Terminal terminal) {
-        terminal.writer().print(printSchoolBoards(3));
+    public static void print(Terminal terminal, List<Player> players, boolean exp, List<it.polimi.ingsw.client.model.SpecialCharacter> cards) {
+        terminal.writer().print(printSchoolBoards(players, exp));
         terminal.flush();
-        terminal.writer().print(printSpecialCharactes(3));
-        terminal.flush();
+        if (exp) {
+            terminal.writer().print(printSpecialCharacters(cards, players.size()));
+            terminal.flush();
+        }
     }
 
     /**
      * Prints every school board.
      *
-     * @param playersNumber The number of players.
+     * @param players The list with the players in the match.
      * @return The Ansi stream to print to terminal.
      */
-    private static Ansi printSchoolBoards(int playersNumber) {
+    private static Ansi printSchoolBoards(List<Player> players, Boolean exp) {
 
         // Test SchoolBoard - Begin
-        Map<HouseColor, Integer> entrance = new EnumMap<>(HouseColor.class);
-        Map<HouseColor, Integer> diningRoom = new EnumMap<>(HouseColor.class);
-        Map<HouseColor, Boolean> professors = new EnumMap<>(HouseColor.class);
-        for (HouseColor color : HouseColor.values()) {
-            entrance.put(color, 2);
-            diningRoom.put(color, 5);
-            if (color == HouseColor.BLUE || color == HouseColor.RED) professors.put(color, true);
-            else professors.put(color, false);
-        }
+//        Map<HouseColor, Integer> entrance = new EnumMap<>(HouseColor.class);
+//        Map<HouseColor, Integer> diningRoom = new EnumMap<>(HouseColor.class);
+//        Map<HouseColor, Boolean> professors = new EnumMap<>(HouseColor.class);
+//        for (HouseColor color : HouseColor.values()) {
+//            entrance.put(color, 2);
+//            diningRoom.put(color, 5);
+//            if (color == HouseColor.BLUE || color == HouseColor.RED) professors.put(color, true);
+//            else professors.put(color, false);
+//        }
         // Test SchoolBoard - End
 
         Ansi ansi = new Ansi();
 
         // Draw
 
-        ansi.a(Utilities.moveCursor(SchoolBoardFirst.getInstance()));
-        ansi.a(SchoolBoard.print(entrance, diningRoom, professors, TowerType.BLACK, 5, 0, 3, "Matteo", WizardType.YELLOW, true, false));
+        for (int i = 0; i < players.size(); i++) {
+            if (i == 0) ansi.a(Utilities.moveCursor(SchoolBoardFirst.getInstance()));
+            else if (i == 1 || i == 3) ansi.a(Utilities.moveCursor(SchoolBoardE.getInstance()));
+            else ansi.a(Utilities.moveCursor(SchoolBoardS.getInstance()));
 
-        ansi.a(Utilities.moveCursor(SchoolBoardE.getInstance()));
-        ansi.a(SchoolBoard.print(entrance, diningRoom, professors, TowerType.WHITE, 3, 4, 0, "Motta", WizardType.WHITE, false, true));
+            ansi.a(SchoolBoard.print(players.get(i).getSchoolBoard().getEntrance(), players.get(i).getSchoolBoard().getDiningRoom(), players.get(i).getSchoolBoard().getProfessors(), players.get(i).getSchoolBoard().getTowerType(), players.get(i).getSchoolBoard().getTowersNumber(), (players.get(i).getCurrentPlayedAssistant() != null) ? players.get(i).getCurrentPlayedAssistant().getId() : 0, players.get(i).getCoins(), players.get(i).getName(), players.get(i).getWizard(), players.get(i).isActive(), exp));
 
-        ansi.a(Utilities.moveCursor(SchoolBoardReset2Player.getInstance()));
-
-        if (playersNumber == 3) {
-            ansi.a(Utilities.moveCursor(SchoolBoardS.getInstance()));
-            ansi.a(SchoolBoard.print(entrance, diningRoom, professors, TowerType.BLACK, 6, 5, 10, "Milici", WizardType.FUCHSIA, false, true));
-            ansi.a(Utilities.moveCursor(SchoolBoardReset3Player.getInstance()));
-        } else {
-            ansi.a(Utilities.moveCursor(SchoolBoardS.getInstance()));
-            ansi.a(SchoolBoard.print(entrance, diningRoom, professors, TowerType.BLACK, 6, 5, 10, "Milici", WizardType.FUCHSIA, false, true));
-
-            ansi.a(Utilities.moveCursor(SchoolBoardE.getInstance()));
-            ansi.a(SchoolBoard.print(entrance, diningRoom, professors, TowerType.WHITE, 2, 10, 0, "Lazzarin", WizardType.GREEN, false, false));
-
-            ansi.a(Utilities.moveCursor(SchoolBoardReset4Player.getInstance()));
+            if (i == 1) ansi.a(Utilities.moveCursor(SchoolBoardReset2Player.getInstance()));
+            else if (i == 2 && players.size() == 3) ansi.a(Utilities.moveCursor(SchoolBoardReset3Player.getInstance()));
+            else if (i == 3 && players.size() == 4) ansi.a(Utilities.moveCursor(SchoolBoardReset4Player.getInstance()));
         }
 
         return ansi;
@@ -87,19 +76,19 @@ public class PlayerStuff {
     /**
      * Prints every special character.
      *
-     * @param playersNumber The number of players.
+     * @param cards The list of special characters.
      * @return The Ansi stream to print to terminal.
      */
-    private static Ansi printSpecialCharactes(int playersNumber) {
+    private static Ansi printSpecialCharacters(List<it.polimi.ingsw.client.model.SpecialCharacter> cards, int playersNumber) {
 
         // Test SchoolBoard - Begin
-        List<HouseColor> studentsSix = new ArrayList<>();
-        List<HouseColor> studentsFour = new ArrayList<>();
-        for (HouseColor color : HouseColor.values()) {
-            studentsSix.add(color);
-            if (!color.equals(HouseColor.FUCHSIA)) studentsFour.add(color);
-        }
-        studentsSix.add(HouseColor.RED);
+//        List<HouseColor> studentsSix = new ArrayList<>();
+//        List<HouseColor> studentsFour = new ArrayList<>();
+//        for (HouseColor color : HouseColor.values()) {
+//            studentsSix.add(color);
+//            if (!color.equals(HouseColor.FUCHSIA)) studentsFour.add(color);
+//        }
+//        studentsSix.add(HouseColor.RED);
         // Test SchoolBoard - End
 
         Ansi ansi = new Ansi();
@@ -112,13 +101,10 @@ public class PlayerStuff {
             default -> Utilities.moveCursor(SpecialCharacterFirst4Players.getInstance());
         });
 
-        ansi.a(SpecialCharacter.print(3, 1, false, 5, null));
-
-        ansi.a(Utilities.moveCursor(SpecialCharacterE.getInstance()));
-        ansi.a(SpecialCharacter.print(12, 4, true, -1, studentsSix));
-
-        ansi.a(Utilities.moveCursor(SpecialCharacterE.getInstance()));
-        ansi.a(SpecialCharacter.print(7, 3, false, -1, null));
+        for (int i=0; i<3; i++) {
+            if (i!=0) ansi.a(Utilities.moveCursor(SpecialCharacterE.getInstance()));
+            ansi.a(SpecialCharacter.print(cards.get(i).getId(), cards.get(i).getCost(), cards.get(i).isActive(), cards.get(i).getAvailableBans(), cards.get(i).getStudents()));
+        }
 
         ansi.a(switch (playersNumber) {
             case 2 -> Utilities.moveCursor(SpecialCharactersReset2Players.getInstance());
