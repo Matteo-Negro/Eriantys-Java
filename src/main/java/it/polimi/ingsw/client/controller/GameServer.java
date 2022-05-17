@@ -31,8 +31,7 @@ public class GameServer extends Thread {
         this.client = client;
         this.connected = true;
         this.connectedLock = new Object();
-
-        new Thread(new Ping(this)).start();
+        this.ping = new Ping(this);
         hostSocket.setSoTimeout(10000);
         //System.out.println("\nGameServer instance created");
     }
@@ -40,6 +39,7 @@ public class GameServer extends Thread {
     public void run() {
         JsonObject incomingMessage;
 
+        new Thread(ping).start();
 
         while (true) {
 
@@ -148,6 +148,7 @@ public class GameServer extends Thread {
         synchronized (this.connectedLock) {
             setConnected(false);
         }
+        this.ping.stopPing();
         this.client.setClientState(ClientStates.CONNECTION_LOST);
     }
 
