@@ -35,6 +35,8 @@ public class Ping extends Thread {
     }
 
     public void stopPing() {
-        this.stop = true;
+        synchronized (this.lock){
+            this.stop = true;
+        }
     }
 }

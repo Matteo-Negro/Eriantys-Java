@@ -23,6 +23,7 @@ public class GameServer extends Thread {
     private final ClientCli client;
     private final Object connectedLock;
     private boolean connected;
+    private Ping ping;
 
     public GameServer(Socket hostSocket, ClientCli client) throws IOException {
         this.inputStream = new BufferedReader(new InputStreamReader(hostSocket.getInputStream()));
@@ -38,6 +39,7 @@ public class GameServer extends Thread {
 
     public void run() {
         JsonObject incomingMessage;
+
 
         while (true) {
 
@@ -85,7 +87,7 @@ public class GameServer extends Thread {
     private void manageEnterGame(JsonObject message) {
         if (this.client.getClientState().equals(ClientStates.GAME_CREATION) || this.client.getClientState().equals(ClientStates.JOIN_GAME)) {
             if (message.get("found").getAsBoolean()) {
-                Map<String, String> waitingRoom = new HashMap<>();
+                Map<String, Boolean> waitingRoom = new HashMap<>();
                 int expectedPlayers = message.get("expectedPlayers").getAsInt();
                 JsonArray players = message.get("players").getAsJsonArray();
 
@@ -93,8 +95,7 @@ public class GameServer extends Thread {
 
                     String player = players.get(i).getAsJsonObject().get("name").getAsString();
                     boolean online = players.get(i).getAsJsonObject().get("online").getAsBoolean();
-                    if (online) waitingRoom.put(player, "online");
-                    else waitingRoom.put(player, "offline");
+                    waitingRoom.put(player, online);
 
                 }
                 GameModel newGameModel = new GameModel(expectedPlayers, waitingRoom);

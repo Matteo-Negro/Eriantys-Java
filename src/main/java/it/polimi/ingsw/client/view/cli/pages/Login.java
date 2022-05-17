@@ -41,9 +41,9 @@ public class Login {
      *
      * @param terminal Terminal where to write.
      */
-    public static void print(Terminal terminal, Map<String, String> players) {
+    public static void print(Terminal terminal, Map<String, Boolean> players, int expectedPlayers) {
         terminal.writer().print(ansi().cursor((terminal.getHeight() - 17) / 2, (terminal.getWidth() - 40) / 2));
-        terminal.writer().print(print(players));
+        terminal.writer().print(print(players, expectedPlayers));
         terminal.flush();
     }
 
@@ -52,7 +52,7 @@ public class Login {
      *
      * @return The generated Ansi stream.
      */
-    private static Ansi print(Map<String, String> players) {
+    private static Ansi print(Map<String, Boolean> players, int expectedPlayers) {
         Ansi ansi = new Ansi();
         ansi.a(printTitle());
         ansi.cursorMove(0, 1);

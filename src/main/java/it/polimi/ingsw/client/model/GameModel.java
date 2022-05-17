@@ -7,20 +7,20 @@ import java.util.Map;
 
 public class GameModel {
     private final int playersNumber;
-    private final Map<String, String> waitingRoom;
+    private final Map<String, Boolean> waitingRoom;
     private final Player currentPlayer;
     private boolean expert;
     private List<Player> players;
     private GameBoard gameBoard;
     private List<SpecialCharacter> specialCharacters;
 
-    public GameModel(int expectedPlayers, Map<String, String> waitingRoom) {
+    public GameModel(int expectedPlayers, Map<String, Boolean> waitingRoom) {
         this.waitingRoom = new HashMap<>(waitingRoom);
         this.playersNumber = expectedPlayers;
         this.currentPlayer = null;
     }
 
-    public GameModel(Map<String, String> statusWaitingRoom, int statusPlayersNumber, boolean statusExpert, Player statusCurrentPlayer, List<Player> statusPlayers, GameBoard statusGameBoard, List<SpecialCharacter> statusSpecialCharacters) {
+    public GameModel(Map<String, Boolean> statusWaitingRoom, int statusPlayersNumber, boolean statusExpert, Player statusCurrentPlayer, List<Player> statusPlayers, GameBoard statusGameBoard, List<SpecialCharacter> statusSpecialCharacters) {
         this.waitingRoom = statusWaitingRoom;
         this.playersNumber = statusPlayersNumber;
         this.expert = statusExpert;
@@ -30,7 +30,11 @@ public class GameModel {
         this.specialCharacters = new ArrayList<>(statusSpecialCharacters);
     }
 
-    public Map<String, String> getWaitingRoom() {
+    public Map<String, Boolean> getWaitingRoom() {
         return new HashMap<>(this.waitingRoom);
+    }
+
+    public int getPlayersNumber(){
+        return this.playersNumber;
     }
 }

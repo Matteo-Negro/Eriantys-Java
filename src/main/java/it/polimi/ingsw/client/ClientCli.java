@@ -211,7 +211,7 @@ public class ClientCli extends Thread {
 
     private void manageGameLogin() {
         clearScreen(terminal, false);
-        Login.print(terminal, this.getGameModel().getWaitingRoom());
+        Login.print(terminal, this.getGameModel().getWaitingRoom(), this.getGameModel().getPlayersNumber());
 
         String username;
         boolean usernameIsValid = true;
@@ -222,7 +222,7 @@ public class ClientCli extends Thread {
                 this.resetGame();
                 return;
             }
-            if (this.getGameModel().getWaitingRoom().containsKey(username) && this.getGameModel().getWaitingRoom().get(username).equals("online")) {
+            if (this.getGameModel().getWaitingRoom().containsKey(username) && this.getGameModel().getWaitingRoom().get(username).equals(true)) {
                 usernameIsValid = false;
                 printError(terminal, "Username not valid.");
             }
