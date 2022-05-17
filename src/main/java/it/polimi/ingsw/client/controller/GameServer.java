@@ -113,8 +113,7 @@ public class GameServer extends Thread {
     private void manageLogin(JsonObject message) {
         if (this.client.getClientState().equals(ClientStates.GAME_LOGIN)) {
             if (message.get("success").getAsBoolean()) {
-                this.client.setClientState(ClientStates.GAME_WAITINGROOM);
-
+                this.client.setClientState(ClientStates.GAME_WAITING_ROOM);
             }
         } else disconnected();
         synchronized (this.client.getServerReplyLock()){

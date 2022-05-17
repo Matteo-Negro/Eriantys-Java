@@ -54,6 +54,7 @@ public class ClientCli extends Thread {
         return this.userName;
     }
 
+    @Override
     public void run() {
         boolean process = true;
         try {
@@ -64,7 +65,7 @@ public class ClientCli extends Thread {
                     case GAME_CREATION -> manageGameCreation();
                     case JOIN_GAME -> manageJoinGame();
                     case GAME_LOGIN -> manageGameLogin();
-                    case GAME_WAITINGROOM -> manageWaitingRoom();
+                    case GAME_WAITING_ROOM -> manageWaitingRoom();
                     case GAME_RUNNING -> {
                         //manage game logic
                         //when end game message arrives from the server -> transition to end game
@@ -81,99 +82,125 @@ public class ClientCli extends Thread {
             Log.error(e.getMessage());
         } finally {
             clearScreen(terminal, true);
-            gameServer.disconnected();
-            // System.exit(0);
+            if (gameServer != null)
+                gameServer.disconnected();
         }
     }
 
     private void manageStartScreen() {
-        clearScreen(terminal, false);
-        do {
-            SplashScreen.print(terminal);
-            String hostIp = readLine(" ", terminal, List.of(node("localhost"), node("127.0.0.1")), false, null);
-            terminal.writer().print(ansi().restoreCursorPosition());
-            terminal.writer().print(ansi().cursorMove(-18, 1));
-            terminal.writer().print(ansi().saveCursorPosition());
-            terminal.flush();
-            try {
-                int hostTcpPort = Integer.parseInt(readLine(" ", terminal, List.of(node("36803")), false, null));
-                Socket hostSocket = new Socket(hostIp, hostTcpPort);
-                hostSocket.setSoTimeout(10000);
-                this.gameServer = new GameServer(hostSocket, this);
-                new Thread(this.gameServer).start();
-                setClientState(ClientStates.MAIN_MENU);
-            } catch (IOException | NumberFormatException e) {
-                printError(terminal, "Wrong data provided or server unreachable.");
-            }
-        } while (gameServer == null);
+
+        SplashScreen.print(terminal);
+
+        String hostIp = readLine(" ", terminal, List.of(node("localhost"), node("127.0.0.1")), false, null);
+
+        terminal.writer().print(ansi().restoreCursorPosition());
+        terminal.writer().print(ansi().cursorMove(-18, 1));
+        terminal.writer().print(ansi().saveCursorPosition());
+        terminal.flush();
+
+        int hostTcpPort;
+        try {
+            hostTcpPort = Integer.parseInt(readLine(" ", terminal, List.of(node("36803")), false, null));
+        } catch (NumberFormatException e) {
+            clearScreen(terminal, false);
+            printError(terminal, "Wrong data provided or server unreachable.");
+            return;
+        }
+
+        try (Socket hostSocket = new Socket(hostIp, hostTcpPort)) {
+            hostSocket.setSoTimeout(10000);
+            this.gameServer = new GameServer(hostSocket, this);
+            new Thread(this.gameServer).start();
+            setClientState(ClientStates.MAIN_MENU);
+            clearScreen(terminal, false);
+        } catch (IOException e) {
+            clearScreen(terminal, false);
+            printError(terminal, "Wrong data provided or server unreachable.");
+            return;
+        }
+
+        if (!this.getClientState().equals(ClientStates.START_SCREEN))
+            clearScreen(terminal, false);
     }
 
     private void manageMainMenu() {
+        MainMenu.print(terminal);
+        String option = readLine(" ", terminal, List.of(node("1"), node("2"), node("exit")), false, null);
         clearScreen(terminal, false);
-        String option;
-
-        do {
-            MainMenu.print(terminal);
-            option = readLine(" ", terminal, List.of(node("1"), node("2")), false, null);
-
-            switch (option) {
-                case "1" -> this.setClientState(ClientStates.GAME_CREATION);
-                case "2" -> this.setClientState(ClientStates.JOIN_GAME);
-                default -> printError(terminal, "Wrong command.");
+        switch (option) {
+            case "1" -> this.setClientState(ClientStates.GAME_CREATION);
+            case "2" -> this.setClientState(ClientStates.JOIN_GAME);
+            case "exit" -> {
+                if (this.gameServer != null)
+                    this.gameServer.disconnected();
+                this.setClientState(ClientStates.START_SCREEN);
+                gameModel = null;
             }
-        } while (this.getClientState().equals(ClientStates.MAIN_MENU));
+            default -> {
+                printError(terminal, "Wrong command.");
+                this.setClientState(ClientStates.MAIN_MENU);
+            }
+        }
+
+        if (!this.getClientState().equals(ClientStates.MAIN_MENU))
+            clearScreen(terminal, false);
     }
 
     private void manageGameCreation() {
-        clearScreen(terminal, false);
 
-        boolean wrongCommand;
-        int expectedPlayers = 2;
-        boolean expert = false;
-        do {
-            wrongCommand = false;
-            GameCreation.print(terminal);
-            String playersNumber = readLine(" ", terminal, List.of(node("2"), node("3"), node("4"), node("exit")), false, null);
-            switch (playersNumber) {
-                case "2", "3", "4" -> expectedPlayers = Integer.parseInt(playersNumber);
-                case "exit" -> {
-                    this.setClientState(ClientStates.MAIN_MENU);
-                    this.resetGame();
-                    return;
-                }
-                default -> wrongCommand = true;
-            }
+        int expectedPlayers;
+        boolean expert;
 
-            terminal.writer().print(ansi().restoreCursorPosition());
-            terminal.writer().print(ansi().cursorMove(-1, 1));
-            terminal.writer().print(ansi().saveCursorPosition());
-            terminal.flush();
-            String difficulty = readLine(" ", terminal, List.of(node("normal"), node("expert"), node("exit")), false, null);
-            switch (difficulty) {
-                case "normal" -> expert = false;
-                case "expert" -> expert = true;
-                case "exit" -> {
-                    this.setClientState(ClientStates.MAIN_MENU);
-                    this.resetGame();
-                    return;
-                }
-                default -> wrongCommand = true;
+        GameCreation.print(terminal);
+
+        String playersNumber = readLine(" ", terminal, List.of(node("2"), node("3"), node("4"), node("exit")), false, null);
+
+        switch (playersNumber) {
+            case "2", "3", "4" -> expectedPlayers = Integer.parseInt(playersNumber);
+            case "exit" -> {
+                clearScreen(terminal, false);
+                this.setClientState(ClientStates.MAIN_MENU);
+                this.resetGame();
+                return;
             }
-            if (wrongCommand) printError(terminal, "Wrong command.");
-        } while (wrongCommand);
+            default -> {
+                clearScreen(terminal, false);
+                printError(terminal, "Wrong command.");
+                return;
+            }
+        }
+
+        terminal.writer().print(ansi().restoreCursorPosition());
+        terminal.writer().print(ansi().cursorMove(-1, 1));
+        terminal.writer().print(ansi().saveCursorPosition());
+        terminal.flush();
+
+        String difficulty = readLine(" ", terminal, List.of(node("normal"), node("expert"), node("exit")), false, null);
+
+        switch (difficulty) {
+            case "normal" -> expert = false;
+            case "expert" -> expert = true;
+            case "exit" -> {
+                clearScreen(terminal, false);
+                this.setClientState(ClientStates.MAIN_MENU);
+                this.resetGame();
+                return;
+            }
+            default -> {
+                clearScreen(terminal, false);
+                printError(terminal, "Wrong command.");
+                return;
+            }
+        }
 
         //Send command to the server and wait for a response.
         this.gameServer.sendCommand(MessageCreator.gameCreation(expectedPlayers, expert));
         //System.out.println("gameCreation request");
 
-        synchronized (this.serverReplyLock){
-            try {
-                this.serverReplyLock.wait(10000);
-            } catch (InterruptedException ie) {
-                printError(terminal, "Connection error.");
-                this.resetGame();
-            }
-        }
+        if (tryConnection())
+            return;
+
+        clearScreen(terminal, false);
 
         if (this.getClientState().equals(ClientStates.GAME_CREATION)) {
             printError(terminal, "Connection error.");
@@ -182,12 +209,12 @@ public class ClientCli extends Thread {
     }
 
     private void manageJoinGame() {
-        clearScreen(terminal, false);
+
         JoinGame.print(terminal);
 
-
         String gameCode = readLine(" ", terminal, List.of(node("exit")), false, null);
-        if ("exit".equals(gameCode)) {
+        if (gameCode.equals("exit")) {
+            clearScreen(terminal, false);
             this.setClientState(ClientStates.MAIN_MENU);
             this.resetGame();
             return;
@@ -196,14 +223,9 @@ public class ClientCli extends Thread {
         //Send command to the server and wait for a response.
         this.gameServer.sendCommand(MessageCreator.enterGame(gameCode));
 
-        synchronized (this.serverReplyLock){
-            try {
-                this.serverReplyLock.wait(10000);
-            } catch (InterruptedException ie) {
-                printError(terminal, "Connection error.");
-                this.resetGame();
-            }
-        }
+        if (tryConnection())
+            return;
+
         if (this.getClientState().equals(ClientStates.JOIN_GAME)) {
             printError(terminal, "Connection error.");
             this.resetGame();
@@ -211,36 +233,32 @@ public class ClientCli extends Thread {
     }
 
     private void manageGameLogin() {
-        clearScreen(terminal, false);
+
         Login.print(terminal, this.getGameModel().getWaitingRoom(), this.getGameModel().getPlayersNumber());
 
-        String username;
-        boolean usernameIsValid = true;
-        do {
-            username = readLine(" ", terminal, List.of(node("exit")), false, null);
-            if ("exit".equals(username)) {
-                this.setClientState(ClientStates.MAIN_MENU);
-                this.resetGame();
-                return;
-            }
-            if (this.getGameModel().getWaitingRoom().containsKey(username) && this.getGameModel().getWaitingRoom().get(username).equals(true)) {
-                usernameIsValid = false;
-                printError(terminal, "Username not valid.");
-            }
-        } while (!usernameIsValid);
+        String username = readLine(" ", terminal, List.of(node("exit")), false, null);
+
+        if (username.equals("exit")) {
+            clearScreen(terminal, false);
+            this.setClientState(ClientStates.MAIN_MENU);
+            this.resetGame();
+            return;
+        }
+
+        if (this.getGameModel().getWaitingRoom().containsKey(username) && this.getGameModel().getWaitingRoom().get(username).equals(true)) {
+            clearScreen(terminal, false);
+            printError(terminal, "Invalid username.");
+            return;
+        }
 
         this.userName = username;
         //Send command to the server and wait for a response.
         this.gameServer.sendCommand(MessageCreator.login(username));
 
-        synchronized (this.serverReplyLock){
-            try {
-                this.serverReplyLock.wait(10000);
-            } catch (InterruptedException ie) {
-                printError(terminal, "Connection error.");
-                this.resetGame();
-            }
-        }
+        if (tryConnection())
+            return;
+
+        clearScreen(terminal, false);
 
         if (this.getClientState().equals(ClientStates.GAME_LOGIN)) {
             printError(terminal, "Connection error.");
@@ -256,24 +274,20 @@ public class ClientCli extends Thread {
 
         String command;
         do {
-            command = readLine(" ", terminal, List.of(node("esc")), false, null);
-            if (command.equals("esc")) {
+            command = readLine(" ", terminal, List.of(node("exit")), false, null);
+            if (command.equals("exit")) {
+                clearScreen(terminal, false);
                 this.setClientState(ClientStates.MAIN_MENU);
                 this.resetGame();
-                return;
             } else {
                 printError(terminal, "Wrong command.");
             }
-        } while (this.getClientState().equals(ClientStates.GAME_WAITINGROOM));
+        } while (this.getClientState().equals(ClientStates.GAME_WAITING_ROOM));
 
-        synchronized (this.serverReplyLock){
-            try {
-                this.serverReplyLock.wait(10000);
-            } catch (InterruptedException ie) {
-                printError(terminal, "Connection error.");
-                this.resetGame();
-            }
-        }
+        if (tryConnection())
+            return;
+
+        clearScreen(terminal, false);
     }
 
     private void manageGameRunning() {
@@ -284,14 +298,32 @@ public class ClientCli extends Thread {
         */
     }
 
+    private boolean tryConnection() {
+
+        synchronized (this.serverReplyLock) {
+            try {
+                this.serverReplyLock.wait(10000);
+            } catch (InterruptedException e) {
+                clearScreen(terminal, false);
+                printError(terminal, "Connection error.");
+                this.resetGame();
+                return true;
+            }
+        }
+
+        clearScreen(terminal, false);
+
+        return false;
+    }
+
     private void manageEndGame() {
         clearScreen(terminal, false);
         //TODO Print end game screen on cli.
 
         String command;
         do {
-            command = readLine(" ", terminal, List.of(node("esc")), false, null);
-            if (command.equals("esc")) {
+            command = readLine(" ", terminal, List.of(node("exit")), false, null);
+            if (command.equals("exit")) {
                 this.setClientState(ClientStates.MAIN_MENU);
                 this.resetGame();
                 return;
@@ -303,8 +335,9 @@ public class ClientCli extends Thread {
 
     public void manageConnectionLost() {
         this.resetGame();
-        this.getGameServer().interrupt();
+        this.getGameServer().disconnected();
         this.gameServer = null;
+        clearScreen(terminal, false);
         this.setClientState(ClientStates.START_SCREEN);
     }
 
