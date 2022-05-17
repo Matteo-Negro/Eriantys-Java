@@ -81,6 +81,7 @@ public class ClientCli extends Thread {
             Log.error(e.getMessage());
         } finally {
             clearScreen(terminal, true);
+            gameServer.disconnected();
             // System.exit(0);
         }
     }
