@@ -1,6 +1,7 @@
 package it.polimi.ingsw;
 
 import it.polimi.ingsw.server.Server;
+import it.polimi.ingsw.utilities.Log;
 import it.polimi.ingsw.utilities.Pair;
 
 import java.io.IOException;
@@ -9,12 +10,19 @@ public class ServerLauncher {
 
     public static void main(String[] args) {
 
+        try {
+            Log.createServerInstance();
+            Log.setLevel(Log.Level.DEBUG);
+        } catch (IOException | IllegalAccessException e) {
+            System.exit(1);
+        }
+
         Pair<String, Integer> arguments = parseArguments(args);
 
         try {
             new Server(arguments.key(), arguments.value()).start();
         } catch (IOException e) {
-            System.out.println("Shutdown server.");
+            Log.error("Shutdown server.");
         }
     }
 

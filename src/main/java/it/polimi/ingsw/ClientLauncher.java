@@ -2,6 +2,7 @@ package it.polimi.ingsw;
 
 import it.polimi.ingsw.client.ClientCli;
 import it.polimi.ingsw.utilities.GraphicsType;
+import it.polimi.ingsw.utilities.Log;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -10,6 +11,14 @@ import java.util.List;
 public class ClientLauncher {
 
     public static void main(String[] args) {
+
+        try {
+            Log.createClientInstance();
+            Log.setLevel(Log.Level.DEBUG);
+        } catch (IOException | IllegalAccessException e) {
+            System.exit(1);
+        }
+
         try {
             //new Client(parseArgument(args));
             try {
@@ -17,14 +26,14 @@ public class ClientLauncher {
                     new Thread(new ClientCli()).start();
                 }
             } catch (IOException ioe) {
-                System.err.println("An error occurred while creating the controller class.");
+                Log.error("An error occurred while creating the controller class.");
             }
             /*else{
                 // create ClientGui
             }*/
 
         } catch (IllegalArgumentException e) {
-            System.err.println("Accepted arguments: --cli, -c, --gui or -g.");
+            Log.error("Accepted arguments: --cli, -c, --gui or -g.");
         }
     }
 

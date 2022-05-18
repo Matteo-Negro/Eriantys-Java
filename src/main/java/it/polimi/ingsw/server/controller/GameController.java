@@ -12,6 +12,7 @@ import it.polimi.ingsw.server.model.player.Assistant;
 import it.polimi.ingsw.server.model.player.Player;
 import it.polimi.ingsw.utilities.GameControllerStates;
 import it.polimi.ingsw.utilities.HouseColor;
+import it.polimi.ingsw.utilities.Log;
 import it.polimi.ingsw.utilities.MessageCreator;
 import it.polimi.ingsw.utilities.exceptions.*;
 import it.polimi.ingsw.utilities.parsers.ObjectsToJson;
@@ -266,36 +267,32 @@ public class GameController extends Thread {
         json.add("players", ObjectsToJson.toJsonArray(this.gameModel.getPlayers(), ObjectsToJson.GET_PLAYERS));
         json.add("board", ObjectsToJson.toJsonObject(this.gameModel.getGameBoard()));
 
-        new Thread(() -> {
-            try {
-                writeFile(json);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }).start();
+        new Thread(() -> writeFile(json)).start();
     }
 
     /**
      * Writes the json containing the state into a file.
      *
      * @param json The json to write.
-     * @throws IOException If there is an exception during the process.
      */
-    private void writeFile(JsonObject json) throws IOException {
-        BufferedWriter writer = Files.newBufferedWriter(Paths.get(this.savePath, this.id + ".json"), StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE);
-        writer.write(json.toString());
-        writer.close();
+    private void writeFile(JsonObject json) {
+        try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(this.savePath, this.id + ".json"), StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE)) {
+            writer.write(json.toString());
+        } catch (IOException e) {
+            Log.warning(e.getMessage());
+        }
     }
 
     /**
      * This method is called whenever the game if full (players are all connected); it gives the input permission token to the current player, this decision is based on the turn order imposed by the model.
      */
+    @Override
     public void run() {
         while (true) {
             while (!this.isFull()) {
                 try {
                     this.isFullLock.wait();
-                } catch (InterruptedException ie) {
+                } catch (InterruptedException e) {
                     notifyUsers(MessageCreator.error("Game server error occurred."));
                     for (User user : this.getUsers()) this.removeUser(user);
                     return;

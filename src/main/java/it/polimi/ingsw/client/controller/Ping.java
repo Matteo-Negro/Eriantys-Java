@@ -22,11 +22,11 @@ public class Ping extends Thread {
         //System.out.println("\nPong running");
         while (!stop) {
             synchronized (lock) {
-                System.out.println("\nPong sent");
+                // System.out.println("\nPong sent");
                 this.host.sendCommand(pongMessage);
                 try {
                     lock.wait(1000);
-                } catch (InterruptedException ie) {
+                } catch (InterruptedException e) {
                     this.stopPing();
                 }
             }
