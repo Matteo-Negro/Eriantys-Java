@@ -101,6 +101,7 @@ public class MessageCreator {
     public static JsonObject status(GameController game) {
         JsonObject reply = new JsonObject();
         reply.addProperty("round", game.getRound());
+        reply.addProperty("expert", game.getGameModel().isExpert());
         reply.addProperty("activeUser", game.getActiveUser());
         reply.addProperty("phase", game.getPhase());
         reply.addProperty("subPhase", game.getSubPhase().toString());

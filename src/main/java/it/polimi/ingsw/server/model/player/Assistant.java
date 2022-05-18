@@ -39,6 +39,15 @@ public class Assistant {
     }
 
     /**
+     * Tells if the card has a bonus.
+     *
+     * @return Bonus boolean attribute.
+     */
+    public boolean hasBonus(){
+        return bonus;
+    }
+
+    /**
      * Gets the maximum travel distance for Mother Nature.
      *
      * @return Maximum travel distance for Mother Nature

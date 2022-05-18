@@ -95,8 +95,13 @@ public enum ObjectsToJson {
      */
     private static JsonArray parseAssistants(List<Assistant> assistants) {
         JsonArray list = new JsonArray();
-        for (Assistant assistant : assistants)
-            list.add(assistant.getId());
+        JsonObject assistantCard;
+        for (Assistant assistant : assistants){
+            assistantCard = new JsonObject();
+            assistantCard.addProperty("id", assistant.getId());
+            assistantCard.addProperty("bonus", assistant.hasBonus());
+            list.add(assistantCard);
+        }
         return list;
     }
 

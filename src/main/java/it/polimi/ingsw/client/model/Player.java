@@ -1,13 +1,20 @@
 package it.polimi.ingsw.client.model;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import it.polimi.ingsw.server.model.board.SpecialCharacter;
+import it.polimi.ingsw.utilities.HouseColor;
+import it.polimi.ingsw.utilities.TowerType;
 import it.polimi.ingsw.utilities.WizardType;
 import it.polimi.ingsw.utilities.exceptions.AlreadyPlayedException;
 import it.polimi.ingsw.utilities.exceptions.NegativeException;
 import it.polimi.ingsw.utilities.exceptions.NotEnoughCoinsException;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Contains all the data connected to the player on the client side.
@@ -32,13 +39,33 @@ public class Player {
      * @param coins       Player's coins.
      * @param schoolBoard Player's SchoolBoard.
      */
-    public Player(String name, WizardType wizardType, int coins, SchoolBoard schoolBoard, List<Assistant> hand) {
+    public Player(String name, WizardType wizardType, int coins, JsonObject schoolBoard, JsonArray hand) {
         this.name = name;
         this.wizard = wizardType;
         this.coins = coins;
-        this.schoolBoard = schoolBoard;
-        this.hand = new ArrayList<>(hand);
+
         this.currentPlayedAssistant = null;
+
+
+        this.hand = new ArrayList<>();
+        for(JsonElement assistant : hand){
+            int id = assistant.getAsJsonObject().get("id").getAsInt();
+            boolean bonus = assistant.getAsJsonObject().get("bonus").getAsBoolean();
+            this.hand.add(new Assistant(id, bonus));
+        }
+        TowerType towerType = TowerType.valueOf(schoolBoard.get("towerType").getAsString());
+        int towersNumber = schoolBoard.get("towersNumber").getAsInt();
+        Map<HouseColor, Integer> entrance = new EnumMap<>(HouseColor.class);
+        for(HouseColor color : HouseColor.values()){
+            entrance.put(color, schoolBoard.get("entrance").getAsJsonObject().get(color.toString()).getAsInt());
+        }
+        Map<HouseColor, Integer> diningRoom = new EnumMap<>(HouseColor.class);
+        for(HouseColor color : HouseColor.values()){
+            diningRoom.put(color, schoolBoard.get("diningRoom").getAsJsonObject().get(color.toString()).getAsInt());
+        }
+        //TODO define professors.
+        Map<HouseColor, Boolean> professors = new EnumMap<>(HouseColor.class);
+        this.schoolBoard = new SchoolBoard(towerType, towersNumber, entrance, diningRoom, professors);
     }
 
     /**

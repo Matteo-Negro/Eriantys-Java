@@ -141,7 +141,9 @@ public class User extends Thread {
                 sendMessage(MessageCreator.login(logged));
                 if (logged) {
                     username = command.get("name").getAsString();
+                    System.out.println("\n login reply sent: logged");
                 }
+
             }
             case "logout" -> removeFromGame();
             case "command" -> {

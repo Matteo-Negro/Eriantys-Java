@@ -8,21 +8,21 @@ import java.util.List;
 import java.util.Map;
 
 public class GameBoard {
-    private final Map<HouseColor, Player> professors;
-    private final Island motherNatureIsland;
-    private final Player influenceBonus;
-    private final HouseColor ignoreColor;
-    private final List<Island> islands;
-    private final List<Cloud> clouds;
-    private final Map<Assistant, Player> playedAssistants;
+    private Map<HouseColor, Player> professors;
+    private Island motherNatureIsland;
+    private Player influenceBonus;
+    private HouseColor ignoreColor;
+    private List<Island> islands;
+    private List<Cloud> clouds;
+    private List<SpecialCharacter> specialCharacters;
 
-    public GameBoard(Map<HouseColor, Player> statusProfessors, Island statusMotherNatureIsland, Player statusInfluenceBonus, HouseColor statusIgnoreColor, List<Island> statusIslands, List<Cloud> statusClouds, Map<Assistant, Player> statusPlayedAssistants) {
+    public GameBoard(Map<HouseColor, Player> statusProfessors, Island statusMotherNatureIsland, Player statusInfluenceBonus, HouseColor statusIgnoreColor, List<Island> statusIslands, List<Cloud> statusClouds, List<SpecialCharacter> statusSpecialCharacters) {
         this.professors = new HashMap<>(statusProfessors);
         this.motherNatureIsland = statusMotherNatureIsland;
         this.influenceBonus = statusInfluenceBonus;
         this.ignoreColor = statusIgnoreColor;
         this.islands = new ArrayList<>(statusIslands);
         this.clouds = new ArrayList<>(statusClouds);
-        this.playedAssistants = new HashMap<>(statusPlayedAssistants);
+        this.specialCharacters = new ArrayList<>(statusSpecialCharacters);
     }
 }
