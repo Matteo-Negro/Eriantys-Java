@@ -219,19 +219,18 @@ public class ClientCli extends Thread {
 
     private void manageWaitingRoom() {
         clearScreen(terminal, false);
-        //temporary
-        String[] textualMessage = {"WAITING FOR THE OTHER PLAYERS..."};
-        printText(textualMessage);
+        //work in progress.
+        this.errorOccurred("WAITING FOR OTHER PLAYERS...");
         //TODO Print waiting room screen on cli.
 
     }
 
     private void manageGameRunning() {
-        /* clearScreen(terminal, false);
+        clearScreen(terminal, false);
         //TODO Print current status screen on cli.
+        //work in progress.
+        this.errorOccurred("RUNNING THE GAME");
 
-        String command = readLine(" ", terminal, null, false, null);
-        */
     }
 
     private void manageEndGame() {
@@ -276,7 +275,7 @@ public class ClientCli extends Thread {
         this.gameModel = null;
     }
 
-    private void errorOccurred(String message){
+    public void errorOccurred(String message){
         printError(terminal, message);
         synchronized (this.lock) {
             try {

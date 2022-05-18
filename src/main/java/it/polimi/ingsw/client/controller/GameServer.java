@@ -84,6 +84,8 @@ public class GameServer extends Thread {
                 manageStatus(incomingMessage);
             }
 
+            case "gameStart" -> this.client.setClientState(ClientStates.GAME_RUNNING);
+
             case "playAssistant" ->{
             }
 
@@ -125,9 +127,14 @@ public class GameServer extends Thread {
                 GameModel newGameModel = new GameModel(expectedPlayers, waitingRoom);
                 this.client.initializeGameModel(newGameModel);
                 this.client.setClientState(ClientStates.GAME_LOGIN);
-                System.out.println("changed state");
             }
-        } else disconnected();
+            else{
+                this.client.errorOccurred("This game is full.");
+            }
+        }
+        else{
+            this.client.setClientState(ClientStates.CONNECTION_LOST);
+        };
 
         synchronized (this.client.getLock()){
             this.client.getLock().notify();
@@ -139,8 +146,10 @@ public class GameServer extends Thread {
             if (message.get("success").getAsBoolean()) {
                 this.client.setClientState(ClientStates.GAME_WAITING_ROOM);
             }
-            else this.client.setClientState(ClientStates.MAIN_MENU);
-        } else disconnected();
+            else{
+                this.client.setClientState(ClientStates.CONNECTION_LOST);
+            }
+        } else this.client.setClientState(ClientStates.CONNECTION_LOST);;
 
         synchronized (this.client.getLock()){
             this.client.getLock().notify();
@@ -160,7 +169,6 @@ public class GameServer extends Thread {
         GameModel model = new GameModel(players.size(), round, phase, subphase, expert, activeUser, players, gameBoard);
 
         this.client.initializeGameModel(model);
-        this.client.setClientState(ClientStates.GAME_RUNNING);
     }
 
     public boolean isConnected() {

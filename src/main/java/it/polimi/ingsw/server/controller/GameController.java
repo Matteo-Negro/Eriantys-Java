@@ -216,14 +216,7 @@ public class GameController extends Thread {
 
             if (this.gameModel.getPlayers().stream().noneMatch(player -> player.getName().equals(name)))
                 this.gameModel.addPlayer(name);
-        }
 
-        //SENDING THE CURRENT GAME MODEL STATUS TO THE PLAYER.
-        user.sendMessage(MessageCreator.status(this));
-
-        if (this.isFull()) {
-            notifyUsers(MessageCreator.gameStart());
-            this.isFullLock.notify();
         }
     }
 
@@ -793,6 +786,14 @@ public class GameController extends Thread {
     public void notifyUsersExcept(JsonObject message, User exception) {
         for (User user : this.getUsers()) {
             if (user.getUsername().equals(exception.getUsername())) user.sendMessage(message);
+        }
+    }
+
+    public void checkStartCondition(){
+        if (this.isFull()) {
+            this.notifyUsers(MessageCreator.status(this));
+            this.notifyUsers(MessageCreator.gameStart());
+            this.isFullLock.notify();
         }
     }
 }

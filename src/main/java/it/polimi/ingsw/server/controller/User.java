@@ -122,12 +122,12 @@ public class User extends Thread {
     private void manageCommand(JsonObject command) throws IllegalMoveException {
         switch (command.get("type").getAsString()) {
             case "gameCreation" -> {
-                System.out.println("\n GameCreation message arrived");
+                //System.out.println("\n GameCreation message arrived");
                 sendMessage(MessageCreator.gameCreation(Matchmaking.gameCreation(command, server)));
                 System.out.println("\n GameCreation reply sent");
             }
             case "enterGame" -> {
-                System.out.println("\n enterGame message arrived");
+                //System.out.println("\n enterGame message arrived");
                 try {
                     gameController = Matchmaking.enterGame(command.get("code").getAsString(), server);
                 } catch (FullGameException | GameNotFoundException e) {
@@ -136,14 +136,14 @@ public class User extends Thread {
                 sendMessage(MessageCreator.enterGame(gameController));
             }
             case "login" -> {
-                System.out.println("\n login message message arrived");
+                //System.out.println("\n login message message arrived");
                 logged = Matchmaking.login(gameController, command.get("name").getAsString(), this);
                 sendMessage(MessageCreator.login(logged));
                 if (logged) {
                     username = command.get("name").getAsString();
-                    System.out.println("\n login reply sent: logged");
+                    //System.out.println("\n login reply sent: logged");
+                    this.gameController.checkStartCondition();
                 }
-
             }
             case "logout" -> removeFromGame();
             case "command" -> {

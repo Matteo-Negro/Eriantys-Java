@@ -58,16 +58,15 @@ class Matchmaking {
      * @param user           The user to add to the game.
      */
     static boolean login(GameController gameController, String name, User user) {
-
-        if (gameController == null)
-            return false;
-
-        try {
-            gameController.addUser(name, user);
-        } catch (FullGameException | AlreadyExistingPlayerException e) {
+        if (gameController == null) {
             return false;
         }
-
-        return true;
+        try {
+            gameController.addUser(name, user);
+            return true;
+        } catch (FullGameException | AlreadyExistingPlayerException e) {
+            System.out.println("Game full!");
+            return false;
+        }
     }
 }
