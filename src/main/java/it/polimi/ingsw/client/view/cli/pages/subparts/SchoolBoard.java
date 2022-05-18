@@ -113,7 +113,7 @@ public class SchoolBoard {
         ansi.a(" │ ");
         ansi.a(parsePawn(diningRoom.get(HouseColor.GREEN), HouseColor.GREEN, 2, active, wizard));
         ansi.a(" │  ");
-        ansi.a(parsePawn(professors.get(HouseColor.GREEN) ? 1 : 0, HouseColor.GREEN, 0, active, wizard));
+        ansi.a(parsePawn(Boolean.TRUE.equals(professors.get(HouseColor.GREEN)) ? 1 : 0, HouseColor.GREEN, 0, active, wizard));
         ansi.a("  │ ");
         ansi.a(
                 switch (tower) {
@@ -141,7 +141,7 @@ public class SchoolBoard {
         ansi.a(" │ ");
         ansi.a(parsePawn(diningRoom.get(HouseColor.RED), HouseColor.RED, 2, active, wizard));
         ansi.a(" │  ");
-        ansi.a(parsePawn(professors.get(HouseColor.RED) ? 1 : 0, HouseColor.RED, 0, active, wizard));
+        ansi.a(parsePawn(Boolean.TRUE.equals(professors.get(HouseColor.RED)) ? 1 : 0, HouseColor.RED, 0, active, wizard));
         ansi.a("  │ AST │");
         ansi.a(newLine());
 
@@ -157,7 +157,7 @@ public class SchoolBoard {
         ansi.a(" │ ");
         ansi.a(parsePawn(diningRoom.get(HouseColor.YELLOW), HouseColor.YELLOW, 2, active, wizard));
         ansi.a(" │  ");
-        ansi.a(parsePawn(professors.get(HouseColor.YELLOW) ? 1 : 0, HouseColor.YELLOW, 0, active, wizard));
+        ansi.a(parsePawn(Boolean.TRUE.equals(professors.get(HouseColor.YELLOW)) ? 1 : 0, HouseColor.YELLOW, 0, active, wizard));
         ansi.a("  │");
         if (assistant != 0) {
             ansi.a(defaultForeground(true, wizard));
@@ -179,7 +179,7 @@ public class SchoolBoard {
         ansi.a(" │ ");
         ansi.a(parsePawn(diningRoom.get(HouseColor.FUCHSIA), HouseColor.FUCHSIA, 2, active, wizard));
         ansi.a(" │  ");
-        ansi.a(parsePawn(professors.get(HouseColor.FUCHSIA) ? 1 : 0, HouseColor.FUCHSIA, 0, active, wizard));
+        ansi.a(parsePawn(Boolean.TRUE.equals(professors.get(HouseColor.FUCHSIA)) ? 1 : 0, HouseColor.FUCHSIA, 0, active, wizard));
         if (exp) ansi.a("  │ CNS │");
         else ansi.a("  │     │");
         ansi.a(newLine());
@@ -197,7 +197,7 @@ public class SchoolBoard {
         ansi.a(" │ ");
         ansi.a(parsePawn(diningRoom.get(HouseColor.BLUE), HouseColor.BLUE, 2, active, wizard));
         ansi.a(" │  ");
-        ansi.a(parsePawn(professors.get(HouseColor.BLUE) ? 1 : 0, HouseColor.BLUE, 0, active, wizard));
+        ansi.a(parsePawn(Boolean.TRUE.equals(professors.get(HouseColor.BLUE)) ? 1 : 0, HouseColor.BLUE, 0, active, wizard));
         if (exp) {
             ansi.a("  │ ");
             ansi.a(defaultForeground(true, wizard));

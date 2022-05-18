@@ -36,6 +36,8 @@ public class Login {
             "                    \\██████             "
     };
 
+    private Login() {
+    }
 
 // ┌───────────────2/3───────────────┐
 //   Matteo:                 ONLINE
