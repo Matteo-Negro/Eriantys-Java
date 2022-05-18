@@ -1,19 +1,25 @@
 package it.polimi.ingsw.client.view.cli.pages;
 
-import it.polimi.ingsw.client.view.cli.colours.Grey;
-import it.polimi.ingsw.client.view.cli.colours.Title;
-import it.polimi.ingsw.client.view.cli.colours.White;
-import it.polimi.ingsw.client.view.cli.coordinates.Options;
-import it.polimi.ingsw.client.view.cli.coordinates.OptionsInput;
+import it.polimi.ingsw.client.view.cli.Utilities;
+import it.polimi.ingsw.client.view.cli.colours.*;
+import it.polimi.ingsw.client.view.cli.coordinates.LoginNewLine;
+import it.polimi.ingsw.client.view.cli.coordinates.LoginOptions;
+import it.polimi.ingsw.client.view.cli.coordinates.LoginOptionsInput;
 import org.fusesource.jansi.Ansi;
 import org.jline.terminal.Terminal;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import static it.polimi.ingsw.client.view.cli.Utilities.*;
 import static org.fusesource.jansi.Ansi.ansi;
 
+/**
+ * Login CLI printer.
+ *
+ * @author Matteo Negro
+ */
 public class Login {
     private static final String[] title = {
             " __                         __          ",
@@ -30,11 +36,19 @@ public class Login {
             "                    \\██████             "
     };
 
-    private static final String[] options = {
-            "┌────────────────────────────────┐",
-            "  Chose a name:                   ",
-            "└────────────────────────────────┘"
-    };
+
+// ┌───────────────2/3───────────────┐
+//   Matteo:                 ONLINE
+//   Riccardo:               OFFLINE
+//
+//   Chose a name:
+// └─────────────────────────────────┘
+
+// ┌───────────────0/3───────────────┐
+//   Not login players yet.
+//
+//   Chose a name:
+// └─────────────────────────────────┘
 
     /**
      * Prints the whole game selection centering it.
@@ -54,18 +68,19 @@ public class Login {
      */
     private static Ansi print(Map<String, Boolean> players, int expectedPlayers) {
         Ansi ansi = new Ansi();
+
+        // Test players - start
+        Map<String, Boolean> test = new HashMap<>();
+        test.put("Matteo", true);
+        test.put("Milici", true);
+        test.put("Motta", false);
+        //test.put("Lazzarin", false);
+        // Test players - end
+
         ansi.a(printTitle());
-        ansi.cursorMove(0, 1);
-        ansi.a(" - PLAYERS - ");
-        ansi.cursorMove(-11, 1);
-        for(String player : players.keySet()){
-            ansi.a(player);
-            ansi.a(" ");
-            ansi.a(players.get(player));
-            ansi.cursorMove(-player.length(), 1);
-        }
-        ansi.cursorMove(-18, -2);
-        ansi.a(printOptions());
+        ansi.a(moveCursor(LoginOptions.getInstance()));
+        ansi.a(printOptions(players, expectedPlayers));
+        //ansi.a(printOptions(test, expectedPlayers));
         return ansi;
     }
 
@@ -86,19 +101,72 @@ public class Login {
      *
      * @return The generated Ansi stream.
      */
-    private static Ansi printOptions() {
+    private static Ansi printOptions(Map<String, Boolean> players, int expectedPlayers) {
         Ansi ansi = new Ansi();
         ansi.a(foreground(Grey.getInstance()));
-        ansi.a(printText(options));
-        ansi.a(moveCursor(OptionsInput.getInstance()));
+
+        // Line #1
+
+        ansi.a(String.format("┌───────────────%1d/%1d───────────────┐", players.size(), expectedPlayers));
+        ansi.a(newLine());
+
+        // Line #2
+
+        if (players.keySet().size() != 0) {
+            int size = 35;
+            String name;
+            String shortName;
+            StringBuilder adaptiveString;
+            Iterator<String> itr = players.keySet().iterator();
+
+            for (int i = 0; i < players.keySet().size(); i++) {
+                name = itr.next();
+
+                shortName = name;
+                if (name.length()>22) shortName = name.substring(0, 22);
+
+                adaptiveString = new StringBuilder();
+                adaptiveString.append(" ".repeat(Math.max(0, (size - 2 - shortName.length() - 1 - 10))));
+
+                ansi.a("  " + shortName + ":" + adaptiveString);
+                ansi.a((players.get(name)) ? foreground(Green.getInstance()) : foreground(Red.getInstance()));
+                ansi.a((players.get(name)) ? " ONLINE   " : " OFFLINE  ");
+
+                ansi.a(foreground(Grey.getInstance()));
+                ansi.a(newLine());
+            }
+
+        } else {
+            ansi.append("  Not login players yet.           ");
+            ansi.a(newLine());
+        }
+
+        // Line #3
+
+        ansi.a("                                   ");
+        ansi.a(newLine());
+
+        // Line #4
+
+        ansi.a("  Chose a name:                    ");
+        ansi.a(newLine());
+
+        // Line #5
+
+        ansi.a("└─────────────────────────────────┘");
+
+        ansi.a(moveCursor(LoginOptionsInput.getInstance()));
         ansi.a(foreground(White.getInstance()));
+
         return ansi;
     }
 
-    private static Ansi newline(){
-        Ansi ansi = new Ansi();
-        ansi().restoreCursorPosition();
-        ansi().cursorMove(20, 1);
-        return ansi;
+    /**
+     * Moves the cursor in order to write a new line.
+     *
+     * @return The Ansi stream to print to terminal.
+     */
+    private static Ansi newLine() {
+        return Utilities.moveCursor(LoginNewLine.getInstance());
     }
 }
