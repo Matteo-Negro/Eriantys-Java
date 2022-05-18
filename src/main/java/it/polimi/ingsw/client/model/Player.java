@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import it.polimi.ingsw.server.model.board.SpecialCharacter;
 import it.polimi.ingsw.utilities.HouseColor;
+import it.polimi.ingsw.utilities.Log;
 import it.polimi.ingsw.utilities.TowerType;
 import it.polimi.ingsw.utilities.WizardType;
 import it.polimi.ingsw.utilities.exceptions.AlreadyPlayedException;
@@ -177,7 +178,7 @@ public class Player {
         try {
             takeCoins(specialCharacter.getEffectCost());
         } catch (NegativeException e) {
-            System.err.println(e.getMessage());
+            Log.error(e.getMessage());
         }
         specialCharacter.activateEffect();
     }

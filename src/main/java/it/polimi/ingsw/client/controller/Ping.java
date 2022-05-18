@@ -1,6 +1,7 @@
 package it.polimi.ingsw.client.controller;
 
 import com.google.gson.JsonObject;
+import it.polimi.ingsw.utilities.Log;
 
 public class Ping extends Thread {
 
@@ -13,16 +14,17 @@ public class Ping extends Thread {
         this.lock = new Object();
         this.stop = false;
 
-        //System.out.println("\nPong instance created");
+        Log.info("Ping instance created");
     }
 
+    @Override
     public void run() {
         JsonObject pongMessage = new JsonObject();
         pongMessage.addProperty("type", "pong");
-        //System.out.println("\nPong running");
+        Log.info("Pong running");
         while (!stop) {
             synchronized (lock) {
-                // System.out.println("\nPong sent");
+                Log.debug("Pong sent");
                 this.host.sendCommand(pongMessage);
                 try {
                     lock.wait(1000);
@@ -35,7 +37,7 @@ public class Ping extends Thread {
     }
 
     public void stopPing() {
-        synchronized (this.lock){
+        synchronized (this.lock) {
             this.stop = true;
         }
     }

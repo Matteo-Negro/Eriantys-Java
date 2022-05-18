@@ -8,6 +8,7 @@ import it.polimi.ingsw.client.model.GameModel;
 import it.polimi.ingsw.client.model.Player;
 import it.polimi.ingsw.utilities.ClientStates;
 import it.polimi.ingsw.utilities.GameControllerStates;
+import it.polimi.ingsw.utilities.Log;
 import it.polimi.ingsw.utilities.MessageCreator;
 import it.polimi.ingsw.utilities.parsers.JsonToObjects;
 
@@ -125,7 +126,7 @@ public class GameServer extends Thread {
                 GameModel newGameModel = new GameModel(expectedPlayers, waitingRoom);
                 this.client.initializeGameModel(newGameModel);
                 this.client.setClientState(ClientStates.GAME_LOGIN);
-                System.out.println("changed state");
+                Log.info("Changed state to " + this.client.getClientState());
             }
         } else disconnected();
 
