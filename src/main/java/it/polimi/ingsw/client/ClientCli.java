@@ -4,10 +4,10 @@ import it.polimi.ingsw.client.controller.GameServer;
 import it.polimi.ingsw.client.model.GameModel;
 import it.polimi.ingsw.client.view.cli.pages.*;
 import it.polimi.ingsw.utilities.ClientStates;
+import it.polimi.ingsw.utilities.Log;
 import it.polimi.ingsw.utilities.MessageCreator;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
-import org.jline.utils.Log;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -54,6 +54,7 @@ public class ClientCli extends Thread {
         return this.userName;
     }
 
+    @Override
     public void run() {
         boolean process = true;
         try {
@@ -81,13 +82,12 @@ public class ClientCli extends Thread {
             Log.error(e.getMessage());
         } finally {
             clearScreen(terminal, true);
-            if(this.gameServer != null) gameServer.disconnected();
-            // System.exit(0);
+            if (this.gameServer != null)
+                gameServer.disconnected();
         }
     }
 
     private void manageStartScreen() {
-        clearScreen(terminal, false);
         SplashScreen.print(terminal);
         String hostIp = readLine(" ", terminal, List.of(node("localhost"), node("127.0.0.1")), false, null);
         terminal.writer().print(ansi().restoreCursorPosition());
@@ -101,28 +101,32 @@ public class ClientCli extends Thread {
             this.gameServer = new GameServer(hostSocket, this);
             new Thread(this.gameServer).start();
             setClientState(ClientStates.MAIN_MENU);
+            clearScreen(terminal, false);
         } catch (IOException | NumberFormatException e) {
             this.errorOccurred("Wrong data provided or server unreachable.");
         }
     }
 
     private void manageMainMenu() {
-        clearScreen(terminal, false);
         String option;
 
         MainMenu.print(terminal);
         option = readLine(" ", terminal, List.of(node("1"), node("2")), false, null);
 
         switch (option) {
-            case "1" -> this.setClientState(ClientStates.GAME_CREATION);
-            case "2" -> this.setClientState(ClientStates.JOIN_GAME);
+            case "1" -> {
+                this.setClientState(ClientStates.GAME_CREATION);
+                clearScreen(terminal, false);
+            }
+            case "2" -> {
+                this.setClientState(ClientStates.JOIN_GAME);
+                clearScreen(terminal, false);
+            }
             default -> this.errorOccurred("Wrong command.");
         }
     }
 
     private void manageGameCreation() {
-        clearScreen(terminal, false);
-
         int expectedPlayers;
         boolean expert;
 
@@ -132,6 +136,7 @@ public class ClientCli extends Thread {
             case "2", "3", "4" -> expectedPlayers = Integer.parseInt(playersNumber);
             case "exit" -> {
                 this.setClientState(ClientStates.MAIN_MENU);
+                clearScreen(terminal, false);
                 this.resetGame();
                 return;
             }
@@ -151,6 +156,7 @@ public class ClientCli extends Thread {
             case "expert" -> expert = true;
             case "exit" -> {
                 this.setClientState(ClientStates.MAIN_MENU);
+                clearScreen(terminal, false);
                 this.resetGame();
                 return;
             }
@@ -164,18 +170,19 @@ public class ClientCli extends Thread {
 
         this.tryConnection();
 
-        if (this.getClientState().equals(ClientStates.GAME_CREATION)) {
+        if (this.getClientState().equals(ClientStates.GAME_CREATION))
             this.setClientState(ClientStates.CONNECTION_LOST);
-        }
+
+        clearScreen(terminal, false);
     }
 
     private void manageJoinGame() {
-        clearScreen(terminal, false);
         JoinGame.print(terminal);
 
         String gameCode = readLine(" ", terminal, List.of(node("exit")), false, null);
         if ("exit".equals(gameCode)) {
             this.setClientState(ClientStates.MAIN_MENU);
+            clearScreen(terminal, false);
             this.resetGame();
             return;
         }
@@ -184,13 +191,13 @@ public class ClientCli extends Thread {
 
         this.tryConnection();
 
-        if (this.getClientState().equals(ClientStates.JOIN_GAME)) {
+        if (this.getClientState().equals(ClientStates.JOIN_GAME))
             this.setClientState(ClientStates.CONNECTION_LOST);
-        }
+
+        clearScreen(terminal, false);
     }
 
     private void manageGameLogin() {
-        clearScreen(terminal, false);
         Login.print(terminal, this.getGameModel().getWaitingRoom(), this.getGameModel().getPlayersNumber());
 
         String username;
@@ -198,6 +205,7 @@ public class ClientCli extends Thread {
         username = readLine(" ", terminal, List.of(node("exit")), false, null);
         if ("exit".equals(username)) {
             this.setClientState(ClientStates.MAIN_MENU);
+            clearScreen(terminal, false);
             this.resetGame();
             return;
         }
@@ -212,9 +220,10 @@ public class ClientCli extends Thread {
 
         this.tryConnection();
 
-        if (this.getClientState().equals(ClientStates.GAME_LOGIN)) {
+        if (this.getClientState().equals(ClientStates.GAME_LOGIN))
             this.setClientState(ClientStates.CONNECTION_LOST);
-        }
+
+        clearScreen(terminal, false);
     }
 
     private void manageWaitingRoom() {
@@ -234,7 +243,6 @@ public class ClientCli extends Thread {
     }
 
     private void manageEndGame() {
-        clearScreen(terminal, false);
         //TODO Print end game screen on cli.
 
         String command;
@@ -242,15 +250,17 @@ public class ClientCli extends Thread {
             command = readLine(" ", terminal, List.of(node("exit")), false, null);
             if (command.equals("exit")) {
                 this.setClientState(ClientStates.MAIN_MENU);
+                clearScreen(terminal, false);
                 this.resetGame();
                 return;
             } else {
                 this.errorOccurred("Wrong command.");
             }
         } while (this.getClientState().equals(ClientStates.END_GAME));
+        clearScreen(terminal, false);
     }
 
-    private void manageConnectionLost(){
+    private void manageConnectionLost() {
         this.resetGame();
         this.getGameServer().disconnected();
         this.gameServer = null;
@@ -275,23 +285,26 @@ public class ClientCli extends Thread {
         this.gameModel = null;
     }
 
-    public void errorOccurred(String message){
+    public void errorOccurred(String message) {
+        clearScreen(terminal, false);
         printError(terminal, message);
-        synchronized (this.lock) {
-            try {
-                this.lock.wait(2000);
-            } catch (InterruptedException ie) {
-                this.resetGame();
-            }
-        }
+        Log.warning(message);
+//        synchronized (this.lock) {
+//            try {
+//                this.lock.wait(2000);
+//            } catch (InterruptedException e) {
+//                this.resetGame();
+//            }
+//        }
     }
 
-    private void tryConnection(){
+    private void tryConnection() {
         synchronized (this.lock) {
             try {
                 this.lock.wait(10000);
-            } catch (InterruptedException ie) {
+            } catch (InterruptedException e) {
                 this.setClientState(ClientStates.CONNECTION_LOST);
+                clearScreen(terminal, false);
             }
         }
     }
