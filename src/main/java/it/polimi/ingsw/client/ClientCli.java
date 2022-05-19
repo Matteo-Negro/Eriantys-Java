@@ -2,7 +2,9 @@ package it.polimi.ingsw.client;
 
 import it.polimi.ingsw.client.controller.GameServer;
 import it.polimi.ingsw.client.model.GameModel;
+import it.polimi.ingsw.client.model.Player;
 import it.polimi.ingsw.client.view.cli.pages.*;
+import it.polimi.ingsw.client.view.cli.pages.subparts.WaitingRoom;
 import it.polimi.ingsw.utilities.ClientStates;
 import it.polimi.ingsw.utilities.Log;
 import it.polimi.ingsw.utilities.MessageCreator;
@@ -11,6 +13,8 @@ import org.jline.terminal.TerminalBuilder;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static it.polimi.ingsw.client.view.cli.Utilities.*;
@@ -227,11 +231,16 @@ public class ClientCli extends Thread {
     }
 
     private void manageWaitingRoom() {
-        clearScreen(terminal, false);
         //work in progress.
-        this.errorOccurred("WAITING FOR OTHER PLAYERS...");
-        //TODO Print waiting room screen on cli.
-
+        WaitingRoom.print(terminal, new HashMap<>(), this.getGameModel().getPlayersNumber());
+        synchronized (this.lock) {
+            try {
+                this.lock.wait(2000);
+            } catch (InterruptedException e) {
+                this.resetGame();
+            }
+        }
+        clearScreen(terminal, false);
     }
 
     private void manageGameRunning() {

@@ -196,7 +196,7 @@ public class JsonToObjects {
      * @param json Json object which represents the map of students.
      * @return The Map that has been built.
      */
-    private static Map<HouseColor, Integer> parseStudents(JsonObject json) {
+    public static Map<HouseColor, Integer> parseStudents(JsonObject json) {
         Map<HouseColor, Integer> map = new EnumMap<>(HouseColor.class);
         for (HouseColor color : HouseColor.values())
             map.put(color, json.get(color.name()).getAsInt());

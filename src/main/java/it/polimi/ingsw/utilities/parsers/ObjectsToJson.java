@@ -190,7 +190,7 @@ public enum ObjectsToJson {
     private static JsonArray parsePlayedAssistants(Map<Player, Assistant> playedAssistants) {
         JsonArray list = new JsonArray();
         for (Map.Entry<Player, Assistant> entry : playedAssistants.entrySet())
-            list.add(parsePlayedAssistant(entry.getKey().getName(), entry.getValue().getId()));
+            list.add(parsePlayedAssistant(entry.getKey().getName(), entry.getValue().getId(), entry.getValue().hasBonus()));
         return list;
     }
 
@@ -201,10 +201,11 @@ public enum ObjectsToJson {
      * @param assistant Assistant connected to that player.
      * @return The generated JsonObject.
      */
-    private static JsonObject parsePlayedAssistant(String name, int assistant) {
+    private static JsonObject parsePlayedAssistant(String name, int assistant, boolean bonus) {
         JsonObject object = new JsonObject();
         object.addProperty("player", name);
         object.addProperty("assistant", assistant);
+        object.addProperty("bonus", bonus);
         return object;
     }
 

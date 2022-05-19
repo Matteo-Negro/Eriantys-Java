@@ -40,35 +40,8 @@ public class GameModel {
         this.subphase = statusSubphase;
         this.expert = statusExpert;
         this.currentPlayer = statusCurrentPlayer;
-
-        this.players = new ArrayList<>();
-        for(JsonElement player : statusPlayers){
-            String name = player.getAsJsonObject().get("name").getAsString();
-            WizardType wizard = WizardType.valueOf(player.getAsJsonObject().get("wizardType").getAsString());
-            int coins = player.getAsJsonObject().get("coins").getAsInt();
-            JsonArray assistants = player.getAsJsonObject().get("assistants").getAsJsonArray();
-            JsonObject schoolBoard = player.getAsJsonObject().get("schoolBoard").getAsJsonObject();
-
-            this.players.add(new Player(name, wizard, coins, schoolBoard, assistants));
-        }
-
-        int motherNatureIsland = statusGameBoard.get("motherNatureIsland").getAsInt();
-        String influenceBonus = statusGameBoard.get("influenceBonus").getAsString();
-        HouseColor ignoreColor = HouseColor.valueOf(statusGameBoard.get("ignoreColor").getAsString());
-        JsonArray clouds = statusGameBoard.get("clouds").getAsJsonArray();
-        JsonArray islands = statusGameBoard.get("islands").getAsJsonArray();
-        JsonArray specialCharacters = statusGameBoard.get("characters").getAsJsonArray();
-
-        this.gameBoard = new GameBoard(motherNatureIsland, influenceBonus, ignoreColor, islands, clouds, specialCharacters);
-
-        JsonObject professors = statusGameBoard.get("professors").getAsJsonObject();
-        for(String color : professors.keySet()){
-            if(professors.get(color) != null){
-                this.getPlayerByName(professors.get(color).getAsString()).getSchoolBoard().addProfessor(HouseColor.valueOf(color));
-            }
-        }
-
-
+        this.parsePlayers(statusPlayers, statusGameBoard);
+        this.parseGameBoard(statusGameBoard);
     }
 
     public Map<String, Boolean> getWaitingRoom() {
@@ -88,5 +61,40 @@ public class GameModel {
             if(player.getName().equals(name)) return player;
         }
         return null;
+    }
+
+    private void parsePlayers(JsonArray players, JsonObject gameBoard){
+        this.players = new ArrayList<>();
+        JsonArray playedAssistants = gameBoard.get("playedAssistants").getAsJsonArray();
+        for(JsonElement player : players){
+            String name = player.getAsJsonObject().get("name").getAsString();
+            WizardType wizard = WizardType.valueOf(player.getAsJsonObject().get("wizardType").getAsString());
+            int coins = player.getAsJsonObject().get("coins").getAsInt();
+            JsonArray assistants = player.getAsJsonObject().get("assistants").getAsJsonArray();
+            JsonObject schoolBoard = player.getAsJsonObject().get("schoolBoard").getAsJsonObject();
+            JsonObject playedAssistant = null;
+            for(JsonElement assistant : playedAssistants){
+                if(assistant.getAsJsonObject().get("player").getAsString().equals(player.getAsJsonObject().get("name").getAsString()))
+                    playedAssistant = assistant.getAsJsonObject();
+            }
+            this.players.add(new Player(name, wizard, coins, schoolBoard, assistants, playedAssistant));
+        }
+        JsonObject professors = gameBoard.get("professors").getAsJsonObject();
+        for(String color : professors.keySet()){
+            if(professors.get(color) != null){
+                this.getPlayerByName(professors.get(color).getAsString()).getSchoolBoard().addProfessor(HouseColor.valueOf(color));
+            }
+        }
+    }
+
+    private void parseGameBoard(JsonObject gameboard){
+        int motherNatureIsland = gameboard.get("motherNatureIsland").getAsInt();
+        String influenceBonus = gameboard.get("influenceBonus").getAsString();
+        HouseColor ignoreColor = HouseColor.valueOf(gameboard.get("ignoreColor").getAsString());
+        JsonArray clouds = gameboard.get("clouds").getAsJsonArray();
+        JsonArray islands = gameboard.get("islands").getAsJsonArray();
+        JsonArray specialCharacters = gameboard.get("characters").getAsJsonArray();
+
+        this.gameBoard = new GameBoard(motherNatureIsland, influenceBonus, ignoreColor, islands, clouds, specialCharacters);
     }
 }

@@ -1,8 +1,10 @@
 package it.polimi.ingsw.client.model;
 
+import com.google.gson.JsonObject;
 import it.polimi.ingsw.utilities.HouseColor;
 import it.polimi.ingsw.utilities.TowerType;
 import it.polimi.ingsw.utilities.exceptions.IllegalActionException;
+import it.polimi.ingsw.utilities.parsers.JsonToObjects;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -31,13 +33,13 @@ public class Island {
      * @param motherNature true if Mother Nature is on the island.
      * @param ban          true if the island is banned.
      */
-    public Island(boolean next, boolean prev, TowerType tower, Map<HouseColor, Integer> students, boolean motherNature, boolean ban) {
+    public Island(boolean next, boolean prev, TowerType tower, JsonObject students, boolean motherNature, boolean ban) {
         this.next = next;
         this.prev = prev;
         this.tower = tower;
-        this.students = new EnumMap<>(students);
         this.motherNature = motherNature;
         this.ban = ban;
+        this.students = JsonToObjects.parseStudents(students);
     }
 
     /**

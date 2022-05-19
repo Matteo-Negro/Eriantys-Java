@@ -1,10 +1,12 @@
 package it.polimi.ingsw.client.model;
 
+import com.google.gson.JsonObject;
 import it.polimi.ingsw.utilities.HouseColor;
 import it.polimi.ingsw.utilities.TowerType;
 import it.polimi.ingsw.utilities.exceptions.NegativeException;
 import it.polimi.ingsw.utilities.exceptions.NoStudentException;
 import it.polimi.ingsw.utilities.exceptions.NotEnoughTowersException;
+import it.polimi.ingsw.utilities.parsers.JsonToObjects;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -28,14 +30,13 @@ public class SchoolBoard {
      * @param towerType    Color of the tower.
      * @param diningRoom   Students in the dining room.
      * @param entrance     Students at the entrance.
-     * @param professors   Professor is owned by the player
      */
-    public SchoolBoard(TowerType towerType, int towersNumber, Map<HouseColor, Integer> entrance, Map<HouseColor, Integer> diningRoom, Map<HouseColor, Boolean> professors) {
+    public SchoolBoard(TowerType towerType, int towersNumber, JsonObject entrance, JsonObject diningRoom) {
         this.towerType = towerType;
         this.towersNumber = towersNumber;
-        this.entrance = new EnumMap<>(entrance);
-        this.diningRoom = new EnumMap<>(diningRoom);
-        this.professors = new EnumMap<>(professors);
+        this.entrance = JsonToObjects.parseStudents(entrance);
+        this.diningRoom = JsonToObjects.parseStudents(diningRoom);
+        this.professors = new EnumMap<>(HouseColor.class);
     }
 
     /**

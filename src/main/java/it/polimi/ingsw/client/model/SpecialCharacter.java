@@ -1,7 +1,9 @@
 package it.polimi.ingsw.client.model;
 
+import com.google.gson.JsonObject;
 import it.polimi.ingsw.utilities.HouseColor;
 import it.polimi.ingsw.utilities.exceptions.IllegalMoveException;
+import it.polimi.ingsw.utilities.parsers.JsonToObjects;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -14,12 +16,12 @@ import java.util.Map;
  */
 public class SpecialCharacter {
     private final int id;
-    //Specialized attributes.
     private final Map<HouseColor, Integer> students;
-    private int cost;
+    private final int cost;
     private boolean active;
     private boolean alreadyPaid;
-    private int availableBans;
+    private boolean paidInRound;
+    private Integer availableBans;
 
     /**
      * Class constructor.
@@ -32,13 +34,14 @@ public class SpecialCharacter {
      * @param availableBans Number of ban marker available.
      * @param cost          Price to activate the effect.
      */
-    public SpecialCharacter(int id, boolean active, boolean alreadyPaid, Map<HouseColor, Integer> students, int availableBans, int cost) {
+    public SpecialCharacter(int id, boolean active, boolean alreadyPaid, boolean paidInRound, JsonObject students, Integer availableBans, int cost) {
         this.id = id;
         this.active = active;
         this.alreadyPaid = alreadyPaid;
-        this.students = new EnumMap<>(students);
+        this.paidInRound = paidInRound;
         this.availableBans = availableBans;
         this.cost = cost;
+        this.students = JsonToObjects.parseStudents(students);
     }
 
     /**
@@ -92,6 +95,7 @@ public class SpecialCharacter {
     public void activateEffect() {
         this.active = true;
         this.alreadyPaid = true;
+        this.paidInRound = true;
         //update view.
     }
 
