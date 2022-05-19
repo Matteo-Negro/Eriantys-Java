@@ -1,9 +1,10 @@
 package it.polimi.ingsw.server.model.board;
 
 import it.polimi.ingsw.utilities.HouseColor;
+import it.polimi.ingsw.utilities.Log;
 
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 
 /**
@@ -23,10 +24,10 @@ public class Cloud {
      */
     public Cloud(int idCloud) {
         this.id = idCloud;
-        this.students = new HashMap<>();
+        this.students = new EnumMap<>(HouseColor.class);
         Arrays.stream(HouseColor.values()).forEach(color -> this.students.put(color, 0));
 
-        System.out.printf("\n *** New Cloud successfully created with id: %d", idCloud);
+        Log.debug("*** New Cloud successfully created with id: " + idCloud);
     }
 
     /**
@@ -37,10 +38,10 @@ public class Cloud {
      */
     public Cloud(int idCloud, Map<HouseColor, Integer> status) {
         this.id = idCloud;
-        this.students = new HashMap<>();
+        this.students = new EnumMap<>(HouseColor.class);
         Arrays.stream(HouseColor.values()).forEach(color -> this.students.put(color, status.get(color)));
 
-        System.out.printf("\n *** Saved Island successfully restored with id: %d", idCloud);
+        Log.debug("*** Saved Island successfully restored with id: " + idCloud);
     }
 
     /**
@@ -58,7 +59,7 @@ public class Cloud {
      * @return The data structure of the students when the method is called.
      */
     public Map<HouseColor, Integer> getStudents() {
-        return new HashMap<>(this.students);
+        return new EnumMap<>(this.students);
     }
 
     /**

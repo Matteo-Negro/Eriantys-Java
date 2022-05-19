@@ -1,5 +1,7 @@
 package it.polimi.ingsw.server.model.player;
 
+import it.polimi.ingsw.utilities.Log;
+
 import java.util.Objects;
 
 /**
@@ -26,7 +28,7 @@ public class Assistant {
         this.maxDistance = id / 2 + 1;
         this.bonus = false;
 
-        System.out.printf("\n *** New Assistant successfully created with id: %d", id);
+        Log.info("*** New Assistant successfully created with id: " + id);
     }
 
     /**

@@ -1,6 +1,7 @@
 package it.polimi.ingsw.server.model.player;
 
 import it.polimi.ingsw.utilities.HouseColor;
+import it.polimi.ingsw.utilities.Log;
 import it.polimi.ingsw.utilities.TowerType;
 import it.polimi.ingsw.utilities.exceptions.NegativeException;
 import it.polimi.ingsw.utilities.exceptions.NoStudentException;
@@ -38,7 +39,7 @@ public class SchoolBoard {
             this.entrance.put(color, 0);
         }
 
-        System.out.println("\n *** New SchoolBoard successfully created.");
+        Log.info("*** New SchoolBoard successfully created.");
     }
 
     /**
@@ -55,7 +56,7 @@ public class SchoolBoard {
         this.diningRoom = new EnumMap<>(diningRoom);
         this.entrance = new EnumMap<>(entrance);
 
-        System.out.println("\n *** Saved SchoolBoard successfully restored.");
+        Log.info("*** Saved SchoolBoard successfully restored.");
     }
 
     /**

@@ -71,7 +71,7 @@ public class JesterEffect extends Effect {
      *
      * @return students attribute.
      */
-    public EnumMap<HouseColor, Integer> getStudents() {
+    public Map<HouseColor, Integer> getStudents() {
         return new EnumMap<>(students);
     }
 

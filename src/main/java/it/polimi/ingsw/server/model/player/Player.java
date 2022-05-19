@@ -1,6 +1,7 @@
 package it.polimi.ingsw.server.model.player;
 
 import it.polimi.ingsw.server.model.board.SpecialCharacter;
+import it.polimi.ingsw.utilities.Log;
 import it.polimi.ingsw.utilities.TowerType;
 import it.polimi.ingsw.utilities.WizardType;
 import it.polimi.ingsw.utilities.exceptions.AlreadyPlayedException;
@@ -143,7 +144,7 @@ public class Player {
         try {
             takeCoins(specialCharacter.getEffectCost());
         } catch (NegativeException e) {
-            System.err.println(e.getMessage());
+            Log.warning(e.getMessage());
         }
         specialCharacter.activateEffect();
     }

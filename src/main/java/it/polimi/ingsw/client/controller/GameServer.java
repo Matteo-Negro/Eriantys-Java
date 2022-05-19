@@ -8,6 +8,7 @@ import it.polimi.ingsw.client.model.GameModel;
 import it.polimi.ingsw.client.model.Player;
 import it.polimi.ingsw.utilities.ClientStates;
 import it.polimi.ingsw.utilities.GameControllerStates;
+import it.polimi.ingsw.utilities.Log;
 import it.polimi.ingsw.utilities.MessageCreator;
 import it.polimi.ingsw.utilities.parsers.JsonToObjects;
 
@@ -36,7 +37,7 @@ public class GameServer extends Thread {
         this.connected = true;
         this.connectedLock = new Object();
         this.ping = new Ping(this);
-        //System.out.println("\nGameServer instance created");
+        Log.info("GameServer instance created");
     }
 
     public void run() {
@@ -52,7 +53,7 @@ public class GameServer extends Thread {
 
             try {
                 incomingMessage = getMessage();
-                //System.out.println(incomingMessage.get("type").getAsString());
+                Log.debug(incomingMessage.get("type").getAsString());
                 manageMessage(incomingMessage);
             } catch (IOException ioe) {
                 this.client.setClientState(ClientStates.CONNECTION_LOST);
@@ -61,26 +62,26 @@ public class GameServer extends Thread {
     }
 
     private void manageMessage(JsonObject incomingMessage) {
-        //System.out.println("incoming message ");
+        Log.debug("incoming message ");
         switch (incomingMessage.get("type").getAsString()) {
             case "ping" -> {
-                //System.out.println("ping arrived");
+                Log.debug("ping arrived");
             }
             case "gameCreation" -> {
-                //System.out.println("gameCreation reply");
+                Log.debug("gameCreation reply");
                 sendCommand(MessageCreator.enterGame(incomingMessage.get("code").getAsString()));
             }
             case "enterGame" -> {
-                //System.out.println("enterGame reply");
+                Log.debug("enterGame reply");
                 manageEnterGame(incomingMessage);
             }
             case "login" -> {
-                //System.out.println("login reply");
+                Log.debug("login reply");
                 manageLogin(incomingMessage);
             }
 
             case "status" ->{
-                //System.out.println("status message arrived");
+                Log.debug("status message arrived");
                 manageStatus(incomingMessage);
             }
 
@@ -134,7 +135,7 @@ public class GameServer extends Thread {
         }
         else{
             this.client.setClientState(ClientStates.CONNECTION_LOST);
-        };
+        }
 
         synchronized (this.client.getLock()){
             this.client.getLock().notify();

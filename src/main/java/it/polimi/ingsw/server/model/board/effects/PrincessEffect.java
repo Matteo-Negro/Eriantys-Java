@@ -23,12 +23,8 @@ public class PrincessEffect extends Effect {
      */
     public PrincessEffect() {
         students = new EnumMap<>(HouseColor.class);
-
-        students.put(HouseColor.BLUE, 0);
-        students.put(HouseColor.GREEN, 0);
-        students.put(HouseColor.FUCHSIA, 0);
-        students.put(HouseColor.RED, 0);
-        students.put(HouseColor.YELLOW, 0);
+        for (HouseColor color : HouseColor.values())
+            students.put(color, 0);
     }
 
     /**

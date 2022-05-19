@@ -4,10 +4,7 @@ import it.polimi.ingsw.server.model.board.Bag;
 import it.polimi.ingsw.server.model.board.GameBoard;
 import it.polimi.ingsw.server.model.player.Assistant;
 import it.polimi.ingsw.server.model.player.Player;
-import it.polimi.ingsw.utilities.HouseColor;
-import it.polimi.ingsw.utilities.Pair;
-import it.polimi.ingsw.utilities.TowerType;
-import it.polimi.ingsw.utilities.WizardType;
+import it.polimi.ingsw.utilities.*;
 import it.polimi.ingsw.utilities.exceptions.AlreadyExistingPlayerException;
 import it.polimi.ingsw.utilities.exceptions.FullGameException;
 import it.polimi.ingsw.utilities.exceptions.RoundConcluded;
@@ -47,7 +44,7 @@ public class GamePlatform {
         this.currentPlayer = "";
         this.roundWinner = "";
 
-        System.out.println("\n *** New GamePlatform successfully created.");
+        Log.info("*** New GamePlatform successfully created.");
     }
 
     /**
@@ -70,7 +67,7 @@ public class GamePlatform {
         this.players = new HashMap<>();
         this.clockwiseOrder.forEach(player -> this.players.put(player.getName(), player));
 
-        System.out.println("\n *** Saved GamePlatform successfully restored.");
+        Log.info("*** Saved GamePlatform successfully restored.");
     }
 
     /**

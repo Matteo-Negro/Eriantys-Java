@@ -3,6 +3,7 @@ package it.polimi.ingsw.server.model.board.effects;
 import it.polimi.ingsw.server.model.player.Player;
 import it.polimi.ingsw.utilities.HouseColor;
 
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -65,8 +66,8 @@ public class FarmerEffect extends Effect {
      * @return stolenProfessors attribute.
      */
     public Map<HouseColor, Player> getStolenProfessors() {
-        Map<HouseColor, Player> professors = new HashMap<>(this.stolenProfessors);
-        stolenProfessors = new HashMap<>();
+        Map<HouseColor, Player> professors = new EnumMap<>(this.stolenProfessors);
+        stolenProfessors = new EnumMap<>(HouseColor.class);
         return professors;
     }
 

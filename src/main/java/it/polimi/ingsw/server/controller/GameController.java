@@ -70,7 +70,7 @@ public class GameController extends Thread {
         this.movementEffectActive = false;
         this.activeUser = null;
 
-        System.out.println("\n ** New GameController successfully created with : " + id);
+        Log.info("*** New GameController successfully created with : " + id);
     }
 
     /**
@@ -713,7 +713,7 @@ public class GameController extends Thread {
             end = true;
             winners = checkForWinners();
         } else if ((this.gameModel.getCurrentPlayer().equals(this.gameModel.getTurnOrder().get(this.expectedPlayers - 1)))) {
-            if (this.gameModel.getGameBoard().getBag().isEmpty() || this.gameModel.getPlayers().get(0).getAssistants().size() == 0) {
+            if (this.gameModel.getGameBoard().getBag().isEmpty() || this.gameModel.getPlayers().get(0).getAssistants().isEmpty()) {
                 end = true;
                 winners = checkForWinners();
             }

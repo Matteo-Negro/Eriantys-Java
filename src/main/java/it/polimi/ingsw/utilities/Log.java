@@ -19,19 +19,19 @@ public class Log {
     private Log() {
     }
 
-    public static void createClientInstance() throws IOException, IllegalAccessException {
+    public static synchronized void createClientInstance() throws IOException, IllegalAccessException {
         if (writer != null)
             throw new IllegalAccessException();
         createInstance(false);
     }
 
-    public static void createServerInstance() throws IOException, IllegalAccessException {
+    public static synchronized void createServerInstance() throws IOException, IllegalAccessException {
         if (writer != null)
             throw new IllegalAccessException();
         createInstance(true);
     }
 
-    private static void createInstance(boolean server) throws IOException {
+    private static synchronized void createInstance(boolean server) throws IOException {
         File file = new File(Paths.get(new File(Log.class.getProtectionDomain().getCodeSource().getLocation().getFile())
                 .getParent(), server ? "server.log" : "client.log").toString());
         if (!file.exists() && !file.createNewFile())
@@ -41,11 +41,13 @@ public class Log {
         level = Level.WARNING;
     }
 
-    public static void setLevel(int level) {
+    public static synchronized void setLevel(int level) {
         Log.level = level;
     }
 
-    public static void debug(String message) {
+    public static synchronized void debug(String message) {
+        if (writer == null)
+            return;
         if (level <= Level.DEBUG) {
             try {
                 writer.write(format("DEBUG", message));
@@ -55,7 +57,9 @@ public class Log {
         }
     }
 
-    public static void info(String message) {
+    public static synchronized void info(String message) {
+        if (writer == null)
+            return;
         if (level <= Level.INFO) {
             try {
                 writer.write(format("INFO", message));
@@ -65,7 +69,9 @@ public class Log {
         }
     }
 
-    public static void warning(String message) {
+    public static synchronized void warning(String message) {
+        if (writer == null)
+            return;
         if (level <= Level.WARNING) {
             try {
                 writer.write(format("WARNING", message));
@@ -75,7 +81,9 @@ public class Log {
         }
     }
 
-    public static void error(String message) {
+    public static synchronized void error(String message) {
+        if (writer == null)
+            return;
         if (level <= Level.ERROR) {
             try {
                 writer.write(format("ERROR", message));
@@ -85,13 +93,8 @@ public class Log {
         }
     }
 
-    private static String format(String type, String message) {
-        return dateTimeFormatter.format(LocalDateTime.now()) +
-                " | " +
-                type +
-                " | " +
-                message.replace("|", "-") +
-                "\n";
+    private static synchronized String format(String type, String message) {
+        return dateTimeFormatter.format(LocalDateTime.now()) + " | " + type + " | " + message + "\n";
     }
 
     public static class Level {

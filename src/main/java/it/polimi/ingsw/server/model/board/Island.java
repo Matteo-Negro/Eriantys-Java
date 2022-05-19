@@ -1,11 +1,11 @@
 package it.polimi.ingsw.server.model.board;
 
 import it.polimi.ingsw.utilities.HouseColor;
+import it.polimi.ingsw.utilities.Log;
 import it.polimi.ingsw.utilities.TowerType;
 
 import java.util.Arrays;
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -32,12 +32,12 @@ public class Island {
         this.size = 1;
         this.ban = false;
         this.tower = null;
-        this.students = new EnumMap<HouseColor, Integer>(HouseColor.class);
+        this.students = new EnumMap<>(HouseColor.class);
         if (color == null)
             Arrays.stream(HouseColor.values()).forEach(studentColor -> this.students.put(studentColor, 0));
         else
             Arrays.stream(HouseColor.values()).forEach(studentColor -> this.students.put(studentColor, studentColor.equals(color) ? 1 : 0));
-        System.out.println("\n *** New Island successfully created with id: " + idIsland);
+        Log.info("*** New Island successfully created with id: " + idIsland);
     }
 
     /**
@@ -54,12 +54,12 @@ public class Island {
         this.size = size;
         this.ban = ban;
         this.tower = tower;
-        this.students = new HashMap<>();
+        this.students = new EnumMap<>(HouseColor.class);
 
         for (HouseColor color : HouseColor.values())
             this.students.put(color, status.getOrDefault(color, 0));
 
-        System.out.printf("\n *** Saved Island successfully restored with id: %d", idIsland);
+        Log.info("*** Saved Island successfully restored with id: " + idIsland);
     }
 
     /**
@@ -113,7 +113,7 @@ public class Island {
      * @return An HashMap (key: HouseColor, value: Integer), that contains the number of students on the island.
      */
     public Map<HouseColor, Integer> getStudents() {
-        return new HashMap<>(this.students);
+        return new EnumMap<>(this.students);
     }
 
     /**

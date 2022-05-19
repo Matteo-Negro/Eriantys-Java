@@ -2,6 +2,7 @@ package it.polimi.ingsw.server.model.board;
 
 import it.polimi.ingsw.server.model.board.effects.*;
 import it.polimi.ingsw.utilities.HouseColor;
+import it.polimi.ingsw.utilities.Log;
 
 import java.util.Map;
 
@@ -35,7 +36,7 @@ public class SpecialCharacter {
         assignedEffect = getEffectBy(id, students, 5);
         effectCost = assignedEffect.getCost();
 
-        System.out.printf("\n *** New SpecialCharacter successfully created with id: %d", id);
+        Log.info("*** New SpecialCharacter successfully created with id: " + id);
     }
 
     /**
@@ -43,8 +44,8 @@ public class SpecialCharacter {
      *
      * @param statusId          The identification number of the special character card.
      * @param statusEffectCost  The special character's activation cost.
-     * @param statusAlreadyPaid True if the special character has already been payed and it's effect has already been activated during this game.
-     * @param statusPaidInRound True if the special character has already been payed and it's effect has already been activated during this round.
+     * @param statusAlreadyPaid True if the special character has already been paid, and it's effect has already been activated during this game.
+     * @param statusPaidInRound True if the special character has already been paid, and it's effect has already been activated during this round.
      * @param statusIsActive    True if the special character's effect is active.
      */
     public SpecialCharacter(int statusId, int statusEffectCost, boolean statusAlreadyPaid, boolean statusPaidInRound, boolean statusIsActive, Map<HouseColor, Integer> statusStudents, int bans) {
@@ -56,11 +57,11 @@ public class SpecialCharacter {
         this.paidInRound = statusPaidInRound;
         this.isActive = statusIsActive;
 
-        System.out.printf("\n *** Saved SpecialCharacter successfully restored with id: %d", statusId);
+        Log.info("*** Saved SpecialCharacter successfully restored with id: " + statusId);
     }
 
     /**
-     * Gets the effect according to it's identification number.
+     * Gets the effect according to its identification number.
      *
      * @param id The identification number of the effect.
      * @return The required effect.

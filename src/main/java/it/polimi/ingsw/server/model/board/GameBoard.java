@@ -3,6 +3,7 @@ package it.polimi.ingsw.server.model.board;
 import it.polimi.ingsw.server.model.player.Assistant;
 import it.polimi.ingsw.server.model.player.Player;
 import it.polimi.ingsw.utilities.HouseColor;
+import it.polimi.ingsw.utilities.Log;
 import it.polimi.ingsw.utilities.TowerType;
 import it.polimi.ingsw.utilities.exceptions.IllegalMoveException;
 import it.polimi.ingsw.utilities.exceptions.IslandNotFoundException;
@@ -41,19 +42,19 @@ public class GameBoard {
         this.islands = new ArrayList<>();
         this.clouds = new ArrayList<>();
         this.characters = new ArrayList<>();
-        this.professors = new HashMap<>();
+        this.professors = new EnumMap<>(HouseColor.class);
         this.influenceBonus = null;
         this.tieWinner = null;
-        System.out.println("0");
+        Log.debug("0");
         temp = this.bag.boardSetUp();
-        System.out.println("1");
+        Log.debug("1");
         for (int i = 0; i < 12; i++) {
-            System.out.println("2");
+            Log.debug("2");
             if (i == 0 || i == 6) {
-                System.out.println("3");
+                Log.debug("3");
                 this.islands.add(new Island(null, i));
             } else this.islands.add(new Island(temp.get(i < 6 ? i - 1 : i - 2), i));
-            System.out.println("4");
+            Log.debug("4");
         }
 
         if (isExp) {
@@ -88,7 +89,7 @@ public class GameBoard {
         this.initializeClouds(numPlayer);
         this.motherNatureIsland = this.islands.get(0);
 
-        System.out.println("\n *** New GameBoard successfully created.");
+        Log.info("*** New GameBoard successfully created.");
     }
 
     /**
@@ -109,7 +110,7 @@ public class GameBoard {
         this.playedAssistants = new HashMap<>(statusPlayedAssistants);
         this.islands = new ArrayList<>(statusIslands);
         this.clouds = new ArrayList<>(statusClouds);
-        this.professors = new HashMap<>(statusProfessors);
+        this.professors = new EnumMap<>(statusProfessors);
         this.characters = null;
         this.influenceBonus = null;
         this.tieWinner = null;
@@ -120,7 +121,7 @@ public class GameBoard {
 
         this.motherNatureIsland = this.islands.get(idMotherNatureIsland);
 
-        System.out.println("\n *** Saved GameBoard successfully restored.");
+        Log.info("*** Saved GameBoard successfully restored.");
     }
 
     /**
@@ -316,7 +317,7 @@ public class GameBoard {
      * @return The data structure the professors.
      */
     public Map<HouseColor, Player> getProfessors() {
-        return new HashMap<>(this.professors);
+        return new EnumMap<>(this.professors);
     }
 
     /**

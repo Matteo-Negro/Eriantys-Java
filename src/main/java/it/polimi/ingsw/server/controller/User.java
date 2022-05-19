@@ -3,6 +3,7 @@ package it.polimi.ingsw.server.controller;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import it.polimi.ingsw.server.Server;
+import it.polimi.ingsw.utilities.Log;
 import it.polimi.ingsw.utilities.MessageCreator;
 import it.polimi.ingsw.utilities.exceptions.FullGameException;
 import it.polimi.ingsw.utilities.exceptions.GameNotFoundException;
@@ -69,7 +70,7 @@ public class User extends Thread {
      */
     @Override
     public void run() {
-        System.out.println("\n User running");
+        Log.info("User running");
         JsonObject incomingMessage;
 
         this.ping.start();
@@ -122,12 +123,12 @@ public class User extends Thread {
     private void manageCommand(JsonObject command) throws IllegalMoveException {
         switch (command.get("type").getAsString()) {
             case "gameCreation" -> {
-                //System.out.println("\n GameCreation message arrived");
+                Log.info("GameCreation message arrived");
                 sendMessage(MessageCreator.gameCreation(Matchmaking.gameCreation(command, server)));
-                System.out.println("\n GameCreation reply sent");
+                Log.debug("GameCreation reply sent");
             }
             case "enterGame" -> {
-                //System.out.println("\n enterGame message arrived");
+                Log.info("enterGame message arrived");
                 try {
                     gameController = Matchmaking.enterGame(command.get("code").getAsString(), server);
                 } catch (FullGameException | GameNotFoundException e) {
@@ -136,13 +137,12 @@ public class User extends Thread {
                 sendMessage(MessageCreator.enterGame(gameController));
             }
             case "login" -> {
-                //System.out.println("\n login message message arrived");
+                Log.info("login message message arrived");
                 logged = Matchmaking.login(gameController, command.get("name").getAsString(), this);
                 sendMessage(MessageCreator.login(logged));
                 if (logged) {
                     username = command.get("name").getAsString();
-                    //System.out.println("\n login reply sent: logged");
-                    this.gameController.checkStartCondition();
+                    Log.debug("login reply sent: logged");
                 }
             }
             case "logout" -> removeFromGame();
@@ -181,7 +181,7 @@ public class User extends Thread {
      * If the user was in a game, s/he's removed from the game and the username is reset.
      */
     private void removeFromGame() {
-        System.out.println("\nUser disconnected");
+        Log.info("User disconnected");
         if (gameController == null)
             return;
         gameController.removeUser(this);

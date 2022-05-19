@@ -1,6 +1,7 @@
 package it.polimi.ingsw.server.model.board;
 
 import it.polimi.ingsw.utilities.HouseColor;
+import it.polimi.ingsw.utilities.Log;
 
 import java.util.*;
 
@@ -12,13 +13,14 @@ import java.util.*;
 
 public class Bag {
     private final Stack<HouseColor> listStudents;
-    Map<HouseColor, Integer> result = new HashMap<>();
+    Map<HouseColor, Integer> result;
 
     /**
      * Bag Constructor, listStudents is initialized with the all 120 students and shuffled.
      */
     public Bag() {
         this.listStudents = new Stack<>();
+        this.result = new EnumMap<>(HouseColor.class);
 
         Arrays.stream(HouseColor.values()).forEach(color -> {
             for (int i = 0; i < 24; i++) {
@@ -28,7 +30,7 @@ public class Bag {
 
         this.randomize();
 
-        System.out.println("\n *** New Bag successfully created.");
+        Log.debug("*** New Bag successfully created.");
     }
 
     /**
@@ -38,6 +40,7 @@ public class Bag {
      */
     public Bag(Map<HouseColor, Integer> status) {
         this.listStudents = new Stack<>();
+        this.result = new EnumMap<>(HouseColor.class);
 
         Arrays.stream(HouseColor.values()).forEach(color -> {
             for (int i = 0; i < status.get(color); i++) {
@@ -47,7 +50,7 @@ public class Bag {
 
         this.randomize();
 
-        System.out.println("\n *** Saved Bag successfully restored.");
+        Log.debug("*** Saved Bag successfully restored.");
     }
 
     /**
@@ -76,7 +79,7 @@ public class Bag {
      *
      * @return The arraylist with the sequence of students for the setup.
      */
-    public ArrayList<HouseColor> boardSetUp() {
+    public List<HouseColor> boardSetUp() {
         ArrayList<HouseColor> setUp = new ArrayList<>();
         Arrays.stream(HouseColor.values()).forEach(color -> {
             setUp.add(color);
