@@ -99,6 +99,7 @@ public class MessageCreator {
      * @return JsonObject which represents the message.
      */
     public static JsonObject status(GameController game) {
+
         JsonObject reply = new JsonObject();
         reply.addProperty("round", game.getRound());
         reply.addProperty("expert", game.getGameModel().isExpert());

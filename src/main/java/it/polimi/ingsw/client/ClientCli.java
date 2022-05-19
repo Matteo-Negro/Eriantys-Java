@@ -244,11 +244,17 @@ public class ClientCli extends Thread {
     }
 
     private void manageGameRunning() {
-        clearScreen(terminal, false);
         //TODO Print current status screen on cli.
         //work in progress.
-        this.errorOccurred("RUNNING THE GAME");
-
+        Game.print(terminal);
+        synchronized (this.lock) {
+            try {
+                this.lock.wait(2000);
+            } catch (InterruptedException e) {
+                this.resetGame();
+            }
+        }
+        clearScreen(terminal, false);
     }
 
     private void manageEndGame() {

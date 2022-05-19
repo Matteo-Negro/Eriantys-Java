@@ -143,6 +143,8 @@ public class User extends Thread {
                 if (logged) {
                     username = command.get("name").getAsString();
                     Log.debug("login reply sent: logged");
+                    gameController.checkStartCondition();
+                    Log.debug("sono dentro fine");
                 }
             }
             case "logout" -> removeFromGame();

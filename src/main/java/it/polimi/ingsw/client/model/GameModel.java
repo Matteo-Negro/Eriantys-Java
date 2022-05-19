@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import it.polimi.ingsw.utilities.GameControllerStates;
 import it.polimi.ingsw.utilities.HouseColor;
+import it.polimi.ingsw.utilities.Log;
 import it.polimi.ingsw.utilities.WizardType;
 
 import java.util.ArrayList;
@@ -40,8 +41,10 @@ public class GameModel {
         this.subphase = statusSubphase;
         this.expert = statusExpert;
         this.currentPlayer = statusCurrentPlayer;
+        Log.debug("sono dentro 2");
         this.parsePlayers(statusPlayers, statusGameBoard);
         this.parseGameBoard(statusGameBoard);
+        Log.debug("sono dentro 3");
     }
 
     public Map<String, Boolean> getWaitingRoom() {
@@ -89,8 +92,14 @@ public class GameModel {
 
     private void parseGameBoard(JsonObject gameboard){
         int motherNatureIsland = gameboard.get("motherNatureIsland").getAsInt();
-        String influenceBonus = gameboard.get("influenceBonus").getAsString();
-        HouseColor ignoreColor = HouseColor.valueOf(gameboard.get("ignoreColor").getAsString());
+        String influenceBonus;
+        if(gameboard.get("influenceBonus") != null)
+            influenceBonus = gameboard.get("influenceBonus").getAsString();
+        else influenceBonus = null;
+        HouseColor ignoreColor;
+        if(gameboard.get("ignoreColor") != null)
+            ignoreColor = HouseColor.valueOf(gameboard.get("ignoreColor").getAsString());
+        else ignoreColor = null;
         JsonArray clouds = gameboard.get("clouds").getAsJsonArray();
         JsonArray islands = gameboard.get("islands").getAsJsonArray();
         JsonArray specialCharacters = gameboard.get("characters").getAsJsonArray();

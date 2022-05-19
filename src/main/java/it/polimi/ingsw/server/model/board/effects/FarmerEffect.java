@@ -26,15 +26,6 @@ public class FarmerEffect extends Effect {
         stolenProfessors = new HashMap<>();
     }
 
-    /**
-     * Class constructor used to restore the game.
-     *
-     * @param statusStolenProfessors
-     */
-    public FarmerEffect(Map<HouseColor, Player> statusStolenProfessors) {
-        this.stolenProfessors = statusStolenProfessors;
-    }
-
     @Override
     public int getId() {
         return 2;
@@ -45,39 +36,9 @@ public class FarmerEffect extends Effect {
 
     }
 
-    /**
-     * effect() method overload.
-     * Calls the stealProfessors(Map<HouseColor, Player> stolen) private method.
-     *
-     * @param stolen
-     */
-    public void effect(Map<HouseColor, Player> stolen) {
-        stealProfessors(stolen);
-    }
-
     @Override
     public int getCost() {
         return 2;
-    }
-
-    /**
-     * Returns the Map saved in the stolenProfessors attribute.
-     *
-     * @return stolenProfessors attribute.
-     */
-    public Map<HouseColor, Player> getStolenProfessors() {
-        Map<HouseColor, Player> professors = new EnumMap<>(this.stolenProfessors);
-        stolenProfessors = new EnumMap<>(HouseColor.class);
-        return professors;
-    }
-
-    /**
-     * Saves the input map, containing a mapping between the color of the professors stolen from the players to whom they belong, into the stolenProfessors attribute.
-     *
-     * @param stolen
-     */
-    private void stealProfessors(Map<HouseColor, Player> stolen) {
-        stolenProfessors = stolen;
     }
 
     /**

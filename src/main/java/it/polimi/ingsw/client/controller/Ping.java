@@ -24,7 +24,7 @@ public class Ping extends Thread {
         Log.info("Pong running");
         while (!stop) {
             synchronized (lock) {
-                Log.debug("Pong sent");
+                //Log.debug("Pong sent");
                 this.host.sendCommand(pongMessage);
                 try {
                     lock.wait(1000);

@@ -43,7 +43,10 @@ public class GameBoard {
         int id = 0;
         for(JsonElement island : islands){
             int size = island.getAsJsonObject().get("size").getAsInt();
-            TowerType tower = TowerType.valueOf(island.getAsJsonObject().get("tower").getAsString());
+            TowerType tower;
+            if(island.getAsJsonObject().get("tower") != null)
+                tower = TowerType.valueOf(island.getAsJsonObject().get("tower").getAsString());
+            else tower = null;
             boolean ban = island.getAsJsonObject().get("ban").getAsBoolean();
             JsonObject containedStudents = island.getAsJsonObject().get("students").getAsJsonObject();
             boolean motherNature;

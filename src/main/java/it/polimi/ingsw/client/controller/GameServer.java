@@ -53,7 +53,7 @@ public class GameServer extends Thread {
 
             try {
                 incomingMessage = getMessage();
-                Log.debug(incomingMessage.get("type").getAsString());
+                //Log.debug(incomingMessage.get("type").getAsString());
                 manageMessage(incomingMessage);
             } catch (IOException ioe) {
                 this.client.setClientState(ClientStates.CONNECTION_LOST);
@@ -166,9 +166,9 @@ public class GameServer extends Thread {
         String subphase = incomingMessage.get("subphase").getAsString();
         JsonArray players = incomingMessage.get("players").getAsJsonArray();
         JsonObject gameBoard = incomingMessage.get("gameBoard").getAsJsonObject();
-
+        Log.debug("sono dentro 0");
         GameModel model = new GameModel(players.size(), round, phase, subphase, expert, activeUser, players, gameBoard);
-
+        Log.debug("sono dentro 1");
         this.client.initializeGameModel(model);
     }
 

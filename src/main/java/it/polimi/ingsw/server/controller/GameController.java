@@ -132,9 +132,9 @@ public class GameController extends Thread {
      *
      * @return The set of the users that are online.
      */
-    public Set<User> getUsers() {
+    public List<User> getUsers() {
         synchronized (this.users) {
-            return new HashSet<>(this.users.values());
+            return new ArrayList<>(this.users.values());
         }
     }
 
@@ -155,9 +155,9 @@ public class GameController extends Thread {
      *
      * @return The set of usernames.
      */
-    public Set<String> getUsernames() {
+    public List<String> getUsernames() {
         synchronized (this.users) {
-            return this.users.keySet();
+            return new ArrayList<>(this.users.keySet());
         }
     }
 
@@ -216,7 +216,6 @@ public class GameController extends Thread {
 
             if (this.gameModel.getPlayers().stream().noneMatch(player -> player.getName().equals(name)))
                 this.gameModel.addPlayer(name);
-
         }
     }
 
@@ -792,7 +791,9 @@ public class GameController extends Thread {
     public void checkStartCondition(){
         if (this.isFull()) {
             this.notifyUsers(MessageCreator.status(this));
+            Log.debug("Status message sent to users.");
             this.notifyUsers(MessageCreator.gameStart());
+            Log.debug("GameStart message sent to users.");
             this.isFullLock.notify();
         }
     }
