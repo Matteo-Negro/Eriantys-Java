@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import it.polimi.ingsw.utilities.GameControllerStates;
+import it.polimi.ingsw.utilities.HouseColor;
 import it.polimi.ingsw.utilities.WizardType;
 
 import java.util.ArrayList;
@@ -51,10 +52,21 @@ public class GameModel {
             this.players.add(new Player(name, wizard, coins, schoolBoard, assistants));
         }
 
+        int motherNatureIsland = statusGameBoard.get("motherNatureIsland").getAsInt();
+        String influenceBonus = statusGameBoard.get("influenceBonus").getAsString();
+        HouseColor ignoreColor = HouseColor.valueOf(statusGameBoard.get("ignoreColor").getAsString());
+        JsonArray clouds = statusGameBoard.get("clouds").getAsJsonArray();
+        JsonArray islands = statusGameBoard.get("islands").getAsJsonArray();
+        JsonArray specialCharacters = statusGameBoard.get("characters").getAsJsonArray();
 
-        //TODO define game board
-        //this.gameBoard = new GameBoard();
+        this.gameBoard = new GameBoard(motherNatureIsland, influenceBonus, ignoreColor, islands, clouds, specialCharacters);
 
+        JsonObject professors = statusGameBoard.get("professors").getAsJsonObject();
+        for(String color : professors.keySet()){
+            if(professors.get(color) != null){
+                this.getPlayerByName(professors.get(color).getAsString()).getSchoolBoard().addProfessor(HouseColor.valueOf(color));
+            }
+        }
 
 
     }
@@ -65,5 +77,16 @@ public class GameModel {
 
     public int getPlayersNumber(){
         return this.playersNumber;
+    }
+
+    public List<Player> getPlayers(){
+        return this.players;
+    }
+
+    public Player getPlayerByName(String name){
+        for(Player player : this.getPlayers()){
+            if(player.getName().equals(name)) return player;
+        }
+        return null;
     }
 }
