@@ -22,7 +22,7 @@ public class ClientGui extends Application {
     public void start(Stage primaryStage) throws Exception {
         Parent root;
         try {
-            root = FXMLLoader.load(getClass().getResource("/fxml/Menu.fxml"));
+            root = FXMLLoader.load(getClass().getResource("/fxml/GameCreation.fxml"));
         } catch (IOException e) {
             e.printStackTrace();
             return;

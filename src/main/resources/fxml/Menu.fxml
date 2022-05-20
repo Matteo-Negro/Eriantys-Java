@@ -19,7 +19,7 @@
             <Image url="@../backgrounds/menu.jpg" />
          </image>
       </ImageView>
-      <ImageView fitHeight="467.0" fitWidth="700.0" layoutX="173.0" layoutY="100.0" opacity="0.1" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <ImageView fitHeight="467.0" fitWidth="700.0" layoutX="173.0" layoutY="100.0" opacity="0.2" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
          <cursor>
             <Cursor fx:constant="DEFAULT" />
          </cursor>
