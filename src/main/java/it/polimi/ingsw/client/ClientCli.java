@@ -70,10 +70,7 @@ public class ClientCli extends Thread {
                     case JOIN_GAME -> manageJoinGame();
                     case GAME_LOGIN -> manageGameLogin();
                     case GAME_WAITING_ROOM -> manageWaitingRoom();
-                    case GAME_RUNNING -> {
-                        //manage game logic
-                        //when end game message arrives from the server -> transition to end game
-                    }
+                    case GAME_RUNNING -> manageGameRunning();
                     case END_GAME -> {
                         //visualize end game screen
                         //transition to main menu

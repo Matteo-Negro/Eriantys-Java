@@ -2,6 +2,7 @@ package it.polimi.ingsw.client.model;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import it.polimi.ingsw.utilities.HouseColor;
 import it.polimi.ingsw.utilities.TowerType;
@@ -31,7 +32,8 @@ public class GameBoard {
         for (JsonElement map : clouds) {
             students = new EnumMap<>(HouseColor.class);
             for (String color : map.getAsJsonObject().keySet()) {
-                students.put(HouseColor.valueOf(color), map.getAsJsonObject().get("color").getAsInt());
+                if(map.getAsJsonObject().get("color")!=null) students.put(HouseColor.valueOf(color), map.getAsJsonObject().get("color").getAsInt());
+                else students.put(HouseColor.valueOf(color), 0);
             }
             Cloud cloud = new Cloud(students);
             this.clouds.add(cloud);
@@ -43,10 +45,9 @@ public class GameBoard {
         int id = 0;
         for(JsonElement island : islands){
             int size = island.getAsJsonObject().get("size").getAsInt();
-            TowerType tower;
-            if(island.getAsJsonObject().get("tower") != null)
+            TowerType tower = null;
+            if(!(island.getAsJsonObject().get("tower") instanceof JsonNull))
                 tower = TowerType.valueOf(island.getAsJsonObject().get("tower").getAsString());
-            else tower = null;
             boolean ban = island.getAsJsonObject().get("ban").getAsBoolean();
             JsonObject containedStudents = island.getAsJsonObject().get("students").getAsJsonObject();
             boolean motherNature;

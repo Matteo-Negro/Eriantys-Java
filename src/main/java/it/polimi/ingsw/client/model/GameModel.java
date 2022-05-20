@@ -2,6 +2,7 @@ package it.polimi.ingsw.client.model;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import it.polimi.ingsw.utilities.GameControllerStates;
 import it.polimi.ingsw.utilities.HouseColor;
@@ -18,8 +19,8 @@ public class GameModel {
     private Map<String, Boolean> waitingRoom;
 
     private int round;
-    private GameControllerStates phase;
-    private String subphase;
+    private String phase;
+    private GameControllerStates subphase;
 
     private String currentPlayer;
     private boolean expert;
@@ -33,7 +34,7 @@ public class GameModel {
         this.currentPlayer = null;
     }
 
-    public GameModel(int statusPlayersNumber, int statusRound, GameControllerStates statusPhase, String statusSubphase, boolean statusExpert, String statusCurrentPlayer, JsonArray statusPlayers, JsonObject statusGameBoard) {
+    public GameModel(int statusPlayersNumber, int statusRound, String statusPhase, GameControllerStates statusSubphase, boolean statusExpert, String statusCurrentPlayer, JsonArray statusPlayers, JsonObject statusGameBoard) {
         this.waitingRoom = null;
         this.playersNumber = statusPlayersNumber;
         this.round = statusRound;
@@ -41,10 +42,8 @@ public class GameModel {
         this.subphase = statusSubphase;
         this.expert = statusExpert;
         this.currentPlayer = statusCurrentPlayer;
-        Log.debug("sono dentro 2");
         this.parsePlayers(statusPlayers, statusGameBoard);
         this.parseGameBoard(statusGameBoard);
-        Log.debug("sono dentro 3");
     }
 
     public Map<String, Boolean> getWaitingRoom() {
@@ -84,7 +83,7 @@ public class GameModel {
         }
         JsonObject professors = gameBoard.get("professors").getAsJsonObject();
         for(String color : professors.keySet()){
-            if(professors.get(color) != null){
+            if(!(professors.get(color) instanceof JsonNull)){
                 this.getPlayerByName(professors.get(color).getAsString()).getSchoolBoard().addProfessor(HouseColor.valueOf(color));
             }
         }
@@ -92,14 +91,10 @@ public class GameModel {
 
     private void parseGameBoard(JsonObject gameboard){
         int motherNatureIsland = gameboard.get("motherNatureIsland").getAsInt();
-        String influenceBonus;
-        if(gameboard.get("influenceBonus") != null)
-            influenceBonus = gameboard.get("influenceBonus").getAsString();
-        else influenceBonus = null;
-        HouseColor ignoreColor;
-        if(gameboard.get("ignoreColor") != null)
-            ignoreColor = HouseColor.valueOf(gameboard.get("ignoreColor").getAsString());
-        else ignoreColor = null;
+        String influenceBonus = null;
+        if(!(gameboard.get("influenceBonus") instanceof JsonNull)) influenceBonus = gameboard.get("influenceBonus").getAsString();
+        HouseColor ignoreColor = null;
+        if(!(gameboard.get("ignoreColor") instanceof JsonNull)) ignoreColor = HouseColor.valueOf(gameboard.get("ignoreColor").getAsString());
         JsonArray clouds = gameboard.get("clouds").getAsJsonArray();
         JsonArray islands = gameboard.get("islands").getAsJsonArray();
         JsonArray specialCharacters = gameboard.get("characters").getAsJsonArray();

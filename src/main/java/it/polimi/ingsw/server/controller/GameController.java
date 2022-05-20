@@ -312,7 +312,7 @@ public class GameController extends Thread {
             //ENABLING THE CURRENT USER INPUT (taken from the clockwise order).
             User currentUser = getUser(currentPlayer.getName());
             this.activeUser = currentUser.getUsername();
-            currentUser.sendMessage(MessageCreator.turnEnable(true));
+            notifyUsers(MessageCreator.turnEnable(currentUser.getUsername(), true));
 
             //WAITING FOR ASSISTANT TO BE PLAYED
             while (this.getSubPhase() != GameControllerStates.ASSISTANT_PLAYED || !this.isFull()) {
@@ -326,7 +326,7 @@ public class GameController extends Thread {
             }
             //DISABLING THE CURRENT USER'S INPUT.
             this.activeUser = null;
-            currentUser.sendMessage(MessageCreator.turnEnable(false));
+            notifyUsers(MessageCreator.turnEnable(currentUser.getUsername(),false));
             this.setSubPhase(GameControllerStates.PLAY_ASSISTANT);
         }
         this.getGameModel().updateTurnOrder();
@@ -342,7 +342,7 @@ public class GameController extends Thread {
             //ENABLING THE INPUT OF THE CURRENT USER (taken from the turn list).
             User currentUser = getUser(currentPlayer.getName());
             this.activeUser = currentUser.getUsername();
-            currentUser.sendMessage(MessageCreator.turnEnable(true));
+            notifyUsers(MessageCreator.turnEnable(currentUser.getUsername(), true));
 
             //WAITING FOR A CLOUD TO BE CHOSEN (refill command)
             while (this.getSubPhase() != GameControllerStates.END_TURN || !this.isFull()) {
@@ -357,7 +357,7 @@ public class GameController extends Thread {
 
             //DISABLING THE INPUT OF THE CURRENT USER.
             this.activeUser = null;
-            currentUser.sendMessage(MessageCreator.turnEnable(false));
+            notifyUsers(MessageCreator.turnEnable(currentUser.getUsername(), false));
 
             try {
                 this.getGameModel().nextTurn();

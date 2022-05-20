@@ -1,6 +1,7 @@
 package it.polimi.ingsw.utilities;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import it.polimi.ingsw.server.controller.GameController;
 import it.polimi.ingsw.server.model.board.Island;
@@ -82,13 +83,14 @@ public class MessageCreator {
     /**
      * Creates the message used to give the communication token to a specified user.
      *
-     * @param enabled A boolean parameter which indicates the communication permission token.
+     * @param player The name of the player who is going to receive the communication token.
      * @return JsonObject which represents the message.
      */
-    public static JsonObject turnEnable(boolean enabled) {
+    public static JsonObject turnEnable(String player, boolean enable) {
         JsonObject reply = new JsonObject();
         reply.addProperty("type", "turnEnable");
-        reply.addProperty("enable", enabled);
+        reply.addProperty("player", player);
+        reply.addProperty("enable", enable);
         return reply;
     }
 
@@ -101,9 +103,12 @@ public class MessageCreator {
     public static JsonObject status(GameController game) {
 
         JsonObject reply = new JsonObject();
+        reply.addProperty("type", "status");
         reply.addProperty("round", game.getRound());
         reply.addProperty("expert", game.getGameModel().isExpert());
-        reply.addProperty("activeUser", game.getActiveUser());
+        if(game.getActiveUser()!=null)
+            reply.addProperty("activeUser", game.getActiveUser());
+        else reply.add("activeUser", JsonNull.INSTANCE);
         reply.addProperty("phase", game.getPhase());
         reply.addProperty("subPhase", game.getSubPhase().toString());
         reply.add("players", ObjectsToJson.toJsonArray(game.getGameModel().getPlayers(), ObjectsToJson.GET_PLAYERS));

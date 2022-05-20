@@ -1,6 +1,7 @@
 package it.polimi.ingsw.client.controller;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import it.polimi.ingsw.client.ClientCli;
@@ -62,10 +63,10 @@ public class GameServer extends Thread {
     }
 
     private void manageMessage(JsonObject incomingMessage) {
-        Log.debug("incoming message ");
+        //Log.debug("incoming message ");
         switch (incomingMessage.get("type").getAsString()) {
             case "ping" -> {
-                Log.debug("ping arrived");
+                //Log.debug("ping arrived");
             }
             case "gameCreation" -> {
                 Log.debug("gameCreation reply");
@@ -85,7 +86,10 @@ public class GameServer extends Thread {
                 manageStatus(incomingMessage);
             }
 
-            case "gameStart" -> this.client.setClientState(ClientStates.GAME_RUNNING);
+            case "gameStart" ->{
+                Log.debug("gameStart message arrived");
+                this.client.setClientState(ClientStates.GAME_RUNNING);
+            }
 
             case "playAssistant" ->{
             }
@@ -150,7 +154,7 @@ public class GameServer extends Thread {
             else{
                 this.client.setClientState(ClientStates.CONNECTION_LOST);
             }
-        } else this.client.setClientState(ClientStates.CONNECTION_LOST);;
+        } else this.client.setClientState(ClientStates.CONNECTION_LOST);
 
         synchronized (this.client.getLock()){
             this.client.getLock().notify();
@@ -160,10 +164,11 @@ public class GameServer extends Thread {
     private void manageStatus(JsonObject incomingMessage){
 
         int round = incomingMessage.get("round").getAsInt();
-        String activeUser = incomingMessage.get("activeUser").getAsString();
+        String activeUser = null;
+        if(!(incomingMessage.get("activeUser") instanceof JsonNull)) activeUser = incomingMessage.get("activeUser").getAsString();
         boolean expert = incomingMessage.get("expert").getAsBoolean();
-        GameControllerStates phase = GameControllerStates.valueOf(incomingMessage.get("phase").getAsString());
-        String subphase = incomingMessage.get("subphase").getAsString();
+        String phase = incomingMessage.get("phase").getAsString();
+        GameControllerStates subphase = GameControllerStates.valueOf(incomingMessage.get("subPhase").getAsString());
         JsonArray players = incomingMessage.get("players").getAsJsonArray();
         JsonObject gameBoard = incomingMessage.get("gameBoard").getAsJsonObject();
         Log.debug("sono dentro 0");

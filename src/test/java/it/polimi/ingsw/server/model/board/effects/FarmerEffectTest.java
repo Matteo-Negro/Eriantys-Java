@@ -47,40 +47,10 @@ class FarmerEffectTest {
     }
 
     /**
-     * Tests if the effect works correctly.
-     */
-    @Test
-    void effect() {
-        farmerEffect.effect(getMap());
-        assertEquals(getMap(), farmerEffect.getStolenProfessors());
-    }
-
-    /**
      * Tests if returns the correct cost.
      */
     @Test
     void getCost() {
         assertEquals(2, farmerEffect.getCost());
-    }
-
-    /**
-     * Tests if the returned stolen professors coincide.
-     */
-    @Test
-    void getStolenProfessors() {
-        farmerEffect.effect(getMap());
-        assertEquals(getMap(), farmerEffect.getStolenProfessors());
-    }
-
-    /**
-     * Generates a test map.
-     *
-     * @return The generated map.
-     */
-    private Map<HouseColor, Player> getMap() {
-        EnumMap<HouseColor, Player> map = new EnumMap<>(HouseColor.class);
-        map.put(HouseColor.BLUE, new Player("Player 1", WizardType.FUCHSIA, 6, TowerType.WHITE));
-        map.put(HouseColor.FUCHSIA, new Player("Player 2", WizardType.WHITE, 6, TowerType.BLACK));
-        return map;
     }
 }
