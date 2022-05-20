@@ -6,12 +6,10 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import it.polimi.ingsw.client.ClientCli;
 import it.polimi.ingsw.client.model.GameModel;
-import it.polimi.ingsw.client.model.Player;
 import it.polimi.ingsw.utilities.ClientStates;
 import it.polimi.ingsw.utilities.GameControllerStates;
 import it.polimi.ingsw.utilities.Log;
 import it.polimi.ingsw.utilities.MessageCreator;
-import it.polimi.ingsw.utilities.parsers.JsonToObjects;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -19,7 +17,6 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class GameServer extends Thread {
@@ -71,6 +68,7 @@ public class GameServer extends Thread {
             case "gameCreation" -> {
                 Log.debug("gameCreation reply");
                 sendCommand(MessageCreator.enterGame(incomingMessage.get("code").getAsString()));
+                this.client.setGameCode(incomingMessage.get("code").getAsString());
             }
             case "enterGame" -> {
                 Log.debug("enterGame reply");
@@ -81,32 +79,32 @@ public class GameServer extends Thread {
                 manageLogin(incomingMessage);
             }
 
-            case "status" ->{
+            case "status" -> {
                 Log.debug("status message arrived");
                 manageStatus(incomingMessage);
             }
 
-            case "gameStart" ->{
+            case "gameStart" -> {
                 Log.debug("gameStart message arrived");
                 this.client.setClientState(ClientStates.GAME_RUNNING);
             }
 
-            case "playAssistant" ->{
+            case "playAssistant" -> {
             }
 
-            case "moveStudent" ->{
+            case "moveStudent" -> {
             }
 
-            case "payCharacter" ->{
+            case "payCharacter" -> {
             }
 
-            case "moveProfessor" ->{
+            case "moveProfessor" -> {
             }
 
-            case "moveTower" ->{
+            case "moveTower" -> {
             }
 
-            case "endGame" ->{
+            case "endGame" -> {
             }
 
             case "turnEnable", "command" -> {
@@ -116,32 +114,21 @@ public class GameServer extends Thread {
     }
 
     private void manageEnterGame(JsonObject message) {
-        if (this.client.getClientState().equals(ClientStates.GAME_CREATION) || this.client.getClientState().equals(ClientStates.JOIN_GAME)) {
-            if (message.get("found").getAsBoolean()) {
-                Map<String, Boolean> waitingRoom = new HashMap<>();
-                int expectedPlayers = message.get("expectedPlayers").getAsInt();
-                JsonArray players = message.get("players").getAsJsonArray();
 
-                for (int i = 0; i < players.size(); i++) {
-
-                    String player = players.get(i).getAsJsonObject().get("name").getAsString();
-                    boolean online = players.get(i).getAsJsonObject().get("online").getAsBoolean();
-                    waitingRoom.put(player, online);
-
+        switch (this.client.getClientState()) {
+            case GAME_CREATION, JOIN_GAME -> {
+                if (message.get("found").getAsBoolean()) {
+                    parseEnterGame(message);
+                    this.client.setClientState(ClientStates.GAME_LOGIN);
+                } else {
+                    this.client.errorOccurred("This game is full.");
                 }
-                GameModel newGameModel = new GameModel(expectedPlayers, waitingRoom);
-                this.client.initializeGameModel(newGameModel);
-                this.client.setClientState(ClientStates.GAME_LOGIN);
             }
-            else{
-                this.client.errorOccurred("This game is full.");
-            }
-        }
-        else{
-            this.client.setClientState(ClientStates.CONNECTION_LOST);
+            case GAME_WAITING_ROOM -> parseEnterGame(message);
+            default -> this.client.setClientState(ClientStates.CONNECTION_LOST);
         }
 
-        synchronized (this.client.getLock()){
+        synchronized (this.client.getLock()) {
             this.client.getLock().notify();
         }
     }
@@ -150,22 +137,22 @@ public class GameServer extends Thread {
         if (this.client.getClientState().equals(ClientStates.GAME_LOGIN)) {
             if (message.get("success").getAsBoolean()) {
                 this.client.setClientState(ClientStates.GAME_WAITING_ROOM);
-            }
-            else{
+            } else {
                 this.client.setClientState(ClientStates.CONNECTION_LOST);
             }
         } else this.client.setClientState(ClientStates.CONNECTION_LOST);
 
-        synchronized (this.client.getLock()){
+        synchronized (this.client.getLock()) {
             this.client.getLock().notify();
         }
     }
 
-    private void manageStatus(JsonObject incomingMessage){
+    private void manageStatus(JsonObject incomingMessage) {
 
         int round = incomingMessage.get("round").getAsInt();
         String activeUser = null;
-        if(!(incomingMessage.get("activeUser") instanceof JsonNull)) activeUser = incomingMessage.get("activeUser").getAsString();
+        if (!(incomingMessage.get("activeUser") instanceof JsonNull))
+            activeUser = incomingMessage.get("activeUser").getAsString();
         boolean expert = incomingMessage.get("expert").getAsBoolean();
         String phase = incomingMessage.get("phase").getAsString();
         GameControllerStates subphase = GameControllerStates.valueOf(incomingMessage.get("subPhase").getAsString());
@@ -204,6 +191,23 @@ public class GameServer extends Thread {
             setConnected(false);
         }
         this.ping.stopPing();
+    }
+
+    private void parseEnterGame(JsonObject message) {
+        Map<String, Boolean> waitingRoom = new HashMap<>();
+
+        int expectedPlayers = message.get("expectedPlayers").getAsInt();
+        JsonArray players = message.get("players").getAsJsonArray();
+
+        for (int i = 0; i < players.size(); i++) {
+
+            String player = players.get(i).getAsJsonObject().get("name").getAsString();
+            boolean online = players.get(i).getAsJsonObject().get("online").getAsBoolean();
+            waitingRoom.put(player, online);
+
+        }
+        GameModel newGameModel = new GameModel(expectedPlayers, waitingRoom);
+        this.client.initializeGameModel(newGameModel);
     }
 
 }

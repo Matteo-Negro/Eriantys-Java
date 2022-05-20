@@ -229,7 +229,7 @@ public class GameController extends Thread {
             if (user.getUsername() == null) return;
             this.users.replace(user.getUsername(), null);
             this.connectedPlayers--;
-            notifyUsers(MessageCreator.error("One or more players disconnected."));
+            this.notifyUsers(MessageCreator.enterGame(this));
         }
     }
 
@@ -784,7 +784,7 @@ public class GameController extends Thread {
 
     public void notifyUsersExcept(JsonObject message, User exception) {
         for (User user : this.getUsers()) {
-            if (user.getUsername().equals(exception.getUsername())) user.sendMessage(message);
+            if (!user.getUsername().equals(exception.getUsername())) user.sendMessage(message);
         }
     }
 
