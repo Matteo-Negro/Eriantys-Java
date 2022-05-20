@@ -15,7 +15,7 @@
             <Cursor fx:constant="DEFAULT" />
          </cursor>
          <image>
-            <Image url="@../splash_screen.jpg" />
+            <Image url="@../backgrounds/splash_screen.jpg" />
          </image>
       </ImageView>
       <TextField alignment="CENTER" layoutX="227.0" layoutY="298.0" prefHeight="26.0" prefWidth="247.0" promptText="Server IP or address">
