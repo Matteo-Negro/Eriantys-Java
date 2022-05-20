@@ -2,9 +2,8 @@ package it.polimi.ingsw.client;
 
 import it.polimi.ingsw.client.controller.GameServer;
 import it.polimi.ingsw.client.model.GameModel;
-import it.polimi.ingsw.client.model.Player;
 import it.polimi.ingsw.client.view.cli.pages.*;
-import it.polimi.ingsw.client.view.cli.pages.subparts.WaitingRoom;
+import it.polimi.ingsw.client.view.cli.pages.WaitingRoom;
 import it.polimi.ingsw.utilities.ClientStates;
 import it.polimi.ingsw.utilities.Log;
 import it.polimi.ingsw.utilities.MessageCreator;
@@ -14,7 +13,6 @@ import org.jline.terminal.TerminalBuilder;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import static it.polimi.ingsw.client.view.cli.Utilities.*;
@@ -227,9 +225,13 @@ public class ClientCli extends Thread {
         clearScreen(terminal, false);
     }
 
+    static int waitingIteration = 0;
     private void manageWaitingRoom() {
         //work in progress.
-        WaitingRoom.print(terminal, new HashMap<>(), this.getGameModel().getPlayersNumber());
+        List<String> onlinePlayers = new ArrayList<>();
+        for (String name : this.getGameModel().getWaitingRoom().keySet()) if(this.getGameModel().getWaitingRoom().get(name)) onlinePlayers.add(name);
+
+        WaitingRoom.print(terminal, onlinePlayers, "ABCDE", this.getGameModel().getPlayersNumber(), waitingIteration++);
         synchronized (this.lock) {
             try {
                 this.lock.wait(2000);
@@ -246,7 +248,7 @@ public class ClientCli extends Thread {
         Game.print(terminal);
         synchronized (this.lock) {
             try {
-                this.lock.wait(2000);
+                this.lock.wait(500);
             } catch (InterruptedException e) {
                 this.resetGame();
             }

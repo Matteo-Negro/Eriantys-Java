@@ -58,7 +58,7 @@ public class Login {
      * @param terminal Terminal where to write.
      */
     public static void print(Terminal terminal, Map<String, Boolean> players, int expectedPlayers) {
-        terminal.writer().print(ansi().cursor((terminal.getHeight() - 17) / 2, (terminal.getWidth() - 40) / 2));
+        terminal.writer().print(ansi().cursor((terminal.getHeight() - ((players.size() != 0) ? 16 + players.size() : 17)) / 2, (terminal.getWidth() - 40) / 2));
         terminal.writer().print(print(players, expectedPlayers));
         terminal.flush();
     }
@@ -109,12 +109,12 @@ public class Login {
 
         // Line #1
 
-        ansi.a(String.format("┌───────────────%1d/%1d───────────────┐", players.size(), expectedPlayers));
+        ansi.a(String.format("┌─────────────[ %1d/%1d ]─────────────┐", players.size(), expectedPlayers));
         ansi.a(newLine());
 
         // Line #2
 
-        if (players.keySet().size() != 0) {
+        if (players.size() != 0) {
             int size = 35;
             String name;
             String shortName;
@@ -125,14 +125,14 @@ public class Login {
                 name = itr.next();
 
                 shortName = name;
-                if (name.length()>22) shortName = name.substring(0, 22);
+                if (name.length() > 22) shortName = name.substring(0, 22);
 
                 adaptiveString = new StringBuilder();
-                adaptiveString.append(" ".repeat(Math.max(0, (size - 2 - shortName.length() - 1 - 10))));
+                adaptiveString.append(" ".repeat(Math.max(0, (size - 2 - shortName.length() - 1 - ((players.get(name) ? 9 : 10))))));
 
                 ansi.a("  " + shortName + ":" + adaptiveString);
                 ansi.a((players.get(name)) ? foreground(Green.getInstance()) : foreground(Red.getInstance()));
-                ansi.a((players.get(name)) ? " ONLINE   " : " OFFLINE  ");
+                ansi.a((players.get(name)) ? " ONLINE  " : " OFFLINE  ");
 
                 ansi.a(foreground(Grey.getInstance()));
                 ansi.a(newLine());
@@ -143,17 +143,17 @@ public class Login {
             ansi.a(newLine());
         }
 
-        // Line #3
+        // Line #3 (manually printing)
 
         ansi.a("                                   ");
         ansi.a(newLine());
 
-        // Line #4
+        // Line #4 (manually printing)
 
         ansi.a("  Chose a name:                    ");
         ansi.a(newLine());
 
-        // Line #5
+        // Line #5 (manually printing)
 
         ansi.a("└─────────────────────────────────┘");
 
