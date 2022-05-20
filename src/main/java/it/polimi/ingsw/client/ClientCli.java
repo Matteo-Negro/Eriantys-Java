@@ -232,9 +232,6 @@ public class ClientCli extends Thread {
 
         this.tryConnection();
 
-        if (this.getClientState().equals(ClientStates.GAME_LOGIN))
-            this.setClientState(ClientStates.CONNECTION_LOST);
-
         clearScreen(terminal, false);
     }
 
@@ -314,13 +311,6 @@ public class ClientCli extends Thread {
         clearScreen(terminal, false);
         printError(terminal, message);
         Log.warning(message);
-//        synchronized (this.lock) {
-//            try {
-//                this.lock.wait(2000);
-//            } catch (InterruptedException e) {
-//                this.resetGame();
-//            }
-//        }
     }
 
     private void tryConnection() {

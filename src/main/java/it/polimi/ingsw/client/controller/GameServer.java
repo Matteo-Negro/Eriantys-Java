@@ -123,13 +123,16 @@ public class GameServer extends Thread {
                 } else {
                     this.client.errorOccurred("This game is full.");
                 }
+                synchronized (this.client.getLock()) {
+                    this.client.getLock().notify();
+                }
             }
-            case GAME_WAITING_ROOM -> parseEnterGame(message);
-            default -> this.client.setClientState(ClientStates.CONNECTION_LOST);
-        }
-
-        synchronized (this.client.getLock()) {
-            this.client.getLock().notify();
+            case GAME_WAITING_ROOM ->{
+                parseEnterGame(message);
+                synchronized (this.client.getLock()) {
+                    this.client.getLock().notify();
+                }
+            }
         }
     }
 
@@ -138,9 +141,11 @@ public class GameServer extends Thread {
             if (message.get("success").getAsBoolean()) {
                 this.client.setClientState(ClientStates.GAME_WAITING_ROOM);
             } else {
-                this.client.setClientState(ClientStates.CONNECTION_LOST);
+                this.client.errorOccurred("Invalid username");
             }
-        } else this.client.setClientState(ClientStates.CONNECTION_LOST);
+        } else{
+            this.client.setClientState(ClientStates.CONNECTION_LOST);
+        }
 
         synchronized (this.client.getLock()) {
             this.client.getLock().notify();
@@ -158,9 +163,7 @@ public class GameServer extends Thread {
         GameControllerStates subphase = GameControllerStates.valueOf(incomingMessage.get("subPhase").getAsString());
         JsonArray players = incomingMessage.get("players").getAsJsonArray();
         JsonObject gameBoard = incomingMessage.get("gameBoard").getAsJsonObject();
-        Log.debug("sono dentro 0");
         GameModel model = new GameModel(players.size(), round, phase, subphase, expert, activeUser, players, gameBoard);
-        Log.debug("sono dentro 1");
         this.client.initializeGameModel(model);
     }
 

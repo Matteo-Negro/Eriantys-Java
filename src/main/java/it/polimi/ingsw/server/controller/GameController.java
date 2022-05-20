@@ -209,7 +209,7 @@ public class GameController extends Thread {
         if (isFull()) throw new FullGameException();
 
         synchronized (this.users) {
-            if (this.users.get(name) != null) throw new AlreadyExistingPlayerException();
+            if (this.users.get(name) != null || this.users.keySet().size() == this.expectedPlayers && !this.users.containsKey(name)) throw new AlreadyExistingPlayerException();
 
             this.users.put(name, user);
             this.connectedPlayers++;
@@ -229,14 +229,13 @@ public class GameController extends Thread {
             if (user.getUsername() == null) return;
             this.users.replace(user.getUsername(), null);
             this.connectedPlayers--;
-            this.notifyUsers(MessageCreator.enterGame(this));
         }
     }
 
     /**
      * This method returns whether the game is full.
      *
-     * @return True whether the bag is full.
+     * @return True whether the game is full.
      */
     public boolean isFull() {
         synchronized (this.users) {
@@ -283,7 +282,9 @@ public class GameController extends Thread {
         while (true) {
             while (!this.isFull()) {
                 try {
-                    this.isFullLock.wait();
+                    synchronized (this.isFullLock){
+                        this.isFullLock.wait();
+                    }
                 } catch (InterruptedException e) {
                     notifyUsers(MessageCreator.error("Game server error occurred."));
                     for (User user : this.getUsers()) this.removeUser(user);
@@ -777,14 +778,18 @@ public class GameController extends Thread {
     }
 
     public void notifyUsers(JsonObject message) {
-        for (User user : this.getUsers()) {
-            user.sendMessage(message);
+        synchronized (this.users){
+            for (User user : this.getUsers()) {
+                user.sendMessage(message);
+            }
         }
     }
 
     public void notifyUsersExcept(JsonObject message, User exception) {
-        for (User user : this.getUsers()) {
-            if (!user.getUsername().equals(exception.getUsername())) user.sendMessage(message);
+        synchronized (this.users){
+            for (User user : this.getUsers()) {
+                if (!user.getUsername().equals(exception.getUsername())) user.sendMessage(message);
+            }
         }
     }
 

@@ -85,11 +85,20 @@ public class User extends Thread {
                 incomingMessage = getCommand();
                 if (!incomingMessage.get("type").getAsString().equals("pong") && !incomingMessage.get("type").getAsString().equals("error"))
                     manageCommand(incomingMessage);
+                if(this.gameController != null && !this.gameController.isFull()){
+                    synchronized (connectedLock){
+                        try{
+                            this.connectedLock.wait(500);
+                        }catch(InterruptedException ie){
+                            this.disconnected();
+                        }
+                    }
+                    this.sendMessage(MessageCreator.enterGame(this.gameController));
+                }
             } catch (IOException | IllegalMoveException e) {
                 // If socket time out expires.
                 disconnected();
             }
-
         }
     }
 
@@ -142,8 +151,7 @@ public class User extends Thread {
                 sendMessage(MessageCreator.login(logged));
                 if (logged) {
                     username = command.get("name").getAsString();
-                    this.gameController.notifyUsers(MessageCreator.enterGame(this.gameController));
-                    Log.debug("login reply sent: logged");
+                    Log.debug("login reply sent: logged ");
                     gameController.checkStartCondition();
                 }
             }
@@ -183,7 +191,7 @@ public class User extends Thread {
      * If the user was in a game, s/he's removed from the game and the username is reset.
      */
     private void removeFromGame() {
-        Log.info("User disconnected");
+        Log.info("User disconnected with name: " + this.getUsername());
         if (gameController == null)
             return;
         gameController.removeUser(this);
