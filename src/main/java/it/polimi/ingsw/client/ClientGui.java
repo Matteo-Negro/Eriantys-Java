@@ -8,6 +8,7 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 public class ClientGui extends Application {
 
@@ -29,7 +30,7 @@ public class ClientGui extends Application {
             StartScreen.initialize(this);
             MainMenu.initialize(this);
         } catch (IOException e) {
-            Log.error("Cannot initialize scenes: " + e.getMessage());
+            Log.error("Cannot initialize scenes: ", e);
             return;
         }
         Log.info("Initialization completed");

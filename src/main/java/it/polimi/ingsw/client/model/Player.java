@@ -13,10 +13,7 @@ import it.polimi.ingsw.utilities.exceptions.NegativeException;
 import it.polimi.ingsw.utilities.exceptions.NotEnoughCoinsException;
 import it.polimi.ingsw.utilities.parsers.JsonToObjects;
 
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Contains all the data connected to the player on the client side.
@@ -161,7 +158,7 @@ public class Player {
         try {
             takeCoins(specialCharacter.getEffectCost());
         } catch (NegativeException e) {
-            Log.error(e.getMessage());
+            Log.error(e);
         }
         specialCharacter.activateEffect();
     }

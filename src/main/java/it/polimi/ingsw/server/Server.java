@@ -18,6 +18,7 @@ import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -77,7 +78,7 @@ public class Server {
                 userExecutor.submit(new User(socket, this));
             }
         } catch (NoSuchElementException e) {
-            Log.error(e.getMessage());
+            Log.error(e);
         } finally {
             userExecutor.shutdown();
             Log.info("Socket closed.");
@@ -96,7 +97,7 @@ public class Server {
                         try (BufferedReader bufferedReader = Files.newBufferedReader(file)) {
                             loadGame(JsonParser.parseReader(bufferedReader).getAsJsonObject());
                         } catch (IOException e) {
-                            Log.error(e.getMessage());
+                            Log.error(e);
                         }
                     });
         }

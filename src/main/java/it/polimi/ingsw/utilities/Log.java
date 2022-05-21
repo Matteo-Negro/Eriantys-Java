@@ -81,7 +81,18 @@ public class Log {
         }
     }
 
-    public static synchronized void error(String message) {
+    public static void error(String message, Exception exception) {
+        printError(message + exception.getMessage() + "\n" + getStackTrace(exception.getStackTrace()));
+    }
+    public static void error(Exception exception) {
+        printError(exception.getMessage() + "\n" + getStackTrace(exception.getStackTrace()));
+    }
+
+    public static void error(String message) {
+        printError(message);
+    }
+
+    private static synchronized void printError(String message) {
         if (writer == null)
             return;
         if (level <= Level.ERROR) {
@@ -91,6 +102,13 @@ public class Log {
             } catch (IOException ignored) {
             }
         }
+    }
+
+    private static String getStackTrace(StackTraceElement[] stackTrace) {
+        StringBuilder trace = new StringBuilder();
+        for (StackTraceElement element : stackTrace)
+            trace.append("    " + element.toString() + "\n");
+        return trace.toString();
     }
 
     private static synchronized String format(String type, String message) {

@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static it.polimi.ingsw.client.view.cli.Utilities.*;
@@ -91,7 +92,7 @@ public class ClientCli extends Thread {
                 }
             }
         } catch (Exception e) {
-            Log.error(e.getMessage());
+            Log.error(e);
         } finally {
             clearScreen(terminal, true);
             if (this.gameServer != null)
