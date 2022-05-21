@@ -54,8 +54,10 @@ public class Server {
         this.port = port;
         this.savePath = savePath != null
                 ? savePath
-                : Paths.get(new File(ServerLauncher.class.getProtectionDomain().getCodeSource().getLocation().getFile())
-                .getParent(), "database").toString();
+                : Paths.get(
+                        new File(ServerLauncher.class.getProtectionDomain().getCodeSource().getLocation().getFile()).getParent(),
+                "database"
+        ).toString();
         games = new HashMap<>();
         gameExecutor = Executors.newCachedThreadPool();
         File directory = new File(this.savePath);

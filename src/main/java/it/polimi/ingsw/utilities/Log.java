@@ -32,13 +32,20 @@ public class Log {
     }
 
     private static synchronized void createInstance(boolean server) throws IOException {
-        File file = new File(Paths.get(new File(Log.class.getProtectionDomain().getCodeSource().getLocation().getFile())
-                .getParent(), server ? "server.log" : "client.log").toString());
-        if (!file.exists() && !file.createNewFile())
-            throw new IOException();
-        writer = Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE);
         dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
         level = Level.WARNING;
+        File file = new File(Paths.get(
+                new File(Log.class.getProtectionDomain().getCodeSource().getLocation().getFile()).getParent(),
+                dateTimeFormatter.format(LocalDateTime.now()) + "-" + (server ? "server" : "client") + ".log"
+        ).toString());
+        if (!file.exists() && !file.createNewFile())
+            throw new IOException();
+        writer = Files.newBufferedWriter(
+                file.toPath(),
+                StandardCharsets.UTF_8,
+                StandardOpenOption.CREATE,
+                StandardOpenOption.TRUNCATE_EXISTING,
+                StandardOpenOption.WRITE);
     }
 
     public static synchronized void setLevel(int level) {

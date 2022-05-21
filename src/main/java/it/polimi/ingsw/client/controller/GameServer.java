@@ -120,8 +120,6 @@ public class GameServer extends Thread {
                     Log.debug("enterGame reply");
                     parseEnterGame(message);
                     this.client.setClientState(ClientStates.GAME_LOGIN);
-                } else {
-                    this.client.errorOccurred("This game is full.");
                 }
                 synchronized (this.client.getLock()) {
                     this.client.getLock().notify();

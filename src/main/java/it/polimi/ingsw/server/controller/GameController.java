@@ -267,7 +267,12 @@ public class GameController extends Thread {
      * @param json The json to write.
      */
     private void writeFile(JsonObject json) {
-        try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(this.savePath, this.id + ".json"), StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE)) {
+        try (BufferedWriter writer = Files.newBufferedWriter(
+                Paths.get(this.savePath, this.id + ".json"),
+                StandardCharsets.UTF_8,
+                StandardOpenOption.CREATE,
+                StandardOpenOption.TRUNCATE_EXISTING,
+                StandardOpenOption.WRITE)) {
             writer.write(json.toString());
         } catch (IOException e) {
             Log.warning(e.getMessage());
