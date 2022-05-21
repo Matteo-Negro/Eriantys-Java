@@ -16,7 +16,7 @@ import java.util.Map;
  */
 public class SpecialCharacter {
     private final int id;
-    private final Map<HouseColor, Integer> students;
+    private Map<HouseColor, Integer> students;
     private final int cost;
     private boolean active;
     private boolean alreadyPaid;
@@ -41,7 +41,8 @@ public class SpecialCharacter {
         this.paidInRound = paidInRound;
         this.availableBans = availableBans;
         this.cost = cost;
-        this.students = JsonToObjects.parseStudents(students);
+        this.students = null;
+        if(students!=null) this.students = JsonToObjects.parseStudents(students);
     }
 
     /**
@@ -77,7 +78,8 @@ public class SpecialCharacter {
      * @return students attribute.
      */
     public Map<HouseColor, Integer> getStudents() {
-        return new EnumMap<>(this.students);
+        if(this.students!=null) return new EnumMap<>(this.students);
+        return null;
     }
 
     /**

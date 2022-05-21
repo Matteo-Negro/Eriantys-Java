@@ -77,7 +77,7 @@ public class SpecialCharacter {
      * @param students  Map of students on the card.
      * @return The Ansi stream to print to terminal.
      */
-    public static Ansi print(int id, int price, boolean active, int banNumber, Map<HouseColor, Integer> students) {
+    public static Ansi print(int id, int price, boolean active, Integer banNumber, Map<HouseColor, Integer> students) {
 
         Ansi ansi = new Ansi();
 
@@ -120,7 +120,7 @@ public class SpecialCharacter {
 
         // Print closure
 
-        if (banNumber != -1) {
+        if (banNumber != null) {
             ansi.a(printBan(banNumber, active));
         } else if (students != null) {
             ansi.a(printStudents(students, active));

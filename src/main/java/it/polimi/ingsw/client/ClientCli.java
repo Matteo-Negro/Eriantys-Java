@@ -221,7 +221,7 @@ public class ClientCli extends Thread {
             this.resetGame();
             return;
         }
-        if (this.getGameModel().getWaitingRoom().containsKey(username) && this.getGameModel().getWaitingRoom().get(username).equals(true)) {
+        if (this.getGameModel().getWaitingRoom().containsKey(username) && this.getGameModel().getWaitingRoom().get(username).equals(true) || username.equals("")) {
             this.errorOccurred("Invalid username.");
             return;
         }

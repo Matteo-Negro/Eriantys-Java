@@ -71,7 +71,6 @@ public class GameServer extends Thread {
                 this.client.setGameCode(incomingMessage.get("code").getAsString());
             }
             case "enterGame" -> {
-                Log.debug("enterGame reply");
                 manageEnterGame(incomingMessage);
             }
             case "login" -> {
@@ -118,6 +117,7 @@ public class GameServer extends Thread {
         switch (this.client.getClientState()) {
             case GAME_CREATION, JOIN_GAME -> {
                 if (message.get("found").getAsBoolean()) {
+                    Log.debug("enterGame reply");
                     parseEnterGame(message);
                     this.client.setClientState(ClientStates.GAME_LOGIN);
                 } else {
