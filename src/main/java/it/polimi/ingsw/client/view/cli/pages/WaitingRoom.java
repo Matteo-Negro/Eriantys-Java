@@ -20,30 +20,20 @@ import static org.fusesource.jansi.Ansi.ansi;
  * @author Matteo Negro
  */
 public class WaitingRoom {
-    private static final String[] title = {
-            " __       __          __   __     __                                                                ",
-            "|  \\  _  |  \\        |  \\ |  \\   |  \\                                                               ",
-            "| ██ / \\ | ██ ______  \\██_| ██_   \\██_______   ______        ______   ______   ______  ______ ____  ",
-            "| ██/  █\\| ██|      \\|  \\   ██ \\ |  \\       \\ /      \\      /      \\ /      \\ /      \\|      \\    \\ ",
-            "| ██  ███\\ ██ \\██████\\ ██\\██████ | ██ ███████\\  ██████\\    |  ██████\\  ██████\\  ██████\\ ██████\\████\\",
-            "| ██ ██\\██\\██/      ██ ██ | ██ __| ██ ██  | ██ ██  | ██    | ██   \\██ ██  | ██ ██  | ██ ██ | ██ | ██",
-            "| ████  \\████  ███████ ██ | ██|  \\ ██ ██  | ██ ██__| ██    | ██     | ██__/ ██ ██__/ ██ ██ | ██ | ██",
-            "| ███    \\███\\██    ██ ██  \\██  ██ ██ ██  | ██\\██    ██    | ██      \\██    ██\\██    ██ ██ | ██ | ██",
-            " \\██      \\██ \\███████\\██   \\████ \\██\\██   \\██_\\███████     \\██       \\██████  \\██████ \\██  \\██  \\██",
-            "                                             |  \\__| ██                                             ",
-            "                                              \\██    ██                                             ",
-            "                                               \\██████                                              ",
-    };
+    private static final String[] title = {" __       __          __   __     __                                                                ", "|  \\  _  |  \\        |  \\ |  \\   |  \\                                                               ", "| ██ / \\ | ██ ______  \\██_| ██_   \\██_______   ______        ______   ______   ______  ______ ____  ", "| ██/  █\\| ██|      \\|  \\   ██ \\ |  \\       \\ /      \\      /      \\ /      \\ /      \\|      \\    \\ ", "| ██  ███\\ ██ \\██████\\ ██\\██████ | ██ ███████\\  ██████\\    |  ██████\\  ██████\\  ██████\\ ██████\\████\\", "| ██ ██\\██\\██/      ██ ██ | ██ __| ██ ██  | ██ ██  | ██    | ██   \\██ ██  | ██ ██  | ██ ██ | ██ | ██", "| ████  \\████  ███████ ██ | ██|  \\ ██ ██  | ██ ██__| ██    | ██     | ██__/ ██ ██__/ ██ ██ | ██ | ██", "| ███    \\███\\██    ██ ██  \\██  ██ ██ ██  | ██\\██    ██    | ██      \\██    ██\\██    ██ ██ | ██ | ██", " \\██      \\██ \\███████\\██   \\████ \\██\\██   \\██_\\███████     \\██       \\██████  \\██████ \\██  \\██  \\██", "                                             |  \\__| ██                                             ", "                                              \\██    ██                                             ", "                                               \\██████                                              ",};
 
     private WaitingRoom() {
     }
 
     /**
-     * Prints the whole game selection centering it.
+     * Prints the whole wainting room centering it.
      *
-     * @param terminal Terminal where to write.
+     * @param terminal        Terminal where to write.
+     * @param players         List of online player in the game.
+     * @param gameCode        Id of the game.
+     * @param expectedPlayers Number of the expected players.
+     * @param iteration       Number used to print the suspension dots.
      */
-
     public static void print(Terminal terminal, List<String> players, String gameCode, int expectedPlayers, int iteration) {
         terminal.writer().print(ansi().cursor((terminal.getHeight() - 12 - players.size() - 4) / 2, (terminal.getWidth() - 100) / 2));
         terminal.writer().print(print(players, gameCode, expectedPlayers, iteration));
@@ -53,6 +43,10 @@ public class WaitingRoom {
     /**
      * Prints the whole game selection.
      *
+     * @param players         List of online player in the game.
+     * @param gameCode        Id of the game.
+     * @param expectedPlayers Number of the expected players.
+     * @param iteration       Number used to print the suspension dots.
      * @return The generated Ansi stream.
      */
     private static Ansi print(List<String> players, String gameCode, int expectedPlayers, int iteration) {
@@ -72,7 +66,7 @@ public class WaitingRoom {
 
         ansi.a(printTitle());
         ansi.a(moveCursor(WaitingOptions.getInstance()));
-        ansi.a(printOptions(players, gameCode, expectedPlayers,  iteration));
+        ansi.a(printOptions(players, gameCode, expectedPlayers, iteration));
         //ansi.a(printOptions(test, testCode, expectedPlayers, iteration));
         return ansi;
     }
@@ -92,6 +86,10 @@ public class WaitingRoom {
     /**
      * Prints the options.
      *
+     * @param players         List of online player in the game.
+     * @param gameCode        Id of the game.
+     * @param expectedPlayers Number of the expected players.
+     * @param iteration       Number used to print the suspension dots.
      * @return The generated Ansi stream.
      */
     private static Ansi printOptions(List<String> players, String gameCode, int expectedPlayers, int iteration) {
@@ -131,7 +129,7 @@ public class WaitingRoom {
         // Line #4 (manually printing)
 
         ansi.a("  You're waiting for the others ");
-        switch (iteration%4) {
+        switch (iteration % 4) {
             case 1 -> ansi.a(".    ");
             case 2 -> ansi.a("..   ");
             case 3 -> ansi.a("...  ");
@@ -141,7 +139,7 @@ public class WaitingRoom {
 
         // Line #5 (manually printing)
 
-        ansi.a("└─────────────[ " +  gameCode + " ]─────────────┘");
+        ansi.a("└─────────────[ " + gameCode + " ]─────────────┘");
         ansi.cursor(0, 0);
 
         return ansi;

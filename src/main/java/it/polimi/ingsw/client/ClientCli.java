@@ -243,7 +243,7 @@ public class ClientCli extends Thread {
         WaitingRoom.print(terminal, onlinePlayers, this.getGameCode(), this.getGameModel().getPlayersNumber(), waitingIteration++);
         synchronized (this.lock) {
             try {
-                this.lock.wait(2000);
+                this.lock.wait(500);
             } catch (InterruptedException e) {
                 this.resetGame();
             }
@@ -254,7 +254,7 @@ public class ClientCli extends Thread {
     private void manageGameRunning() {
         //TODO Print current status screen on cli.
         //work in progress.;
-        Game.print(terminal);
+        Game.print(terminal, this.gameModel, this.getGameCode());
         synchronized (this.lock) {
             try {
                 this.lock.wait(2000);

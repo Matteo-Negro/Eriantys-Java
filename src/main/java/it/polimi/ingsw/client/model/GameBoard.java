@@ -84,4 +84,16 @@ public class GameBoard {
             }
         }
     }
+
+    public List<Island> getIslands() {
+        return new ArrayList<>(this.islands);
+    }
+
+    public List<Cloud> getClouds() {
+        return new ArrayList<>(this.clouds);
+    }
+
+    public List<SpecialCharacter> getSpecialCharacters() {
+        return new ArrayList<>(this.specialCharacters);
+    }
 }

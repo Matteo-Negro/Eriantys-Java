@@ -21,20 +21,7 @@ import static org.fusesource.jansi.Ansi.ansi;
  * @author Matteo Negro
  */
 public class Login {
-    private static final String[] title = {
-            " __                         __          ",
-            "|  \\                       |  \\         ",
-            "| ██       ______   ______  \\██_______  ",
-            "| ██      /      \\ /      \\|  \\       \\ ",
-            "| ██     |  ██████\\  ██████\\ ██ ███████\\",
-            "| ██     | ██  | ██ ██  | ██ ██ ██  | ██",
-            "| ██_____| ██__/ ██ ██__| ██ ██ ██  | ██",
-            "| ██     \\\\██    ██\\██    ██ ██ ██  | ██",
-            " \\████████ \\██████ _\\███████\\██\\██   \\██",
-            "                  |  \\__| ██            ",
-            "                   \\██    ██            ",
-            "                    \\██████             "
-    };
+    private static final String[] title = {" __                         __          ", "|  \\                       |  \\         ", "| ██       ______   ______  \\██_______  ", "| ██      /      \\ /      \\|  \\       \\ ", "| ██     |  ██████\\  ██████\\ ██ ███████\\", "| ██     | ██  | ██ ██  | ██ ██ ██  | ██", "| ██_____| ██__/ ██ ██__| ██ ██ ██  | ██", "| ██     \\\\██    ██\\██    ██ ██ ██  | ██", " \\████████ \\██████ _\\███████\\██\\██   \\██", "                  |  \\__| ██            ", "                   \\██    ██            ", "                    \\██████             "};
 
     private Login() {
     }
@@ -55,7 +42,9 @@ public class Login {
     /**
      * Prints the whole game selection centering it.
      *
-     * @param terminal Terminal where to write.
+     * @param terminal        Terminal where to write.
+     * @param players         List of online player in the game.
+     * @param expectedPlayers Number of the expected players.
      */
     public static void print(Terminal terminal, Map<String, Boolean> players, int expectedPlayers) {
         terminal.writer().print(ansi().cursor((terminal.getHeight() - ((players.size() != 0) ? 16 + players.size() : 17)) / 2, (terminal.getWidth() - 40) / 2));
@@ -64,8 +53,10 @@ public class Login {
     }
 
     /**
-     * Prints the whole game selection.
+     * Prints the whole login page.
      *
+     * @param players         List of online player in the game.
+     * @param expectedPlayers Number of the expected players.
      * @return The generated Ansi stream.
      */
     private static Ansi print(Map<String, Boolean> players, int expectedPlayers) {
@@ -101,6 +92,8 @@ public class Login {
     /**
      * Prints the options.
      *
+     * @param players         List of online player in the game.
+     * @param expectedPlayers Number of the expected players.
      * @return The generated Ansi stream.
      */
     private static Ansi printOptions(Map<String, Boolean> players, int expectedPlayers) {

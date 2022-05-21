@@ -101,4 +101,12 @@ public class GameModel {
 
         this.gameBoard = new GameBoard(motherNatureIsland, influenceBonus, ignoreColor, islands, clouds, specialCharacters);
     }
+
+    public boolean isExpert() {
+        return this.expert;
+    }
+
+    public GameBoard getGameBoard() {
+        return this.gameBoard;
+    }
 }
