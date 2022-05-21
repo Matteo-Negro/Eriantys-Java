@@ -36,7 +36,7 @@ public class Log {
         level = Level.WARNING;
         File file = new File(Paths.get(
                 new File(Log.class.getProtectionDomain().getCodeSource().getLocation().getFile()).getParent(),
-                dateTimeFormatter.format(LocalDateTime.now()) + "-" + (server ? "server" : "client") + ".log"
+                (server ? "server" : "client") + ".log"
         ).toString());
         if (!file.exists() && !file.createNewFile())
             throw new IOException();
@@ -91,6 +91,7 @@ public class Log {
     public static void error(String message, Exception exception) {
         printError(message + exception.getMessage() + "\n" + getStackTrace(exception.getStackTrace()));
     }
+
     public static void error(Exception exception) {
         printError(exception.getMessage() + "\n" + getStackTrace(exception.getStackTrace()));
     }
