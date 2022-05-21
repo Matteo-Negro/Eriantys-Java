@@ -37,6 +37,8 @@ public class Cloud {
         for (HouseColor color : HouseColor.values())
             for (int index = 0; index < students.get(color); index++)
                 list.add(color);
+        if (list.isEmpty())
+            return null;
         Collections.shuffle(list);
         return list;
     }
