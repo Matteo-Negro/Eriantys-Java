@@ -13,10 +13,6 @@ public class ClientGui extends Application {
 
     private Stage stage;
 
-    public static void main(String[] args) {
-        launch();
-    }
-
     /**
      * @param primaryStage the primary stage for this application, onto which
      *                     the application scene can be set.

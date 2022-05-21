@@ -27,7 +27,7 @@ public class ClientLauncher {
                 if (parseArgument((args)).equals(GraphicsType.CLI)) {
                     new Thread(new ClientCli()).start();
                 } else {
-                    ClientGui.main(args);
+                    Application.launch(ClientGui.class);
                 }
             } catch (IOException ioe) {
                 Log.error("An error occurred while creating the controller class.");
