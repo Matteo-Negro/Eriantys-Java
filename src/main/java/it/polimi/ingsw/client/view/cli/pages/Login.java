@@ -121,18 +121,18 @@ public class Login {
                 if (name.length() > 22) shortName = name.substring(0, 22);
 
                 adaptiveString = new StringBuilder();
-                adaptiveString.append(" ".repeat(Math.max(0, (size - 2 - shortName.length() - 1 - ((players.get(name) ? 9 : 10))))));
+                adaptiveString.append(" ".repeat(Math.max(0, (size - 2 - shortName.length() - 1 - (Boolean.TRUE.equals(players.get(name)) ? 9 : 10)))));
 
                 ansi.a("  " + shortName + ":" + adaptiveString);
-                ansi.a((players.get(name)) ? foreground(Green.getInstance()) : foreground(Red.getInstance()));
-                ansi.a((players.get(name)) ? " ONLINE  " : " OFFLINE  ");
+                ansi.a(Boolean.TRUE.equals(players.get(name)) ? foreground(Green.getInstance()) : foreground(Red.getInstance()));
+                ansi.a(Boolean.TRUE.equals(players.get(name)) ? " ONLINE  " : " OFFLINE  ");
 
                 ansi.a(foreground(Grey.getInstance()));
                 ansi.a(newLine());
             }
 
         } else {
-            ansi.append("  Not login players yet.           ");
+            ansi.append("  No one here, yet.                ");
             ansi.a(newLine());
         }
 

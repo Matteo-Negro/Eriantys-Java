@@ -67,7 +67,7 @@ public class Island {
 
         if (id >= 1 && id <= 6) {
             ansi.a(Utilities.bold(true));
-            ansi.a("       ISL${id}        ".replace("${id}", String.format("%02d", id)));
+            ansi.a(String.format("       ISL%02d        ", id));
             ansi.a(Utilities.bold(false));
         } else if (Boolean.TRUE.equals(connections.get(IslandConnection.NORTH)))
             ansi.a(centeredDots);
@@ -188,7 +188,7 @@ public class Island {
 
         if (id >= 7 && id <= 12) {
             ansi.a(Utilities.bold(true));
-            ansi.a("       ISL${id}        ".replace("${id}", String.format("%02d", id)));
+            ansi.a(String.format("       ISL%02d        ", id));
             ansi.a(Utilities.bold(false));
         } else if (Boolean.TRUE.equals(connections.get(IslandConnection.SOUTH)))
             ansi.a(centeredDots);

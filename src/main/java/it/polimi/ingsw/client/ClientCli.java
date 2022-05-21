@@ -2,10 +2,7 @@ package it.polimi.ingsw.client;
 
 import it.polimi.ingsw.client.controller.GameServer;
 import it.polimi.ingsw.client.model.GameModel;
-import it.polimi.ingsw.client.model.SchoolBoard;
 import it.polimi.ingsw.client.view.cli.pages.*;
-import it.polimi.ingsw.client.view.cli.pages.WaitingRoom;
-import it.polimi.ingsw.client.view.cli.pages.subparts.Realm;
 import it.polimi.ingsw.utilities.ClientStates;
 import it.polimi.ingsw.utilities.Log;
 import it.polimi.ingsw.utilities.MessageCreator;
@@ -13,11 +10,10 @@ import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 
 import java.io.IOException;
-import java.io.Reader;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import static it.polimi.ingsw.client.view.cli.Utilities.*;
 import static org.fusesource.jansi.Ansi.ansi;
@@ -62,11 +58,11 @@ public class ClientCli extends Thread {
         return this.userName;
     }
 
-    public String getGameCode(){
+    public String getGameCode() {
         return this.gameCode;
     }
 
-    public void setGameCode(String gameCode){
+    public void setGameCode(String gameCode) {
         this.gameCode = gameCode;
     }
 
@@ -192,7 +188,7 @@ public class ClientCli extends Thread {
     private void manageJoinGame() {
         JoinGame.print(terminal);
 
-        String gameCode = readLine(" ", terminal, List.of(node("exit")), false, null);
+        String gameCode = readLine(" ", terminal, List.of(node("exit")), false, null).toUpperCase(Locale.ROOT);
         if ("exit".equals(gameCode)) {
             this.setClientState(ClientStates.MAIN_MENU);
             clearScreen(terminal, false);
@@ -204,13 +200,16 @@ public class ClientCli extends Thread {
 
         this.tryConnection();
 
-        if (this.getClientState().equals(ClientStates.JOIN_GAME))
-            this.setClientState(ClientStates.CONNECTION_LOST);
+        if (this.getClientState().equals(ClientStates.JOIN_GAME)) {
+            this.errorOccurred("The desired game doesn't exist or is full.");
+            return;
+        }
 
         clearScreen(terminal, false);
     }
 
     private void manageGameLogin() {
+
         Login.print(terminal, this.getGameModel().getWaitingRoom(), this.getGameModel().getPlayersNumber());
 
         String username;
@@ -237,9 +236,13 @@ public class ClientCli extends Thread {
     }
 
     static int waitingIteration = 0;
+
     private void manageWaitingRoom() {
+
         List<String> onlinePlayers = new ArrayList<>();
-        for (String name : this.getGameModel().getWaitingRoom().keySet()) if(this.getGameModel().getWaitingRoom().get(name)) onlinePlayers.add(name);
+        for (String name : this.getGameModel().getWaitingRoom().keySet())
+            if (Boolean.TRUE.equals(this.getGameModel().getWaitingRoom().get(name)))
+                onlinePlayers.add(name);
 
         WaitingRoom.print(terminal, onlinePlayers, this.getGameCode(), this.getGameModel().getPlayersNumber(), waitingIteration++);
         synchronized (this.lock) {

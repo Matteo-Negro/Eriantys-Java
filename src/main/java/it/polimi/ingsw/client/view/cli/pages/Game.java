@@ -83,7 +83,7 @@ public class Game {
             ansi.a("│");
         }
 
-        String str = "└──[ Insert below the command ]";
+        String str = "└──[ Insert the command below ]";
         ansi.cursor(y - 3, 2);
         for (int c = 0; c < x - 1 - str.length(); c++) {
             if (c == 0) ansi.a(str);
