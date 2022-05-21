@@ -67,7 +67,7 @@ public class Realm {
             ansi.a(printIsland(index, islands.get(index - 1)));
         }
 
-        ansi.a(Utilities.moveCursor(IslandReset.getInstance()));
+        ansi.a(Utilities.moveCursor(IslandsReset.getInstance()));
 
         return ansi;
     }

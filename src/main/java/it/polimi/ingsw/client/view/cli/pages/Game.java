@@ -32,7 +32,7 @@ public class Game {
     public static void print(Terminal terminal, GameModel gameModel, String gameId) {
         terminal.writer().print(printBorder(terminal.getHeight(), terminal.getWidth(), gameId));
         terminal.flush();
-        terminal.writer().print(ansi().cursor((terminal.getHeight() - 37 - 5) / 2, (terminal.getWidth() - 165 - 6) / 2));
+        terminal.writer().print(ansi().cursor((terminal.getHeight() - 31- 5) / 2, (terminal.getWidth() - 165 - 6) / 2));
         Realm.print(terminal, gameModel.getGameBoard().getIslands(), gameModel.getGameBoard().getClouds());
 
         if (!gameModel.isExpert()) {
