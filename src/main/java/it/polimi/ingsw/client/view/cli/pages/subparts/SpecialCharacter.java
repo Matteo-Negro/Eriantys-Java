@@ -116,13 +116,14 @@ public class SpecialCharacter {
         // Line #7
 
         ansi.a("└───────┘");
-        ansi.a(newLine());
 
         // Print closure
 
         if (banNumber != null) {
+            ansi.a(newLine());
             ansi.a(printBan(banNumber, active));
         } else if (students != null) {
+            ansi.a(newLine());
             ansi.a(printStudents(students, active));
         } else {
             ansi.a(resetCursor(ResetType.STANDARD));

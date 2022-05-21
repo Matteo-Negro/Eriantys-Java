@@ -37,19 +37,18 @@ public class Game {
 
         if (!gameModel.isExpert()) {
             if (gameModel.getPlayersNumber() == 2)
-                terminal.writer().print(ansi().cursor((terminal.getHeight() - 15 - 5) / 2, (terminal.getWidth() - 165 - 6) / 2));
+                terminal.writer().print(ansi().cursor((terminal.getHeight() - 15 - 6) / 2, (terminal.getWidth() - 165 - 6) / 2));
             else
-                terminal.writer().print(ansi().cursor((terminal.getHeight() - 29 - 5) / 2, (terminal.getWidth() - 165 - 6) / 2));
+                terminal.writer().print(ansi().cursor((terminal.getHeight() - 29 - 6) / 2, (terminal.getWidth() - 165 - 6) / 2));
         } else {
             switch (gameModel.getPlayersNumber()) {
-                case 2 -> terminal.writer().print(ansi().cursor((terminal.getHeight() - 26 - 5) / 2, (terminal.getWidth() - 165 - 6) / 2));
-                case 3 -> terminal.writer().print(ansi().cursor((terminal.getHeight() - 29 - 5) / 2, (terminal.getWidth() - 165 - 6) / 2));
-                default -> terminal.writer().print(ansi().cursor((terminal.getHeight() - 40 - 5) / 2, (terminal.getWidth() - 165 - 6) / 2));
-
+                case 2 -> terminal.writer().print(ansi().cursor((terminal.getHeight() - 26 - 6) / 2, (terminal.getWidth() - 165 - 6) / 2));
+                case 3 -> terminal.writer().print(ansi().cursor((terminal.getHeight() - 29 - 6) / 2, (terminal.getWidth() - 165 - 6) / 2));
+                default -> terminal.writer().print(ansi().cursor((terminal.getHeight() - 40 - 6) / 2, (terminal.getWidth() - 165 - 6) / 2));
             }
         }
         PlayerStuff.print(terminal, gameModel.getPlayers(), gameModel.isExpert(), gameModel.getGameBoard().getSpecialCharacters());
-        terminal.writer().print(ansi().cursor(terminal.getHeight() - 2, 2));
+        terminal.writer().print(ansi().cursor(terminal.getHeight() - 2, 3));
         terminal.flush();
     }
 
@@ -64,22 +63,22 @@ public class Game {
     private static Ansi printBorder(int y, int x, String gameId) {
         Ansi ansi = new Ansi();
 
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
         LocalDateTime now = LocalDateTime.now();
 
-        ansi.cursor(1, 2);
+        ansi.cursor(2, 2);
         for (int c = 0; c < x - 2 - 20 - 23; c++) {
             if (c == 0) ansi.a("┌──[ GameID: " + gameId + " ]─");
             else if (c == x - 3 - 23 - 20) ansi.a("─[ " + dtf.format(now) + " ]──┐");
             else ansi.a("─");
         }
 
-        for (int r = 2; r < y - 3; r++) {
+        for (int r = 3; r < y - 3; r++) {
             ansi.cursor(r, 2);
             ansi.a("│");
         }
 
-        for (int r = 2; r < y - 3; r++) {
+        for (int r = 3; r < y - 3; r++) {
             ansi.cursor(r, x - 1);
             ansi.a("│");
         }
