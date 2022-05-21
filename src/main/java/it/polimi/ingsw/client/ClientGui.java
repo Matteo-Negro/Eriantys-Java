@@ -1,85 +1,79 @@
 package it.polimi.ingsw.client;
 
+import it.polimi.ingsw.client.view.gui.MainMenu;
+import it.polimi.ingsw.client.view.gui.StartScreen;
+import it.polimi.ingsw.utilities.ClientStates;
+import it.polimi.ingsw.utilities.Log;
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.net.Socket;
-import java.util.Objects;
 
 public class ClientGui extends Application {
 
+    private Stage stage;
+
+    public static void main(String[] args) {
+        launch();
+    }
 
     /**
      * @param primaryStage the primary stage for this application, onto which
      *                     the application scene can be set.
      *                     Applications may create other stages, if needed, but they will not be
      *                     primary stages.
-     * @throws Exception
      */
     @Override
-    public void start(Stage primaryStage) throws Exception {
-        Scene rootScene;
+    public void start(Stage primaryStage) {
+
+        stage = primaryStage;
+
+        Log.info("Initializing scenes");
         try {
-            rootScene = new Scene(FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/fxml/SplashScreen.fxml"))));
+            StartScreen.initialize(this);
+            MainMenu.initialize(this);
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.error("Cannot initialize scenes: " + e.getMessage());
             return;
         }
-        primaryStage.setScene(rootScene);
+        Log.info("Initialization completed");
+
         primaryStage.setTitle("Eriantys");
         primaryStage.sizeToScene();
         primaryStage.setResizable(false);
 
-        TextField ip = (TextField) rootScene.lookup("#ip");
-        TextField port = (TextField) rootScene.lookup("#port");
-        Label error = (Label) rootScene.lookup("#error");
-        Button submit = (Button) rootScene.lookup("#submit");
-
-        submit.requestFocus();
-
-        rootScene.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
-            processButton(ip, port, error);
-            event.consume();
-        });
-
-        submit.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
-            processButton(ip, port, error);
-            event.consume();
-        });
+        changeScene(ClientStates.START_SCREEN);
 
         primaryStage.show();
     }
 
-    private void processButton(TextField ip, TextField port, Label error) {
-        String socketIp = ip.getText();
-        int socketPort;
-
-        if (socketIp.isEmpty())
-            socketIp = "localhost";
-
-        try {
-            socketPort = Integer.parseInt(port.getText());
-        } catch (NumberFormatException e) {
-            socketPort = 36803;
+    public void changeScene(ClientStates state) {
+        Log.info("Displaying " + state);
+        switch (state) {
+            case CONNECTION_LOST -> {
+            }
+            case END_GAME -> {
+            }
+            case EXIT -> {
+            }
+            case GAME_CREATION -> {
+            }
+            case GAME_LOGIN -> {
+            }
+            case GAME_RUNNING -> {
+            }
+            case GAME_WAITING_ROOM -> {
+            }
+            case JOIN_GAME -> {
+            }
+            case MAIN_MENU -> {
+                stage.setScene(MainMenu.getScene());
+                MainMenu.addEvents();
+            }
+            case START_SCREEN -> {
+                stage.setScene(StartScreen.getScene());
+                StartScreen.addEvents();
+            }
         }
-
-        try {
-            Socket hostSocket = new Socket(socketIp, socketPort);
-            hostSocket.setSoTimeout(10000);
-        } catch (IOException e) {
-            error.setText("Wrong data provided or server unreachable.");
-        }
-    }
-
-    public static void main(String[] args) {
-        launch(args);
     }
 }

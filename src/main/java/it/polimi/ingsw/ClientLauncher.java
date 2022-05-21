@@ -4,6 +4,7 @@ import it.polimi.ingsw.client.ClientCli;
 import it.polimi.ingsw.client.ClientGui;
 import it.polimi.ingsw.utilities.GraphicsType;
 import it.polimi.ingsw.utilities.Log;
+import javafx.application.Application;
 
 import java.io.IOException;
 import java.util.ArrayList;

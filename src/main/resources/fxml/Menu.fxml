@@ -48,10 +48,10 @@
                   <Image url="@../titles/menu.png" />
                </image>
             </ImageView>
-            <Button mnemonicParsing="false" text="Create new game" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-            <Button mnemonicParsing="false" text="Enter game" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+            <Button fx:id="create" mnemonicParsing="false" text="Create new game" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <Button fx:id="enter" mnemonicParsing="false" text="Enter game" GridPane.columnIndex="3" GridPane.rowIndex="3" />
          </children>
       </GridPane>
-      <Button mnemonicParsing="false" text="Exit" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
+      <Button fx:id="exit" mnemonicParsing="false" text="Exit" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
    </children>
 </AnchorPane>
