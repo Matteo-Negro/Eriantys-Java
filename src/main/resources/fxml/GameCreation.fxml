@@ -68,7 +68,7 @@
          <children>
             <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                <children>
-                  <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
+                  <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0" style="-fx-background-color: rgba(0, 0, 0, 0.2);">
                      <children>
                         <VBox alignment="CENTER" prefHeight="200.0" prefWidth="200.0">
                            <children>
@@ -79,17 +79,17 @@
                               </Label>
                               <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                                  <children>
-                                    <RadioButton mnemonicParsing="false" text="2" textFill="WHITE">
+                                    <RadioButton fx:id="players_2" mnemonicParsing="false" text="2" textFill="WHITE">
                                        <HBox.margin>
                                           <Insets right="10.0" />
                                        </HBox.margin>
                                     </RadioButton>
-                                    <RadioButton mnemonicParsing="false" text="3" textFill="WHITE">
+                                    <RadioButton fx:id="players_3" mnemonicParsing="false" text="3" textFill="WHITE">
                                        <HBox.margin>
                                           <Insets left="10.0" right="10.0" />
                                        </HBox.margin>
                                     </RadioButton>
-                                    <RadioButton mnemonicParsing="false" text="4" textFill="WHITE">
+                                    <RadioButton fx:id="players_4" mnemonicParsing="false" text="4" textFill="WHITE">
                                        <HBox.margin>
                                           <Insets left="10.0" />
                                        </HBox.margin>
@@ -101,7 +101,8 @@
                         <Separator orientation="VERTICAL" prefHeight="200.0">
                            <HBox.margin>
                               <Insets left="5.0" />
-                           </HBox.margin></Separator>
+                           </HBox.margin>
+                        </Separator>
                         <VBox alignment="CENTER" prefHeight="200.0" prefWidth="200.0">
                            <children>
                               <Label text="Game mode" textFill="WHITE">
@@ -114,12 +115,12 @@
                               </Label>
                               <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                                  <children>
-                                    <RadioButton mnemonicParsing="false" text="Normal" textFill="WHITE">
+                                    <RadioButton fx:id="normal" mnemonicParsing="false" text="Normal" textFill="WHITE">
                                        <HBox.margin>
                                           <Insets right="10.0" />
                                        </HBox.margin>
                                     </RadioButton>
-                                    <RadioButton mnemonicParsing="false" text="Expert" textFill="WHITE">
+                                    <RadioButton fx:id="expert" mnemonicParsing="false" text="Expert" textFill="WHITE">
                                        <HBox.margin>
                                           <Insets left="10.0" />
                                        </HBox.margin>
@@ -130,7 +131,7 @@
                         </VBox>
                      </children>
                   </HBox>
-                  <Button mnemonicParsing="false" text="Create">
+                  <Button fx:id="submit" mnemonicParsing="false" text="Create">
                      <VBox.margin>
                         <Insets top="10.0" />
                      </VBox.margin>
@@ -142,6 +143,7 @@
             </VBox>
          </children>
       </GridPane>
-      <Button mnemonicParsing="false" text="Back" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
+      <Button fx:id="back" mnemonicParsing="false" text="Back" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
+      <Label fx:id="error" alignment="CENTER" layoutX="14.0" layoutY="455.0" prefHeight="17.0" prefWidth="700.0" textFill="RED" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" />
    </children>
 </AnchorPane>

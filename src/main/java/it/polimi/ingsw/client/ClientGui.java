@@ -8,17 +8,14 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 public class ClientGui extends Application {
 
     private Stage stage;
 
     /**
-     * @param primaryStage the primary stage for this application, onto which
-     *                     the application scene can be set.
-     *                     Applications may create other stages, if needed, but they will not be
-     *                     primary stages.
+     * @param primaryStage the primary stage for this application, onto which the application scene can be set.
+     *                     Applications may create other stages, if needed, but they will not be primary stages.
      */
     @Override
     public void start(Stage primaryStage) {
@@ -46,31 +43,17 @@ public class ClientGui extends Application {
 
     public void changeScene(ClientStates state) {
         Log.info("Displaying " + state);
-        switch (state) {
-            case CONNECTION_LOST -> {
-            }
-            case END_GAME -> {
-            }
-            case EXIT -> {
-            }
-            case GAME_CREATION -> {
-            }
-            case GAME_LOGIN -> {
-            }
-            case GAME_RUNNING -> {
-            }
-            case GAME_WAITING_ROOM -> {
-            }
-            case JOIN_GAME -> {
-            }
-            case MAIN_MENU -> {
-                stage.setScene(MainMenu.getScene());
-                MainMenu.addEvents();
-            }
-            case START_SCREEN -> {
-                stage.setScene(StartScreen.getScene());
-                StartScreen.addEvents();
-            }
-        }
+        stage.setScene(switch (state) {
+            case CONNECTION_LOST -> null;
+            case END_GAME -> null;
+            case EXIT -> null;
+            case GAME_CREATION -> null;
+            case GAME_LOGIN -> null;
+            case GAME_RUNNING -> null;
+            case GAME_WAITING_ROOM -> null;
+            case JOIN_GAME -> null;
+            case MAIN_MENU -> MainMenu.getScene();
+            case START_SCREEN -> StartScreen.getScene();
+        });
     }
 }

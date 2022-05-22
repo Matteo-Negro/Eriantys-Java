@@ -13,25 +13,36 @@ import java.util.Objects;
 public class MainMenu {
 
     private static Scene scene = null;
-    private static ClientGui client;
-    private static boolean eventsAdded = false;
+    private static ClientGui client = null;
 
     private MainMenu() {
     }
 
+    /**
+     * Initializes the scene.
+     *
+     * @param client The client to which change the state.
+     * @throws IOException Thrown if there is an error somewhere.
+     */
     public static void initialize(ClientGui client) throws IOException {
         MainMenu.client = client;
         scene = new Scene(FXMLLoader.load(Objects.requireNonNull(MainMenu.class.getResource("/fxml/Menu.fxml"))));
+        addEvents();
     }
 
+    /**
+     * Returns the scene.
+     *
+     * @return The scene.
+     */
     public static Scene getScene() {
         return scene;
     }
 
+    /**
+     * Adds all the events to the scene.
+     */
     public static void addEvents() {
-
-        if (eventsAdded)
-            return;
 
         Button create = (Button) scene.lookup("#create");
         Button enter = (Button) scene.lookup("#enter");
@@ -54,6 +65,5 @@ public class MainMenu {
             client.changeScene(ClientStates.START_SCREEN);
         });
 
-        eventsAdded = true;
     }
 }

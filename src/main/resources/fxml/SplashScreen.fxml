@@ -50,6 +50,6 @@
             </Button>
          </children>
       </VBox>
-      <Label fx:id="error" alignment="CENTER" layoutX="4.0" layoutY="445.0" prefHeight="17.0" prefWidth="692.0" textFill="RED" />
+      <Label fx:id="error" alignment="CENTER" layoutX="4.0" layoutY="445.0" prefHeight="17.0" prefWidth="692.0" textFill="RED" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" />
    </children>
 </AnchorPane>

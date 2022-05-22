@@ -17,25 +17,38 @@ import java.util.Objects;
 public class StartScreen {
 
     private static Scene scene = null;
-    private static ClientGui client;
-    private static boolean eventsAdded = false;
+    private static ClientGui client = null;
 
     private StartScreen() {
     }
 
+    /**
+     * Initializes the scene.
+     *
+     * @param client The client to which change the state.
+     * @throws IOException Thrown if there is an error somewhere.
+     */
     public static void initialize(ClientGui client) throws IOException {
+        if (client == null)
+            return;
         StartScreen.client = client;
         scene = new Scene(FXMLLoader.load(Objects.requireNonNull(StartScreen.class.getResource("/fxml/SplashScreen.fxml"))));
+        addEvents();
     }
 
+    /**
+     * Returns the scene.
+     *
+     * @return The scene.
+     */
     public static Scene getScene() {
         return scene;
     }
 
-    public static void addEvents() {
-
-        if (eventsAdded)
-            return;
+    /**
+     * Adds all the events to the scene.
+     */
+    private static void addEvents() {
 
         TextField ip = (TextField) scene.lookup("#ip");
         TextField port = (TextField) scene.lookup("#port");
@@ -54,10 +67,15 @@ public class StartScreen {
             event.consume();
             processButton(ip, port, error);
         });
-
-        eventsAdded = true;
     }
 
+    /**
+     * Connects to the server.
+     *
+     * @param ip    Ip of the server.
+     * @param port  Port of the server.
+     * @param error Label where to write an eventual error message.
+     */
     private static void processButton(TextField ip, TextField port, Label error) {
         String socketIp = ip.getText();
         int socketPort;
