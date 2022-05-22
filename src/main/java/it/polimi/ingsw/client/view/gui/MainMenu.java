@@ -52,7 +52,7 @@ public class MainMenu {
 
         create.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
             event.consume();
-            client.changeScene(ClientStates.START_SCREEN);
+            client.changeScene(ClientStates.GAME_CREATION);
         });
 
         enter.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {

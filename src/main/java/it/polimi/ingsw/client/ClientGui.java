@@ -1,5 +1,6 @@
 package it.polimi.ingsw.client;
 
+import it.polimi.ingsw.client.view.gui.GameCreation;
 import it.polimi.ingsw.client.view.gui.MainMenu;
 import it.polimi.ingsw.client.view.gui.StartScreen;
 import it.polimi.ingsw.utilities.ClientStates;
@@ -26,6 +27,7 @@ public class ClientGui extends Application {
         try {
             StartScreen.initialize(this);
             MainMenu.initialize(this);
+            GameCreation.initialize(this);
         } catch (IOException e) {
             Log.error("Cannot initialize scenes: ", e);
             return;
@@ -47,7 +49,7 @@ public class ClientGui extends Application {
             case CONNECTION_LOST -> null;
             case END_GAME -> null;
             case EXIT -> null;
-            case GAME_CREATION -> null;
+            case GAME_CREATION -> GameCreation.getScene();
             case GAME_LOGIN -> null;
             case GAME_RUNNING -> null;
             case GAME_WAITING_ROOM -> null;

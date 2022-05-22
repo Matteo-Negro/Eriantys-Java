@@ -144,6 +144,5 @@
          </children>
       </GridPane>
       <Button fx:id="back" mnemonicParsing="false" text="Back" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
-      <Label fx:id="error" alignment="CENTER" layoutX="14.0" layoutY="455.0" prefHeight="17.0" prefWidth="700.0" textFill="RED" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" />
    </children>
 </AnchorPane>
