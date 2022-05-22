@@ -24,15 +24,16 @@ public class Game {
     /**
      * Prints the whole game selection centering it.
      *
-     * @param terminal  Terminal where to write.
-     * @param gameModel The model of the game where the data are stored.
-     * @param gameId    The id of the game.
+     * @param terminal          Terminal where to write.
+     * @param gameModel         The model of the game where the data are stored.
+     * @param gameId            The id of the game.
+     * @param currentPlayerTurn true if it's the turn of the current player.
      */
     // TODO: max 47 row (MAC 13")
-    public static void print(Terminal terminal, GameModel gameModel, String gameId) {
-        terminal.writer().print(printBorder(terminal.getHeight(), terminal.getWidth(), gameId));
+    public static void print(Terminal terminal, GameModel gameModel, String gameId, boolean currentPlayerTurn) {
+        terminal.writer().print(printBorder(terminal.getHeight(), terminal.getWidth(), gameId, currentPlayerTurn, gameModel.getPhase()));
         terminal.flush();
-        terminal.writer().print(ansi().cursor((terminal.getHeight() - 31- 5) / 2, (terminal.getWidth() - 165 - 6) / 2));
+        terminal.writer().print(ansi().cursor((terminal.getHeight() - 31 - 5) / 2, (terminal.getWidth() - 165 - 6) / 2));
         Realm.print(terminal, gameModel.getGameBoard().getIslands(), gameModel.getGameBoard().getClouds());
 
         if (!gameModel.isExpert()) {
@@ -42,9 +43,12 @@ public class Game {
                 terminal.writer().print(ansi().cursor((terminal.getHeight() - 29 - 6) / 2, (terminal.getWidth() - 165 - 6) / 2));
         } else {
             switch (gameModel.getPlayersNumber()) {
-                case 2 -> terminal.writer().print(ansi().cursor((terminal.getHeight() - 26 - 6) / 2, (terminal.getWidth() - 165 - 6) / 2));
-                case 3 -> terminal.writer().print(ansi().cursor((terminal.getHeight() - 29 - 6) / 2, (terminal.getWidth() - 165 - 6) / 2));
-                default -> terminal.writer().print(ansi().cursor((terminal.getHeight() - 40 - 6) / 2, (terminal.getWidth() - 165 - 6) / 2));
+                case 2 ->
+                        terminal.writer().print(ansi().cursor((terminal.getHeight() - 26 - 6) / 2, (terminal.getWidth() - 165 - 6) / 2));
+                case 3 ->
+                        terminal.writer().print(ansi().cursor((terminal.getHeight() - 29 - 6) / 2, (terminal.getWidth() - 165 - 6) / 2));
+                default ->
+                        terminal.writer().print(ansi().cursor((terminal.getHeight() - 40 - 6) / 2, (terminal.getWidth() - 165 - 6) / 2));
             }
         }
         PlayerStuff.print(terminal, gameModel.getPlayers(), gameModel.isExpert(), gameModel.getGameBoard().getSpecialCharacters());
@@ -55,12 +59,14 @@ public class Game {
     /**
      * Prints the border of the page.
      *
-     * @param y      The y-size of the terminal.
-     * @param x      The x-size of the terminal.
-     * @param gameId The id of the game.
+     * @param y                 The y-size of the terminal.
+     * @param x                 The x-size of the terminal.
+     * @param gameId            The id of the game.
+     * @param currentPlayerTurn true if it's the turn of the current player.
+     * @param phase             The current phase of the game.
      * @return The generated Ansi stream.
      */
-    private static Ansi printBorder(int y, int x, String gameId) {
+    private static Ansi printBorder(int y, int x, String gameId, boolean currentPlayerTurn, String phase) {
         Ansi ansi = new Ansi();
 
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
@@ -83,7 +89,15 @@ public class Game {
             ansi.a("│");
         }
 
-        String str = "└──[ Insert the command below ]";
+        String str;
+        if (currentPlayerTurn) {
+            if (phase.equals("planning"))
+                str = "└──[ Play an assistant ]";
+            else
+                str = "└──[ It's your turn ]";
+        } else
+            str = "└";
+
         ansi.cursor(y - 3, 2);
         for (int c = 0; c < x - 1 - str.length(); c++) {
             if (c == 0) ansi.a(str);

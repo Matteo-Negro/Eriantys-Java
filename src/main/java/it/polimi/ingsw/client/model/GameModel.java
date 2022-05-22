@@ -109,4 +109,16 @@ public class GameModel {
     public GameBoard getGameBoard() {
         return this.gameBoard;
     }
+
+    public String getCurrentPlayer() {
+        return currentPlayer;
+    }
+
+    public String getPhase() {
+        return phase;
+    }
+
+    public GameControllerStates getSubphase() {
+        return subphase;
+    }
 }

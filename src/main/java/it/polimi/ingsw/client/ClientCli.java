@@ -258,7 +258,7 @@ public class ClientCli extends Thread {
     private void manageGameRunning() {
         //TODO Print current status screen on cli.
         //work in progress.;
-        Game.print(terminal, this.gameModel, this.getGameCode());
+        Game.print(terminal, this.gameModel, this.getGameCode(), userName.equals(gameModel.getCurrentPlayer()));
         synchronized (this.lock) {
             try {
                 this.lock.wait(2000);
