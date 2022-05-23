@@ -34,7 +34,6 @@ public class ClientGui extends Application {
         }
         Log.info("Initialization completed");
 
-        primaryStage.setTitle("Eriantys");
         primaryStage.sizeToScene();
         primaryStage.setResizable(false);
 
@@ -45,6 +44,7 @@ public class ClientGui extends Application {
 
     public void changeScene(ClientStates state) {
         Log.info("Displaying " + state);
+        final String defaultTitle = "Eriantys";
         stage.setScene(switch (state) {
             case CONNECTION_LOST -> null;
             case END_GAME -> null;
@@ -56,6 +56,18 @@ public class ClientGui extends Application {
             case JOIN_GAME -> null;
             case MAIN_MENU -> MainMenu.getScene();
             case START_SCREEN -> StartScreen.getScene();
+        });
+        stage.setTitle(switch (state) {
+            case CONNECTION_LOST -> defaultTitle;
+            case END_GAME -> defaultTitle;
+            case EXIT -> defaultTitle;
+            case GAME_CREATION -> defaultTitle + " | Create a new game";
+            case GAME_LOGIN -> defaultTitle;
+            case GAME_RUNNING -> defaultTitle;
+            case GAME_WAITING_ROOM -> defaultTitle;
+            case JOIN_GAME -> defaultTitle;
+            case MAIN_MENU -> defaultTitle + " | Menu";
+            case START_SCREEN -> defaultTitle;
         });
     }
 }

@@ -92,7 +92,7 @@ public class Game {
 
         String str;
         if (currentPlayerTurn) {
-            if (phase.equals("planning"))
+            if (phase.equals(Phase.PLANNING))
                 str = "└──[ Play an assistant ]";
             else
                 str = "└──[ It's your turn ]";
