@@ -1,6 +1,7 @@
 package it.polimi.ingsw.client;
 
 import it.polimi.ingsw.client.view.gui.GameCreation;
+import it.polimi.ingsw.client.view.gui.JoinGame;
 import it.polimi.ingsw.client.view.gui.MainMenu;
 import it.polimi.ingsw.client.view.gui.StartScreen;
 import it.polimi.ingsw.utilities.ClientStates;
@@ -28,6 +29,7 @@ public class ClientGui extends Application {
             StartScreen.initialize(this);
             MainMenu.initialize(this);
             GameCreation.initialize(this);
+            JoinGame.initialize(this);
         } catch (IOException e) {
             Log.error("Cannot initialize scenes: ", e);
             return;
@@ -42,6 +44,11 @@ public class ClientGui extends Application {
         primaryStage.show();
     }
 
+    /**
+     * Changes the scene according to the state.
+     *
+     * @param state State of the game.
+     */
     public void changeScene(ClientStates state) {
         Log.info("Displaying " + state);
         final String defaultTitle = "Eriantys";
@@ -53,7 +60,7 @@ public class ClientGui extends Application {
             case GAME_LOGIN -> null;
             case GAME_RUNNING -> null;
             case GAME_WAITING_ROOM -> null;
-            case JOIN_GAME -> null;
+            case JOIN_GAME -> JoinGame.getScene();
             case MAIN_MENU -> MainMenu.getScene();
             case START_SCREEN -> StartScreen.getScene();
         });
@@ -62,7 +69,7 @@ public class ClientGui extends Application {
             case END_GAME -> defaultTitle;
             case EXIT -> defaultTitle;
             case GAME_CREATION -> defaultTitle + " | Create a new game";
-            case GAME_LOGIN -> defaultTitle;
+            case GAME_LOGIN -> defaultTitle + " | Game code";
             case GAME_RUNNING -> defaultTitle;
             case GAME_WAITING_ROOM -> defaultTitle;
             case JOIN_GAME -> defaultTitle;

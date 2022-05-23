@@ -2,22 +2,31 @@ package it.polimi.ingsw.client.view.gui;
 
 import it.polimi.ingsw.client.ClientGui;
 import it.polimi.ingsw.utilities.ClientStates;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 
 public class StartScreen {
 
     private static Scene scene = null;
     private static ClientGui client = null;
+
+    @FXML
+    private static TextField ip;
+    @FXML
+    private static TextField port;
+    @FXML
+    private static Label error;
+    @FXML
+    private static Button submit;
 
     private StartScreen() {
     }
@@ -32,7 +41,8 @@ public class StartScreen {
         if (client == null)
             return;
         StartScreen.client = client;
-        scene = new Scene(FXMLLoader.load(Objects.requireNonNull(StartScreen.class.getResource("/fxml/SplashScreen.fxml"))));
+        scene = new Scene(FXMLLoader.load(Objects.requireNonNull(StartScreen.class.getResource("/fxml/splash_screen.fxml"))));
+        lookup();
         addEvents();
     }
 
@@ -42,7 +52,18 @@ public class StartScreen {
      * @return The scene.
      */
     public static Scene getScene() {
+        submit.requestFocus();
         return scene;
+    }
+
+    /**
+     * Looks for every used element in the scene.
+     */
+    private static void lookup() {
+        ip = (TextField) scene.lookup("#ip");
+        port = (TextField) scene.lookup("#port");
+        error = (Label) scene.lookup("#error");
+        submit = (Button) scene.lookup("#submit");
     }
 
     /**
@@ -50,33 +71,28 @@ public class StartScreen {
      */
     private static void addEvents() {
 
-        TextField ip = (TextField) scene.lookup("#ip");
-        TextField port = (TextField) scene.lookup("#port");
-        Label error = (Label) scene.lookup("#error");
-        Button submit = (Button) scene.lookup("#submit");
-
-        submit.requestFocus();
-
-        scene.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
+        scene.setOnKeyPressed(event -> {
             event.consume();
             if (event.getCode() == KeyCode.ENTER)
-                processButton(ip, port, error);
+                processButton();
         });
 
-        submit.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+        submit.setOnMouseClicked(event -> {
             event.consume();
-            processButton(ip, port, error);
+            processButton();
+        });
+
+        submit.setOnKeyPressed(event -> {
+            event.consume();
+            if (event.getCode() == KeyCode.ENTER)
+                processButton();
         });
     }
 
     /**
      * Connects to the server.
-     *
-     * @param ip    Ip of the server.
-     * @param port  Port of the server.
-     * @param error Label where to write an eventual error message.
      */
-    private static void processButton(TextField ip, TextField port, Label error) {
+    private static void processButton() {
         String socketIp = ip.getText();
         int socketPort;
 
