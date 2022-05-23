@@ -106,7 +106,14 @@ public class GamePlatform {
             throw new FullGameException("There are already " + playersNumber + "/" + playersNumber + " players.");
         if (players.containsKey(name))
             throw new AlreadyExistingPlayerException("A player with name \"" + name + "\" already exists.");
-        tmp = new Player(name, getWizardType(), getTowersNumber(), getTowerType());
+
+        Map<HouseColor, Integer> students = new EnumMap<>(HouseColor.class);
+        for(HouseColor color : HouseColor.values()) students.put(color, 0);
+        for(int i=0; i<7; i++){
+            HouseColor color = this.getGameBoard().getBag().pop();
+            students.put(color, students.get(color)+1);
+        }
+        tmp = new Player(name, getWizardType(), getTowersNumber(), getTowerType(), students);
         clockwiseOrder.add(tmp);
         players.put(name, tmp);
         if (players.size() == 1) {

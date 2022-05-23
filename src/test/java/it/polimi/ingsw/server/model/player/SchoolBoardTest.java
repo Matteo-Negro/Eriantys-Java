@@ -23,6 +23,7 @@ class SchoolBoardTest {
 
     private final int towersNumber = 8;
     private final TowerType towerType = TowerType.BLACK;
+    private final Map<HouseColor, Integer> entrance = new EnumMap<>(HouseColor.class);
 
     private SchoolBoard schoolBoard;
 
@@ -31,7 +32,8 @@ class SchoolBoardTest {
      */
     @BeforeEach
     void setUp() {
-        this.schoolBoard = new SchoolBoard(this.towersNumber, this.towerType);
+        for(HouseColor color : HouseColor.values()) entrance.put(color, 0);
+        this.schoolBoard = new SchoolBoard(this.towersNumber, this.towerType, this.entrance);
     }
 
     /**

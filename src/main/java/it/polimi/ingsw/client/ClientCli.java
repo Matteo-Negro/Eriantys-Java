@@ -23,6 +23,7 @@ public class ClientCli extends Thread {
     private final Terminal terminal;
     private final Object lock;
     private String userName;
+    private boolean communicationToken;
     private String gameCode;
     private GameServer gameServer;
     private GameModel gameModel;
@@ -36,36 +37,78 @@ public class ClientCli extends Thread {
         this.gameServer = null;
         this.gameModel = null;
         this.userName = null;
+        this.communicationToken = false;
         this.gameCode = null;
         this.lock = new Object();
         this.terminal = TerminalBuilder.terminal();
         clearScreen(terminal, false);
     }
 
+    /**
+     * Returns the GameServer instance which represents the network link to the server.
+     *
+     * @return The gameServer attribute.
+     */
     public GameServer getGameServer() {
         return this.gameServer;
     }
 
+    /**
+     * Returns the GameModel instance associated to the current game status.
+     *
+     * @return The gameModel attribute.
+     */
     public GameModel getGameModel() {
         return this.gameModel;
     }
 
+    /**
+     * Returns the lock used to synchronize multithreading operations.
+     *
+     * @return The lock attribute.
+     */
     public Object getLock() {
         return lock;
     }
 
+    /**
+     * Returns the username used in the current game, null if the client is currently not playing a game.
+     *
+     * @return The userName attribute.
+     */
     public String getUserName() {
         return this.userName;
     }
 
+    private boolean hasCommunicationToken(){
+        return this.communicationToken;
+    }
+
+    public  void setCommunicationToken(boolean token){
+        this.communicationToken = token;
+    }
+
+    /**
+     * Returns the game code associated to the joined game, null if the user hasn't already joined one.
+     *
+     * @return The gameCode attribute.
+     */
     public String getGameCode() {
         return this.gameCode;
     }
 
+    /**
+     * Sets the gameCode to the given value.
+     *
+     * @param gameCode The code associated to the game which the user is attempting join.
+     */
     public void setGameCode(String gameCode) {
         this.gameCode = gameCode;
     }
 
+    /**
+     * The main client method, chooses the correct method to invoke basing on the current state.
+     */
     @Override
     public void run() {
         boolean process = true;
@@ -96,6 +139,9 @@ public class ClientCli extends Thread {
         }
     }
 
+    /**
+     * Manages the start-screen's I/O.
+     */
     private void manageStartScreen() {
         SplashScreen.print(terminal);
         String hostIp = readLine(" ", terminal, List.of(node("localhost"), node("127.0.0.1")), false, null);
@@ -116,6 +162,9 @@ public class ClientCli extends Thread {
         }
     }
 
+    /**
+     * Manages the main-menu-screen's I/O.
+     */
     private void manageMainMenu() {
         String option;
 
@@ -135,6 +184,9 @@ public class ClientCli extends Thread {
         }
     }
 
+    /**
+     * Manages the game-creation-screen's I/O.
+     */
     private void manageGameCreation() {
         int expectedPlayers;
         boolean expert;
@@ -185,6 +237,9 @@ public class ClientCli extends Thread {
         clearScreen(terminal, false);
     }
 
+    /**
+     * Manages the join-game-screen's I/O.
+     */
     private void manageJoinGame() {
         JoinGame.print(terminal);
 
@@ -208,6 +263,9 @@ public class ClientCli extends Thread {
         clearScreen(terminal, false);
     }
 
+    /**
+     * Manages the login-screen's I/O.
+     */
     private void manageGameLogin() {
 
         Login.print(terminal, this.getGameModel().getWaitingRoom(), this.getGameModel().getPlayersNumber());
@@ -235,8 +293,10 @@ public class ClientCli extends Thread {
         clearScreen(terminal, false);
     }
 
+    /**
+     * Manages the waiting-room-screen's I/O.
+     */
     static int waitingIteration = 0;
-
     private void manageWaitingRoom() {
 
         List<String> onlinePlayers = new ArrayList<>();
@@ -247,7 +307,7 @@ public class ClientCli extends Thread {
         WaitingRoom.print(terminal, onlinePlayers, this.getGameCode(), this.getGameModel().getPlayersNumber(), waitingIteration++);
         synchronized (this.lock) {
             try {
-                this.lock.wait(500);
+                this.lock.wait(1000);
             } catch (InterruptedException e) {
                 this.resetGame();
             }
@@ -255,20 +315,34 @@ public class ClientCli extends Thread {
         clearScreen(terminal, false);
     }
 
+    /**
+     * Manages the game-screen's I/O.
+     */
     private void manageGameRunning() {
-        //TODO Print current status screen on cli.
-        //work in progress.;
         Game.print(terminal, this.gameModel, this.getGameCode(), userName.equals(gameModel.getCurrentPlayer()));
-        synchronized (this.lock) {
-            try {
-                this.lock.wait(2000);
-            } catch (InterruptedException e) {
+
+        if(this.hasCommunicationToken()){
+            String command = readLine("", terminal, List.of(node("exit")), false, null);
+            if(command.equals("exit")){
+                this.getGameServer().sendCommand(MessageCreator.logout());
                 this.resetGame();
+            }
+        }
+        else{
+            synchronized (this.lock) {
+                try {
+                    this.lock.wait(2000);
+                } catch (InterruptedException e) {
+                    this.resetGame();
+                }
             }
         }
         clearScreen(terminal, false);
     }
 
+    /**
+     * Manages the end-game-screen's I/O.
+     */
     private void manageEndGame() {
         //TODO Print end game screen on cli.
         String command;
@@ -286,6 +360,9 @@ public class ClientCli extends Thread {
         clearScreen(terminal, false);
     }
 
+    /**
+     * Manages the CONNECTION_LOST state of the client, terminating all the server-associated threads.
+     */
     private void manageConnectionLost() {
         this.resetGame();
         this.getGameServer().disconnected();
@@ -294,29 +371,55 @@ public class ClientCli extends Thread {
         this.setClientState(ClientStates.START_SCREEN);
     }
 
+    /**
+     * Sets the gameModel attribute to a new GameModel instance.
+     *
+     * @param newGameModel The new GameModel instance.
+     */
     public void initializeGameModel(GameModel newGameModel) {
         this.gameModel = newGameModel;
     }
 
+    /**
+     * Returns the current client's state.
+     *
+     * @return The state attribute.
+     */
     public ClientStates getClientState() {
         return this.state;
     }
 
+    /**
+     * Sets the current client's state to a new value.
+     *
+     * @param newState The next state to set.
+     */
     public void setClientState(ClientStates newState) {
         this.state = newState;
     }
 
+    /**
+     * Flushes the current game model and sets the current state to MAIN_MENU.
+     */
     private void resetGame() {
         this.setClientState(ClientStates.MAIN_MENU);
         this.gameModel = null;
     }
 
+    /**
+     * Prints an error message.
+     *
+     * @param message The message to print.
+     */
     public void errorOccurred(String message) {
         clearScreen(terminal, false);
         printError(terminal, message);
         Log.warning(message);
     }
 
+    /**
+     * Waits for a response from the game server; if the timeout expires, the CONNECTION_LOST state is set.
+     */
     private void tryConnection() {
         synchronized (this.lock) {
             try {

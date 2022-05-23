@@ -4,10 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
-import it.polimi.ingsw.utilities.GameControllerStates;
-import it.polimi.ingsw.utilities.HouseColor;
-import it.polimi.ingsw.utilities.Log;
-import it.polimi.ingsw.utilities.WizardType;
+import it.polimi.ingsw.utilities.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,7 +16,7 @@ public class GameModel {
     private Map<String, Boolean> waitingRoom;
 
     private int round;
-    private String phase;
+    private Phase phase;
     private GameControllerStates subphase;
 
     private String currentPlayer;
@@ -34,7 +31,7 @@ public class GameModel {
         this.currentPlayer = null;
     }
 
-    public GameModel(int statusPlayersNumber, int statusRound, String statusPhase, GameControllerStates statusSubphase, boolean statusExpert, String statusCurrentPlayer, JsonArray statusPlayers, JsonObject statusGameBoard) {
+    public GameModel(int statusPlayersNumber, int statusRound, Phase statusPhase, GameControllerStates statusSubphase, boolean statusExpert, String statusCurrentPlayer, JsonArray statusPlayers, JsonObject statusGameBoard) {
         this.waitingRoom = null;
         this.playersNumber = statusPlayersNumber;
         this.round = statusRound;
@@ -114,11 +111,15 @@ public class GameModel {
         return currentPlayer;
     }
 
-    public String getPhase() {
+    public Phase getPhase() {
         return phase;
     }
 
     public GameControllerStates getSubphase() {
         return subphase;
+    }
+
+    public void setCurrentPlayer(String currentPlayer){
+        this.currentPlayer = currentPlayer;
     }
 }

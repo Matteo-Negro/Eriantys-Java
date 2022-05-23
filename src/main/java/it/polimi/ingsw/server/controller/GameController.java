@@ -10,10 +10,7 @@ import it.polimi.ingsw.server.model.board.effects.MonkEffect;
 import it.polimi.ingsw.server.model.board.effects.PrincessEffect;
 import it.polimi.ingsw.server.model.player.Assistant;
 import it.polimi.ingsw.server.model.player.Player;
-import it.polimi.ingsw.utilities.GameControllerStates;
-import it.polimi.ingsw.utilities.HouseColor;
-import it.polimi.ingsw.utilities.Log;
-import it.polimi.ingsw.utilities.MessageCreator;
+import it.polimi.ingsw.utilities.*;
 import it.polimi.ingsw.utilities.exceptions.*;
 import it.polimi.ingsw.utilities.parsers.ObjectsToJson;
 
@@ -43,7 +40,7 @@ public class GameController extends Thread {
     private final Object actionNeededLock;
     private int connectedPlayers;
     private int round;
-    private String phase;
+    private Phase phase;
     private GameControllerStates subPhase;
     private boolean movementEffectActive;
     private String activeUser;
@@ -60,7 +57,7 @@ public class GameController extends Thread {
         this.expectedPlayers = expectedPlayers;
         this.gameModel = gameModel;
         this.id = id;
-        this.phase = "planning";
+        this.phase = Phase.PLANNING;
         this.round = 0;
         this.savePath = savePath;
         this.users = new HashMap<>();
@@ -105,7 +102,7 @@ public class GameController extends Thread {
      *
      * @return The phase of the turn.
      */
-    public String getPhase() {
+    public Phase getPhase() {
         return this.phase;
     }
 
@@ -229,6 +226,7 @@ public class GameController extends Thread {
             if (user.getUsername() == null) return;
             this.users.replace(user.getUsername(), null);
             this.connectedPlayers--;
+            //this.notifyUsers(MessageCreator.error("UserDisconnected"));
         }
     }
 
@@ -291,14 +289,14 @@ public class GameController extends Thread {
                         this.isFullLock.wait();
                     }
                 } catch (InterruptedException e) {
-                    notifyUsers(MessageCreator.error("Game server error occurred."));
+                    notifyUsers(MessageCreator.error("GameServerError"));
                     for (User user : this.getUsers()) this.removeUser(user);
                     return;
                 }
             }
             switch (this.getPhase()) {
-                case "planning" -> this.planningPhase();
-                case "action" -> this.actionPhase();
+                case PLANNING -> this.planningPhase();
+                case ACTION -> this.actionPhase();
             }
         }
     }
@@ -312,6 +310,7 @@ public class GameController extends Thread {
         int indexOfRoundWinner = this.getGameModel().getPlayers().indexOf(roundWinner);
 
         for (int i = 0; i < this.getExpectedPlayers(); i++) {
+            if(i==0) this.getGameModel().nextRound();
 
             Player currentPlayer = this.getGameModel().getPlayers().get((indexOfRoundWinner + i) % this.getExpectedPlayers());
 
@@ -325,7 +324,7 @@ public class GameController extends Thread {
                 try {
                     this.actionNeededLock.wait();
                 } catch (InterruptedException ie) {
-                    notifyUsers(MessageCreator.error("Game server error occurred."));
+                    notifyUsers(MessageCreator.error("GameServerError"));
                     for (User user : this.getUsers()) this.removeUser(user);
                     return;
                 }
@@ -336,7 +335,7 @@ public class GameController extends Thread {
             this.setSubPhase(GameControllerStates.PLAY_ASSISTANT);
         }
         this.getGameModel().updateTurnOrder();
-        this.phase = "action";
+        this.phase = Phase.ACTION;
     }
 
     /**
@@ -355,7 +354,7 @@ public class GameController extends Thread {
                 try {
                     this.actionNeededLock.wait();
                 } catch (InterruptedException ie) {
-                    notifyUsers(MessageCreator.error("Game server error occurred."));
+                    notifyUsers(MessageCreator.error("GameServerError"));
                     for (User user : this.getUsers()) this.removeUser(user);
                     return;
                 }
@@ -369,9 +368,8 @@ public class GameController extends Thread {
                 this.getGameModel().nextTurn();
                 this.setSubPhase(GameControllerStates.MOVE_STUDENT_1);
             } catch (RoundConcluded rc) {
-                this.getGameModel().nextRound();
                 this.round++;
-                this.phase = "planning";
+                this.phase = Phase.PLANNING;
                 this.setSubPhase(GameControllerStates.PLAY_ASSISTANT);
             }
 

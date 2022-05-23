@@ -6,10 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import it.polimi.ingsw.client.ClientCli;
 import it.polimi.ingsw.client.model.GameModel;
-import it.polimi.ingsw.utilities.ClientStates;
-import it.polimi.ingsw.utilities.GameControllerStates;
-import it.polimi.ingsw.utilities.Log;
-import it.polimi.ingsw.utilities.MessageCreator;
+import it.polimi.ingsw.utilities.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -63,7 +60,7 @@ public class GameServer extends Thread {
         //Log.debug("incoming message ");
         switch (incomingMessage.get("type").getAsString()) {
             case "ping" -> {
-                //Log.debug("ping arrived");
+                Log.debug("ping arrived");
             }
             case "gameCreation" -> {
                 Log.debug("gameCreation reply");
@@ -88,6 +85,11 @@ public class GameServer extends Thread {
                 this.client.setClientState(ClientStates.GAME_RUNNING);
             }
 
+            case "turnEnable" -> {
+                Log.debug("turnEnable message arrived");
+                this.manageTurnEnable(incomingMessage);
+            }
+
             case "playAssistant" -> {
             }
 
@@ -106,9 +108,11 @@ public class GameServer extends Thread {
             case "endGame" -> {
             }
 
-            case "turnEnable", "command" -> {
-            }//manage turn enable
-            //manage command
+            case "command" -> {
+            }
+            case "error" -> {
+                this.manageError(incomingMessage);
+            }
         }
     }
 
@@ -157,12 +161,30 @@ public class GameServer extends Thread {
         if (!(incomingMessage.get("activeUser") instanceof JsonNull))
             activeUser = incomingMessage.get("activeUser").getAsString();
         boolean expert = incomingMessage.get("expert").getAsBoolean();
-        String phase = incomingMessage.get("phase").getAsString();
+        Phase phase = Phase.valueOf(incomingMessage.get("phase").getAsString());
         GameControllerStates subphase = GameControllerStates.valueOf(incomingMessage.get("subPhase").getAsString());
         JsonArray players = incomingMessage.get("players").getAsJsonArray();
         JsonObject gameBoard = incomingMessage.get("gameBoard").getAsJsonObject();
         GameModel model = new GameModel(players.size(), round, phase, subphase, expert, activeUser, players, gameBoard);
         this.client.initializeGameModel(model);
+    }
+
+    private void manageError(JsonObject incomingMessage){
+       if(this.client.getClientState().equals(ClientStates.GAME_RUNNING)){
+            if(incomingMessage.getAsJsonArray("message").getAsString().equals("UserDisconnected")){
+                this.client.setClientState(ClientStates.GAME_WAITING_ROOM);
+            }
+        }
+    }
+
+    private void manageTurnEnable(JsonObject incomingMessage){
+        if(incomingMessage.get("player").getAsString().equals(this.client.getUserName())){
+            if(incomingMessage.get("enable").getAsBoolean()) this.client.setCommunicationToken(true);
+            else this.client.setCommunicationToken(false);
+        }
+        else{
+            this.client.getGameModel().setCurrentPlayer(incomingMessage.get("player").getAsString());
+        }
     }
 
     public boolean isConnected() {
@@ -180,9 +202,20 @@ public class GameServer extends Thread {
     }
 
     public void sendCommand(JsonObject command) {
-        synchronized (this.outputStream) {
-            this.outputStream.println(command.toString());
-            outputStream.flush();
+        switch(this.client.getClientState()){
+            case GAME_CREATION, GAME_LOGIN, JOIN_GAME, GAME_RUNNING -> {
+                synchronized (this.outputStream) {
+                    this.outputStream.println(command.toString());
+                    outputStream.flush();
+                }
+            }
+            default -> {
+                if(command.get("type").getAsString().equals("pong"));
+                synchronized (this.outputStream) {
+                    this.outputStream.println(command.toString());
+                    outputStream.flush();
+                }
+            }
         }
     }
 

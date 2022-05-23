@@ -82,7 +82,9 @@ public class User extends Thread {
             }
 
             try {
+                Log.debug("Scanning for messages");
                 incomingMessage = getCommand();
+                Log.debug("message arrived");
                 if (!incomingMessage.get("type").getAsString().equals("pong") && !incomingMessage.get("type").getAsString().equals("error"))
                     manageCommand(incomingMessage);
                 if(this.gameController != null && !this.gameController.isFull()){

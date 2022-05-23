@@ -32,7 +32,7 @@ public class Ping extends Thread {
         while (!stop) {
             synchronized (lock) {
                 user.sendMessage(ping);
-                //Log.debug("Ping");
+                Log.debug("Ping");
                 try {
                     lock.wait(1000);
                 } catch (InterruptedException e) {
@@ -43,6 +43,7 @@ public class Ping extends Thread {
     }
 
     public void stopPing() {
+        Log.debug("Ping stopped.");
         this.stop = true;
     }
 }

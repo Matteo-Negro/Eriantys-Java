@@ -1,6 +1,7 @@
 package it.polimi.ingsw.server.model.player;
 
 import it.polimi.ingsw.server.model.board.SpecialCharacter;
+import it.polimi.ingsw.utilities.HouseColor;
 import it.polimi.ingsw.utilities.Log;
 import it.polimi.ingsw.utilities.TowerType;
 import it.polimi.ingsw.utilities.WizardType;
@@ -10,6 +11,7 @@ import it.polimi.ingsw.utilities.exceptions.NotEnoughCoinsException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -33,14 +35,14 @@ public class Player {
      * @param towersNumber Number of towers to put on the board.
      * @param towerType    Color of the tower.
      */
-    public Player(String name, WizardType wizardType, int towersNumber, TowerType towerType) {
+    public Player(String name, WizardType wizardType, int towersNumber, TowerType towerType, Map<HouseColor, Integer> entrance) {
         this.name = name;
         this.wizardType = wizardType;
         this.coins = 0;
         this.assistants = new ArrayList<>();
         for (int index = 1; index <= 10; index++)
             assistants.add(new Assistant(index));
-        this.schoolBoard = new SchoolBoard(towersNumber, towerType);
+        this.schoolBoard = new SchoolBoard(towersNumber, towerType, entrance);
     }
 
     /**

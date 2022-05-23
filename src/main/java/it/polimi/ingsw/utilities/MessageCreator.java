@@ -109,7 +109,7 @@ public class MessageCreator {
         if(game.getActiveUser()!=null)
             reply.addProperty("activeUser", game.getActiveUser());
         else reply.add("activeUser", JsonNull.INSTANCE);
-        reply.addProperty("phase", game.getPhase());
+        reply.addProperty("phase", game.getPhase().toString());
         reply.addProperty("subPhase", game.getSubPhase().toString());
         reply.add("players", ObjectsToJson.toJsonArray(game.getGameModel().getPlayers(), ObjectsToJson.GET_PLAYERS));
         reply.add("gameBoard", ObjectsToJson.toJsonObject(game.getGameModel().getGameBoard()));

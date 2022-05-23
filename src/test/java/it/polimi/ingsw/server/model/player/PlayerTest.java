@@ -27,6 +27,7 @@ class PlayerTest {
     private final String name = "Matteo";
     private final TowerType towerType = TowerType.BLACK;
     private final WizardType wizardType = WizardType.YELLOW;
+    private final Map<HouseColor, Integer> entrance = new EnumMap<>(HouseColor.class);
 
     private Player player;
 
@@ -35,7 +36,7 @@ class PlayerTest {
      */
     @BeforeEach
     void setUp() {
-        this.player = new Player(this.name, this.wizardType, this.towersNumber, this.towerType);
+        this.player = new Player(this.name, this.wizardType, this.towersNumber, this.towerType, this.entrance);
     }
 
     /**

@@ -29,16 +29,14 @@ public class SchoolBoard {
      * @param towersNumber Number of towers to put on the board.
      * @param towerType    Color of the tower.
      */
-    SchoolBoard(int towersNumber, TowerType towerType) {
+    SchoolBoard(int towersNumber, TowerType towerType, Map<HouseColor, Integer> students) {
         this.towersNumber = towersNumber;
         this.towerType = towerType;
         this.diningRoom = new EnumMap<>(HouseColor.class);
-        this.entrance = new EnumMap<>(HouseColor.class);
+        this.entrance = new EnumMap<>(students);
         for (HouseColor color : HouseColor.values()) {
             this.diningRoom.put(color, 0);
-            this.entrance.put(color, 0);
         }
-
         Log.info("*** New SchoolBoard successfully created.");
     }
 
