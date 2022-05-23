@@ -21,7 +21,7 @@ public class Ping extends Thread {
     public void run() {
         JsonObject pongMessage = new JsonObject();
         pongMessage.addProperty("type", "pong");
-        Log.info("Pong running");
+        //Log.info("Pong running");
         while (!stop && this.host.isConnected()) {
             synchronized (lock) {
                 //Log.debug("Pong sent");

@@ -82,9 +82,7 @@ public class User extends Thread {
             }
 
             try {
-                Log.debug("Scanning for messages");
                 incomingMessage = getCommand();
-                Log.debug("message arrived");
                 if (!incomingMessage.get("type").getAsString().equals("pong") && !incomingMessage.get("type").getAsString().equals("error"))
                     manageCommand(incomingMessage);
                 if(this.gameController != null && !this.gameController.isFull()){
@@ -157,7 +155,10 @@ public class User extends Thread {
                     gameController.checkStartCondition();
                 }
             }
-            case "logout" -> removeFromGame();
+            case "logout" -> {
+                Log.info("logout message message arrived");
+                removeFromGame();
+            }
             case "command" -> {
                 switch (command.get("subtype").getAsString()) {
                     case "playAssistant" ->
@@ -194,9 +195,8 @@ public class User extends Thread {
      */
     private void removeFromGame() {
         Log.info("User disconnected with name: " + this.getUsername());
-        if (gameController == null)
-            return;
+        if (gameController == null) return;
+        Log.debug("Removing user from game.");
         gameController.removeUser(this);
-        username = null;
     }
 }

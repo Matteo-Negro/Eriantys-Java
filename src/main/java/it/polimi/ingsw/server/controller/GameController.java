@@ -223,10 +223,16 @@ public class GameController extends Thread {
      */
     public void removeUser(User user) {
         synchronized (this.users) {
-            if (user.getUsername() == null) return;
+            if (user.getUsername() == null){
+                return;
+            }
             this.users.replace(user.getUsername(), null);
             this.connectedPlayers--;
-            //this.notifyUsers(MessageCreator.error("UserDisconnected"));
+        }
+        this.notifyUsers(MessageCreator.error("UserDisconnected"));
+
+        synchronized (this.actionNeededLock){
+            this.actionNeededLock.notify();
         }
     }
 
@@ -282,6 +288,7 @@ public class GameController extends Thread {
      */
     @Override
     public void run() {
+        Log.debug("Game controller running");
         while (true) {
             while (!this.isFull()) {
                 try {
@@ -294,6 +301,7 @@ public class GameController extends Thread {
                     return;
                 }
             }
+            Log.debug("Scanning phase");
             switch (this.getPhase()) {
                 case PLANNING -> this.planningPhase();
                 case ACTION -> this.actionPhase();
@@ -305,7 +313,7 @@ public class GameController extends Thread {
      * This method manages the planning phase.
      */
     private void planningPhase() {
-
+        Log.debug("Planning phase");
         Player roundWinner = this.getGameModel().getRoundWinner();
         int indexOfRoundWinner = this.getGameModel().getPlayers().indexOf(roundWinner);
 
@@ -320,15 +328,24 @@ public class GameController extends Thread {
             notifyUsers(MessageCreator.turnEnable(currentUser.getUsername(), true));
 
             //WAITING FOR ASSISTANT TO BE PLAYED
-            while (this.getSubPhase() != GameControllerStates.ASSISTANT_PLAYED || !this.isFull()) {
-                try {
-                    this.actionNeededLock.wait();
-                } catch (InterruptedException ie) {
-                    notifyUsers(MessageCreator.error("GameServerError"));
-                    for (User user : this.getUsers()) this.removeUser(user);
-                    return;
+            Log.debug("Waiting for assistant to be played.");
+            while (this.getSubPhase() != GameControllerStates.ASSISTANT_PLAYED) {
+                synchronized(this.actionNeededLock) {
+                    try {
+                        this.actionNeededLock.wait();
+
+                    } catch (InterruptedException ie) {
+                        notifyUsers(MessageCreator.error("GameServerError"));
+                        for (User user : this.getUsers()) this.removeUser(user);
+                        return;
+                    }
+                }
+                synchronized (this.isFullLock){
+                    Log.debug("Game is not full.");
+                    if(!this.isFull()) return;
                 }
             }
+            Log.debug("Assistant played");
             //DISABLING THE CURRENT USER'S INPUT.
             this.activeUser = null;
             notifyUsers(MessageCreator.turnEnable(currentUser.getUsername(),false));
@@ -350,13 +367,19 @@ public class GameController extends Thread {
             notifyUsers(MessageCreator.turnEnable(currentUser.getUsername(), true));
 
             //WAITING FOR A CLOUD TO BE CHOSEN (refill command)
-            while (this.getSubPhase() != GameControllerStates.END_TURN || !this.isFull()) {
-                try {
-                    this.actionNeededLock.wait();
-                } catch (InterruptedException ie) {
-                    notifyUsers(MessageCreator.error("GameServerError"));
-                    for (User user : this.getUsers()) this.removeUser(user);
-                    return;
+            while (this.getSubPhase() != GameControllerStates.END_TURN) {
+                synchronized(this.actionNeededLock) {
+                    try {
+                        this.actionNeededLock.wait();
+
+                    } catch (InterruptedException ie) {
+                        notifyUsers(MessageCreator.error("GameServerError"));
+                        for (User user : this.getUsers()) this.removeUser(user);
+                        return;
+                    }
+                }
+                synchronized (this.isFullLock){
+                    if(!this.isFull()) return;
                 }
             }
 
@@ -783,7 +806,8 @@ public class GameController extends Thread {
     public void notifyUsers(JsonObject message) {
         synchronized (this.users){
             for (User user : this.getUsers()) {
-                user.sendMessage(message);
+                if(user!=null)
+                    user.sendMessage(message);
             }
         }
     }
@@ -802,7 +826,9 @@ public class GameController extends Thread {
             Log.debug("Status message sent to users.");
             this.notifyUsers(MessageCreator.gameStart());
             Log.debug("GameStart message sent to users.");
-            this.isFullLock.notify();
+            synchronized (this.isFullLock){
+                this.isFullLock.notify();
+            }
         }
     }
 }

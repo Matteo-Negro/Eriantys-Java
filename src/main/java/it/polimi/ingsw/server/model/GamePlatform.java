@@ -109,7 +109,9 @@ public class GamePlatform {
 
         Map<HouseColor, Integer> students = new EnumMap<>(HouseColor.class);
         for(HouseColor color : HouseColor.values()) students.put(color, 0);
-        for(int i=0; i<7; i++){
+        int studentsNumber = 7;
+        if(this.playersNumber == 3)  studentsNumber = 9;
+        for(int i=0; i<studentsNumber; i++){
             HouseColor color = this.getGameBoard().getBag().pop();
             students.put(color, students.get(color)+1);
         }

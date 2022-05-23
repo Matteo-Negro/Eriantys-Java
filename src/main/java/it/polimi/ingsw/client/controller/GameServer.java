@@ -60,7 +60,7 @@ public class GameServer extends Thread {
         //Log.debug("incoming message ");
         switch (incomingMessage.get("type").getAsString()) {
             case "ping" -> {
-                Log.debug("ping arrived");
+                //Log.debug("ping arrived");
             }
             case "gameCreation" -> {
                 Log.debug("gameCreation reply");
@@ -111,6 +111,7 @@ public class GameServer extends Thread {
             case "command" -> {
             }
             case "error" -> {
+                Log.debug("Error message arrived");
                 this.manageError(incomingMessage);
             }
         }
@@ -171,18 +172,20 @@ public class GameServer extends Thread {
 
     private void manageError(JsonObject incomingMessage){
        if(this.client.getClientState().equals(ClientStates.GAME_RUNNING)){
-            if(incomingMessage.getAsJsonArray("message").getAsString().equals("UserDisconnected")){
+            if(incomingMessage.get("message").getAsString().equals("UserDisconnected")){
                 this.client.setClientState(ClientStates.GAME_WAITING_ROOM);
+                this.client.errorOccurred("One or more users disconnected.");
             }
         }
     }
 
     private void manageTurnEnable(JsonObject incomingMessage){
         if(incomingMessage.get("player").getAsString().equals(this.client.getUserName())){
-            if(incomingMessage.get("enable").getAsBoolean()) this.client.setCommunicationToken(true);
-            else this.client.setCommunicationToken(false);
+            Log.debug("Token arrived.");
+            this.client.setCommunicationToken(incomingMessage.get("enable").getAsBoolean());
         }
         else{
+            Log.debug("Current player set.");
             this.client.getGameModel().setCurrentPlayer(incomingMessage.get("player").getAsString());
         }
     }
@@ -210,10 +213,11 @@ public class GameServer extends Thread {
                 }
             }
             default -> {
-                if(command.get("type").getAsString().equals("pong"));
-                synchronized (this.outputStream) {
-                    this.outputStream.println(command.toString());
-                    outputStream.flush();
+                if(command.get("type").getAsString().equals("pong")){
+                    synchronized (this.outputStream) {
+                        this.outputStream.println(command.toString());
+                        outputStream.flush();
+                    }
                 }
             }
         }
