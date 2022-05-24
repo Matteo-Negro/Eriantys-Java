@@ -106,7 +106,7 @@ public class MessageCreator {
         reply.addProperty("type", "status");
         reply.addProperty("round", game.getRound());
         reply.addProperty("expert", game.getGameModel().isExpert());
-        if(game.getActiveUser()!=null)
+        if (game.getActiveUser() != null)
             reply.addProperty("activeUser", game.getActiveUser());
         else reply.add("activeUser", JsonNull.INSTANCE);
         reply.addProperty("phase", game.getPhase().toString());
@@ -252,11 +252,11 @@ public class MessageCreator {
     /**
      * Creates the "playAssistant" command.
      *
-     * @param player The player who's performing the move.
+     * @param player      The player who's performing the move.
      * @param assistantId The id of the assistant card played.
      * @return JsonObject which represents the message.
      */
-    public static JsonObject playAssistant(String player, int assistantId){
+    public static JsonObject playAssistant(String player, int assistantId) {
         JsonObject command = new JsonObject();
         command.addProperty("type", "command");
         command.addProperty("subtype", "playAssistant");
@@ -270,14 +270,14 @@ public class MessageCreator {
      * Creates the "moveStudent" command.
      *
      * @param player The player who's performing the move.
-     * @param color The color of the student moved.
-     * @param from The initial position.
-     * @param to The final position.
+     * @param color  The color of the student moved.
+     * @param from   The initial position.
+     * @param to     The final position.
      * @param fromId The initial island's id (null if the move doesn't involve islands).
-     * @param toId The final island's id (null if the move doesn't involve islands).
+     * @param toId   The final island's id (null if the move doesn't involve islands).
      * @return JsonObject which represents the message.
      */
-    public static JsonObject moveStudent(String player, HouseColor color, String from, String to, Integer fromId, Integer toId){
+    public static JsonObject moveStudent(String player, HouseColor color, String from, String to, Integer fromId, Integer toId) {
         JsonObject command = new JsonObject();
         command.addProperty("type", "command");
         command.addProperty("subtype", "move");
@@ -286,9 +286,9 @@ public class MessageCreator {
         command.addProperty("color", color.toString());
         command.addProperty("from", from);
         command.addProperty("to", to);
-        if(fromId == null) command.add("fromId", JsonNull.INSTANCE);
+        if (fromId == null) command.add("fromId", JsonNull.INSTANCE);
         else command.addProperty("fromId", fromId);
-        if(toId == null) command.add("toId", JsonNull.INSTANCE);
+        if (toId == null) command.add("toId", JsonNull.INSTANCE);
         else command.addProperty("toId", toId);
 
         return command;
@@ -300,7 +300,7 @@ public class MessageCreator {
      * @param islandId The destination island.
      * @return JsonObject which represents the message.
      */
-    public static JsonObject moveMotherNature(int islandId){
+    public static JsonObject moveMotherNature(int islandId) {
         JsonObject command = new JsonObject();
         command.addProperty("type", "command");
         command.addProperty("subtype", "motherNature");
@@ -312,16 +312,33 @@ public class MessageCreator {
     /**
      * Creates the "payCharacter" command.
      *
-     * @param player The player who's performing the move.
+     * @param player      The player who's performing the move.
      * @param characterId The paid special character's id.
      * @return JsonObject which represents the message.
      */
-    public static JsonObject payCharacter(String player, int characterId){
+    public static JsonObject payCharacter(String player, int characterId) {
         JsonObject command = new JsonObject();
         command.addProperty("type", "command");
         command.addProperty("subtype", "pay");
         command.addProperty("player", player);
         command.addProperty("character", characterId);
+
+        return command;
+    }
+
+    /**
+     * Creates the "refillEntrance" command.
+     *
+     * @param player  The player who's performing the move.
+     * @param cloudId The cloud's id.
+     * @return JsonObject which represents the message.
+     */
+    public static JsonObject refillEntrance(String player, int cloudId) {
+        JsonObject command = new JsonObject();
+        command.addProperty("type", "command");
+        command.addProperty("subtype", "refill");
+        command.addProperty("player", player);
+        command.addProperty("cloud", cloudId);
 
         return command;
     }
