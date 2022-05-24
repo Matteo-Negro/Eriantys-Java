@@ -1,12 +1,15 @@
 package it.polimi.ingsw.client.view.cli.pages.subparts;
 
 import it.polimi.ingsw.client.model.Player;
-import it.polimi.ingsw.client.view.cli.Utilities;
+import it.polimi.ingsw.client.view.cli.colours.White;
 import it.polimi.ingsw.client.view.cli.coordinates.*;
 import org.fusesource.jansi.Ansi;
 import org.jline.terminal.Terminal;
 
 import java.util.List;
+
+import static it.polimi.ingsw.client.view.cli.Utilities.foreground;
+import static it.polimi.ingsw.client.view.cli.Utilities.moveCursor;
 
 /**
  * Prints the whole player platform.
@@ -44,18 +47,20 @@ public class PlayerStuff {
         // Draw
 
         for (int i = 0; i < players.size(); i++) {
-            if (i == 0) ansi.a(Utilities.moveCursor(SchoolBoardFirst.getInstance()));
-            else if (i == 1 || i == 3) ansi.a(Utilities.moveCursor(SchoolBoardE.getInstance()));
-            else if (!exp && i == 2 && players.size() == 3) ansi.a(Utilities.moveCursor(SchoolBoardThirdNoExp.getInstance()));
-            else ansi.a(Utilities.moveCursor(SchoolBoardS.getInstance()));
+            if (i == 0) ansi.a(moveCursor(SchoolBoardFirst.getInstance()));
+            else if (i == 1 || i == 3) ansi.a(moveCursor(SchoolBoardE.getInstance()));
+            else if (!exp && i == 2 && players.size() == 3) ansi.a(moveCursor(SchoolBoardThirdNoExp.getInstance()));
+            else ansi.a(moveCursor(SchoolBoardS.getInstance()));
 
             ansi.a(SchoolBoard.print(players.get(i).getSchoolBoard().getEntrance(), players.get(i).getSchoolBoard().getDiningRoom(), players.get(i).getSchoolBoard().getProfessors(), players.get(i).getSchoolBoard().getTowerType(), players.get(i).getSchoolBoard().getTowersNumber(), (players.get(i).getCurrentPlayedAssistant() != null) ? players.get(i).getCurrentPlayedAssistant().getId() : 0, players.get(i).getCoins(), players.get(i).getName(), players.get(i).getWizard(), players.get(i).isActive(), exp));
 
-            if (i == 1) ansi.a(Utilities.moveCursor(SchoolBoardReset2Player.getInstance()));
-            else if (i == 2 && players.size() == 3 && exp) ansi.a(Utilities.moveCursor(SchoolBoardReset3PlayerExp.getInstance()));
-            else if (i == 2 && players.size() == 3) ansi.a(Utilities.moveCursor(SchoolBoardReset3PlayerNoExp.getInstance()));
-            else if (i == 3 && players.size() == 4) ansi.a(Utilities.moveCursor(SchoolBoardReset4Player.getInstance()));
+            if (i == 1) ansi.a(moveCursor(SchoolBoardReset2Player.getInstance()));
+            else if (i == 2 && players.size() == 3 && exp) ansi.a(moveCursor(SchoolBoardReset3PlayerExp.getInstance()));
+            else if (i == 2 && players.size() == 3) ansi.a(moveCursor(SchoolBoardReset3PlayerNoExp.getInstance()));
+            else if (i == 3 && players.size() == 4) ansi.a(moveCursor(SchoolBoardReset4Player.getInstance()));
         }
+
+        ansi.a(foreground(White.getInstance()));
 
         return ansi;
     }
@@ -83,20 +88,20 @@ public class PlayerStuff {
         // Draw
 
         ansi.a(switch (playersNumber) {
-            case 2 -> Utilities.moveCursor(SpecialCharacterFirst2Players.getInstance());
-            case 3 -> Utilities.moveCursor(SpecialCharacterFirst3Players.getInstance());
-            default -> Utilities.moveCursor(SpecialCharacterFirst4Players.getInstance());
+            case 2 -> moveCursor(SpecialCharacterFirst2Players.getInstance());
+            case 3 -> moveCursor(SpecialCharacterFirst3Players.getInstance());
+            default -> moveCursor(SpecialCharacterFirst4Players.getInstance());
         });
 
         for (int i = 0; i < 3; i++) {
-            if (i != 0) ansi.a(Utilities.moveCursor(SpecialCharacterE.getInstance()));
+            if (i != 0) ansi.a(moveCursor(SpecialCharacterE.getInstance()));
             ansi.a(SpecialCharacter.print(cards.get(i).getId(), cards.get(i).getCost(), cards.get(i).isActive(), cards.get(i).getAvailableBans(), cards.get(i).getStudents()));
         }
 
         ansi.a(switch (playersNumber) {
-            case 2 -> Utilities.moveCursor(SpecialCharactersReset2Players.getInstance());
-            case 3 -> Utilities.moveCursor(SpecialCharactersReset3Players.getInstance());
-            default -> Utilities.moveCursor(SpecialCharactersReset4Players.getInstance());
+            case 2 -> moveCursor(SpecialCharactersReset2Players.getInstance());
+            case 3 -> moveCursor(SpecialCharactersReset3Players.getInstance());
+            default -> moveCursor(SpecialCharactersReset4Players.getInstance());
         });
 
         return ansi;

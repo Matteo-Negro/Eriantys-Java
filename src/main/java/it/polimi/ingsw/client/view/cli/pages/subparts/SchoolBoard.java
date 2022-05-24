@@ -11,6 +11,8 @@ import org.fusesource.jansi.Ansi;
 
 import java.util.Map;
 
+import static it.polimi.ingsw.client.view.cli.Utilities.bold;
+
 // ╔═════[TEMP_SCHOOLBOARD]═════╗
 // ║  NAME                      ║
 // ║ ┌─────┬──────┬─────┬─────┐ ║
@@ -20,7 +22,7 @@ import java.util.Map;
 // ║ │     │      │     ├─────┤ ║
 // ║ │ ●x0 │ ●x00 │  ●  │ AST │ ║
 // ║ │     │      │     ├─────┤ ║
-// ║ │ ●x0 │ ●x00 │  ●  │AS-00│ ║
+// ║ │ ●x0 │ ●x00 │  ●  │AST00│ ║
 // ║ │     │      │     ├─────┤ ║
 // ║ │ ●x0 │ ●x00 │  ●  │     │ ║
 // ║ │     │      │     │     │ ║
@@ -82,13 +84,15 @@ public class SchoolBoard {
         // Line #1
 
         StringBuilder temp = new StringBuilder(" ");
+        ansi.a(bold(true));
         if (name.length() > blankLineChars) {
             for (int i = 0; i < blankLineChars - 1; i++) temp.append(name.charAt(i));
-            ansi.a(temp.toString());
         } else {
             for (int i = 0; i < blankLineChars - 1; i++) temp.append((i < name.length()) ? name.charAt(i) : " ");
         }
         ansi.a(temp.toString());
+        ansi.a(bold(false));
+
         ansi.a(newLine());
 
         // Line #2
@@ -98,7 +102,23 @@ public class SchoolBoard {
 
         // Line #3
 
-        ansi.a("│ ENT │  DR  │ PRF │ TWR │");
+        ansi.a("│ ");
+        ansi.a(bold(true));
+        ansi.a("ENT");
+        ansi.a(bold(false));
+        ansi.a(" │  ");
+        ansi.a(bold(true));
+        ansi.a("DR");
+        ansi.a(bold(false));
+        ansi.a("  │ ");
+        ansi.a(bold(true));
+        ansi.a("PRF");
+        ansi.a(bold(false));
+        ansi.a(" │ ");
+        ansi.a(bold(true));
+        ansi.a("TWR");
+        ansi.a(bold(false));
+        ansi.a(" │");
         ansi.a(newLine());
 
         // Line #4
@@ -115,13 +135,11 @@ public class SchoolBoard {
         ansi.a(" │  ");
         ansi.a(parsePawn(Boolean.TRUE.equals(professors.get(HouseColor.GREEN)) ? 1 : 0, HouseColor.GREEN, 0, active, wizard));
         ansi.a("  │ ");
-        ansi.a(
-                switch (tower) {
-                    case BLACK -> Utilities.foreground(TowerBlack.getInstance());
-                    case GREY -> Utilities.foreground(TowerGrey.getInstance());
-                    case WHITE -> Utilities.foreground(TowerWhite.getInstance());
-                }
-        );
+        ansi.a(switch (tower) {
+            case BLACK -> Utilities.foreground(TowerBlack.getInstance());
+            case GREY -> Utilities.foreground(TowerGrey.getInstance());
+            case WHITE -> Utilities.foreground(TowerWhite.getInstance());
+        });
         ansi.a("●");
         ansi.a(defaultForeground(true, wizard));
         ansi.a(String.format("x%01d", towersNumber));
@@ -142,7 +160,11 @@ public class SchoolBoard {
         ansi.a(parsePawn(diningRoom.get(HouseColor.RED), HouseColor.RED, 2, active, wizard));
         ansi.a(" │  ");
         ansi.a(parsePawn(Boolean.TRUE.equals(professors.get(HouseColor.RED)) ? 1 : 0, HouseColor.RED, 0, active, wizard));
-        ansi.a("  │ AST │");
+        ansi.a("  │ ");
+        ansi.a(bold(true));
+        ansi.a("AST");
+        ansi.a(bold(false));
+        ansi.a(" │");
         ansi.a(newLine());
 
         // Line #8
@@ -180,8 +202,13 @@ public class SchoolBoard {
         ansi.a(parsePawn(diningRoom.get(HouseColor.FUCHSIA), HouseColor.FUCHSIA, 2, active, wizard));
         ansi.a(" │  ");
         ansi.a(parsePawn(Boolean.TRUE.equals(professors.get(HouseColor.FUCHSIA)) ? 1 : 0, HouseColor.FUCHSIA, 0, active, wizard));
-        if (exp) ansi.a("  │ CNS │");
-        else ansi.a("  │     │");
+        if (exp) {
+            ansi.a("  │ ");
+            ansi.a(bold(true));
+            ansi.a("CNS");
+            ansi.a(bold(false));
+            ansi.a(" │");
+        } else ansi.a("  │     │");
         ansi.a(newLine());
 
         // Line #12
@@ -242,8 +269,7 @@ public class SchoolBoard {
      */
     private static Ansi defaultForeground(boolean active, WizardType wizard) {
         return switch (wizard) {
-            case FUCHSIA ->
-                    Utilities.foreground(active ? WizardFuchsia.getInstance() : WizardDarkFuchsia.getInstance());
+            case FUCHSIA -> Utilities.foreground(active ? WizardFuchsia.getInstance() : WizardDarkFuchsia.getInstance());
             case GREEN -> Utilities.foreground(active ? WizardGreen.getInstance() : WizardDarkGreen.getInstance());
             case WHITE -> Utilities.foreground(active ? WizardWhite.getInstance() : WizardDarkWhite.getInstance());
             case YELLOW -> Utilities.foreground(active ? WizardYellow.getInstance() : WizardDarkYellow.getInstance());

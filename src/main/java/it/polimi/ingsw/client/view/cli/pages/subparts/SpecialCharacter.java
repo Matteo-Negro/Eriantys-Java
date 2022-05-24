@@ -16,6 +16,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import static it.polimi.ingsw.client.view.cli.Utilities.bold;
+import static it.polimi.ingsw.client.view.cli.Utilities.foreground;
+
 // ╔[CHARACTER]╗
 // ║           ║
 // ║ ┌───────┐ ║
@@ -90,7 +93,11 @@ public class SpecialCharacter {
 
         // Line #2
 
-        ansi.a("│  CHR  │");
+        ansi.a("│  ");
+        ansi.a(bold(true));
+        ansi.a("CHR");
+        ansi.a(bold(false));
+        ansi.a("  │");
         ansi.a(newLine());
 
         // Line #3
@@ -206,7 +213,7 @@ public class SpecialCharacter {
         if (banNumber != 0) ansi.a(String.format("│  !x%01d  │", banNumber));
         else {
             ansi.a("│  ");
-            ansi.a(Utilities.foreground(DarkGrey.getInstance()));
+            ansi.a(foreground(DarkGrey.getInstance()));
             ansi.a(String.format("!x%01d", banNumber));
             ansi.a(defaultForeground(active));
             ansi.a("  │");
@@ -250,8 +257,8 @@ public class SpecialCharacter {
      * @return The Ansi stream to print to terminal.
      */
     private static Ansi defaultForeground(boolean active) {
-        if (active) return Utilities.foreground(White.getInstance());
-        else return Utilities.foreground(Grey.getInstance());
+        if (active) return foreground(White.getInstance());
+        else return foreground(Grey.getInstance());
     }
 
     /**
@@ -266,10 +273,10 @@ public class SpecialCharacter {
         Ansi ansi = new Ansi();
 
         if (houseColor != null) {
-            ansi.a(Utilities.foreground(Utilities.getColourFrom(houseColor)));
+            ansi.a(foreground(Utilities.getColourFrom(houseColor)));
             ansi.a("●");
         } else {
-            ansi.a(Utilities.foreground(DarkGrey.getInstance()));
+            ansi.a(foreground(DarkGrey.getInstance()));
             ansi.a("●");
 
         }
