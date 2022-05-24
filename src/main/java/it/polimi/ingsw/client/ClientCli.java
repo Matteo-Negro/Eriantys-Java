@@ -345,7 +345,7 @@ public class ClientCli extends Thread {
             }
         }
 
-        Game.print(terminal, this.gameModel, this.getGameCode(), userName.equals(gameModel.getCurrentPlayer()));
+        Game.print(terminal, this.gameModel, this.getGameCode(), this.getGameModel().getPlayerByName(userName).isActive());
 
         if(this.hasCommunicationToken()){
             String command = readLine("", terminal, List.of(node("exit")), false, null);
@@ -390,7 +390,7 @@ public class ClientCli extends Thread {
 
     /*private boolean checkCommand(JsonObject command){
         if(this.getGameModel().getPhase().equals(Phase.PLANNING)){
-            if(Phase.valueOf(command.get("type").getAsString()).equals() )
+            if(!Phase.valueOf(command.get("subtype").getAsString()).equals("playAssistant") )
         }
         else{
 

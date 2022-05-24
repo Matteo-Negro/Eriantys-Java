@@ -41,7 +41,10 @@ public class GameModel {
         this.currentPlayer = statusCurrentPlayer;
         this.parsePlayers(statusPlayers, statusGameBoard);
         this.parseGameBoard(statusGameBoard);
-        this.getPlayerByName(this.currentPlayer).setActive(true);
+        System.out.println("--------------------------------");
+        for(Player p: this.getPlayers()) System.out.println(p.getName());
+        System.out.println(currentPlayer);
+        //this.getPlayerByName(this.currentPlayer).setActive(true);
     }
 
     public Map<String, Boolean> getWaitingRoom() {
@@ -58,6 +61,7 @@ public class GameModel {
 
     public Player getPlayerByName(String name){
         for(Player player : this.getPlayers()){
+            System.out.println(player.getName());
             if(player.getName().equals(name)) return player;
         }
         return null;
