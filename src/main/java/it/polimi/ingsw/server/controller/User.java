@@ -88,7 +88,7 @@ public class User extends Thread {
                 if(this.gameController != null && !this.gameController.isFull()){
                     synchronized (connectedLock){
                         try{
-                            this.connectedLock.wait(500);
+                            this.connectedLock.wait(1000);
                         }catch(InterruptedException ie){
                             this.disconnected();
                         }

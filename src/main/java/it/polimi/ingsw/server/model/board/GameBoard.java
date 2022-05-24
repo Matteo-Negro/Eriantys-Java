@@ -45,31 +45,21 @@ public class GameBoard {
         this.professors = new EnumMap<>(HouseColor.class);
         this.influenceBonus = null;
         this.tieWinner = null;
-        Log.debug("0");
         temp = this.bag.boardSetUp();
-        Log.debug("1");
         for (int i = 0; i < 12; i++) {
-            Log.debug("2");
             if (i == 0 || i == 6) {
-                Log.debug("3");
                 this.islands.add(new Island(null, i));
             } else this.islands.add(new Island(temp.get(i < 6 ? i - 1 : i - 2), i));
-            Log.debug("4");
         }
 
         if (isExp) {
-
-            for (int i = 0; i < 12; i++) randomVector.add(i);
+            for (int i = 1; i <= 12; i++) randomVector.add(i);
 
             Collections.shuffle(randomVector);
             for (int i = 0; i < 3; i++) {
 
                 Map<HouseColor, Integer> students = new EnumMap<>(HouseColor.class);
-                students.put(HouseColor.RED, 0);
-                students.put(HouseColor.BLUE, 0);
-                students.put(HouseColor.GREEN, 0);
-                students.put(HouseColor.YELLOW, 0);
-                students.put(HouseColor.FUCHSIA, 0);
+                for(HouseColor color : HouseColor.values()) students.put(color, 0);
                 int studentsNumber;
 
                 switch (randomVector.get(i)) {
@@ -80,7 +70,7 @@ public class GameBoard {
 
                 for (int c = 0; c < studentsNumber; c++) {
                     HouseColor color = this.getBag().pop();
-                    students.replace(color, students.get(color) + 1);
+                    students.replace(color, students.get(color));
                 }
                 this.characters.add(new SpecialCharacter(randomVector.get(i), students));
             }

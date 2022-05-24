@@ -126,6 +126,7 @@ public class GameServer extends Thread {
                     Log.debug("enterGame reply");
                     parseEnterGame(message);
                     this.client.setClientState(ClientStates.GAME_LOGIN);
+                    Log.debug("changed state Game login.");
                 }
                 synchronized (this.client.getLock()) {
                     this.client.getLock().notify();
@@ -144,11 +145,13 @@ public class GameServer extends Thread {
         if (this.client.getClientState().equals(ClientStates.GAME_LOGIN)) {
             if (message.get("success").getAsBoolean()) {
                 this.client.setClientState(ClientStates.GAME_WAITING_ROOM);
+                Log.debug("changed state Waiting room.");
             } else {
                 this.client.errorOccurred("Invalid username");
             }
         } else{
             this.client.setClientState(ClientStates.CONNECTION_LOST);
+            Log.debug("changed state Connection lost.");
         }
 
         synchronized (this.client.getLock()) {
@@ -175,6 +178,7 @@ public class GameServer extends Thread {
        if(this.client.getClientState().equals(ClientStates.GAME_RUNNING)){
             if(incomingMessage.get("message").getAsString().equals("UserDisconnected")){
                 this.client.setClientState(ClientStates.GAME_WAITING_ROOM);
+                Log.debug("changed state Waiting room.");
                 this.client.errorOccurred("One or more users disconnected.");
             }
         }

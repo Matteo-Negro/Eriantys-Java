@@ -304,50 +304,43 @@ public class ClientCli extends Thread {
      * Manages the waiting-room-screen's I/O.
      */
     static int waitingIteration = 0;
-    private void manageWaitingRoom() {
-        if(!this.modelUpdated){
-            synchronized (this.lock){
-                try{
-                    this.lock.wait();
-                }catch(InterruptedException ie){
-                    errorOccurred("Client error.");
-                    resetGame();
+    private void manageWaitingRoom() throws Exception{
+        try{
+            if(!this.modelUpdated){
+                synchronized (this.lock){
+                    try{
+                        this.lock.wait();
+                    }catch(InterruptedException ie){
+                        errorOccurred("Client error.");
+                        resetGame();
+                    }
                 }
             }
-        }
 
-        this.modelUpdated = false;
-        List<String> onlinePlayers = new ArrayList<>();
-        for (String name : this.getGameModel().getWaitingRoom().keySet())
-            if (Boolean.TRUE.equals(this.getGameModel().getWaitingRoom().get(name)))
-                onlinePlayers.add(name);
+            this.modelUpdated = false;
+            List<String> onlinePlayers = new ArrayList<>();
+            for (String name : this.getGameModel().getWaitingRoom().keySet())
+                if (Boolean.TRUE.equals(this.getGameModel().getWaitingRoom().get(name)))
+                    onlinePlayers.add(name);
 
-        WaitingRoom.print(terminal, onlinePlayers, this.getGameCode(), this.getGameModel().getPlayersNumber(), waitingIteration++);
-        synchronized (this.lock) {
-            try {
-                this.lock.wait(1000);
-            } catch (InterruptedException e) {
-                this.resetGame();
+            WaitingRoom.print(terminal, onlinePlayers, this.getGameCode(), this.getGameModel().getPlayersNumber(), waitingIteration++);
+            synchronized (this.lock) {
+                try {
+                    this.lock.wait(1000);
+                } catch (InterruptedException e) {
+                    this.resetGame();
+                }
             }
+            clearScreen(terminal, false);
+        }catch(Exception e){
+            throw new Exception();
         }
-        clearScreen(terminal, false);
     }
 
     /**
      * Manages the game-screen's I/O.
      */
     private void manageGameRunning() {
-        if(!this.modelUpdated){
-            synchronized (this.lock){
-                try{
-                    this.lock.wait();
-                }catch(InterruptedException ie){
-                    errorOccurred("Client error.");
-                    resetGame();
-                }
-            }
-        }
-
         Game.print(terminal, this.gameModel, this.getGameCode(), this.getGameModel().getPlayerByName(userName).isActive());
 
         if(this.hasCommunicationToken()){
@@ -356,10 +349,10 @@ public class ClientCli extends Thread {
                 this.getGameServer().sendCommand(MessageCreator.logout());
                 this.resetGame();
             }
-        }
-        else{
             //call static method for command parsing.
             //Checking message.
+        }
+        else{
             synchronized (this.lock) {
                 try {
                     this.lock.wait(2000);

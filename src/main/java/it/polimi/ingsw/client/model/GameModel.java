@@ -41,7 +41,6 @@ public class GameModel {
         this.currentPlayer = statusCurrentPlayer;
         this.parsePlayers(statusPlayers, statusGameBoard);
         this.parseGameBoard(statusGameBoard);
-        System.out.println(currentPlayer);
     }
 
     public Map<String, Boolean> getWaitingRoom() {
