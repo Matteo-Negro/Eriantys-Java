@@ -3,11 +3,14 @@ package it.polimi.ingsw.client;
 import com.google.gson.JsonObject;
 import it.polimi.ingsw.client.controller.GameServer;
 import it.polimi.ingsw.client.model.GameModel;
+import it.polimi.ingsw.client.view.cli.Utilities;
+import it.polimi.ingsw.client.view.cli.colours.*;
 import it.polimi.ingsw.client.view.cli.pages.*;
 import it.polimi.ingsw.utilities.ClientStates;
 import it.polimi.ingsw.utilities.Log;
 import it.polimi.ingsw.utilities.MessageCreator;
 import it.polimi.ingsw.utilities.Phase;
+import org.fusesource.jansi.Ansi;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 
@@ -348,7 +351,7 @@ public class ClientCli extends Thread {
         Game.print(terminal, this.gameModel, this.getGameCode(), this.getGameModel().getPlayerByName(userName).isActive());
 
         if(this.hasCommunicationToken()){
-            String command = readLine("", terminal, List.of(node("exit")), false, null);
+            String command = readLine(getPrettyUserName(), terminal, List.of(node("exit")), false, null);
             if(command.equals("exit")){
                 this.getGameServer().sendCommand(MessageCreator.logout());
                 this.resetGame();
@@ -366,6 +369,24 @@ public class ClientCli extends Thread {
             }
         }
         clearScreen(terminal, false);
+    }
+
+    private String getPrettyUserName() {
+        Ansi ansi = new Ansi();
+        ansi.a(" ");
+        ansi.a(foreground(switch (gameModel.getPlayerByName(userName).getWizard()) {
+            case FUCHSIA -> WizardFuchsia.getInstance();
+            case GREEN -> WizardGreen.getInstance();
+            case WHITE -> WizardWhite.getInstance();
+            case YELLOW -> WizardYellow.getInstance();
+        }));
+        ansi.a(bold(true));
+        ansi.a(userName);
+        ansi.a(bold(false));
+        ansi.a(foreground(Grey.getInstance()));
+        ansi.a(" > ");
+        ansi.a(foreground(White.getInstance()));
+        return ansi.toString();
     }
 
     /**
