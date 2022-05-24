@@ -184,13 +184,11 @@ public class GameServer extends Thread {
         if(incomingMessage.get("player").getAsString().equals(this.client.getUserName())){
             Log.debug("Token arrived.");
             this.client.setCommunicationToken(incomingMessage.get("enable").getAsBoolean());
-            /*for(Player p: this.client.getGameModel().getPlayers()) System.out.println(p.getName());
-            System.out.println(incomingMessage.get("player").getAsString());*/
-            this.client.getGameModel().getPlayerByName(incomingMessage.get("player").getAsString()).setActive(incomingMessage.get("enable").getAsBoolean());
+            this.client.getGameModel().setCurrentPlayer(incomingMessage.get("player").getAsString(), incomingMessage.get("enable").getAsBoolean());
         }
         else{
             Log.debug("Current player set.");
-            this.client.getGameModel().setCurrentPlayer(incomingMessage.get("player").getAsString());
+            this.client.getGameModel().setCurrentPlayer(incomingMessage.get("player").getAsString(), incomingMessage.get("enable").getAsBoolean());
         }
     }
 
