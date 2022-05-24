@@ -1,11 +1,13 @@
 package it.polimi.ingsw.client;
 
+import com.google.gson.JsonObject;
 import it.polimi.ingsw.client.controller.GameServer;
 import it.polimi.ingsw.client.model.GameModel;
 import it.polimi.ingsw.client.view.cli.pages.*;
 import it.polimi.ingsw.utilities.ClientStates;
 import it.polimi.ingsw.utilities.Log;
 import it.polimi.ingsw.utilities.MessageCreator;
+import it.polimi.ingsw.utilities.Phase;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 
@@ -28,6 +30,7 @@ public class ClientCli extends Thread {
     private GameServer gameServer;
     private GameModel gameModel;
     private ClientStates state;
+    private boolean modelUpdated;
 
     /**
      * Default constructor.
@@ -36,6 +39,7 @@ public class ClientCli extends Thread {
         this.state = ClientStates.START_SCREEN;
         this.gameServer = null;
         this.gameModel = null;
+        this.modelUpdated = false;
         this.userName = null;
         this.communicationToken = false;
         this.gameCode = null;
@@ -298,7 +302,18 @@ public class ClientCli extends Thread {
      */
     static int waitingIteration = 0;
     private void manageWaitingRoom() {
+        if(!this.modelUpdated){
+            synchronized (this.lock){
+                try{
+                    this.lock.wait();
+                }catch(InterruptedException ie){
+                    errorOccurred("Client error.");
+                    resetGame();
+                }
+            }
+        }
 
+        this.modelUpdated = false;
         List<String> onlinePlayers = new ArrayList<>();
         for (String name : this.getGameModel().getWaitingRoom().keySet())
             if (Boolean.TRUE.equals(this.getGameModel().getWaitingRoom().get(name)))
@@ -319,6 +334,17 @@ public class ClientCli extends Thread {
      * Manages the game-screen's I/O.
      */
     private void manageGameRunning() {
+        if(!this.modelUpdated){
+            synchronized (this.lock){
+                try{
+                    this.lock.wait();
+                }catch(InterruptedException ie){
+                    errorOccurred("Client error.");
+                    resetGame();
+                }
+            }
+        }
+
         Game.print(terminal, this.gameModel, this.getGameCode(), userName.equals(gameModel.getCurrentPlayer()));
 
         if(this.hasCommunicationToken()){
@@ -329,6 +355,8 @@ public class ClientCli extends Thread {
             }
         }
         else{
+            //call static method for command parsing.
+            //Checking message.
             synchronized (this.lock) {
                 try {
                     this.lock.wait(2000);
@@ -360,6 +388,15 @@ public class ClientCli extends Thread {
         clearScreen(terminal, false);
     }
 
+    /*private boolean checkCommand(JsonObject command){
+        if(this.getGameModel().getPhase().equals(Phase.PLANNING)){
+            if(Phase.valueOf(command.get("type").getAsString()).equals() )
+        }
+        else{
+
+        }
+    }*/
+
     /**
      * Manages the CONNECTION_LOST state of the client, terminating all the server-associated threads.
      */
@@ -378,6 +415,10 @@ public class ClientCli extends Thread {
      */
     public void initializeGameModel(GameModel newGameModel) {
         this.gameModel = newGameModel;
+        this.modelUpdated = true;
+        synchronized (this.lock){
+            this.lock.notify();
+        }
     }
 
     /**
