@@ -85,15 +85,16 @@ public class User extends Thread {
                 incomingMessage = getCommand();
                 if (!incomingMessage.get("type").getAsString().equals("pong") && !incomingMessage.get("type").getAsString().equals("error"))
                     manageCommand(incomingMessage);
-                if(this.gameController != null && !this.gameController.isFull()){
+                if(this.gameController != null && !this.gameController.isFull() && this.isLogged()){
                     synchronized (connectedLock){
                         try{
-                            this.connectedLock.wait(1000);
+                            this.connectedLock.wait(1500);
                         }catch(InterruptedException ie){
                             this.disconnected();
                         }
                     }
-                    this.sendMessage(MessageCreator.enterGame(this.gameController));
+                    this.sendMessage(MessageCreator.waitingRoomUpdate(this.gameController));
+                    Log.debug("waiting room message sent.");
                 }
             } catch (IOException | IllegalMoveException e) {
                 // If socket time out expires.
@@ -147,12 +148,12 @@ public class User extends Thread {
             }
             case "login" -> {
                 Log.info("login message message arrived");
-                logged = Matchmaking.login(gameController, command.get("name").getAsString(), this);
-                sendMessage(MessageCreator.login(logged));
-                if (logged) {
-                    username = command.get("name").getAsString();
+                setLogged(Matchmaking.login(gameController, command.get("name").getAsString(), this));
+                sendMessage(MessageCreator.login(this.isLogged()));
+                if (this.isLogged()) {
+                    this.username = command.get("name").getAsString();
                     Log.debug("login reply sent: logged ");
-                    gameController.checkStartCondition();
+                    this.gameController.checkStartCondition();
                 }
             }
             case "logout" -> {
@@ -191,6 +192,23 @@ public class User extends Thread {
     }
 
     /**
+     * Sets the logged attribute to the given status.
+     * @param status The new logged value.
+     */
+    private void setLogged(boolean status){
+        this.logged = status;
+    }
+
+    /**
+     * Returns the boolean value of logged attribute.
+     *
+     * @return True if the user has successfully logged into a game, false otherwise.
+     */
+    private boolean isLogged(){
+        return this.logged;
+    }
+
+    /**
      * If the user was in a game, s/he's removed from the game and the username is reset.
      */
     private void removeFromGame() {
@@ -198,5 +216,8 @@ public class User extends Thread {
         if (gameController == null) return;
         Log.debug("Removing user from game.");
         gameController.removeUser(this);
+        this.gameController = null;
+        this.username = null;
+        setLogged(false);
     }
 }

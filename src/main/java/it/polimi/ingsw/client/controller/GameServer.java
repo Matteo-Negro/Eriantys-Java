@@ -70,6 +70,8 @@ public class GameServer extends Thread {
             case "enterGame" -> {
                 manageEnterGame(incomingMessage);
             }
+            case "waitingRoomUpdate" -> manageWaitingRoomUpdate(incomingMessage);
+
             case "login" -> {
                 Log.debug("login reply");
                 manageLogin(incomingMessage);
@@ -131,14 +133,15 @@ public class GameServer extends Thread {
                     this.client.getLock().notify();
                 }
             }
-            case GAME_WAITING_ROOM -> {
+            /*case GAME_WAITING_ROOM -> {
                 parseEnterGame(message);
-                synchronized (this.client.getLock()) {
-                    this.client.getLock().notify();
-                }
-            }
+            }*/
             default -> {}
         }
+    }
+
+    private void manageWaitingRoomUpdate(JsonObject message){
+        if(this.client.getClientState().equals(ClientStates.GAME_WAITING_ROOM)) parseEnterGame(message);
     }
 
     private void manageLogin(JsonObject message) {
@@ -180,19 +183,17 @@ public class GameServer extends Thread {
                 this.client.setClientState(ClientStates.GAME_WAITING_ROOM);
                 Log.debug("changed state Waiting room.");
                 this.client.errorOccurred("One or more users disconnected.");
+                this.client.initializeGameModel(null);
             }
         }
     }
 
     private void manageTurnEnable(JsonObject incomingMessage) {
-        if (incomingMessage.get("player").getAsString().equals(this.client.getUserName())) {
             Log.debug("Token arrived.");
-            this.client.setCommunicationToken(incomingMessage.get("enable").getAsBoolean());
-            this.client.getGameModel().setCurrentPlayer(incomingMessage.get("player").getAsString(), incomingMessage.get("enable").getAsBoolean());
-        } else {
-            Log.debug("Current player set.");
-            this.client.getGameModel().setCurrentPlayer(incomingMessage.get("player").getAsString(), incomingMessage.get("enable").getAsBoolean());
-        }
+            synchronized (this.client.getLock()){
+                this.client.getGameModel().setCurrentPlayer(incomingMessage.get("player").getAsString(), incomingMessage.get("enable").getAsBoolean());
+                this.client.getLock().notify();
+            }
     }
 
     public boolean isConnected() {

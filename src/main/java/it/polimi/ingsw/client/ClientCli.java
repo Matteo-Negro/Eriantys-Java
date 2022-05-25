@@ -28,13 +28,12 @@ public class ClientCli extends Thread {
     private final Terminal terminal;
     private final Object lock;
     private String userName;
-    private boolean communicationToken;
     private String gameCode;
     private GameServer gameServer;
     private GameModel gameModel;
     private ClientStates state;
     private boolean modelUpdated;
-    private History history;
+    private final History history;
 
     /**
      * Default constructor.
@@ -45,7 +44,6 @@ public class ClientCli extends Thread {
         this.gameModel = null;
         this.modelUpdated = false;
         this.userName = null;
-        this.communicationToken = false;
         this.gameCode = null;
         this.lock = new Object();
         this.terminal = TerminalBuilder.terminal();
@@ -90,11 +88,7 @@ public class ClientCli extends Thread {
     }
 
     private boolean hasCommunicationToken() {
-        return this.communicationToken;
-    }
-
-    public void setCommunicationToken(boolean token) {
-        this.communicationToken = token;
+        return this.getGameModel().getPlayerByName(getUserName()).isActive();
     }
 
     /**
@@ -123,7 +117,7 @@ public class ClientCli extends Thread {
         boolean process = true;
         try {
             while (process) {
-                Log.debug(this.getClientState().toString());
+                //Log.debug(this.getClientState().toString());
                 switch (getClientState()) {
                     case START_SCREEN -> manageStartScreen();
                     case MAIN_MENU -> manageMainMenu();
@@ -307,33 +301,32 @@ public class ClientCli extends Thread {
      * Manages the waiting-room-screen's I/O.
      */
     static int waitingIteration = 0;
-    private void manageWaitingRoom() throws Exception{
-        try{
-            this.modelUpdated = false;
+
+    private void manageWaitingRoom(){
+        if(this.getGameModel()!=null){
+
             List<String> onlinePlayers = new ArrayList<>();
             for (String name : this.getGameModel().getWaitingRoom().keySet())
                 if (Boolean.TRUE.equals(this.getGameModel().getWaitingRoom().get(name)))
                     onlinePlayers.add(name);
 
             WaitingRoom.print(terminal, onlinePlayers, this.getGameCode(), this.getGameModel().getPlayersNumber(), waitingIteration++);
-            synchronized (this.lock) {
-                try {
-                    this.lock.wait(1000);
-                } catch (InterruptedException e) {
-                    this.resetGame();
-                }
-            }
-            clearScreen(terminal, false);
-        } catch (Exception e) {
-            throw new Exception();
+
         }
+        synchronized (this.lock){
+            try{
+                this.lock.wait();
+            }catch(InterruptedException ie){
+                resetGame();
+            }
+        }
+        clearScreen(terminal, false);
     }
 
     /**
      * Manages the game-screen's I/O.
      */
     private void manageGameRunning() {
-
         Game.print(terminal, this.gameModel, this.getGameCode(), this.getGameModel().getPlayerByName(userName).isActive());
 
         if (this.hasCommunicationToken()) {
@@ -344,11 +337,10 @@ public class ClientCli extends Thread {
             }
             //call static method for command parsing.
             //Checking message.
-        }
-        else{
+        } else {
             synchronized (this.lock) {
                 try {
-                    this.lock.wait(2000);
+                    this.lock.wait(1500);
                 } catch (InterruptedException e) {
                     this.resetGame();
                 }
@@ -421,10 +413,12 @@ public class ClientCli extends Thread {
      * @param newGameModel The new GameModel instance.
      */
     public void initializeGameModel(GameModel newGameModel) {
-        this.gameModel = newGameModel;
-        this.modelUpdated = true;
         synchronized (this.lock) {
-            this.lock.notify();
+            this.gameModel = newGameModel;
+            if(newGameModel!=null){
+                this.modelUpdated = true;
+                this.lock.notify();
+            }
         }
     }
 
@@ -443,7 +437,11 @@ public class ClientCli extends Thread {
      * @param newState The next state to set.
      */
     public void setClientState(ClientStates newState) {
-        this.state = newState;
+        synchronized (this.lock){
+            this.state = newState;
+            this.lock.notify();
+        }
+
     }
 
     /**
@@ -452,6 +450,8 @@ public class ClientCli extends Thread {
     private void resetGame() {
         this.setClientState(ClientStates.MAIN_MENU);
         this.gameModel = null;
+        this.userName = null;
+        this.gameCode = null;
     }
 
     /**
@@ -460,7 +460,6 @@ public class ClientCli extends Thread {
      * @param message The message to print.
      */
     public void errorOccurred(String message) {
-        clearScreen(terminal, false);
         printError(terminal, message);
         Log.warning(message);
     }

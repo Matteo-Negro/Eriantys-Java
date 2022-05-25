@@ -50,6 +50,14 @@ public class MessageCreator {
         return reply;
     }
 
+    public static JsonObject waitingRoomUpdate(GameController gameController){
+        JsonObject reply = new JsonObject();
+        reply.addProperty("type", "waitingRoomUpdate");
+        reply.addProperty("expectedPlayers", gameController.getExpectedPlayers());
+        reply.add("players", getOnlinePlayers(gameController));
+        return reply;
+    }
+
     /**
      * Creates a list of players for "enterGame" message.
      *
