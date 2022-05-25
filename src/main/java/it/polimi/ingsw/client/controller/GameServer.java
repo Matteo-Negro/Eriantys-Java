@@ -6,7 +6,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import it.polimi.ingsw.client.ClientCli;
 import it.polimi.ingsw.client.model.GameModel;
-import it.polimi.ingsw.client.model.Player;
 import it.polimi.ingsw.utilities.*;
 
 import java.io.BufferedReader;
@@ -132,7 +131,7 @@ public class GameServer extends Thread {
                     this.client.getLock().notify();
                 }
             }
-            case GAME_WAITING_ROOM ->{
+            case GAME_WAITING_ROOM -> {
                 parseEnterGame(message);
                 synchronized (this.client.getLock()) {
                     this.client.getLock().notify();
@@ -149,7 +148,7 @@ public class GameServer extends Thread {
             } else {
                 this.client.errorOccurred("Invalid username");
             }
-        } else{
+        } else {
             this.client.setClientState(ClientStates.CONNECTION_LOST);
             Log.debug("changed state Connection lost.");
         }
@@ -174,9 +173,9 @@ public class GameServer extends Thread {
         this.client.initializeGameModel(model);
     }
 
-    private void manageError(JsonObject incomingMessage){
-       if(this.client.getClientState().equals(ClientStates.GAME_RUNNING)){
-            if(incomingMessage.get("message").getAsString().equals("UserDisconnected")){
+    private void manageError(JsonObject incomingMessage) {
+        if (this.client.getClientState().equals(ClientStates.GAME_RUNNING)) {
+            if (incomingMessage.get("message").getAsString().equals("UserDisconnected")) {
                 this.client.setClientState(ClientStates.GAME_WAITING_ROOM);
                 Log.debug("changed state Waiting room.");
                 this.client.errorOccurred("One or more users disconnected.");
@@ -184,13 +183,12 @@ public class GameServer extends Thread {
         }
     }
 
-    private void manageTurnEnable(JsonObject incomingMessage){
-        if(incomingMessage.get("player").getAsString().equals(this.client.getUserName())){
+    private void manageTurnEnable(JsonObject incomingMessage) {
+        if (incomingMessage.get("player").getAsString().equals(this.client.getUserName())) {
             Log.debug("Token arrived.");
             this.client.setCommunicationToken(incomingMessage.get("enable").getAsBoolean());
             this.client.getGameModel().setCurrentPlayer(incomingMessage.get("player").getAsString(), incomingMessage.get("enable").getAsBoolean());
-        }
-        else{
+        } else {
             Log.debug("Current player set.");
             this.client.getGameModel().setCurrentPlayer(incomingMessage.get("player").getAsString(), incomingMessage.get("enable").getAsBoolean());
         }
@@ -211,7 +209,7 @@ public class GameServer extends Thread {
     }
 
     public void sendCommand(JsonObject command) {
-        switch(this.client.getClientState()){
+        switch (this.client.getClientState()) {
             case GAME_CREATION, GAME_LOGIN, JOIN_GAME, GAME_RUNNING -> {
                 synchronized (this.outputStream) {
                     this.outputStream.println(command.toString());
@@ -219,7 +217,7 @@ public class GameServer extends Thread {
                 }
             }
             default -> {
-                if(command.get("type").getAsString().equals("pong")){
+                if (command.get("type").getAsString().equals("pong")) {
                     synchronized (this.outputStream) {
                         this.outputStream.println(command.toString());
                         outputStream.flush();

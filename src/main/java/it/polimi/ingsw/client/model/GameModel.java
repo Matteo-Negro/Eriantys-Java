@@ -44,7 +44,9 @@ public class GameModel {
     }
 
     public Map<String, Boolean> getWaitingRoom() {
-        return new HashMap<>(this.waitingRoom);
+        if (waitingRoom == null)
+            return new HashMap<>();
+        return new HashMap<>(waitingRoom);
     }
 
     public int getPlayersNumber(){

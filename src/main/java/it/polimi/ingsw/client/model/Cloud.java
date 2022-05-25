@@ -14,7 +14,6 @@ import java.util.Map;
  * @author Riccardo Motta
  */
 public class Cloud {
-
     private List<HouseColor> students;
 
     /**

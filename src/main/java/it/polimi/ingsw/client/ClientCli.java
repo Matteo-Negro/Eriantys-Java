@@ -1,16 +1,16 @@
 package it.polimi.ingsw.client;
 
-import com.google.gson.JsonObject;
 import it.polimi.ingsw.client.controller.GameServer;
 import it.polimi.ingsw.client.model.GameModel;
-import it.polimi.ingsw.client.view.cli.Utilities;
+import it.polimi.ingsw.client.view.cli.Autocompletion;
 import it.polimi.ingsw.client.view.cli.colours.*;
 import it.polimi.ingsw.client.view.cli.pages.*;
 import it.polimi.ingsw.utilities.ClientStates;
 import it.polimi.ingsw.utilities.Log;
 import it.polimi.ingsw.utilities.MessageCreator;
-import it.polimi.ingsw.utilities.Phase;
 import org.fusesource.jansi.Ansi;
+import org.jline.reader.History;
+import org.jline.reader.impl.history.DefaultHistory;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 
@@ -34,6 +34,7 @@ public class ClientCli extends Thread {
     private GameModel gameModel;
     private ClientStates state;
     private boolean modelUpdated;
+    private History history;
 
     /**
      * Default constructor.
@@ -48,6 +49,7 @@ public class ClientCli extends Thread {
         this.gameCode = null;
         this.lock = new Object();
         this.terminal = TerminalBuilder.terminal();
+        this.history = new DefaultHistory();
         clearScreen(terminal, false);
     }
 
@@ -87,11 +89,11 @@ public class ClientCli extends Thread {
         return this.userName;
     }
 
-    private boolean hasCommunicationToken(){
+    private boolean hasCommunicationToken() {
         return this.communicationToken;
     }
 
-    public  void setCommunicationToken(boolean token){
+    public void setCommunicationToken(boolean token) {
         this.communicationToken = token;
     }
 
@@ -251,7 +253,7 @@ public class ClientCli extends Thread {
         JoinGame.print(terminal);
 
         String gameCode = readLine(" ", terminal, List.of(node("exit")), false, null).toUpperCase(Locale.ROOT);
-        if ("exit".equals(gameCode)) {
+        if ("EXIT".equals(gameCode)) {
             this.setClientState(ClientStates.MAIN_MENU);
             clearScreen(terminal, false);
             this.resetGame();
@@ -304,13 +306,14 @@ public class ClientCli extends Thread {
      * Manages the waiting-room-screen's I/O.
      */
     static int waitingIteration = 0;
-    private void manageWaitingRoom() throws Exception{
-        try{
-            if(!this.modelUpdated){
-                synchronized (this.lock){
-                    try{
+
+    private void manageWaitingRoom() throws Exception {
+        try {
+            if (!this.modelUpdated) {
+                synchronized (this.lock) {
+                    try {
                         this.lock.wait();
-                    }catch(InterruptedException ie){
+                    } catch (InterruptedException ie) {
                         errorOccurred("Client error.");
                         resetGame();
                     }
@@ -332,7 +335,7 @@ public class ClientCli extends Thread {
                 }
             }
             clearScreen(terminal, false);
-        }catch(Exception e){
+        } catch (Exception e) {
             throw new Exception();
         }
     }
@@ -341,18 +344,18 @@ public class ClientCli extends Thread {
      * Manages the game-screen's I/O.
      */
     private void manageGameRunning() {
+
         Game.print(terminal, this.gameModel, this.getGameCode(), this.getGameModel().getPlayerByName(userName).isActive());
 
-        if(this.hasCommunicationToken()){
-            String command = readLine(getPrettyUserName(), terminal, List.of(node("exit")), false, null);
-            if(command.equals("exit")){
+        if (this.hasCommunicationToken()) {
+            String command = readLine(getPrettyUserName(), terminal, Autocompletion.get(this), true, history).toLowerCase(Locale.ROOT);
+            if (command.equals("exit") || command.equals("logout")) {
                 this.getGameServer().sendCommand(MessageCreator.logout());
                 this.resetGame();
             }
+        } else {
             //call static method for command parsing.
             //Checking message.
-        }
-        else{
             synchronized (this.lock) {
                 try {
                     this.lock.wait(2000);
@@ -366,7 +369,7 @@ public class ClientCli extends Thread {
 
     private String getPrettyUserName() {
         Ansi ansi = new Ansi();
-        ansi.a(" ");
+        ansi.a("  ");
         ansi.a(foreground(switch (gameModel.getPlayerByName(userName).getWizard()) {
             case FUCHSIA -> WizardFuchsia.getInstance();
             case GREEN -> WizardGreen.getInstance();
@@ -430,7 +433,7 @@ public class ClientCli extends Thread {
     public void initializeGameModel(GameModel newGameModel) {
         this.gameModel = newGameModel;
         this.modelUpdated = true;
-        synchronized (this.lock){
+        synchronized (this.lock) {
             this.lock.notify();
         }
     }

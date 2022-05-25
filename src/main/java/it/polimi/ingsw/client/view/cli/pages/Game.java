@@ -53,7 +53,7 @@ public class Game {
             }
         }
         PlayerStuff.print(terminal, gameModel.getPlayers(), gameModel.isExpert(), gameModel.getGameBoard().getSpecialCharacters());
-        terminal.writer().print(ansi().cursor(terminal.getHeight() - 2, 3));
+        terminal.writer().print(ansi().cursor(terminal.getHeight() - 2, 1));
         terminal.flush();
     }
 
