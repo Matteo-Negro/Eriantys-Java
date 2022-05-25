@@ -70,7 +70,7 @@ public class GameBoard {
 
                 for (int c = 0; c < studentsNumber; c++) {
                     HouseColor color = this.getBag().pop();
-                    students.replace(color, students.get(color));
+                    students.replace(color, students.get(color)+1);
                 }
                 this.characters.add(new SpecialCharacter(randomVector.get(i), students));
             }

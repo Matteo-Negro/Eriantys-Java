@@ -123,6 +123,7 @@ public class ClientCli extends Thread {
         boolean process = true;
         try {
             while (process) {
+                Log.debug(this.getClientState().toString());
                 switch (getClientState()) {
                     case START_SCREEN -> manageStartScreen();
                     case MAIN_MENU -> manageMainMenu();
@@ -306,20 +307,8 @@ public class ClientCli extends Thread {
      * Manages the waiting-room-screen's I/O.
      */
     static int waitingIteration = 0;
-
-    private void manageWaitingRoom() throws Exception {
-        try {
-            if (!this.modelUpdated) {
-                synchronized (this.lock) {
-                    try {
-                        this.lock.wait();
-                    } catch (InterruptedException ie) {
-                        errorOccurred("Client error.");
-                        resetGame();
-                    }
-                }
-            }
-
+    private void manageWaitingRoom() throws Exception{
+        try{
             this.modelUpdated = false;
             List<String> onlinePlayers = new ArrayList<>();
             for (String name : this.getGameModel().getWaitingRoom().keySet())
@@ -353,9 +342,10 @@ public class ClientCli extends Thread {
                 this.getGameServer().sendCommand(MessageCreator.logout());
                 this.resetGame();
             }
-        } else {
             //call static method for command parsing.
             //Checking message.
+        }
+        else{
             synchronized (this.lock) {
                 try {
                     this.lock.wait(2000);
@@ -369,7 +359,7 @@ public class ClientCli extends Thread {
 
     private String getPrettyUserName() {
         Ansi ansi = new Ansi();
-        ansi.a("  ");
+        ansi.a(" ");
         ansi.a(foreground(switch (gameModel.getPlayerByName(userName).getWizard()) {
             case FUCHSIA -> WizardFuchsia.getInstance();
             case GREEN -> WizardGreen.getInstance();

@@ -137,6 +137,7 @@ public class GameServer extends Thread {
                     this.client.getLock().notify();
                 }
             }
+            default -> {}
         }
     }
 
