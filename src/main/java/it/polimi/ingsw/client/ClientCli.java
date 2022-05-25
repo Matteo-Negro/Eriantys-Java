@@ -1,5 +1,6 @@
 package it.polimi.ingsw.client;
 
+import com.google.gson.JsonObject;
 import it.polimi.ingsw.client.controller.GameServer;
 import it.polimi.ingsw.client.model.GameModel;
 import it.polimi.ingsw.client.view.cli.Autocompletion;
@@ -8,6 +9,7 @@ import it.polimi.ingsw.client.view.cli.pages.*;
 import it.polimi.ingsw.utilities.ClientStates;
 import it.polimi.ingsw.utilities.Log;
 import it.polimi.ingsw.utilities.MessageCreator;
+import it.polimi.ingsw.utilities.parsers.CommandParser;
 import org.fusesource.jansi.Ansi;
 import org.jline.reader.History;
 import org.jline.reader.impl.history.DefaultHistory;
@@ -333,6 +335,7 @@ public class ClientCli extends Thread {
      * Manages the game-screen's I/O.
      */
     private void manageGameRunning() {
+        JsonObject message;
 
         Game.print(terminal, this.gameModel, this.getGameCode(), this.getGameModel().getPlayerByName(userName).isActive());
 
@@ -342,8 +345,15 @@ public class ClientCli extends Thread {
                 this.getGameServer().sendCommand(MessageCreator.logout());
                 this.resetGame();
             }
-            //call static method for command parsing.
-            //Checking message.
+
+            if (command.contains("info")) {
+                // TODO: managed info printing (for now the searches for info but it's a void method)
+                CommandParser.infoGenerator(command);
+            } else {
+                // TODO: send it.
+                message = CommandParser.commandManager(command, userName);
+            }
+
         }
         else{
             synchronized (this.lock) {
