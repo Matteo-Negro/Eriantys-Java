@@ -48,12 +48,12 @@ public class CommandParser {
         String[] parsedCommand = command.split(" ");
 
         switch (parsedCommand[0]) {
-            case "play" -> jsonCommand = MessageCreator.playAssistant(playerName, Integer.parseInt(parsedCommand[2]));
+            case "play" -> jsonCommand = MessageCreator.playAssistant(playerName, Integer.parseInt(parsedCommand[1].replaceAll("\\D", "")));
             case "move" -> jsonCommand = manageMove(command, playerName);
             case "refill" ->
-                    jsonCommand = MessageCreator.refillEntrance(playerName, Integer.parseInt(parsedCommand[parsedCommand.length - 1]));
+                    jsonCommand = MessageCreator.refillEntrance(playerName, Integer.parseInt(parsedCommand[1].replaceAll("\\D", "")));
             default ->
-                    jsonCommand = MessageCreator.payCharacter(playerName, Integer.parseInt(parsedCommand[parsedCommand.length - 1]));
+                    jsonCommand = MessageCreator.payCharacter(playerName, Integer.parseInt(parsedCommand[1].replaceAll("\\D", "")));
 
         }
         return jsonCommand;
