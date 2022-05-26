@@ -91,7 +91,7 @@ public class Autocompletion {
     private static List<Node> playableAssistants() {
         List<Node> nodes = new ArrayList<>();
         for (String assistant : assistants)
-            nodes.add(node("play", node("assistant", node(assistant))));
+            nodes.add(node("play", node(assistant)));
         return nodes;
     }
 

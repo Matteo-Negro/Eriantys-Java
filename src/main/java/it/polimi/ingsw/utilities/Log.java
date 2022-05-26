@@ -44,8 +44,7 @@ public class Log {
                 file.toPath(),
                 StandardCharsets.UTF_8,
                 StandardOpenOption.CREATE,
-                StandardOpenOption.TRUNCATE_EXISTING,
-                StandardOpenOption.WRITE);
+                StandardOpenOption.APPEND);
     }
 
     public static synchronized void setLevel(int level) {
