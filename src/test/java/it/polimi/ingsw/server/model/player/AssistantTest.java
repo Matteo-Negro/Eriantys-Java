@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test of class Assistant.
@@ -12,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @author Matteo Negro
  */
 class AssistantTest {
+
 
     private final int id = 10;
 
@@ -41,6 +43,14 @@ class AssistantTest {
         assertEquals(this.id, this.assistant.getId());
     }
 
+    /**
+     *  Test whether the assistant a has the bonus.
+     */
+    @Test
+    void hasBonus() {
+        this.assistant.setBonus();
+        assertTrue(this.assistant.hasBonus());
+    }
     /**
      * Tests whether returns the right distance links to the ID of card.
      */
