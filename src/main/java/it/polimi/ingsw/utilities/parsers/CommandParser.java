@@ -27,18 +27,18 @@ public class CommandParser {
             result = "The Assistant #" + id + " allow you to do " + (id / 2 + 1) + "steps";
         else {
             switch (id) {
-                case 1 -> result = "SpecialCharacter #" + id;
-                case 2 -> result = "SpecialCharacter #" + id;
-                case 3 -> result = "SpecialCharacter #" + id;
-                case 4 -> result = "SpecialCharacter #" + id;
-                case 5 -> result = "SpecialCharacter #" + id;
-                case 6 -> result = "SpecialCharacter #" + id;
-                case 7 -> result = "SpecialCharacter #" + id;
-                case 8 -> result = "SpecialCharacter #" + id;
-                case 9 -> result = "SpecialCharacter #" + id;
-                case 10 -> result = "SpecialCharacter #" + id;
-                case 11 -> result = "SpecialCharacter #" + id;
-                default -> result = "SpecialCharacter #" + id;
+                case 1 -> result = "SpecialCharacter #" + id + "Take 1 Student from this card and place it on an Island of your choice.";
+                case 2 -> result = "SpecialCharacter #" + id + "Take control of any number of Professors, even if you have the same number of Students as the the player who controls them.";
+                case 3 -> result = "SpecialCharacter #" + id + "Choose an Island and resolve it as if Mother Nature had ended her movement there.";
+                case 4 -> result = "SpecialCharacter #" + id + "You may move Mother Nature up to 2 additional islands than is indicated on your played Assistant.";
+                case 5 -> result = "SpecialCharacter #" + id + "Place a Ban on an Island of your choice. The first time that Mother Nature ends her movements there the Island won't be resolved.";
+                case 6 -> result = "SpecialCharacter #" + id + "When resolving a Conquering on an Island, Tower do not count toward influence.";
+                case 7 -> result = "SpecialCharacter #" + id + "You may take up to 3 Students from this card and replace them with the same number of Students from your Entrance.";
+                case 8 -> result = "SpecialCharacter #" + id + "During the influence calculation this turn, you count as having 2 more influence.";
+                case 9 -> result = "SpecialCharacter #" + id + "Choose a color of Student: during the influence calculation this turn, that color adds no influence.";
+                case 10 -> result = "SpecialCharacter #" + id + "You may exchange up to 2 Students between your Entrance and your Dining Room.";
+                case 11 -> result = "SpecialCharacter #" + id + "Take 1 Student from this card and place it in your Dining Room.";
+                default -> result = "SpecialCharacter #" + id + "Choose a color of Student: every player (you too) must return 3 Students of that color from their Dining Room to the Bag.";
             }
         }
     }
