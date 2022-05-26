@@ -23,9 +23,9 @@ public class CommandParser {
         parsedCommand = command.split(" ");
         id = Integer.parseInt(parsedCommand[1].replaceAll("\\D", ""));
         // TODO: decide signature
-        if (parsedCommand[1].startsWith("AST")) result = "The Assistant #" + id +
-                " allow you to do " + (id / 2 + 1) + "steps";
-        else{
+        if (parsedCommand[1].startsWith("AST"))
+            result = "The Assistant #" + id + " allow you to do " + (id / 2 + 1) + "steps";
+        else {
             switch (id) {
                 case 1 -> result = "SpecialCharacter #" + id;
                 case 2 -> result = "SpecialCharacter #" + id;
@@ -48,7 +48,8 @@ public class CommandParser {
         String[] parsedCommand = command.split(" ");
 
         switch (parsedCommand[0]) {
-            case "play" -> jsonCommand = MessageCreator.playAssistant(playerName, Integer.parseInt(parsedCommand[1].replaceAll("\\D", "")));
+            case "play" ->
+                    jsonCommand = MessageCreator.playAssistant(playerName, Integer.parseInt(parsedCommand[1].replaceAll("\\D", "")));
             case "move" -> jsonCommand = manageMove(command, playerName);
             case "refill" ->
                     jsonCommand = MessageCreator.refillEntrance(playerName, Integer.parseInt(parsedCommand[1].replaceAll("\\D", "")));
@@ -100,7 +101,7 @@ public class CommandParser {
             return MessageCreator.moveStudent(playerName, HouseColor.valueOf(color), from, to, Integer.parseInt(fromId), Integer.parseInt(toId));
         } else {
             //Move Mother Nature
-            return MessageCreator.moveMotherNature(Integer.parseInt(parsedCommand[6]));
+            return MessageCreator.moveMotherNature(Integer.parseInt(parsedCommand[4].replaceAll("\\D", "")));
         }
     }
 }
