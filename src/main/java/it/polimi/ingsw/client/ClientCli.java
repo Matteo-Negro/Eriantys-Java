@@ -38,7 +38,7 @@ public class ClientCli extends Thread {
     private GameModel gameModel;
     private ClientStates state;
     private boolean modelUpdated;
-    private History history;
+    private final History history;
 
     /**
      * Default constructor.
@@ -53,6 +53,7 @@ public class ClientCli extends Thread {
         this.lock = new Object();
         this.terminal = TerminalBuilder.terminal();
         this.history = new DefaultHistory();
+        Autocompletion.initialize(this);
         clearScreen(terminal, false);
     }
 
@@ -337,7 +338,7 @@ public class ClientCli extends Thread {
         Game.print(terminal, this.gameModel, this.getGameCode(), this.getGameModel().getPlayerByName(userName).isActive());
 
         if (this.hasCommunicationToken()) {
-            String command = readLine(getPrettyUserName(), terminal, Autocompletion.get(this), true, history).toLowerCase(Locale.ROOT);
+            String command = readLine(getPrettyUserName(), terminal, Autocompletion.get(), true, history).toLowerCase(Locale.ROOT);
 
             // Logout command.
             if (command.equals("exit") || command.equals("logout")) {
