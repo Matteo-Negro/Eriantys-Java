@@ -116,6 +116,18 @@ public class Player {
     }
 
     /**
+     * Gets an assistant by its identification number.
+     * @param id The assistant id.
+     * @return The assistant if it is found, null otherwise.
+     */
+    public Assistant getAssistantById(int id){
+        for(Assistant a : this.getHand()){
+            if(a.getId() == id) return a;
+        }
+        return null;
+    }
+
+    /**
      * Gets the assistant that was played in the current turn.
      *
      * @return The played assistant.

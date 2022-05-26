@@ -443,7 +443,7 @@ public class GameController extends Thread {
 
         moveStudentTo(command);
 
-        notifyUsersExcept(command, getUser(this.activeUser));
+        notifyUsers(MessageCreator.status(this));
 
         this.saveGame();
     }
@@ -575,6 +575,7 @@ public class GameController extends Thread {
             motherNatureAction(targetIsland);
         } else targetIsland.removeBan();
 
+        notifyUsers(MessageCreator.status(this));
         this.saveGame();
     }
 
@@ -593,7 +594,6 @@ public class GameController extends Thread {
         if (mostInfluential.size() == 1 || (mostInfluential.size() == 2 && mostInfluential.get(0).getSchoolBoard().getTowerType().equals(mostInfluential.get(1).getSchoolBoard().getTowerType()))) {
             if (island.getTower() == null) {
                 this.getGameModel().getGameBoard().setTowerOnIsland(island, mostInfluential.get(0).getSchoolBoard().getTowerType());
-                this.notifyUsers(MessageCreator.moveTower(mostInfluential.get(0).getSchoolBoard().getTowerType(), island));
                 try {
                     for (Player player : this.gameModel.getPlayers()) {
                         if (player.getSchoolBoard().getTowerType().equals(mostInfluential.get(0).getSchoolBoard().getTowerType())) {
@@ -616,7 +616,6 @@ public class GameController extends Thread {
                             }
                         }
                         this.getGameModel().getGameBoard().setTowerOnIsland(island, mostInfluential.get(0).getSchoolBoard().getTowerType());
-                        this.notifyUsers(MessageCreator.moveTower(mostInfluential.get(0).getSchoolBoard().getTowerType(), island));
                     } catch (NotEnoughTowersException e1) {
                         endGame();
                     } catch (NegativeException e2) {
@@ -635,7 +634,7 @@ public class GameController extends Thread {
     public void chooseCloud(JsonObject command) {
         this.gameModel.getPlayerByName(command.get("player").getAsString()).getSchoolBoard().addToEntrance(this.gameModel.getGameBoard().getClouds().get(command.get("cloud").getAsInt()).flush());
         this.setSubPhase(GameControllerStates.END_TURN);
-
+        notifyUsers(MessageCreator.status(this));
         this.saveGame();
     }
 
@@ -703,7 +702,7 @@ public class GameController extends Thread {
             throw new IllegalMoveException();
         }
 
-        notifyUsersExcept(command, getUser(this.activeUser));
+        notifyUsers(MessageCreator.status(this));
 
         this.saveGame();
     }
@@ -800,7 +799,6 @@ public class GameController extends Thread {
             }
         }
         this.gameModel.getGameBoard().setProfessor(HouseColor.valueOf(color), this.gameModel.getPlayerByName(newProfessorOwner));
-        notifyUsers(MessageCreator.moveProfessor(color, newProfessorOwner));
     }
 
     public void notifyUsers(JsonObject message) {

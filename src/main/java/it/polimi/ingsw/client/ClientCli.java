@@ -1,20 +1,22 @@
 package it.polimi.ingsw.client;
 
+import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import it.polimi.ingsw.client.controller.GameServer;
 import it.polimi.ingsw.client.model.GameModel;
+import it.polimi.ingsw.client.model.Island;
+import it.polimi.ingsw.client.model.SpecialCharacter;
 import it.polimi.ingsw.client.view.cli.Autocompletion;
 import it.polimi.ingsw.client.view.cli.colours.*;
 import it.polimi.ingsw.client.view.cli.pages.*;
-import it.polimi.ingsw.utilities.ClientStates;
-import it.polimi.ingsw.utilities.Log;
-import it.polimi.ingsw.utilities.MessageCreator;
+import it.polimi.ingsw.utilities.*;
 import it.polimi.ingsw.utilities.parsers.CommandParser;
 import org.fusesource.jansi.Ansi;
 import org.jline.reader.History;
 import org.jline.reader.impl.history.DefaultHistory;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
+import it.polimi.ingsw.utilities.exceptions.*;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -23,6 +25,7 @@ import java.util.List;
 import java.util.Locale;
 
 import static it.polimi.ingsw.client.view.cli.Utilities.*;
+import static it.polimi.ingsw.utilities.GameControllerStates.*;
 import static org.fusesource.jansi.Ansi.ansi;
 import static org.jline.builtins.Completers.TreeCompleter.node;
 
@@ -335,17 +338,34 @@ public class ClientCli extends Thread {
 
         if (this.hasCommunicationToken()) {
             String command = readLine(getPrettyUserName(), terminal, Autocompletion.get(this), true, history).toLowerCase(Locale.ROOT);
+
+            // Logout command.
             if (command.equals("exit") || command.equals("logout")) {
                 this.getGameServer().sendCommand(MessageCreator.logout());
                 this.resetGame();
+                clearScreen(terminal, false);
+                return;
             }
+
+            // Another player disconnected.
+            if(getGameModel() == null) return;
 
             if (command.contains("info")) {
                 // TODO: managed info printing (for now the searches for info but it's a void method)
                 CommandParser.infoGenerator(command);
             } else {
-                // TODO: send it.
+                //Command parsing and check.
                 message = CommandParser.commandManager(command, userName);
+                try{
+                    if(checkMessage(message)) getGameServer().sendCommand(message);
+                    else errorOccurred("Command not allowed");
+                }catch(IllegalActionException iae){
+                    errorOccurred("Connection lost.");
+                    setClientState(ClientStates.CONNECTION_LOST);
+                    clearScreen(terminal, false);
+                    return;
+                }
+
             }
 
         }
@@ -360,6 +380,7 @@ public class ClientCli extends Thread {
         }
         clearScreen(terminal, false);
     }
+
 
     private String getPrettyUserName() {
         Ansi ansi = new Ansi();
@@ -399,14 +420,154 @@ public class ClientCli extends Thread {
         clearScreen(terminal, false);
     }
 
-    /*private boolean checkCommand(JsonObject command){
+    /**
+     * Checks the message validity.
+     *
+     * @param message The message to check.
+     * @return True if the message is correct, false otherwise.
+     */
+    private boolean checkMessage(JsonObject message) throws IllegalActionException{
         if(this.getGameModel().getPhase().equals(Phase.PLANNING)){
-            if(!Phase.valueOf(command.get("subtype").getAsString()).equals("playAssistant") )
-        }
-        else{
+            if(!message.get("subtype").getAsString().equals("playAssistant")) return false;
+            else{
+                int assistantId = message.get("assistant").getAsInt();
+                return !message.get("subtype").getAsString().equals("playAssistant") || getGameModel().getPlayerByName(this.getUserName()).getAssistantById(assistantId) != null;
+            }
 
         }
-    }*/
+        else{
+            try{
+                switch(message.get("subtype").getAsString()){
+                    case "moveStudent" -> checkStudentMove(message);
+                    case "motherNature" -> checkMotherNatureMove(message);
+                    case "pay" -> checkCharacterPayment(message);
+                    case "refill" -> checkEntranceRefill(message);
+                    default -> {
+                        return false;
+                    }
+                }
+            }catch (IllegalMoveException ime){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Checks if the student move request is legal.
+     *
+     * @param message The message to check.
+     * @throws IllegalMoveException Thrown if the requested move is illegal.
+     * @throws IllegalActionException Thrown if the client model is not aligned with that of the game server.
+     */
+    private void checkStudentMove(JsonObject message) throws IllegalMoveException, IllegalActionException{
+        synchronized (this.getGameModel()){
+            switch(getGameModel().getSubphase()){
+                case MOVE_STUDENT_1, MOVE_STUDENT_2, MOVE_STUDENT_3 -> {}
+                case MOVE_STUDENT_4 -> {
+                    if(getGameModel().getPlayersNumber()!=3) throw new IllegalActionException();
+                }
+            }
+
+            String from = message.get("from").getAsString();
+            String to = message.get("to").getAsString();
+
+            if(from.equals(to)) throw new IllegalMoveException();
+            if(!(message.get("fromId") instanceof JsonNull) && !(message.get("toId") instanceof JsonNull) && message.get("fromId").getAsString().equals(message.get("toId").getAsString())) throw new IllegalMoveException();
+
+            switch(from){
+                case "entrance" -> {
+                    if(getGameModel().getPlayerByName(this.getUserName()).getSchoolBoard().getEntrance().get(HouseColor.valueOf(message.get("color").getAsString())) == 0)
+                        throw new IllegalMoveException();
+                }
+                case "diningRoom" -> {
+                    if(!to.equals("entrance") || !getGameModel().isExpert() || getGameModel().getGameBoard().getSpecialCharacterById(10)!=null || !getGameModel().getGameBoard().getSpecialCharacterById(10).isActive())
+                        throw new IllegalMoveException();
+                    if(getGameModel().getPlayerByName(this.getUserName()).getSchoolBoard().getDiningRoom().get(HouseColor.valueOf(message.get("color").getAsString())) == 0)
+                        throw new IllegalMoveException();
+                }
+                case "character" -> {
+                    if(!to.equals("entrance") && !to.equals("diningRoom") && !to.equals("island"))
+                        throw new IllegalMoveException();
+
+                    SpecialCharacter involvedCharacter = getGameModel().getGameBoard().getSpecialCharacterById(message.get("fromId").getAsInt());
+                    if(involvedCharacter == null || !involvedCharacter.isActive() || involvedCharacter.getStudents() == null || involvedCharacter.getStudents().get(HouseColor.valueOf(message.get("color").getAsString()))==0)
+                        throw new IllegalMoveException();
+                }
+                default -> throw new IllegalMoveException();
+            }
+
+            switch(to){
+                case "entrance" -> {
+                    if(!from.equals("character") && (!getGameModel().isExpert() || getGameModel().getGameBoard().getSpecialCharacterById(10) != null || !getGameModel().getGameBoard().getSpecialCharacterById(10).isActive())) throw new IllegalMoveException();
+                    if(message.get("fromId") instanceof JsonNull || !getGameModel().getGameBoard().getSpecialCharacterById(message.get("fromId").getAsInt()).isActive() || getGameModel().getGameBoard().getSpecialCharacterById(message.get("fromId").getAsInt()) == null)
+                        throw new IllegalMoveException();
+                }
+                case "character" ->{
+                    if(message.get("toId").getAsInt()!=7 || !getGameModel().isExpert() || getGameModel().getGameBoard().getSpecialCharacterById(7)==null || !getGameModel().getGameBoard().getSpecialCharacterById(7).isActive())
+                        throw new IllegalMoveException();
+                }
+            }
+        }
+    }
+
+    /**
+     * Checks if the mother nature move is legal.
+     *
+     * @param message The message to check.
+     * @throws IllegalMoveException Thrown if the client model is not aligned with that of the game server.
+     */
+    private void checkMotherNatureMove(JsonObject message) throws IllegalMoveException{
+        if(!getGameModel().getSubphase().equals(MOVE_MOTHER_NATURE)) throw new IllegalMoveException();
+
+        int finalIsland = message.get("island").getAsInt();
+        int maxDistance = getGameModel().getPlayerByName(this.getUserName()).getCurrentPlayedAssistant().getMaxDistance();
+        int motherNatureIsland = 0;
+        for(int i=0; i<getGameModel().getGameBoard().getIslands().size(); i++){
+            Island isl = getGameModel().getGameBoard().getIslands().get(i);
+            if(isl.hasMotherNature()) motherNatureIsland = i;
+        }
+
+        int distanceWanted;
+        if(finalIsland<motherNatureIsland) distanceWanted = finalIsland + 12 - motherNatureIsland;
+        else distanceWanted = finalIsland - motherNatureIsland;
+
+        if(distanceWanted > maxDistance) throw new IllegalMoveException();
+    }
+
+    /**
+     * Checks if the chosen special character payment is legal.
+     *
+     * @param message The message to check.
+     * @throws IllegalMoveException Thrown if the client model is not aligned with that of the game server.
+     */
+    private void checkCharacterPayment(JsonObject message) throws IllegalMoveException{
+        if(getGameModel().getSubphase().equals(MOVE_MOTHER_NATURE))
+            throw new IllegalMoveException();
+
+        int characterId = message.get("character").getAsInt();
+        if(!getGameModel().isExpert()) throw new IllegalMoveException();
+
+        if(getGameModel().getGameBoard().getSpecialCharacterById(characterId) == null || getGameModel().getGameBoard().getSpecialCharacterById(characterId).isActive())
+            throw new IllegalMoveException();
+
+        if(getGameModel().getPlayerByName(this.getUserName()).getCoins() < getGameModel().getGameBoard().getSpecialCharacterById(characterId).getCost())
+            throw new IllegalMoveException();
+    }
+
+    /**
+     * Checks if the refill from the chosen cloud is legal.
+     *
+     * @param message The message to check.
+     * @throws IllegalMoveException Thrown if the client model is not aligned with that of the game server.
+     */
+    private void checkEntranceRefill(JsonObject message) throws IllegalMoveException{
+        if(!getGameModel().getSubphase().equals(END_TURN)) throw new IllegalMoveException();
+
+        int cloudId = message.get("cloud").getAsInt();
+        if(getGameModel().getGameBoard().getClouds().get(cloudId).getStudents(true)==null)
+            throw new IllegalMoveException();
+    }
 
     /**
      * Manages the CONNECTION_LOST state of the client, terminating all the server-associated threads.

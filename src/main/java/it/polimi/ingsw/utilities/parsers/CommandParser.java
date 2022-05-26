@@ -91,11 +91,11 @@ public class CommandParser {
 
             color = parsedCommand[2];
             tmp = parsedCommand[4];
-            if (tmp.equals("dining-room") || tmp.equals("entance")) from = parsedCommand[4];
+            if (tmp.equals("dining-room") || tmp.equals("entrance")) from = parsedCommand[4];
             else fromId = parsedCommand[4].replaceAll("\\D", "");
 
             tmp = parsedCommand[6];
-            if (tmp.equals("dining-room") || tmp.equals("entance")) to = parsedCommand[6];
+            if (tmp.equals("dining-room") || tmp.equals("entrance")) to = parsedCommand[6];
             else toId = parsedCommand[6].replaceAll("\\D", "");
 
             return MessageCreator.moveStudent(playerName, HouseColor.valueOf(color), from, to, Integer.parseInt(fromId), Integer.parseInt(toId));

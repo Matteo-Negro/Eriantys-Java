@@ -281,15 +281,14 @@ public class MessageCreator {
      * @param color  The color of the student moved.
      * @param from   The initial position.
      * @param to     The final position.
-     * @param fromId The initial island's id (null if the move doesn't involve islands).
-     * @param toId   The final island's id (null if the move doesn't involve islands).
+     * @param fromId The initial island's id (null if the move doesn't involve islands or characters).
+     * @param toId   The final island's id (null if the move doesn't involve islands or characters).
      * @return JsonObject which represents the message.
      */
     public static JsonObject moveStudent(String player, HouseColor color, String from, String to, Integer fromId, Integer toId) {
         JsonObject command = new JsonObject();
         command.addProperty("type", "command");
-        command.addProperty("subtype", "move");
-        command.addProperty("pawn", "student");
+        command.addProperty("subtype", "moveStudent");
         command.addProperty("player", player);
         command.addProperty("color", color.toString());
         command.addProperty("from", from);

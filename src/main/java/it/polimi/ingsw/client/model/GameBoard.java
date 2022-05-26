@@ -96,4 +96,12 @@ public class GameBoard {
     public List<SpecialCharacter> getSpecialCharacters() {
         return new ArrayList<>(this.specialCharacters);
     }
+
+    public SpecialCharacter getSpecialCharacterById(int id){
+        for(SpecialCharacter sc : getSpecialCharacters()){
+            if(sc.getId() == id) return sc;
+        }
+
+        return null;
+    }
 }
