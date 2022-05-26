@@ -2,6 +2,8 @@ package it.polimi.ingsw.client.view.cli;
 
 import it.polimi.ingsw.client.ClientCli;
 import it.polimi.ingsw.client.model.Assistant;
+import it.polimi.ingsw.client.model.GameBoard;
+import it.polimi.ingsw.client.model.Island;
 import it.polimi.ingsw.client.model.SpecialCharacter;
 import it.polimi.ingsw.utilities.HouseColor;
 import it.polimi.ingsw.utilities.Phase;
@@ -79,7 +81,7 @@ public class Autocompletion {
 
     private static List<Node> motherNatureMoves() {
         List<Node> nodes = new ArrayList<>();
-        for (String island : islands)
+        for (String island : getMotherNatureIslands())
             nodes.add(node("move", node("mother", node("nature", node("to", node(island))))));
         return nodes;
     }
@@ -112,6 +114,28 @@ public class Autocompletion {
             if (cli.getGameModel().getGameBoard().getClouds().get(index).getStudents(false) != null)
                 result.add(String.format("CL%1d", index + 1));
         return Collections.unmodifiableList(result);
+    }
+
+    private static List<String> getMotherNatureIslands() {
+        List<String> result = new ArrayList<>();
+        List<Island> islands = cli.getGameModel().getGameBoard().getIslands();
+        int index = (getMotherNatureIsland() + 1) % islands.size();
+        for (int moves = 0; moves < cli.getGameModel().getPlayerByName(cli.getUserName()).getCurrentPlayedAssistant().getMaxDistance(); moves++)
+            do {
+                if (islands.get(index).hasMotherNature())
+                    return Collections.unmodifiableList(result);
+                result.add(String.format("ISL%02d", index + 1));
+                index = (index + 1) % islands.size();
+            } while (islands.get(index).hasNext());
+        return Collections.unmodifiableList(result);
+    }
+
+    private static int getMotherNatureIsland() {
+        GameBoard gameBoard = cli.getGameModel().getGameBoard();
+        for (int index = 0; index < gameBoard.getIslands().size(); index++)
+            if (gameBoard.getIslands().get(index).hasMotherNature())
+                return index;
+        return 0;
     }
 
     private static List<String> getFromList() {
