@@ -344,8 +344,8 @@ public class ClientCli extends Thread {
                 // TODO: managed info printing (for now the searches for info but it's a void method)
                 CommandParser.infoGenerator(command);
             } else {
-                // TODO: send it.
                 message = CommandParser.commandManager(command, userName);
+                gameServer.manageMessage(message);
             }
 
         }
