@@ -42,8 +42,7 @@ public class GameServer extends Thread {
         while (true) {
 
             synchronized (connectedLock) {
-                if (!connected)
-                    break;
+                if (!connected) break;
             }
 
             try {
@@ -56,7 +55,7 @@ public class GameServer extends Thread {
         }
     }
 
-    private void manageMessage(JsonObject incomingMessage) {
+    public void manageMessage(JsonObject incomingMessage) {
         //Log.debug("incoming message ");
         switch (incomingMessage.get("type").getAsString()) {
             case "ping" -> {
@@ -92,26 +91,10 @@ public class GameServer extends Thread {
                 this.manageTurnEnable(incomingMessage);
             }
 
-            case "playAssistant" -> {
-            }
-
-            case "moveStudent" -> {
-            }
-
-            case "payCharacter" -> {
-            }
-
-            case "moveProfessor" -> {
-            }
-
-            case "moveTower" -> {
-            }
-
             case "endGame" -> {
             }
 
-            case "command" -> {
-            }
+            case "command" -> manageCommand(incomingMessage);
             case "error" -> {
                 Log.debug("Error message arrived");
                 this.manageError(incomingMessage);
@@ -136,12 +119,13 @@ public class GameServer extends Thread {
             /*case GAME_WAITING_ROOM -> {
                 parseEnterGame(message);
             }*/
-            default -> {}
+            default -> {
+            }
         }
     }
 
-    private void manageWaitingRoomUpdate(JsonObject message){
-        if(this.client.getClientState().equals(ClientStates.GAME_WAITING_ROOM)) parseEnterGame(message);
+    private void manageWaitingRoomUpdate(JsonObject message) {
+        if (this.client.getClientState().equals(ClientStates.GAME_WAITING_ROOM)) parseEnterGame(message);
     }
 
     private void manageLogin(JsonObject message) {
@@ -189,11 +173,11 @@ public class GameServer extends Thread {
     }
 
     private void manageTurnEnable(JsonObject incomingMessage) {
-            Log.debug("Token arrived.");
-            synchronized (this.client.getLock()){
-                this.client.getGameModel().setCurrentPlayer(incomingMessage.get("player").getAsString(), incomingMessage.get("enable").getAsBoolean());
-                this.client.getLock().notify();
-            }
+        Log.debug("Token arrived.");
+        synchronized (this.client.getLock()) {
+            this.client.getGameModel().setCurrentPlayer(incomingMessage.get("player").getAsString(), incomingMessage.get("enable").getAsBoolean());
+            this.client.getLock().notify();
+        }
     }
 
     public boolean isConnected() {
@@ -254,4 +238,38 @@ public class GameServer extends Thread {
         this.client.initializeGameModel(newGameModel);
     }
 
+    private void manageCommand(JsonObject incomingMessage) {
+        switch (incomingMessage.get("subtype").getAsString()) {
+            case "playAssistant" -> {
+                Log.debug("playAssistant");
+                sendCommand(incomingMessage);
+            }
+
+            case "pay" -> {
+                Log.debug("paySpecialCharacter");
+            }
+
+            case "refill" -> {
+                Log.debug("refill");
+            }
+
+            case "ban" -> {
+                Log.debug("ban");
+            }
+
+            case "motherNature" -> {
+                Log.debug("motherNature");
+            }
+
+            default -> {
+                // Move
+                if (incomingMessage.get("pawn").getAsString().equals("student")) {
+                    Log.debug("moveStudent");
+                } else {
+                    // Move professor
+                    Log.debug("moveProfessor");
+                }
+            }
+        }
+    }
 }
