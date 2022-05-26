@@ -10,17 +10,14 @@ import it.polimi.ingsw.utilities.Phase;
 import org.jline.builtins.Completers.TreeCompleter;
 import org.jline.builtins.Completers.TreeCompleter.Node;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 import static org.jline.builtins.Completers.TreeCompleter.node;
 
 public class Autocompletion {
     private static ClientCli cli = null;
     private static List<String> islands = null;
-    private static List<String> specialCharacters = null;
+    private static List<String> toList = null;
 
     private Autocompletion() {
     }
@@ -30,7 +27,7 @@ public class Autocompletion {
             return;
         Autocompletion.cli = cli;
         initializeIslands();
-        initializeSpecialCharacters();
+        initializeToList();
     }
 
     private static void initializeIslands() {
@@ -40,11 +37,11 @@ public class Autocompletion {
         Autocompletion.islands = Collections.unmodifiableList(islands);
     }
 
-    private static void initializeSpecialCharacters() {
-        List<String> specialCharacters = new ArrayList<>();
-        for (SpecialCharacter specialCharacter : cli.getGameModel().getGameBoard().getSpecialCharacters())
-            specialCharacters.add(String.format("CHR%02d", specialCharacter.getId()));
-        Autocompletion.specialCharacters = Collections.unmodifiableList(specialCharacters);
+    private static void initializeToList() {
+        List<String> toList = new ArrayList<>();
+        toList.add("dining-room");
+        toList.addAll(islands);
+        Autocompletion.toList = Collections.unmodifiableList(toList);
     }
 
     public static List<Node> get() {
@@ -59,8 +56,14 @@ public class Autocompletion {
                 case MOVE_MOTHER_NATURE -> nodes.addAll(motherNatureMoves());
                 case MOVE_STUDENT_1, MOVE_STUDENT_2, MOVE_STUDENT_3, MOVE_STUDENT_4 -> nodes.addAll(studentsMoves());
             }
-            if (cli.getGameModel().isExpert() && cli.getGameModel().getGameBoard().getSpecialCharacters().stream().anyMatch(SpecialCharacter::isActive))
-                nodes.addAll(studentsMoves());
+            // TODO: add payment for special character
+            // TODO: add every special character special commands (switch case)
+            if (cli.getGameModel().isExpert()) {
+                if (cli.getGameModel().getGameBoard().getSpecialCharacters().stream().anyMatch(SpecialCharacter::isActive))
+                    nodes.addAll(specialCharactersActions());
+                else
+                    nodes.addAll(payableSpecialCharacters());
+            }
         }
         return nodes;
     }
@@ -89,15 +92,102 @@ public class Autocompletion {
     private static List<Node> studentsMoves() {
         List<Node> nodes = new ArrayList<>();
         for (HouseColor color : HouseColor.values())
-            for (String from : getFromList())
-                for (String to : getToList())
-                    nodes.add(node("move",
-                            node("student",
-                                    node(color.name().toLowerCase(Locale.ROOT),
-                                            node("from",
-                                                    node(from,
-                                                            node("to",
-                                                                    node(to))))))));
+            for (String to : toList)
+                nodes.add(node("move",
+                        node("student",
+                                node(color.name().toLowerCase(Locale.ROOT),
+                                        node("from",
+                                                node("entrance",
+                                                        node("to",
+                                                                node(to))))))));
+        return nodes;
+    }
+
+    private static List<Node> payableSpecialCharacters() {
+        List<Node> nodes = new ArrayList<>();
+        int availableCoins = cli.getGameModel().getPlayerByName(cli.getUserName()).getCoins();
+        for (SpecialCharacter specialCharacter : cli.getGameModel().getGameBoard().getSpecialCharacters())
+            if (specialCharacter.getCost() <= availableCoins)
+                nodes.add(node("pay", node(String.format("CHR%02d", specialCharacter.getId()))));
+        return nodes;
+    }
+
+    private static List<Node> specialCharactersActions() {
+        List<Node> nodes = new ArrayList<>();
+        SpecialCharacter specialCharacter = cli.getGameModel().getGameBoard().getSpecialCharacters().stream().filter(SpecialCharacter::isActive).findFirst().get();
+        try {
+            switch (specialCharacter.getId()) {
+                case 1 -> {
+                    for (Map.Entry<HouseColor, Integer> entry : specialCharacter.getStudents().entrySet())
+                        for (String island : islands)
+                            nodes.add(node("move",
+                                    node("student",
+                                            node(entry.getKey().name().toLowerCase(Locale.ROOT),
+                                                    node("from",
+                                                            node("CHR01",
+                                                                    node("to",
+                                                                            node(island))))))));
+                }
+                case 3 -> {
+                    for (String island : islands)
+                        nodes.add(node("resolve",
+                                node(island)));
+                }
+                case 5 -> {
+                    if (specialCharacter.getAvailableBans() > 0)
+                        for (String island : islands)
+                            nodes.add(node("ban",
+                                    node(island)));
+                }
+                case 7 -> {
+                    Map<HouseColor, Integer> entrance = cli.getGameModel().getPlayerByName(cli.getUserName()).getSchoolBoard().getEntrance();
+                    Map<HouseColor, Integer> card = specialCharacter.getStudents();
+                    for (Map.Entry<HouseColor, Integer> entranceEntry : entrance.entrySet())
+                        for (Map.Entry<HouseColor, Integer> cardEntry : card.entrySet())
+                            if (entranceEntry.getValue() != 0 && cardEntry.getValue() != 0)
+                                nodes.add(node("swap",
+                                        node("entrance-student",
+                                                node(entranceEntry.getKey().name().toLowerCase(Locale.ROOT),
+                                                        node("with",
+                                                                node("AST07-student",
+                                                                        node(cardEntry.getKey().name().toLowerCase(Locale.ROOT))))))));
+                }
+                case 9 -> {
+                    for (HouseColor color : HouseColor.values())
+                        nodes.add(node("ignore",
+                                node("color",
+                                        node(color.name().toLowerCase(Locale.ROOT)))));
+                }
+                case 10 -> {
+                    Map<HouseColor, Integer> entrance = cli.getGameModel().getPlayerByName(cli.getUserName()).getSchoolBoard().getEntrance();
+                    Map<HouseColor, Integer> diningRoom = cli.getGameModel().getPlayerByName(cli.getUserName()).getSchoolBoard().getDiningRoom();
+                    for (Map.Entry<HouseColor, Integer> entranceEntry : entrance.entrySet())
+                        for (Map.Entry<HouseColor, Integer> diningRoomEntry : diningRoom.entrySet())
+                            if (entranceEntry.getValue() != 0 && diningRoomEntry.getValue() != 0)
+                                nodes.add(node("swap",
+                                        node("entrance-student",
+                                                node(entranceEntry.getKey().name().toLowerCase(Locale.ROOT),
+                                                        node("with",
+                                                                node("dining-room-student",
+                                                                        node(diningRoomEntry.getKey().name().toLowerCase(Locale.ROOT))))))));
+                }
+                case 11 -> {
+                    for (Map.Entry<HouseColor, Integer> entry : specialCharacter.getStudents().entrySet())
+                        if (entry.getValue() != 0)
+                            nodes.add(node("take",
+                                    node("AST11-student",
+                                            node(entry.getKey().name().toLowerCase(Locale.ROOT)))));
+                }
+                case 12 -> {
+                    for (HouseColor color : HouseColor.values())
+                        nodes.add(node("return",
+                                node("students",
+                                        node(color.name().toLowerCase(Locale.ROOT)))));
+                }
+            }
+        } catch (NoSuchElementException e) {
+            return List.of();
+        }
         return nodes;
     }
 
@@ -136,27 +226,5 @@ public class Autocompletion {
             if (gameBoard.getIslands().get(index).hasMotherNature())
                 return index;
         return 0;
-    }
-
-    private static List<String> getFromList() {
-        List<String> result = new ArrayList<>();
-        result.add("entrance");
-        if (cli.getGameModel().isExpert()) {
-            result.add("dining-room");
-            result.addAll(islands);
-            result.addAll(specialCharacters);
-        }
-        return Collections.unmodifiableList(result);
-    }
-
-    private static List<String> getToList() {
-        List<String> result = new ArrayList<>();
-        result.add("dining-room");
-        result.addAll(islands);
-        if (cli.getGameModel().isExpert()) {
-            result.add("entrance");
-            result.addAll(specialCharacters);
-        }
-        return Collections.unmodifiableList(result);
     }
 }
