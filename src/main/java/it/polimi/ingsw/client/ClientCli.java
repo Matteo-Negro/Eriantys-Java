@@ -333,7 +333,7 @@ public class ClientCli extends Thread {
      * Manages the game-screen's I/O.
      */
     private void manageGameRunning() {
-        JsonObject message;
+        List<JsonObject> messages = null;
 
         Game.print(terminal, this.gameModel, this.getGameCode(), this.getGameModel().getPlayerByName(userName).isActive());
 
@@ -356,22 +356,21 @@ public class ClientCli extends Thread {
                 CommandParser.infoGenerator(command);
             } else {
                 //Command parsing and check.
-                message = CommandParser.commandManager(command, userName);
-                try{
-                    if(checkMessage(message)){
-                        getGameServer().sendCommand(message);
-                        Log.debug("Command sent to game server.");
-                    }
-                    else errorOccurred("Command not allowed");
-                }catch(IllegalActionException iae){
-                    errorOccurred("Connection lost.");
-                    setClientState(ClientStates.CONNECTION_LOST);
-                    clearScreen(terminal, false);
-                    return;
-                }
-
+                // TODO: FIx it @Riccardo Milici, now messages is a list
+                messages.addAll(CommandParser.commandManager(command, gameModel.getPlayers()));
+//                try{
+//                    if(checkMessage(messages)){
+//                        getGameServer().sendCommand(messages);
+//                        Log.debug("Command sent to game server.");
+//                    }
+//                    else errorOccurred("Command not allowed");
+//                }catch(IllegalActionException iae){
+//                    errorOccurred("Connection lost.");
+//                    setClientState(ClientStates.CONNECTION_LOST);
+//                    clearScreen(terminal, false);
+//                    return;
+//                }
             }
-
         }
         else{
             synchronized (this.lock) {
@@ -432,11 +431,12 @@ public class ClientCli extends Thread {
      */
     private boolean checkMessage(JsonObject message) throws IllegalActionException{
         if(this.getGameModel().getPhase().equals(Phase.PLANNING)){
-            try{
-                checkAssistant(message);
-            }catch(IllegalMoveException ime){
-                return false;
+            if(!message.get("subtype").getAsString().equals("playAssistant")) return false;
+            else{
+                int assistantId = message.get("assistant").getAsInt();
+                return !message.get("subtype").getAsString().equals("playAssistant") || getGameModel().getPlayerByName(this.getUserName()).getAssistantById(assistantId) != null;
             }
+
         }
         else{
             try{
@@ -567,6 +567,7 @@ public class ClientCli extends Thread {
             throw new IllegalMoveException();
 
         int characterId = message.get("character").getAsInt();
+        if(!getGameModel().isExpert()) throw new IllegalMoveException();
 
         if(getGameModel().getGameBoard().getSpecialCharacterById(characterId) == null || getGameModel().getGameBoard().getSpecialCharacterById(characterId).isActive() || getGameModel().getGameBoard().getSpecialCharacterById(characterId).isPaidInRound())
             throw new IllegalMoveException();

@@ -50,7 +50,7 @@ public class MessageCreator {
         return reply;
     }
 
-    public static JsonObject waitingRoomUpdate(GameController gameController){
+    public static JsonObject waitingRoomUpdate(GameController gameController) {
         JsonObject reply = new JsonObject();
         reply.addProperty("type", "waitingRoomUpdate");
         reply.addProperty("expectedPlayers", gameController.getExpectedPlayers());
@@ -307,11 +307,12 @@ public class MessageCreator {
      * @param islandId The destination island.
      * @return JsonObject which represents the message.
      */
-    public static JsonObject moveMotherNature(int islandId) {
+    public static JsonObject moveMotherNature(int islandId, boolean move) {
         JsonObject command = new JsonObject();
         command.addProperty("type", "command");
         command.addProperty("subtype", "motherNature");
         command.addProperty("island", islandId);
+        command.addProperty("move", move);
 
         return command;
     }
@@ -349,4 +350,35 @@ public class MessageCreator {
 
         return command;
     }
+
+    /**
+     * Creates the "ban" command.
+     *
+     * @param islandId The banned island.
+     * @return JsonObject which represents the message.
+     */
+    public static JsonObject ban(int islandId) {
+        JsonObject command = new JsonObject();
+        command.addProperty("type", "command");
+        command.addProperty("subtype", "ban");
+        command.addProperty("island", islandId);
+
+        return command;
+    }
+
+    /**
+     * Creates the "ignore" command.
+     *
+     * @param color The ignored color.
+     * @return JsonObject which represents the message.
+     */
+    public static JsonObject ignoreColor(String color) {
+        JsonObject command = new JsonObject();
+        command.addProperty("type", "command");
+        command.addProperty("subtype", "ignore");
+        command.addProperty("color", color);
+
+        return command;
+    }
+
 }
