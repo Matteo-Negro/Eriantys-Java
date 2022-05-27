@@ -144,7 +144,7 @@ public class JsonToObjects {
                     index,
                     island.get("size").getAsInt(),
                     island.get("ban").getAsBoolean(),
-                    TowerType.valueOf(island.get("tower").getAsString())
+                    island.get("tower").isJsonNull() ? null : TowerType.valueOf(island.get("tower").getAsString())
             ));
         }
         return islandsList;
