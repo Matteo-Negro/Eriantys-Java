@@ -75,7 +75,19 @@ public class Log {
         }
     }
 
-    public static synchronized void warning(String message) {
+    public static void warning(Exception exception) {
+        printWarning(exception.getMessage() + "\n" + getStackTrace(exception.getStackTrace()));
+    }
+
+    public static void warning(Error error) {
+        printWarning(error.getMessage() + "\n" + getStackTrace(error.getStackTrace()));
+    }
+
+    public static void warning(String message) {
+        printWarning(message);
+    }
+
+    private static synchronized void printWarning(String message) {
         if (writer == null)
             return;
         if (level <= Level.WARNING) {

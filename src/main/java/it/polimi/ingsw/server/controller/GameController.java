@@ -20,7 +20,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * GameController
@@ -232,7 +231,7 @@ public class GameController extends Thread {
         this.notifyUsers(MessageCreator.error("UserDisconnected"));
 
         synchronized (this.actionNeededLock) {
-            this.actionNeededLock.notify();
+            this.actionNeededLock.notifyAll();
         }
     }
 
@@ -340,8 +339,8 @@ public class GameController extends Thread {
                         return;
                     }
                 }
-                synchronized (this.isFullLock){
-                    if(!this.isFull()){
+                synchronized (this.isFullLock) {
+                    if (!this.isFull()) {
                         Log.debug("Game is not full.");
                         return;
                     }
@@ -351,7 +350,7 @@ public class GameController extends Thread {
 
             //DISABLING THE CURRENT USER'S INPUT.
             this.activeUser = null;
-            notifyUsers(MessageCreator.turnEnable(currentUser.getUsername(),false));
+            notifyUsers(MessageCreator.turnEnable(currentUser.getUsername(), false));
             this.setSubPhase(GameControllerStates.PLAY_ASSISTANT);
             notifyUsers(MessageCreator.status(this));
         }
@@ -429,8 +428,8 @@ public class GameController extends Thread {
             this.getUsers().remove(this.getUser(player));
         }
         this.saveGame();
-        synchronized (this.actionNeededLock){
-            this.actionNeededLock.notify();
+        synchronized (this.actionNeededLock) {
+            this.actionNeededLock.notifyAll();
         }
         Log.debug("Assistant played");
     }
@@ -448,8 +447,8 @@ public class GameController extends Thread {
         }
 
         moveStudentTo(command);
-        synchronized (this.actionNeededLock){
-            this.actionNeededLock.notify();
+        synchronized (this.actionNeededLock) {
+            this.actionNeededLock.notifyAll();
         }
         this.saveGame();
     }
@@ -639,8 +638,8 @@ public class GameController extends Thread {
     public void chooseCloud(JsonObject command) {
         this.gameModel.getPlayerByName(command.get("player").getAsString()).getSchoolBoard().addToEntrance(this.gameModel.getGameBoard().getClouds().get(command.get("cloud").getAsInt()).flush());
         this.setSubPhase(GameControllerStates.END_TURN);
-        synchronized (this.actionNeededLock){
-            this.actionNeededLock.notify();
+        synchronized (this.actionNeededLock) {
+            this.actionNeededLock.notifyAll();
         }
         this.saveGame();
     }
@@ -765,10 +764,9 @@ public class GameController extends Thread {
             numTowerPlayers.put(player, player.getSchoolBoard().getTowersNumber());
         }
         int min = Collections.min(numTowerPlayers.values());
-        List<Player> possibleWinners = numTowerPlayers.entrySet().stream().filter(entry -> entry.getValue() == min).map(Map.Entry::getKey).collect(Collectors.toList());
+        List<Player> possibleWinners = numTowerPlayers.entrySet().stream().filter(entry -> entry.getValue() == min).map(Map.Entry::getKey).toList();
         if (possibleWinners.size() == 1 || (possibleWinners.size() == 2 && possibleWinners.get(0).getSchoolBoard().getTowerType().equals(possibleWinners.get(1).getSchoolBoard().getTowerType()))) {
             winners.addAll(possibleWinners);
-
         } else {
             Map<Player, Integer> numProfessorsPlayers = new HashMap<>();
             Player player;
@@ -777,7 +775,7 @@ public class GameController extends Thread {
                 numProfessorsPlayers.put(player, numProfessorsPlayers.containsKey(player) ? numProfessorsPlayers.get(player) + 1 : 1);
             }
             int max = Collections.max(numProfessorsPlayers.values());
-            possibleWinners = numProfessorsPlayers.entrySet().stream().filter(entry -> entry.getValue() == max).map(Map.Entry::getKey).collect(Collectors.toList());
+            possibleWinners = numProfessorsPlayers.entrySet().stream().filter(entry -> entry.getValue() == max).map(Map.Entry::getKey).toList();
             if (possibleWinners.size() == 1 || (possibleWinners.size() == 2 && possibleWinners.get(0).getSchoolBoard().getTowerType().equals(possibleWinners.get(1).getSchoolBoard().getTowerType()))) {
                 winners.addAll(possibleWinners);
             }
@@ -829,7 +827,7 @@ public class GameController extends Thread {
             this.notifyUsers(MessageCreator.gameStart());
             Log.debug("GameStart message sent to users.");
             synchronized (this.isFullLock) {
-                this.isFullLock.notify();
+                this.isFullLock.notifyAll();
             }
         }
     }

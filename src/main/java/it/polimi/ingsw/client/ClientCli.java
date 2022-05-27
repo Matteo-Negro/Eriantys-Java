@@ -197,6 +197,9 @@ public class ClientCli extends Thread {
             }
             default -> this.errorOccurred("Wrong command.");
         }
+
+        if (!this.getClientState().equals(ClientStates.MAIN_MENU))
+            clearScreen(terminal, false);
     }
 
     /**
