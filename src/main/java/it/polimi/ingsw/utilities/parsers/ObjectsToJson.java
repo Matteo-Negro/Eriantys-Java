@@ -15,7 +15,6 @@ import it.polimi.ingsw.server.model.player.Assistant;
 import it.polimi.ingsw.server.model.player.Player;
 import it.polimi.ingsw.server.model.player.SchoolBoard;
 import it.polimi.ingsw.utilities.HouseColor;
-import it.polimi.ingsw.utilities.Log;
 
 import java.util.List;
 import java.util.Map;
@@ -97,11 +96,13 @@ public enum ObjectsToJson {
     private static JsonArray parseAssistants(List<Assistant> assistants) {
         JsonArray list = new JsonArray();
         JsonObject assistantCard;
-        for (Assistant assistant : assistants){
-            assistantCard = new JsonObject();
-            assistantCard.addProperty("id", assistant.getId());
-            assistantCard.addProperty("bonus", assistant.hasBonus());
-            list.add(assistantCard);
+        for (Assistant assistant : assistants) {
+            if (assistant != null) {
+                assistantCard = new JsonObject();
+                assistantCard.addProperty("id", assistant.getId());
+                assistantCard.addProperty("bonus", assistant.hasBonus());
+                list.add(assistantCard);
+            }
         }
         return list;
     }
@@ -136,10 +137,10 @@ public enum ObjectsToJson {
         object.add("characters", parseSpecialCharacters(gameBoard.getCharacters()));
         object.add("professors", parseProfessors(gameBoard.getProfessors()));
         object.addProperty("motherNatureIsland", gameBoard.getMotherNatureIsland().getId());
-        if(gameBoard.getIgnoreColor() != null)
+        if (gameBoard.getIgnoreColor() != null)
             object.addProperty("ignoreColor", gameBoard.getIgnoreColor().toString());
         else object.add("ignoreColor", JsonNull.INSTANCE);
-        if(gameBoard.getInfluenceBonus() != null)
+        if (gameBoard.getInfluenceBonus() != null)
             object.addProperty("influenceBonus", gameBoard.getInfluenceBonus().getName());
         else object.add("influenceBonus", JsonNull.INSTANCE);
         return object;
@@ -180,7 +181,7 @@ public enum ObjectsToJson {
     private static JsonObject parseIsland(Island island) {
         JsonObject object = new JsonObject();
         object.addProperty("size", island.getSize());
-        if(island.getTower()!=null)
+        if (island.getTower() != null)
             object.addProperty("tower", island.getTower().name());
         else object.add("tower", JsonNull.INSTANCE);
         object.addProperty("ban", island.isBanned());
