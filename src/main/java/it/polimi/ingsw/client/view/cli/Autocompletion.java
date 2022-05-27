@@ -48,6 +48,7 @@ public class Autocompletion {
         List<TreeCompleter.Node> nodes = new ArrayList<>();
         nodes.add(node("exit"));
         nodes.add(node("logout"));
+        nodes.addAll(info());
         if (cli.getGameModel().getPhase().equals(Phase.PLANNING))
             nodes.addAll(playableAssistants());
         else {
@@ -64,6 +65,11 @@ public class Autocompletion {
             }
         }
         return nodes;
+    }
+
+    private static List<Node> info() {
+        List<Node> nodes = new ArrayList<>();
+        return Collections.unmodifiableList(nodes);
     }
 
     private static List<Node> playableAssistants() {
@@ -169,13 +175,20 @@ public class Autocompletion {
         List<Node> nodes = new ArrayList<>();
         for (Map.Entry<HouseColor, Integer> entranceEntry : entrance.entrySet())
             for (Map.Entry<HouseColor, Integer> cardEntry : card.entrySet())
-                if (entranceEntry.getValue() != 0 && cardEntry.getValue() != 0)
+                if (entranceEntry.getValue() != 0 && cardEntry.getValue() != 0) {
                     nodes.add(node("swap",
                             node("entrance-student",
                                     node(entranceEntry.getKey().name().toLowerCase(Locale.ROOT),
                                             node("with",
-                                                    node("AST07-student",
+                                                    node("CHR07-student",
                                                             node(cardEntry.getKey().name().toLowerCase(Locale.ROOT))))))));
+                    nodes.add(node("swap",
+                            node("CHR07-student",
+                                    node(cardEntry.getKey().name().toLowerCase(Locale.ROOT),
+                                            node("with",
+                                                    node("entrance-student",
+                                                            node(entranceEntry.getKey().name().toLowerCase(Locale.ROOT))))))));
+                }
         return nodes;
     }
 
@@ -183,8 +196,7 @@ public class Autocompletion {
         List<Node> nodes = new ArrayList<>();
         for (HouseColor color : HouseColor.values())
             nodes.add(node("ignore",
-                    node("color",
-                            node(color.name().toLowerCase(Locale.ROOT)))));
+                    node(color.name().toLowerCase(Locale.ROOT))));
         return nodes;
     }
 
@@ -192,13 +204,20 @@ public class Autocompletion {
         List<Node> nodes = new ArrayList<>();
         for (Map.Entry<HouseColor, Integer> entranceEntry : entrance.entrySet())
             for (Map.Entry<HouseColor, Integer> diningRoomEntry : diningRoom.entrySet())
-                if (entranceEntry.getValue() != 0 && diningRoomEntry.getValue() != 0)
+                if (entranceEntry.getValue() != 0 && diningRoomEntry.getValue() != 0) {
                     nodes.add(node("swap",
                             node("entrance-student",
                                     node(entranceEntry.getKey().name().toLowerCase(Locale.ROOT),
                                             node("with",
                                                     node("dining-room-student",
                                                             node(diningRoomEntry.getKey().name().toLowerCase(Locale.ROOT))))))));
+                    nodes.add(node("swap",
+                            node("dining-room-student",
+                                    node(diningRoomEntry.getKey().name().toLowerCase(Locale.ROOT),
+                                            node("with",
+                                                    node("entrance-student",
+                                                            node(entranceEntry.getKey().name().toLowerCase(Locale.ROOT))))))));
+                }
         return nodes;
     }
 
@@ -207,7 +226,7 @@ public class Autocompletion {
         for (Map.Entry<HouseColor, Integer> entry : students.entrySet())
             if (entry.getValue() != 0)
                 nodes.add(node("take",
-                        node("AST11-student",
+                        node("CHR11-student",
                                 node(entry.getKey().name().toLowerCase(Locale.ROOT)))));
         return nodes;
     }
