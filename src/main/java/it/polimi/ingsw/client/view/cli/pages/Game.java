@@ -53,7 +53,7 @@ public class Game {
             }
         }
         PlayerStuff.print(terminal, gameModel.getPlayers(), gameModel.isExpert(), gameModel.getGameBoard().getSpecialCharacters());
-        terminal.writer().print(ansi().cursor(terminal.getHeight() - 2, 1));
+        terminal.writer().print(ansi().cursor(terminal.getHeight() - 4, 1));
         terminal.flush();
     }
 
@@ -80,12 +80,12 @@ public class Game {
             else ansi.a("─");
         }
 
-        for (int r = 3; r < y - 3; r++) {
+        for (int r = 3; r < y - 5; r++) {
             ansi.cursor(r, 2);
             ansi.a("│");
         }
 
-        for (int r = 3; r < y - 3; r++) {
+        for (int r = 3; r < y - 5; r++) {
             ansi.cursor(r, x - 1);
             ansi.a("│");
         }
@@ -99,7 +99,7 @@ public class Game {
         } else
             str = "└";
 
-        ansi.cursor(y - 3, 2);
+        ansi.cursor(y - 5, 2);
         for (int c = 0; c < x - 1 - str.length(); c++) {
             if (c == 0) ansi.a(str);
             else if (c == x - 2 - str.length()) ansi.a("┘");

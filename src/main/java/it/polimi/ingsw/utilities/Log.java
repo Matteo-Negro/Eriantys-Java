@@ -130,8 +130,8 @@ public class Log {
     private static String getStackTrace(StackTraceElement[] stackTrace) {
         StringBuilder trace = new StringBuilder();
         for (StackTraceElement element : stackTrace)
-            trace.append("    " + element.toString() + "\n");
-        return trace.toString();
+            trace.append("    ").append(element.toString()).append("\n");
+        return trace.substring(0, trace.toString().length() - 1);
     }
 
     private static synchronized String format(String type, String message) {

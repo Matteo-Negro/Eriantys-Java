@@ -364,14 +364,15 @@ public class ClientCli extends Thread {
                 CommandParser.infoGenerator(command);
             } else {
                 //Command parsing and check.
-                // TODO: FIx it @Riccardo Milici, now messages is a list
                 messages.addAll(CommandParser.commandManager(command, gameModel.getPlayers()));
+                if (messages.isEmpty())
+                    return;
                 try {
-                    for (JsonObject message : messages){
+                    for (JsonObject message : messages) {
                         if (checkMessage(message)) {
                             getGameServer().sendCommand(message);
                             Log.debug("Command sent to game server.");
-                        } else{
+                        } else {
                             Log.debug("Wrong command");
                             errorOccurred("Command not allowed");
                             break;
@@ -395,7 +396,6 @@ public class ClientCli extends Thread {
         }
         clearScreen(terminal, false);
     }
-
 
     private String getPrettyUserName() {
         Ansi ansi = new Ansi();
@@ -442,13 +442,13 @@ public class ClientCli extends Thread {
      * @return True if the message is correct, false otherwise.
      */
     private boolean checkMessage(JsonObject message) throws IllegalActionException {
+
         if (this.getGameModel().getPhase().equals(Phase.PLANNING)) {
-            try{
+            try {
                 checkAssistant(message);
-            }catch(IllegalMoveException ime){
+            } catch (IllegalMoveException ime) {
                 return false;
             }
-
         } else {
             try {
                 switch (message.get("subtype").getAsString()) {
