@@ -3,10 +3,11 @@ package it.polimi.ingsw.utilities.parsers;
 import com.google.gson.JsonObject;
 import it.polimi.ingsw.client.model.Player;
 import it.polimi.ingsw.utilities.HouseColor;
-import it.polimi.ingsw.utilities.Log;
 import it.polimi.ingsw.utilities.MessageCreator;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 // play assistant ast00
@@ -124,7 +125,7 @@ public class CommandParser {
     */
     public static List<JsonObject> commandManager(String command, List<Player> players) {
         String playerName = null;
-        List<JsonObject> jsonCommands = null;
+        List<JsonObject> jsonCommands = new ArrayList<>();
         String[] parsedCommand = command.split(" ");
         for (Player p : players) if (p.isActive()) playerName = p.getName();
 
@@ -142,7 +143,6 @@ public class CommandParser {
             case "ignore" -> jsonCommands.add(MessageCreator.ignoreColor(parsedCommand[1]));
             case "swap" -> jsonCommands.addAll(manageSwap());
             default -> jsonCommands.add(MessageCreator.ban(Integer.parseInt(parsedCommand[1].replaceAll("\\D", ""))));
-
         }
         return jsonCommands;
     }
@@ -181,7 +181,7 @@ public class CommandParser {
 
             color = parsedCommand[2];
             tmp = parsedCommand[4];
-            if (tmp.equals(tmp.equals("entrance"))) from = parsedCommand[4];
+            if (tmp.equals("entrance")) from = parsedCommand[4];
             else {
                 from = "character";
                 fromId = parsedCommand[4].replaceAll("\\D", "");
@@ -194,7 +194,7 @@ public class CommandParser {
                 toId = parsedCommand[6].replaceAll("\\D", "");
             }
 
-            return MessageCreator.moveStudent(playerName, HouseColor.valueOf(color), from, to, Integer.parseInt(fromId), Integer.parseInt(toId));
+            return MessageCreator.moveStudent(playerName, HouseColor.valueOf(color.toUpperCase(Locale.ROOT)), from, to, Integer.parseInt(fromId), Integer.parseInt(toId));
         } else {
             //Move Mother Nature
             return MessageCreator.moveMotherNature(Integer.parseInt(parsedCommand[3].replaceAll("\\D", "")), true);
