@@ -194,7 +194,7 @@ public class CommandParser {
                 toId = parsedCommand[6].replaceAll("\\D", "");
             }
 
-            return MessageCreator.moveStudent(playerName, HouseColor.valueOf(color.toUpperCase(Locale.ROOT)), from, to, Integer.parseInt(fromId), Integer.parseInt(toId));
+            return MessageCreator.moveStudent(playerName, HouseColor.valueOf(color.toUpperCase(Locale.ROOT)), from, to, fromId == null ? null : Integer.parseInt(fromId), toId == null ? null : Integer.parseInt(toId));
         } else {
             //Move Mother Nature
             return MessageCreator.moveMotherNature(Integer.parseInt(parsedCommand[3].replaceAll("\\D", "")), true);
