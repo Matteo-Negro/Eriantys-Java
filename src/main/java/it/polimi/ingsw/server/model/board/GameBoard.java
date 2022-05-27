@@ -59,7 +59,7 @@ public class GameBoard {
             for (int i = 0; i < 3; i++) {
 
                 Map<HouseColor, Integer> students = new EnumMap<>(HouseColor.class);
-                for(HouseColor color : HouseColor.values()) students.put(color, 0);
+                for (HouseColor color : HouseColor.values()) students.put(color, 0);
                 int studentsNumber;
 
                 switch (randomVector.get(i)) {
@@ -70,7 +70,7 @@ public class GameBoard {
 
                 for (int c = 0; c < studentsNumber; c++) {
                     HouseColor color = this.getBag().pop();
-                    students.replace(color, students.get(color)+1);
+                    students.replace(color, students.get(color) + 1);
                 }
                 this.characters.add(new SpecialCharacter(randomVector.get(i), students));
             }

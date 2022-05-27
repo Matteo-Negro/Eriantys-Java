@@ -140,6 +140,8 @@ public class ClientCli extends Thread {
             }
         } catch (Exception e) {
             Log.error(e);
+        } catch (Error e) {
+            Log.error(e);
         } finally {
             clearScreen(terminal, true);
             if (this.gameServer != null)

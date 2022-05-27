@@ -32,6 +32,21 @@ public class Assistant {
     }
 
     /**
+     * Class constructor used to restore the game.
+     *
+     * @param id    Identifier of the Assistant.
+     * @param bonus true if the assistant has a movement bonus.
+     * @throws IndexOutOfBoundsException If the passed ID is not between 1 and 10.
+     */
+    public Assistant(int id, boolean bonus) throws IndexOutOfBoundsException {
+        if (id < 1 || id > 10)
+            throw new IndexOutOfBoundsException("The Assistant has to have a value between 1 and 10, passed " + id + ".");
+        this.id = id;
+        this.maxDistance = id / 2 + 1;
+        this.bonus = bonus;
+    }
+
+    /**
      * Gets the ID of the card.
      *
      * @return ID of the card.
@@ -45,7 +60,7 @@ public class Assistant {
      *
      * @return Bonus boolean attribute.
      */
-    public boolean hasBonus(){
+    public boolean hasBonus() {
         return bonus;
     }
 

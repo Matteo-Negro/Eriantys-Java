@@ -18,7 +18,6 @@ import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -55,7 +54,7 @@ public class Server {
         this.savePath = savePath != null
                 ? savePath
                 : Paths.get(
-                        new File(ServerLauncher.class.getProtectionDomain().getCodeSource().getLocation().getFile()).getParent(),
+                new File(ServerLauncher.class.getProtectionDomain().getCodeSource().getLocation().getFile()).getParent(),
                 "database"
         ).toString();
         games = new HashMap<>();

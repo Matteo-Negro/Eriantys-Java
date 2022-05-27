@@ -8,7 +8,6 @@ import it.polimi.ingsw.server.model.board.effects.HerbalistEffect;
 import it.polimi.ingsw.server.model.board.effects.JesterEffect;
 import it.polimi.ingsw.server.model.board.effects.MonkEffect;
 import it.polimi.ingsw.server.model.board.effects.PrincessEffect;
-import it.polimi.ingsw.server.model.player.Assistant;
 import it.polimi.ingsw.server.model.player.Player;
 import it.polimi.ingsw.utilities.*;
 import it.polimi.ingsw.utilities.exceptions.*;
@@ -206,7 +205,8 @@ public class GameController extends Thread {
         if (isFull()) throw new FullGameException();
 
         synchronized (this.users) {
-            if (this.users.get(name) != null || this.users.keySet().size() == this.expectedPlayers && !this.users.containsKey(name)) throw new AlreadyExistingPlayerException();
+            if (this.users.get(name) != null || this.users.keySet().size() == this.expectedPlayers && !this.users.containsKey(name))
+                throw new AlreadyExistingPlayerException();
 
             this.users.put(name, user);
             this.connectedPlayers++;
@@ -223,7 +223,7 @@ public class GameController extends Thread {
      */
     public void removeUser(User user) {
         synchronized (this.users) {
-            if (user.getUsername() == null){
+            if (user.getUsername() == null) {
                 return;
             }
             this.users.replace(user.getUsername(), null);
@@ -231,7 +231,7 @@ public class GameController extends Thread {
         }
         this.notifyUsers(MessageCreator.error("UserDisconnected"));
 
-        synchronized (this.actionNeededLock){
+        synchronized (this.actionNeededLock) {
             this.actionNeededLock.notify();
         }
     }
@@ -292,7 +292,7 @@ public class GameController extends Thread {
         while (true) {
             while (!this.isFull()) {
                 try {
-                    synchronized (this.isFullLock){
+                    synchronized (this.isFullLock) {
                         this.isFullLock.wait();
                     }
                 } catch (InterruptedException e) {
@@ -318,8 +318,7 @@ public class GameController extends Thread {
         int indexOfRoundWinner = this.getGameModel().getPlayers().indexOf(roundWinner);
 
         for (int i = 0; i < this.getExpectedPlayers(); i++) {
-
-            if(i==0) this.getGameModel().nextRound();
+            if (i == 0) this.getGameModel().nextRound();
 
             Player currentPlayer = this.getGameModel().getPlayers().get((indexOfRoundWinner + i) % this.getExpectedPlayers());
             Log.debug("Current player" + currentPlayer.getName());
@@ -332,7 +331,7 @@ public class GameController extends Thread {
             //WAITING FOR ASSISTANT TO BE PLAYED
             Log.debug("Waiting for assistant to be played.");
             while (this.getSubPhase() != GameControllerStates.ASSISTANT_PLAYED) {
-                synchronized(this.actionNeededLock) {
+                synchronized (this.actionNeededLock) {
                     try {
                         this.actionNeededLock.wait();
 
@@ -377,7 +376,7 @@ public class GameController extends Thread {
 
             //WAITING FOR A CLOUD TO BE CHOSEN (refill command)
             while (this.getSubPhase() != GameControllerStates.END_TURN) {
-                synchronized(this.actionNeededLock) {
+                synchronized (this.actionNeededLock) {
                     try {
                         this.actionNeededLock.wait();
 
@@ -387,8 +386,8 @@ public class GameController extends Thread {
                         return;
                     }
                 }
-                synchronized (this.isFullLock){
-                    if(!this.isFull()) return;
+                synchronized (this.isFullLock) {
+                    if (!this.isFull()) return;
                 }
             }
 
@@ -424,9 +423,8 @@ public class GameController extends Thread {
      */
     public void playAssistantCard(String player, int assistant) {
         try {
-            this.gameModel.getGameBoard().addPlayedAssistant(this.gameModel.getPlayerByName(player), new Assistant(assistant));
-
-        } catch (IllegalMoveException e) {
+            this.gameModel.getGameBoard().addPlayedAssistant(this.gameModel.getPlayerByName(player), this.gameModel.getPlayerByName(player).playAssistant(assistant));
+        } catch (IllegalMoveException | AlreadyPlayedException e) {
             this.getUsers().remove(this.getUser(player));
         }
         try {
@@ -435,7 +433,7 @@ public class GameController extends Thread {
         } catch (AlreadyPlayedException e) {
             this.getUsers().remove(this.getUser(player));
         }
-        //this.saveGame();
+        this.saveGame();
         synchronized (this.actionNeededLock){
             this.actionNeededLock.notify();
         }
@@ -459,8 +457,7 @@ public class GameController extends Thread {
         synchronized (this.actionNeededLock){
             this.actionNeededLock.notify();
         }
-
-        //this.saveGame();
+        this.saveGame();
     }
 
     /**
@@ -590,7 +587,7 @@ public class GameController extends Thread {
             motherNatureAction(targetIsland);
         } else targetIsland.removeBan();
 
-        //this.saveGame();
+        this.saveGame();
     }
 
     /**
@@ -651,7 +648,7 @@ public class GameController extends Thread {
         synchronized (this.actionNeededLock){
             this.actionNeededLock.notify();
         }
-        //this.saveGame();
+        this.saveGame();
     }
 
     /**
@@ -717,8 +714,7 @@ public class GameController extends Thread {
         } catch (IslandNotFoundException nfe) {
             throw new IllegalMoveException();
         }
-
-        //this.saveGame();
+        this.saveGame();
     }
 
     /**
@@ -816,29 +812,29 @@ public class GameController extends Thread {
     }
 
     public void notifyUsers(JsonObject message) {
-        synchronized (this.users){
+        synchronized (this.users) {
             for (User user : this.getUsers()) {
-                if(user!=null)
+                if (user != null)
                     user.sendMessage(message);
             }
         }
     }
 
     public void notifyUsersExcept(JsonObject message, User exception) {
-        synchronized (this.users){
+        synchronized (this.users) {
             for (User user : this.getUsers()) {
                 if (!user.getUsername().equals(exception.getUsername())) user.sendMessage(message);
             }
         }
     }
 
-    public void checkStartCondition(){
+    public void checkStartCondition() {
         if (this.isFull()) {
             this.notifyUsers(MessageCreator.status(this));
             Log.debug("Status message sent to users.");
             this.notifyUsers(MessageCreator.gameStart());
             Log.debug("GameStart message sent to users.");
-            synchronized (this.isFullLock){
+            synchronized (this.isFullLock) {
                 this.isFullLock.notify();
             }
         }
