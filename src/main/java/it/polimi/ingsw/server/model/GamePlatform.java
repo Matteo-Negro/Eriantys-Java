@@ -273,7 +273,7 @@ public class GamePlatform {
             player = playedAssistantsOrder.stream()
                     .filter(pair -> pair.value().getId() == remainingPlayers.stream()
                             .mapToInt(item -> playedAssistants.get(item).getId())
-                            .max()
+                            .min()
                             .getAsInt())
                     .toList()
                     .get(0)
