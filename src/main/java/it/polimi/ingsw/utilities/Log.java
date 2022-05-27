@@ -95,6 +95,10 @@ public class Log {
         printError(exception.getMessage() + "\n" + getStackTrace(exception.getStackTrace()));
     }
 
+    public static void error(Error error) {
+        printError(error.getMessage() + "\n" + getStackTrace(error.getStackTrace()));
+    }
+
     public static void error(String message) {
         printError(message);
     }
