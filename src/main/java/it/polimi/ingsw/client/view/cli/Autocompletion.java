@@ -56,8 +56,6 @@ public class Autocompletion {
                 case MOVE_MOTHER_NATURE -> nodes.addAll(motherNatureMoves());
                 case MOVE_STUDENT_1, MOVE_STUDENT_2, MOVE_STUDENT_3, MOVE_STUDENT_4 -> nodes.addAll(studentsMoves());
             }
-            // TODO: add payment for special character
-            // TODO: add every special character special commands (switch case)
             if (cli.getGameModel().isExpert()) {
                 if (cli.getGameModel().getGameBoard().getSpecialCharacters().stream().anyMatch(SpecialCharacter::isActive))
                     nodes.addAll(specialCharactersActions());
@@ -85,7 +83,7 @@ public class Autocompletion {
     private static List<Node> motherNatureMoves() {
         List<Node> nodes = new ArrayList<>();
         for (String island : getMotherNatureIslands())
-            nodes.add(node("move", node("mother", node("nature", node("to", node(island))))));
+            nodes.add(node("move", node("mother-nature", node("to", node(island)))));
         return nodes;
     }
 
@@ -113,81 +111,113 @@ public class Autocompletion {
     }
 
     private static List<Node> specialCharactersActions() {
-        List<Node> nodes = new ArrayList<>();
-        SpecialCharacter specialCharacter = cli.getGameModel().getGameBoard().getSpecialCharacters().stream().filter(SpecialCharacter::isActive).findFirst().get();
-        try {
-            switch (specialCharacter.getId()) {
-                case 1 -> {
-                    for (Map.Entry<HouseColor, Integer> entry : specialCharacter.getStudents().entrySet())
-                        for (String island : islands)
-                            nodes.add(node("move",
-                                    node("student",
-                                            node(entry.getKey().name().toLowerCase(Locale.ROOT),
-                                                    node("from",
-                                                            node("CHR01",
-                                                                    node("to",
-                                                                            node(island))))))));
-                }
-                case 3 -> {
-                    for (String island : islands)
-                        nodes.add(node("resolve",
-                                node(island)));
-                }
-                case 5 -> {
-                    if (specialCharacter.getAvailableBans() > 0)
-                        for (String island : islands)
-                            nodes.add(node("ban",
-                                    node(island)));
-                }
-                case 7 -> {
-                    Map<HouseColor, Integer> entrance = cli.getGameModel().getPlayerByName(cli.getUserName()).getSchoolBoard().getEntrance();
-                    Map<HouseColor, Integer> card = specialCharacter.getStudents();
-                    for (Map.Entry<HouseColor, Integer> entranceEntry : entrance.entrySet())
-                        for (Map.Entry<HouseColor, Integer> cardEntry : card.entrySet())
-                            if (entranceEntry.getValue() != 0 && cardEntry.getValue() != 0)
-                                nodes.add(node("swap",
-                                        node("entrance-student",
-                                                node(entranceEntry.getKey().name().toLowerCase(Locale.ROOT),
-                                                        node("with",
-                                                                node("AST07-student",
-                                                                        node(cardEntry.getKey().name().toLowerCase(Locale.ROOT))))))));
-                }
-                case 9 -> {
-                    for (HouseColor color : HouseColor.values())
-                        nodes.add(node("ignore",
-                                node("color",
-                                        node(color.name().toLowerCase(Locale.ROOT)))));
-                }
-                case 10 -> {
-                    Map<HouseColor, Integer> entrance = cli.getGameModel().getPlayerByName(cli.getUserName()).getSchoolBoard().getEntrance();
-                    Map<HouseColor, Integer> diningRoom = cli.getGameModel().getPlayerByName(cli.getUserName()).getSchoolBoard().getDiningRoom();
-                    for (Map.Entry<HouseColor, Integer> entranceEntry : entrance.entrySet())
-                        for (Map.Entry<HouseColor, Integer> diningRoomEntry : diningRoom.entrySet())
-                            if (entranceEntry.getValue() != 0 && diningRoomEntry.getValue() != 0)
-                                nodes.add(node("swap",
-                                        node("entrance-student",
-                                                node(entranceEntry.getKey().name().toLowerCase(Locale.ROOT),
-                                                        node("with",
-                                                                node("dining-room-student",
-                                                                        node(diningRoomEntry.getKey().name().toLowerCase(Locale.ROOT))))))));
-                }
-                case 11 -> {
-                    for (Map.Entry<HouseColor, Integer> entry : specialCharacter.getStudents().entrySet())
-                        if (entry.getValue() != 0)
-                            nodes.add(node("take",
-                                    node("AST11-student",
-                                            node(entry.getKey().name().toLowerCase(Locale.ROOT)))));
-                }
-                case 12 -> {
-                    for (HouseColor color : HouseColor.values())
-                        nodes.add(node("return",
-                                node("students",
-                                        node(color.name().toLowerCase(Locale.ROOT)))));
-                }
-            }
-        } catch (NoSuchElementException e) {
+        Optional<SpecialCharacter> optional = cli.getGameModel().getGameBoard().getSpecialCharacters().stream().filter(SpecialCharacter::isActive).findFirst();
+        if (optional.isEmpty())
             return List.of();
-        }
+        SpecialCharacter specialCharacter = optional.get();
+        return Collections.unmodifiableList(switch (specialCharacter.getId()) {
+            case 1 -> specialCharacter1(specialCharacter.getStudents());
+            case 3 -> specialCharacter3();
+            case 5 -> specialCharacter5(specialCharacter.getAvailableBans());
+            case 7 -> specialCharacter7(
+                    cli.getGameModel().getPlayerByName(cli.getUserName()).getSchoolBoard().getEntrance(),
+                    specialCharacter.getStudents()
+            );
+            case 9 -> specialCharacter9();
+            case 10 -> specialCharacter10(
+                    cli.getGameModel().getPlayerByName(cli.getUserName()).getSchoolBoard().getEntrance(),
+                    cli.getGameModel().getPlayerByName(cli.getUserName()).getSchoolBoard().getDiningRoom()
+            );
+            case 11 -> specialCharacter11(specialCharacter.getStudents());
+            case 12 -> specialCharacter12();
+            default -> new ArrayList<Node>();
+        });
+    }
+
+    private static List<Node> specialCharacter1(Map<HouseColor, Integer> students) {
+        List<Node> nodes = new ArrayList<>();
+        for (Map.Entry<HouseColor, Integer> entry : students.entrySet())
+            for (String island : islands)
+                nodes.add(node("move",
+                        node("student",
+                                node(entry.getKey().name().toLowerCase(Locale.ROOT),
+                                        node("from",
+                                                node("CHR01",
+                                                        node("to",
+                                                                node(island))))))));
+        return nodes;
+    }
+
+    private static List<Node> specialCharacter3() {
+        List<Node> nodes = new ArrayList<>();
+        for (String island : islands)
+            nodes.add(node("resolve",
+                    node(island)));
+        return nodes;
+    }
+
+    private static List<Node> specialCharacter5(int availableBans) {
+        List<Node> nodes = new ArrayList<>();
+        if (availableBans > 0)
+            for (String island : islands)
+                nodes.add(node("ban",
+                        node(island)));
+        return nodes;
+    }
+
+    private static List<Node> specialCharacter7(Map<HouseColor, Integer> entrance, Map<HouseColor, Integer> card) {
+        List<Node> nodes = new ArrayList<>();
+        for (Map.Entry<HouseColor, Integer> entranceEntry : entrance.entrySet())
+            for (Map.Entry<HouseColor, Integer> cardEntry : card.entrySet())
+                if (entranceEntry.getValue() != 0 && cardEntry.getValue() != 0)
+                    nodes.add(node("swap",
+                            node("entrance-student",
+                                    node(entranceEntry.getKey().name().toLowerCase(Locale.ROOT),
+                                            node("with",
+                                                    node("AST07-student",
+                                                            node(cardEntry.getKey().name().toLowerCase(Locale.ROOT))))))));
+        return nodes;
+    }
+
+    private static List<Node> specialCharacter9() {
+        List<Node> nodes = new ArrayList<>();
+        for (HouseColor color : HouseColor.values())
+            nodes.add(node("ignore",
+                    node("color",
+                            node(color.name().toLowerCase(Locale.ROOT)))));
+        return nodes;
+    }
+
+    private static List<Node> specialCharacter10(Map<HouseColor, Integer> entrance, Map<HouseColor, Integer> diningRoom) {
+        List<Node> nodes = new ArrayList<>();
+        for (Map.Entry<HouseColor, Integer> entranceEntry : entrance.entrySet())
+            for (Map.Entry<HouseColor, Integer> diningRoomEntry : diningRoom.entrySet())
+                if (entranceEntry.getValue() != 0 && diningRoomEntry.getValue() != 0)
+                    nodes.add(node("swap",
+                            node("entrance-student",
+                                    node(entranceEntry.getKey().name().toLowerCase(Locale.ROOT),
+                                            node("with",
+                                                    node("dining-room-student",
+                                                            node(diningRoomEntry.getKey().name().toLowerCase(Locale.ROOT))))))));
+        return nodes;
+    }
+
+    private static List<Node> specialCharacter11(Map<HouseColor, Integer> students) {
+        List<Node> nodes = new ArrayList<>();
+        for (Map.Entry<HouseColor, Integer> entry : students.entrySet())
+            if (entry.getValue() != 0)
+                nodes.add(node("take",
+                        node("AST11-student",
+                                node(entry.getKey().name().toLowerCase(Locale.ROOT)))));
+        return nodes;
+    }
+
+    private static List<Node> specialCharacter12() {
+        List<Node> nodes = new ArrayList<>();
+        for (HouseColor color : HouseColor.values())
+            nodes.add(node("return",
+                    node("students",
+                            node(color.name().toLowerCase(Locale.ROOT)))));
         return nodes;
     }
 
