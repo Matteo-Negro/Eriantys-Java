@@ -85,11 +85,11 @@ public class User extends Thread {
                 incomingMessage = getCommand();
                 if (!incomingMessage.get("type").getAsString().equals("pong") && !incomingMessage.get("type").getAsString().equals("error"))
                     manageCommand(incomingMessage);
-                if(this.gameController != null && !this.gameController.isFull() && this.isLogged()){
-                    synchronized (connectedLock){
-                        try{
+                if (this.gameController != null && !this.gameController.isFull() && this.isLogged()) {
+                    synchronized (connectedLock) {
+                        try {
                             this.connectedLock.wait(1500);
-                        }catch(InterruptedException ie){
+                        } catch (InterruptedException ie) {
                             this.disconnected();
                         }
                     }
@@ -192,20 +192,21 @@ public class User extends Thread {
     }
 
     /**
-     * Sets the logged attribute to the given status.
-     * @param status The new logged value.
-     */
-    private void setLogged(boolean status){
-        this.logged = status;
-    }
-
-    /**
      * Returns the boolean value of logged attribute.
      *
      * @return True if the user has successfully logged into a game, false otherwise.
      */
-    private boolean isLogged(){
+    private boolean isLogged() {
         return this.logged;
+    }
+
+    /**
+     * Sets the logged attribute to the given status.
+     *
+     * @param status The new logged value.
+     */
+    private void setLogged(boolean status) {
+        this.logged = status;
     }
 
     /**

@@ -62,13 +62,13 @@ public class JsonToObjects {
      * @return The List that has been built.
      */
     private static List<Assistant> parseAssistants(JsonArray json) {
-        Set<Integer> ids = new HashSet<>();
+        Map<Integer, Boolean> ids = new HashMap<>();
         List<Assistant> assistants = new ArrayList<>();
 
-        for (JsonElement id : json)
-            ids.add(id.getAsInt());
+        for (JsonElement element : json)
+            ids.put(element.getAsJsonObject().get("id").getAsInt(), element.getAsJsonObject().get("bonus").getAsBoolean());
         for (int index = 1; index <= 10; index++)
-            assistants.add(ids.contains(index) ? new Assistant(index) : null);
+            assistants.add(ids.containsKey(index) ? new Assistant(index, ids.get(index)) : null);
 
         return assistants;
     }
