@@ -127,7 +127,7 @@ public class Player {
      * @throws AlreadyPlayedException If the Assistant had already been played.
      */
     public Assistant playAssistant(int id) throws AlreadyPlayedException {
-        if (assistants.get(id) == null)
+        if (assistants.get(id - 1) == null)
             throw new AlreadyPlayedException("The Assistant #" + id + " has already been played.");
         Assistant tmp = assistants.get(id - 1);
         assistants.set(id - 1, null);

@@ -301,7 +301,6 @@ public class GameController extends Thread {
                     return;
                 }
             }
-            Log.debug("Scanning phase");
             switch (this.getPhase()) {
                 case PLANNING -> this.planningPhase();
                 case ACTION -> this.actionPhase();
@@ -353,10 +352,8 @@ public class GameController extends Thread {
             //DISABLING THE CURRENT USER'S INPUT.
             this.activeUser = null;
             notifyUsers(MessageCreator.turnEnable(currentUser.getUsername(),false));
-            Log.debug("Disabled user input.");
             this.setSubPhase(GameControllerStates.PLAY_ASSISTANT);
             notifyUsers(MessageCreator.status(this));
-            Log.debug("New status notified.");
         }
         this.getGameModel().updateTurnOrder();
         this.phase = Phase.ACTION;
@@ -367,14 +364,16 @@ public class GameController extends Thread {
      * This method manages the action phase.
      */
     private void actionPhase() {
-
+        Log.debug("Action phase");
         for (Player currentPlayer : this.getGameModel().getTurnOrder()) {
             //ENABLING THE INPUT OF THE CURRENT USER (taken from the turn list).
             User currentUser = getUser(currentPlayer.getName());
+            Log.debug("Current player" + currentPlayer.getName());
             this.activeUser = currentUser.getUsername();
             notifyUsers(MessageCreator.turnEnable(currentUser.getUsername(), true));
 
             //WAITING FOR A CLOUD TO BE CHOSEN (refill command)
+            Log.debug("Waiting for a cloud to be chosen.");
             while (this.getSubPhase() != GameControllerStates.END_TURN) {
                 synchronized (this.actionNeededLock) {
                     try {
@@ -424,20 +423,15 @@ public class GameController extends Thread {
     public void playAssistantCard(String player, int assistant) {
         try {
             this.gameModel.getGameBoard().addPlayedAssistant(this.gameModel.getPlayerByName(player), this.gameModel.getPlayerByName(player).playAssistant(assistant));
-        } catch (IllegalMoveException | AlreadyPlayedException e) {
-            this.getUsers().remove(this.getUser(player));
-        }
-        try {
-            this.gameModel.getPlayerByName(player).playAssistant(assistant);
             this.setSubPhase(GameControllerStates.ASSISTANT_PLAYED);
-        } catch (AlreadyPlayedException e) {
+        } catch (IllegalMoveException | AlreadyPlayedException e) {
+            Log.warning(e);
             this.getUsers().remove(this.getUser(player));
         }
         this.saveGame();
         synchronized (this.actionNeededLock){
             this.actionNeededLock.notify();
         }
-
         Log.debug("Assistant played");
     }
 

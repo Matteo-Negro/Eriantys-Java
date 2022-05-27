@@ -131,11 +131,11 @@ public class User extends Thread {
      * @param command The command to manage.
      */
     private void manageCommand(JsonObject command) throws IllegalMoveException {
+        Log.debug(command.toString());
         switch (command.get("type").getAsString()) {
             case "gameCreation" -> {
                 Log.info("GameCreation message arrived");
                 sendMessage(MessageCreator.gameCreation(Matchmaking.gameCreation(command, server)));
-                Log.debug("GameCreation reply sent");
             }
             case "enterGame" -> {
                 Log.info("enterGame message arrived");
@@ -162,8 +162,11 @@ public class User extends Thread {
             }
             case "command" -> {
                 switch (command.get("subtype").getAsString()) {
-                    case "playAssistant" ->
-                            this.gameController.playAssistantCard(command.get("player").getAsString(), command.get("assistant").getAsInt());
+                    case "playAssistant" ->{
+                        Log.debug("PlayAssistant command arrived.");
+                        this.gameController.playAssistantCard(command.get("player").getAsString(), command.get("assistant").getAsInt());
+                    }
+
                     case "move" -> {
                         switch (command.get("pawn").getAsString()) {
                             case "student" -> this.gameController.moveStudent(command);
