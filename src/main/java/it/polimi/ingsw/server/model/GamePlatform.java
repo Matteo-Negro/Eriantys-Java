@@ -117,6 +117,7 @@ public class GamePlatform {
         }
         tmp = new Player(name, getWizardType(), getTowersNumber(), getTowerType(), students);
         clockwiseOrder.add(tmp);
+        turnOrder.add(tmp);
         players.put(name, tmp);
         if (players.size() == 1) {
             currentPlayer = name;
