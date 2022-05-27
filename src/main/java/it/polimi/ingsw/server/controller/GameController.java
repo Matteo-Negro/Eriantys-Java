@@ -318,9 +318,11 @@ public class GameController extends Thread {
         int indexOfRoundWinner = this.getGameModel().getPlayers().indexOf(roundWinner);
 
         for (int i = 0; i < this.getExpectedPlayers(); i++) {
+
             if(i==0) this.getGameModel().nextRound();
 
             Player currentPlayer = this.getGameModel().getPlayers().get((indexOfRoundWinner + i) % this.getExpectedPlayers());
+            Log.debug("Current player" + currentPlayer.getName());
 
             //ENABLING THE CURRENT USER INPUT (taken from the clockwise order).
             User currentUser = getUser(currentPlayer.getName());
@@ -341,18 +343,25 @@ public class GameController extends Thread {
                     }
                 }
                 synchronized (this.isFullLock){
-                    Log.debug("Game is not full.");
-                    if(!this.isFull()) return;
+                    if(!this.isFull()){
+                        Log.debug("Game is not full.");
+                        return;
+                    }
+
                 }
             }
-            Log.debug("Assistant played");
+
             //DISABLING THE CURRENT USER'S INPUT.
             this.activeUser = null;
             notifyUsers(MessageCreator.turnEnable(currentUser.getUsername(),false));
+            Log.debug("Disabled user input.");
             this.setSubPhase(GameControllerStates.PLAY_ASSISTANT);
+            notifyUsers(MessageCreator.status(this));
+            Log.debug("New status notified.");
         }
         this.getGameModel().updateTurnOrder();
         this.phase = Phase.ACTION;
+        notifyUsers(MessageCreator.status(this));
     }
 
     /**
@@ -396,6 +405,8 @@ public class GameController extends Thread {
                 this.setSubPhase(GameControllerStates.PLAY_ASSISTANT);
             }
 
+            notifyUsers(MessageCreator.status(this));
+
             if (endGame()) {
                 for (User user : this.getUsers()) {
                     this.removeUser(user);
@@ -418,15 +429,18 @@ public class GameController extends Thread {
         } catch (IllegalMoveException e) {
             this.getUsers().remove(this.getUser(player));
         }
-
         try {
             this.gameModel.getPlayerByName(player).playAssistant(assistant);
             this.setSubPhase(GameControllerStates.ASSISTANT_PLAYED);
         } catch (AlreadyPlayedException e) {
             this.getUsers().remove(this.getUser(player));
         }
+        //this.saveGame();
+        synchronized (this.actionNeededLock){
+            this.actionNeededLock.notify();
+        }
 
-        this.saveGame();
+        Log.debug("Assistant played");
     }
 
     /**
@@ -442,10 +456,11 @@ public class GameController extends Thread {
         }
 
         moveStudentTo(command);
+        synchronized (this.actionNeededLock){
+            this.actionNeededLock.notify();
+        }
 
-        notifyUsers(MessageCreator.status(this));
-
-        this.saveGame();
+        //this.saveGame();
     }
 
     /**
@@ -575,8 +590,7 @@ public class GameController extends Thread {
             motherNatureAction(targetIsland);
         } else targetIsland.removeBan();
 
-        notifyUsers(MessageCreator.status(this));
-        this.saveGame();
+        //this.saveGame();
     }
 
     /**
@@ -634,8 +648,10 @@ public class GameController extends Thread {
     public void chooseCloud(JsonObject command) {
         this.gameModel.getPlayerByName(command.get("player").getAsString()).getSchoolBoard().addToEntrance(this.gameModel.getGameBoard().getClouds().get(command.get("cloud").getAsInt()).flush());
         this.setSubPhase(GameControllerStates.END_TURN);
-        notifyUsers(MessageCreator.status(this));
-        this.saveGame();
+        synchronized (this.actionNeededLock){
+            this.actionNeededLock.notify();
+        }
+        //this.saveGame();
     }
 
     /**
@@ -702,9 +718,7 @@ public class GameController extends Thread {
             throw new IllegalMoveException();
         }
 
-        notifyUsers(MessageCreator.status(this));
-
-        this.saveGame();
+        //this.saveGame();
     }
 
     /**

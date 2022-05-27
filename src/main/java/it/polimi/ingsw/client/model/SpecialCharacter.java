@@ -92,6 +92,15 @@ public class SpecialCharacter {
     }
 
     /**
+     * Returns true if this character has already been paid during this round.
+     *
+     * @return The paidInRound attribute.
+     */
+    public boolean isPaidInRound(){
+        return this.paidInRound;
+    }
+
+    /**
      * Activates the specific effect assigned to the object.
      */
     public void activateEffect() {

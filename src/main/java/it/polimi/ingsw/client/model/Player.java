@@ -4,14 +4,12 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import it.polimi.ingsw.server.model.board.SpecialCharacter;
-import it.polimi.ingsw.utilities.HouseColor;
 import it.polimi.ingsw.utilities.Log;
 import it.polimi.ingsw.utilities.TowerType;
 import it.polimi.ingsw.utilities.WizardType;
 import it.polimi.ingsw.utilities.exceptions.AlreadyPlayedException;
 import it.polimi.ingsw.utilities.exceptions.NegativeException;
 import it.polimi.ingsw.utilities.exceptions.NotEnoughCoinsException;
-import it.polimi.ingsw.utilities.parsers.JsonToObjects;
 
 import java.util.*;
 
@@ -44,7 +42,7 @@ public class Player {
         this.coins = coins;
         this.hand = new ArrayList<>();
         this.currentPlayedAssistant = null;
-        if(playedAssistant!=null) this.currentPlayedAssistant = new Assistant(playedAssistant.get("id").getAsInt(), playedAssistant.get("bonus").getAsBoolean());
+        if(playedAssistant!=null) this.currentPlayedAssistant = new Assistant(playedAssistant.get("assistant").getAsInt(), playedAssistant.get("bonus").getAsBoolean());
         this.parseHand(hand);
         this.parseSchoolBoard(schoolBoard);
     }

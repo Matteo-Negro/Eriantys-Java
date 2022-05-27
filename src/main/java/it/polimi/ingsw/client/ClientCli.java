@@ -3,9 +3,7 @@ package it.polimi.ingsw.client;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import it.polimi.ingsw.client.controller.GameServer;
-import it.polimi.ingsw.client.model.GameModel;
-import it.polimi.ingsw.client.model.Island;
-import it.polimi.ingsw.client.model.SpecialCharacter;
+import it.polimi.ingsw.client.model.*;
 import it.polimi.ingsw.client.view.cli.Autocompletion;
 import it.polimi.ingsw.client.view.cli.colours.*;
 import it.polimi.ingsw.client.view.cli.pages.*;
@@ -358,7 +356,10 @@ public class ClientCli extends Thread {
                 //Command parsing and check.
                 message = CommandParser.commandManager(command, userName);
                 try{
-                    if(checkMessage(message)) getGameServer().sendCommand(message);
+                    if(checkMessage(message)){
+                        getGameServer().sendCommand(message);
+                        Log.debug("Command sent to game server.");
+                    }
                     else errorOccurred("Command not allowed");
                 }catch(IllegalActionException iae){
                     errorOccurred("Connection lost.");
@@ -429,12 +430,11 @@ public class ClientCli extends Thread {
      */
     private boolean checkMessage(JsonObject message) throws IllegalActionException{
         if(this.getGameModel().getPhase().equals(Phase.PLANNING)){
-            if(!message.get("subtype").getAsString().equals("playAssistant")) return false;
-            else{
-                int assistantId = message.get("assistant").getAsInt();
-                return !message.get("subtype").getAsString().equals("playAssistant") || getGameModel().getPlayerByName(this.getUserName()).getAssistantById(assistantId) != null;
+            try{
+                checkAssistant(message);
+            }catch(IllegalMoveException ime){
+                return false;
             }
-
         }
         else{
             try{
@@ -452,6 +452,24 @@ public class ClientCli extends Thread {
             }
         }
         return true;
+    }
+
+    /**
+     * Checks if the assistant play request is legal.
+     *
+     * @param message The message to check.
+     * @throws IllegalMoveException Thrown if the client model is not aligned with that of the game server.
+     */
+    private void checkAssistant(JsonObject message) throws IllegalMoveException{
+        if(!message.get("subtype").getAsString().equals("playAssistant")) throw new IllegalMoveException();
+        else{
+            int assistantId = message.get("assistant").getAsInt();
+            if(!message.get("subtype").getAsString().equals("playAssistant") || getGameModel().getPlayerByName(this.getUserName()).getAssistantById(assistantId) == null)
+                throw new IllegalMoveException();
+            for(Player p : getGameModel().getPlayers()){
+                if(p.getCurrentPlayedAssistant()!=null && assistantId == p.getCurrentPlayedAssistant().getId()) throw new IllegalMoveException();
+            }
+        }
     }
 
     /**
@@ -543,13 +561,12 @@ public class ClientCli extends Thread {
      * @throws IllegalMoveException Thrown if the client model is not aligned with that of the game server.
      */
     private void checkCharacterPayment(JsonObject message) throws IllegalMoveException{
-        if(getGameModel().getSubphase().equals(MOVE_MOTHER_NATURE))
+        if(getGameModel().getSubphase().equals(MOVE_MOTHER_NATURE) || !getGameModel().isExpert())
             throw new IllegalMoveException();
 
         int characterId = message.get("character").getAsInt();
-        if(!getGameModel().isExpert()) throw new IllegalMoveException();
 
-        if(getGameModel().getGameBoard().getSpecialCharacterById(characterId) == null || getGameModel().getGameBoard().getSpecialCharacterById(characterId).isActive())
+        if(getGameModel().getGameBoard().getSpecialCharacterById(characterId) == null || getGameModel().getGameBoard().getSpecialCharacterById(characterId).isActive() || getGameModel().getGameBoard().getSpecialCharacterById(characterId).isPaidInRound())
             throw new IllegalMoveException();
 
         if(getGameModel().getPlayerByName(this.getUserName()).getCoins() < getGameModel().getGameBoard().getSpecialCharacterById(characterId).getCost())

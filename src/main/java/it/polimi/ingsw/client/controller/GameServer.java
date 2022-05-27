@@ -69,7 +69,10 @@ public class GameServer extends Thread {
             case "enterGame" -> {
                 manageEnterGame(incomingMessage);
             }
-            case "waitingRoomUpdate" -> manageWaitingRoomUpdate(incomingMessage);
+            case "waitingRoomUpdate" -> {
+                Log.debug("WaitingRoomUpdate reply");
+                manageWaitingRoomUpdate(incomingMessage);
+            }
 
             case "login" -> {
                 Log.debug("login reply");
@@ -92,9 +95,9 @@ public class GameServer extends Thread {
             }
 
             case "endGame" -> {
+                Log.debug("endGame message arrived");
             }
 
-            case "command" -> manageCommand(incomingMessage);
             case "error" -> {
                 Log.debug("Error message arrived");
                 this.manageError(incomingMessage);
@@ -238,38 +241,4 @@ public class GameServer extends Thread {
         this.client.initializeGameModel(newGameModel);
     }
 
-    private void manageCommand(JsonObject incomingMessage) {
-        switch (incomingMessage.get("subtype").getAsString()) {
-            case "playAssistant" -> {
-                Log.debug("playAssistant");
-                sendCommand(incomingMessage);
-            }
-
-            case "pay" -> {
-                Log.debug("paySpecialCharacter");
-            }
-
-            case "refill" -> {
-                Log.debug("refill");
-            }
-
-            case "ban" -> {
-                Log.debug("ban");
-            }
-
-            case "motherNature" -> {
-                Log.debug("motherNature");
-            }
-
-            default -> {
-                // Move
-                if (incomingMessage.get("pawn").getAsString().equals("student")) {
-                    Log.debug("moveStudent");
-                } else {
-                    // Move professor
-                    Log.debug("moveProfessor");
-                }
-            }
-        }
-    }
 }
