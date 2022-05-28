@@ -192,9 +192,11 @@ public class GameServer extends Thread {
     }
 
     public JsonObject getMessage() throws IOException {
-
-        return JsonParser.parseString(this.inputStream.readLine()).getAsJsonObject();
-
+        try {
+            return JsonParser.parseString(this.inputStream.readLine()).getAsJsonObject();
+        } catch (Exception e) {
+            throw new IOException(e);
+        }
     }
 
     public void sendCommand(JsonObject command) {

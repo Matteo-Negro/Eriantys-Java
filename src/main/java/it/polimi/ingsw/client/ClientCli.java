@@ -346,6 +346,9 @@ public class ClientCli extends Thread {
 
         if (this.hasCommunicationToken()) {
             String command = readLine(getPrettyUserName(), terminal, Autocompletion.get(), true, history).toLowerCase(Locale.ROOT);
+            terminal.writer().print(background(Black.getInstance()));
+            terminal.writer().print(foreground(White.getInstance()));
+            terminal.flush();
 
             // Logout command.
             if (command.equals("exit") || command.equals("logout")) {
@@ -356,14 +359,22 @@ public class ClientCli extends Thread {
             }
 
             // Another player disconnected.
-            if (getGameModel() == null) return;
+            if (getGameModel() == null)
+                return;
 
             if (command.contains("info")) {
                 // TODO: managed info printing (for now the searches for info but it's a void method)
                 CommandParser.infoGenerator(command);
             } else {
                 //Command parsing and check.
-                messages.addAll(CommandParser.commandManager(command, gameModel.getPlayers()));
+                try {
+                    messages.addAll(CommandParser.commandManager(command, gameModel.getPlayers()));
+                } catch (Exception e) {
+                    Log.warning(e);
+                    clearScreen(terminal, false);
+                    this.errorOccurred("Wrong command");
+                    return;
+                }
                 if (messages.isEmpty())
                     return;
                 try {
@@ -372,15 +383,16 @@ public class ClientCli extends Thread {
                             getGameServer().sendCommand(message);
                             Log.debug("Command sent to game server.");
                         } else {
-                            errorOccurred("Command not allowed");
-                            break;
+                            clearScreen(terminal, false);
+                            errorOccurred("Command not allowed.");
+                            return;
                         }
                     }
+                    clearScreen(terminal, false);
                 } catch (IllegalActionException iae) {
+                    clearScreen(terminal, false);
                     errorOccurred("Connection lost.");
                     setClientState(ClientStates.CONNECTION_LOST);
-                    clearScreen(terminal, false);
-                    return;
                 }
             }
         } else {
@@ -451,7 +463,7 @@ public class ClientCli extends Thread {
             try {
                 switch (message.get("subtype").getAsString()) {
                     case "move" -> {
-                        switch(message.get("pawn").getAsString()){
+                        switch (message.get("pawn").getAsString()) {
                             case "student" -> checkStudentMove(message);
                             case "motherNature" -> checkMotherNatureMove(message);
                         }
@@ -504,7 +516,7 @@ public class ClientCli extends Thread {
                     if (getGameModel().getPlayersNumber() != 3) throw new IllegalActionException();
                 }
                 default -> {
-                    if(getGameModel().getSubphase().equals(CHOOSE_CLOUD) || !getGameModel().isExpert() || getGameModel().isExpert() && !getGameModel().isMovementEffectActive())
+                    if (getGameModel().getSubphase().equals(CHOOSE_CLOUD) || !getGameModel().isExpert() || getGameModel().isExpert() && !getGameModel().isMovementEffectActive())
                         throw new IllegalMoveException();
                 }
             }

@@ -126,6 +126,10 @@ public class CommandParser {
     public static List<JsonObject> commandManager(String command, List<Player> players) {
         String playerName = null;
         List<JsonObject> jsonCommands = new ArrayList<>();
+
+        if (command == null || command.isBlank())
+            return new ArrayList<>();
+
         String[] parsedCommand = command.split(" ");
 
         for (Player p : players)
@@ -145,7 +149,8 @@ public class CommandParser {
                     jsonCommands.add(MessageCreator.moveMotherNature(Integer.parseInt(parsedCommand[3].replaceAll("\\D", "")), false));
             case "ignore" -> jsonCommands.add(MessageCreator.ignoreColor(parsedCommand[1]));
             case "swap" -> jsonCommands.addAll(manageSwap());
-            case "ban" -> jsonCommands.add(MessageCreator.ban(Integer.parseInt(parsedCommand[1].replaceAll("\\D", ""))));
+            case "ban" ->
+                    jsonCommands.add(MessageCreator.ban(Integer.parseInt(parsedCommand[1].replaceAll("\\D", ""))));
         }
         return jsonCommands;
     }
