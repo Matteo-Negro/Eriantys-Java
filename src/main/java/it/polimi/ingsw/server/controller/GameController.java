@@ -443,18 +443,15 @@ public class GameController extends Thread {
      */
     public void moveStudent(JsonObject command) throws IllegalMoveException {
         try {
-            Log.debug("moveStudentFrom");
             moveStudentFrom(command);
         } catch (NoStudentException e) {
             Log.warning(e);
             throw new IllegalMoveException();
         }
-        Log.debug("moveStudentTo");
         moveStudentTo(command);
         synchronized (this.actionNeededLock) {
             this.actionNeededLock.notifyAll();
         }
-        Log.debug("Student moved.");
         this.saveGame();
     }
 
@@ -535,8 +532,7 @@ public class GameController extends Thread {
                     }
                 }
             }
-            case "bag" ->
-                    this.gameModel.getGameBoard().getBag().push(HouseColor.valueOf(command.get("color").getAsString()));
+            case "bag" -> this.gameModel.getGameBoard().getBag().push(HouseColor.valueOf(command.get("color").getAsString()));
             case "island" -> {
                 try {
                     this.gameModel.getGameBoard().getIslandById(command.get("toId").getAsInt()).addStudent(HouseColor.valueOf(command.get("color").getAsString()));
@@ -575,9 +571,12 @@ public class GameController extends Thread {
      */
     public void moveMotherNature(int idIsland) throws IllegalMoveException {
         Island targetIsland;
+
         try {
             targetIsland = this.gameModel.getGameBoard().getIslandById(idIsland);
+
             this.gameModel.getGameBoard().moveMotherNature(targetIsland, this.gameModel.getGameBoard().getPlayedAssistants().get(this.gameModel.getCurrentPlayer()));
+
             this.setSubPhase(GameControllerStates.CHOOSE_CLOUD);
         } catch (IslandNotFoundException e) {
             throw new IllegalMoveException();
@@ -586,6 +585,9 @@ public class GameController extends Thread {
             motherNatureAction(targetIsland);
         } else targetIsland.removeBan();
 
+        synchronized (this.actionNeededLock) {
+            this.actionNeededLock.notifyAll();
+        }
         this.saveGame();
     }
 
@@ -599,37 +601,46 @@ public class GameController extends Thread {
         Map<Player, Integer> influence;
 
         influence = this.gameModel.getGameBoard().getInfluence(island);
-        int max = Collections.max(influence.values());
-        List<Player> mostInfluential = influence.entrySet().stream().filter(entry -> entry.getValue() == max).map(Map.Entry::getKey).toList();
-        if (mostInfluential.size() == 1 || (mostInfluential.size() == 2 && mostInfluential.get(0).getSchoolBoard().getTowerType().equals(mostInfluential.get(1).getSchoolBoard().getTowerType()))) {
-            if (island.getTower() == null) {
-                this.getGameModel().getGameBoard().setTowerOnIsland(island, mostInfluential.get(0).getSchoolBoard().getTowerType());
-                try {
-                    for (Player player : this.gameModel.getPlayers()) {
-                        if (player.getSchoolBoard().getTowerType().equals(mostInfluential.get(0).getSchoolBoard().getTowerType())) {
-                            player.getSchoolBoard().removeTowers(island.getSize());
+
+        final int max;
+        if (influence.keySet().size() != 0) {
+            max = Collections.max(influence.values());
+
+            if (max > 0) {
+                List<Player> mostInfluential = influence.entrySet().stream().filter(entry -> entry.getValue() == max).map(Map.Entry::getKey).toList();
+
+                if (mostInfluential.size() == 1 || (mostInfluential.size() == 2 && mostInfluential.get(0).getSchoolBoard().getTowerType().equals(mostInfluential.get(1).getSchoolBoard().getTowerType()))) {
+                    if (island.getTower() == null) {
+                        this.getGameModel().getGameBoard().setTowerOnIsland(island, mostInfluential.get(0).getSchoolBoard().getTowerType());
+
+                        try {
+                            for (Player player : this.gameModel.getPlayers()) {
+                                if (player.getSchoolBoard().getTowerType().equals(mostInfluential.get(0).getSchoolBoard().getTowerType())) {
+                                    player.getSchoolBoard().removeTowers(island.getSize());
+                                }
+                            }
+                        } catch (NotEnoughTowersException e1) {
+                            endGame();
+                        } catch (NegativeException e2) {
+                            throw new IllegalMoveException();
                         }
-                    }
-                } catch (NotEnoughTowersException e1) {
-                    endGame();
-                } catch (NegativeException e2) {
-                    throw new IllegalMoveException();
-                }
-            } else {
-                if (!island.getTower().equals(mostInfluential.get(0).getSchoolBoard().getTowerType())) {
-                    try {
-                        for (Player player : this.gameModel.getPlayers()) {
-                            if (island.getTower().equals(player.getSchoolBoard().getTowerType())) {
-                                player.getSchoolBoard().addTowers(island.getSize());
-                            } else if (player.getSchoolBoard().getTowerType().equals(mostInfluential.get(0).getSchoolBoard().getTowerType())) {
-                                player.getSchoolBoard().removeTowers(island.getSize());
+                    } else {
+                        if (!island.getTower().equals(mostInfluential.get(0).getSchoolBoard().getTowerType())) {
+                            try {
+                                for (Player player : this.gameModel.getPlayers()) {
+                                    if (island.getTower().equals(player.getSchoolBoard().getTowerType())) {
+                                        player.getSchoolBoard().addTowers(island.getSize());
+                                    } else if (player.getSchoolBoard().getTowerType().equals(mostInfluential.get(0).getSchoolBoard().getTowerType())) {
+                                        player.getSchoolBoard().removeTowers(island.getSize());
+                                    }
+                                }
+                                this.getGameModel().getGameBoard().setTowerOnIsland(island, mostInfluential.get(0).getSchoolBoard().getTowerType());
+                            } catch (NotEnoughTowersException e1) {
+                                endGame();
+                            } catch (NegativeException e2) {
+                                throw new IllegalMoveException();
                             }
                         }
-                        this.getGameModel().getGameBoard().setTowerOnIsland(island, mostInfluential.get(0).getSchoolBoard().getTowerType());
-                    } catch (NotEnoughTowersException e1) {
-                        endGame();
-                    } catch (NegativeException e2) {
-                        throw new IllegalMoveException();
                     }
                 }
             }
@@ -677,22 +688,17 @@ public class GameController extends Thread {
         try {
             switch (character) {
                 case 1, 7, 10, 11 -> this.movementEffectActive = true;
-                case 2 ->
-                        this.getGameModel().getGameBoard().setTieWinner(this.getGameModel().getPlayerByName(command.get("player").getAsString()));
-                case 3 ->
-                        this.getGameModel().getGameBoard().getInfluence(this.getGameModel().getGameBoard().getIslandById(command.get("island").getAsInt()));
-                case 4 ->
-                        this.getGameModel().getGameBoard().getAssistant(this.getGameModel().getPlayerByName(command.get("player").getAsString())).setBonus();
+                case 2 -> this.getGameModel().getGameBoard().setTieWinner(this.getGameModel().getPlayerByName(command.get("player").getAsString()));
+                case 3 -> this.getGameModel().getGameBoard().getInfluence(this.getGameModel().getGameBoard().getIslandById(command.get("island").getAsInt()));
+                case 4 -> this.getGameModel().getGameBoard().getAssistant(this.getGameModel().getPlayerByName(command.get("player").getAsString())).setBonus();
                 case 5 -> {
                     this.getGameModel().getGameBoard().getIslandById(command.get("island").getAsInt()).setBan();
                     ((HerbalistEffect) this.getGameModel().getGameBoard().getCharacters().get(character).getEffect()).effect("take");
                 }
                 case 6 -> {
                 }//Automatically managed by model.
-                case 8 ->
-                        this.getGameModel().getGameBoard().setInfluenceBonus(this.getGameModel().getPlayerByName(command.get("player").getAsString()));
-                case 9 ->
-                        this.getGameModel().getGameBoard().setIgnoreColor(HouseColor.valueOf(command.get("ignoreColor").getAsString()));
+                case 8 -> this.getGameModel().getGameBoard().setInfluenceBonus(this.getGameModel().getPlayerByName(command.get("player").getAsString()));
+                case 9 -> this.getGameModel().getGameBoard().setIgnoreColor(HouseColor.valueOf(command.get("ignoreColor").getAsString()));
                 case 12 -> {
                     for (Player p : this.getGameModel().getPlayers()) {
                         for (int i = 0; i < 3; i++) {
@@ -794,7 +800,7 @@ public class GameController extends Thread {
      */
     public void checkProfessor(String color, String player) {
         String newProfessorOwner = player;
-        if(this.gameModel.getGameBoard().getProfessors().get(HouseColor.valueOf(color))!=null)
+        if (this.gameModel.getGameBoard().getProfessors().get(HouseColor.valueOf(color)) != null)
             newProfessorOwner = this.gameModel.getGameBoard().getProfessors().get(HouseColor.valueOf(color)).getName();
 
         int numStudent;
@@ -804,13 +810,13 @@ public class GameController extends Thread {
             if (numStudent < p.getSchoolBoard().getStudentsNumberOf(HouseColor.valueOf(color))) {
                 numStudent = p.getSchoolBoard().getStudentsNumberOf(HouseColor.valueOf(color));
                 newProfessorOwner = p.getName();
-            } else if (this.gameModel.getGameBoard().getTieWinner()!=null && this.gameModel.getGameBoard().getTieWinner().equals(p) && numStudent == p.getSchoolBoard().getStudentsNumberOf(HouseColor.valueOf(color))) {
+            } else if (this.gameModel.getGameBoard().getTieWinner() != null && this.gameModel.getGameBoard().getTieWinner().equals(p) && numStudent == p.getSchoolBoard().getStudentsNumberOf(HouseColor.valueOf(color))) {
                 numStudent = p.getSchoolBoard().getStudentsNumberOf(HouseColor.valueOf(color));
                 newProfessorOwner = p.getName();
             }
         }
 
-        if(newProfessorOwner!=null)
+        if (newProfessorOwner != null)
             this.gameModel.getGameBoard().setProfessor(HouseColor.valueOf(color), this.gameModel.getPlayerByName(newProfessorOwner));
     }
 

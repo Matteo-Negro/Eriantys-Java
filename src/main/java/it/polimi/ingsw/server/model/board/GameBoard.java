@@ -154,8 +154,15 @@ public class GameBoard {
         int maxDistance;
 
         maxDistance = playedAssistant.getMaxDistance();
-        if (targetIsland.getId() - this.motherNatureIsland.getId() > maxDistance)
+        Log.debug("max distance " + maxDistance);
+
+        int runDistance = targetIsland.getId() - this.motherNatureIsland.getId();
+        if(targetIsland.getId() < this.motherNatureIsland.getId()) runDistance = 12 + targetIsland.getId() - this.motherNatureIsland.getId();
+        Log.debug("run distance " + runDistance);
+
+        if (runDistance > maxDistance)
             throw new IllegalMoveException("Player would like moves MotherNature over assistant card limit.");
+        Log.debug("Correct distance.");
         this.motherNatureIsland = this.islands.get(targetIsland.getId());
     }
 
@@ -222,9 +229,13 @@ public class GameBoard {
         this.professors.keySet().forEach(professorColor -> {
             if (!professorColor.equals(ignoreColor)) {
                 if (!result.containsKey(this.professors.get(professorColor))) {
-                    result.put(this.professors.get(professorColor), 0);
+                    if(this.professors.get(professorColor)!=null) {
+                        result.put(this.professors.get(professorColor), 0);
+                    }
                 }
-                result.put(this.professors.get(professorColor), result.get(this.professors.get(professorColor)) + targetIsland.getStudents().get(professorColor) + (influenceBonus != null && this.professors.get(professorColor).equals(this.influenceBonus) ? 2 : 0));
+                if(this.professors.get(professorColor)!=null) {
+                    result.put(this.professors.get(professorColor), result.get(this.professors.get(professorColor)) + targetIsland.getStudents().get(professorColor) + (influenceBonus != null && this.professors.get(professorColor).equals(this.influenceBonus) ? 2 : 0));
+                }
             }
         });
 
@@ -256,20 +267,37 @@ public class GameBoard {
         island.setTower(tower);
 
         //Check if a merge to left is needed.
+        Log.debug("1");
         boolean mergeDone;
         do {
+            Log.debug("2");
             int islandsSize = getIslands().size();
+            Log.debug("islands number " + islandsSize);
+
             mergeDone = false;
+            if(islandsSize <= 3) break;
+
             for (int i = 0; i < islandsSize; i++) {
-                if (getIslands().get((i + islands.get(i).getSize() + 1) % 12).getId() == island.getId() && islands.get(i).getTower().equals(island.getTower())) {
-                    merge(islands.get(i), island);
-                    mergeDone = true;
-                    break;
-                }
-                if (islands.get((i - island.getSize() - 1) % 12).getId() == island.getId() && islands.get(i).getTower().equals(island.getTower())) {
-                    merge(island, islands.get(i));
-                    mergeDone = true;
-                    break;
+                if(getIslands().get(i).getId() != island.getId() && islands.get(i).getTower() != null){
+                    int currentIslandSize = getIslands().get(i).getSize();
+                    Log.debug("current island " + getIslands().get(i).getId());
+                    Log.debug("current island size" + currentIslandSize);
+                    Log.debug("next island id " + getIslands().get((i + currentIslandSize + 1) % 12).getId());
+                    Log.debug("prev island id " + getIslands().get((i + currentIslandSize - 1) % 12).getId());
+                    if (getIslands().get((i + currentIslandSize + 1) % 12).getId() == island.getId() && islands.get(i).getTower().equals(island.getTower())) {
+
+                        merge(islands.get(i), island);
+                        Log.debug("merge done right");
+                        mergeDone = true;
+                        break;
+                    }
+                    if (islands.get((i - island.getSize() - 1) % 12).getId() == island.getId() && islands.get(i).getTower().equals(island.getTower())) {
+
+                        merge(island, islands.get(i));
+                        Log.debug("merge done left");
+                        mergeDone = true;
+                        break;
+                    }
                 }
             }
         } while (mergeDone);

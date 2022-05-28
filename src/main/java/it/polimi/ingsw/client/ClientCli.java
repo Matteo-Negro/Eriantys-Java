@@ -561,9 +561,9 @@ public class ClientCli extends Thread {
      */
     private void checkMotherNatureMove(JsonObject message) throws IllegalMoveException {
         if (!getGameModel().getSubphase().equals(MOVE_MOTHER_NATURE)) throw new IllegalMoveException();
-
-        int finalIsland = message.get("island").getAsInt();
+        int finalIsland = message.get("island").getAsInt()-1;
         int maxDistance = getGameModel().getPlayerByName(this.getUserName()).getCurrentPlayedAssistant().getMaxDistance();
+
         int motherNatureIsland = 0;
         for (int i = 0; i < getGameModel().getGameBoard().getIslands().size(); i++) {
             Island isl = getGameModel().getGameBoard().getIslands().get(i);
@@ -604,7 +604,7 @@ public class ClientCli extends Thread {
      * @throws IllegalMoveException Thrown if the client model is not aligned with that of the game server.
      */
     private void checkEntranceRefill(JsonObject message) throws IllegalMoveException {
-        if (!getGameModel().getSubphase().equals(END_TURN)) throw new IllegalMoveException();
+        if (!getGameModel().getSubphase().equals(CHOOSE_CLOUD)) throw new IllegalMoveException();
 
         int cloudId = message.get("cloud").getAsInt();
         if (getGameModel().getGameBoard().getClouds().get(cloudId).getStudents(true) == null)

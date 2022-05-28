@@ -200,7 +200,7 @@ public class CommandParser {
             return MessageCreator.moveStudent(playerName, HouseColor.valueOf(color.toUpperCase(Locale.ROOT)), from, to, fromId == null ? null : Integer.parseInt(fromId)-1, toId == null ? null : Integer.parseInt(toId)-1);
         } else {
             //Move Mother Nature
-            return MessageCreator.moveMotherNature(Integer.parseInt(parsedCommand[3].replaceAll("\\D", "")), true);
+            return MessageCreator.moveMotherNature(Integer.parseInt(parsedCommand[3].replaceAll("\\D", ""))-1, true);
         }
     }
 
