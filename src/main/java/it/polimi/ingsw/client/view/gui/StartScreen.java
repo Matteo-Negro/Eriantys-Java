@@ -11,7 +11,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Objects;
 
 public class StartScreen {
