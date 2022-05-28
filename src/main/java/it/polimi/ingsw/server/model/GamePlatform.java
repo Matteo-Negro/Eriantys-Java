@@ -220,8 +220,10 @@ public class GamePlatform {
 
     /**
      * Moves to the next round.
+     *
+     * @throws EmptyStackException Thrown when the bag has no more students.
      */
-    public void nextRound() {
+    public void nextRound() throws EmptyStackException {
         Bag bag = gameBoard.getBag();
         gameBoard.flushAssistantsList();
         gameBoard.getClouds().forEach(cloud -> {

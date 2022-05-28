@@ -316,7 +316,8 @@ public class GameController extends Thread {
         int indexOfRoundWinner = this.getGameModel().getPlayers().indexOf(roundWinner);
 
         for (int i = 0; i < this.getExpectedPlayers(); i++) {
-            if (i == 0) this.getGameModel().nextRound();
+            if (i == 0)
+                this.getGameModel().nextRound();
 
             Player currentPlayer = this.getGameModel().getPlayers().get((indexOfRoundWinner + i) % this.getExpectedPlayers());
             Log.debug("Current player" + currentPlayer.getName());
@@ -332,7 +333,6 @@ public class GameController extends Thread {
                 synchronized (this.actionNeededLock) {
                     try {
                         this.actionNeededLock.wait();
-
                     } catch (InterruptedException ie) {
                         notifyUsers(MessageCreator.error("GameServerError"));
                         for (User user : this.getUsers()) this.removeUser(user);
@@ -344,7 +344,6 @@ public class GameController extends Thread {
                         Log.debug("Game is not full.");
                         return;
                     }
-
                 }
             }
 
