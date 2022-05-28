@@ -18,6 +18,8 @@ public class Autocompletion {
     private static ClientCli cli = null;
     private static List<String> islands = null;
     private static List<String> toList = null;
+    private static List<String> assistants = null;
+    private static List<String> specialCharacters = null;
 
     private Autocompletion() {
     }
@@ -28,6 +30,7 @@ public class Autocompletion {
         Autocompletion.cli = cli;
         initializeIslands();
         initializeToList();
+        initializeAssistants();
     }
 
     private static void initializeIslands() {
@@ -44,6 +47,22 @@ public class Autocompletion {
         Autocompletion.toList = Collections.unmodifiableList(toList);
     }
 
+    private static void initializeAssistants() {
+        List<String> assistants = new ArrayList<>();
+        for (int index = 1; index <= 10; index++)
+            assistants.add(String.format("AST%02d", index));
+        Autocompletion.assistants = Collections.unmodifiableList(assistants);
+    }
+
+    private static void initializeSpecialCharacters() {
+        if (!cli.getGameModel().isExpert())
+            specialCharacters = List.of();
+        List<String> specialCharacters = new ArrayList<>();
+        for (SpecialCharacter specialCharacter : cli.getGameModel().getGameBoard().getSpecialCharacters())
+            specialCharacters.add(String.format("CHR%02d", specialCharacter.getId()));
+        Autocompletion.specialCharacters = Collections.unmodifiableList(specialCharacters);
+    }
+
     public static List<Node> get() {
         List<TreeCompleter.Node> nodes = new ArrayList<>();
         nodes.add(node("exit"));
@@ -55,7 +74,8 @@ public class Autocompletion {
             switch (cli.getGameModel().getSubphase()) {
                 case CHOOSE_CLOUD -> nodes.addAll(refillFromClouds());
                 case MOVE_MOTHER_NATURE -> nodes.addAll(motherNatureMoves());
-                case MOVE_STUDENT_1, MOVE_STUDENT_2, MOVE_STUDENT_3, MOVE_STUDENT_4 -> nodes.addAll(studentsMoves());
+                case MOVE_STUDENT_1, MOVE_STUDENT_2, MOVE_STUDENT_3, MOVE_STUDENT_4 ->
+                        nodes.addAll(studentsMoves(cli.getGameModel().getPlayerByName(cli.getUserName()).getSchoolBoard().getEntrance()));
             }
             if (cli.getGameModel().isExpert()) {
                 if (cli.getGameModel().getGameBoard().getSpecialCharacters().stream().anyMatch(SpecialCharacter::isActive))
@@ -69,6 +89,14 @@ public class Autocompletion {
 
     private static List<Node> info() {
         List<Node> nodes = new ArrayList<>();
+        for (String assistant : assistants)
+            nodes.add(node("info",
+                    node(assistant)));
+        if (specialCharacters == null)
+            initializeSpecialCharacters();
+        for (String specialCharacter : specialCharacters)
+            nodes.add(node("info",
+                    node(specialCharacter)));
         return Collections.unmodifiableList(nodes);
     }
 
@@ -93,17 +121,18 @@ public class Autocompletion {
         return nodes;
     }
 
-    private static List<Node> studentsMoves() {
+    private static List<Node> studentsMoves(Map<HouseColor, Integer> entrance) {
         List<Node> nodes = new ArrayList<>();
-        for (HouseColor color : HouseColor.values())
-            for (String to : toList)
-                nodes.add(node("move",
-                        node("student",
-                                node(color.name().toLowerCase(Locale.ROOT),
-                                        node("from",
-                                                node("entrance",
-                                                        node("to",
-                                                                node(to))))))));
+        for (Map.Entry<HouseColor, Integer> entry : entrance.entrySet())
+            if (entry.getValue() != 0)
+                for (String to : toList)
+                    nodes.add(node("move",
+                            node("student",
+                                    node(entry.getKey().name().toLowerCase(Locale.ROOT),
+                                            node("from",
+                                                    node("entrance",
+                                                            node("to",
+                                                                    node(to))))))));
         return nodes;
     }
 
