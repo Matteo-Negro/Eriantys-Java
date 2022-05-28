@@ -110,7 +110,8 @@ public class GamePlatform {
         Map<HouseColor, Integer> students = new EnumMap<>(HouseColor.class);
         for (HouseColor color : HouseColor.values()) students.put(color, 0);
         int studentsNumber = 7;
-        if (this.playersNumber == 3) studentsNumber = 9;
+        if (this.playersNumber == 3)
+            studentsNumber = 9;
         for (int i = 0; i < studentsNumber; i++) {
             HouseColor color = this.getGameBoard().getBag().pop();
             students.put(color, students.get(color) + 1);
@@ -144,11 +145,10 @@ public class GamePlatform {
      * @return The number of towers.
      */
     private int getTowersNumber() {
-        return switch (playersNumber) {
-            case 2, 4 -> 8;
-            case 3 -> 6;
-            default -> 0;
-        };
+        if (playersNumber == 3)
+            return 6;
+        else
+            return 8;
     }
 
     /**
@@ -163,11 +163,12 @@ public class GamePlatform {
                 if (clockwiseOrder.stream().noneMatch(player -> player.getSchoolBoard().getTowerType().equals(tower)))
                     towers.add(tower);
         } else {
-            for (int index = 0; index < playersNumber - (int) clockwiseOrder.stream().filter(player -> player.getSchoolBoard().getTowerType().equals(TowerType.WHITE)).count(); index++)
+            for (int index = playersNumber - (int) clockwiseOrder.stream().filter(player -> player.getSchoolBoard().getTowerType().equals(TowerType.WHITE)).count(); index > 1; index--)
                 towers.add(TowerType.WHITE);
-            for (int index = 0; index < playersNumber - (int) clockwiseOrder.stream().filter(player -> player.getSchoolBoard().getTowerType().equals(TowerType.BLACK)).count(); index++)
+            for (int index = playersNumber - (int) clockwiseOrder.stream().filter(player -> player.getSchoolBoard().getTowerType().equals(TowerType.BLACK)).count(); index > 1; index--)
                 towers.add(TowerType.BLACK);
         }
+        Log.debug("-------------------------------------" + towers);
         return towers.get(ThreadLocalRandom.current().nextInt(0, towers.size()));
     }
 
