@@ -125,4 +125,13 @@ public class GameModel {
         this.currentPlayer = currentPlayer;
         this.getPlayerByName(currentPlayer).setActive(token);
     }
+
+    public boolean isMovementEffectActive(){
+        if(this.isExpert()){
+            for(SpecialCharacter sc : this.getGameBoard().getSpecialCharacters()){
+                if(sc.isActive() && (sc.getId() == 1 || sc.getId() == 7 || sc.getId() == 11)) return true;
+            }
+        }
+        return false;
+    }
 }

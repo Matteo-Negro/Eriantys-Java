@@ -27,8 +27,7 @@ import java.util.List;
 import java.util.Locale;
 
 import static it.polimi.ingsw.client.view.cli.Utilities.*;
-import static it.polimi.ingsw.utilities.GameControllerStates.END_TURN;
-import static it.polimi.ingsw.utilities.GameControllerStates.MOVE_MOTHER_NATURE;
+import static it.polimi.ingsw.utilities.GameControllerStates.*;
 import static org.fusesource.jansi.Ansi.ansi;
 import static org.jline.builtins.Completers.TreeCompleter.node;
 
@@ -373,7 +372,6 @@ public class ClientCli extends Thread {
                             getGameServer().sendCommand(message);
                             Log.debug("Command sent to game server.");
                         } else {
-                            Log.debug("Wrong command");
                             errorOccurred("Command not allowed");
                             break;
                         }
@@ -452,8 +450,12 @@ public class ClientCli extends Thread {
         } else {
             try {
                 switch (message.get("subtype").getAsString()) {
-                    case "moveStudent" -> checkStudentMove(message);
-                    case "motherNature" -> checkMotherNatureMove(message);
+                    case "move" -> {
+                        switch(message.get("pawn").getAsString()){
+                            case "student" -> checkStudentMove(message);
+                            case "motherNature" -> checkMotherNatureMove(message);
+                        }
+                    }
                     case "pay" -> checkCharacterPayment(message);
                     case "refill" -> checkEntranceRefill(message);
                     default -> {
@@ -500,6 +502,10 @@ public class ClientCli extends Thread {
                 }
                 case MOVE_STUDENT_4 -> {
                     if (getGameModel().getPlayersNumber() != 3) throw new IllegalActionException();
+                }
+                default -> {
+                    if(getGameModel().getSubphase().equals(CHOOSE_CLOUD) || !getGameModel().isExpert() || getGameModel().isExpert() && !getGameModel().isMovementEffectActive())
+                        throw new IllegalMoveException();
                 }
             }
 

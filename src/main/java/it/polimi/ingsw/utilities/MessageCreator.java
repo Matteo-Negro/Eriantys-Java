@@ -288,7 +288,8 @@ public class MessageCreator {
     public static JsonObject moveStudent(String player, HouseColor color, String from, String to, Integer fromId, Integer toId) {
         JsonObject command = new JsonObject();
         command.addProperty("type", "command");
-        command.addProperty("subtype", "moveStudent");
+        command.addProperty("subtype", "move");
+        command.addProperty("pawn", "student");
         command.addProperty("player", player);
         command.addProperty("color", color.toString());
         command.addProperty("from", from);
@@ -310,7 +311,8 @@ public class MessageCreator {
     public static JsonObject moveMotherNature(int islandId, boolean move) {
         JsonObject command = new JsonObject();
         command.addProperty("type", "command");
-        command.addProperty("subtype", "motherNature");
+        command.addProperty("subtype", "move");
+        command.addProperty("pawn", "motherNature");
         command.addProperty("island", islandId);
         command.addProperty("move", move);
 

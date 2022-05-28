@@ -43,6 +43,8 @@ public class GameBoard {
         this.clouds = new ArrayList<>();
         this.characters = new ArrayList<>();
         this.professors = new EnumMap<>(HouseColor.class);
+        for(HouseColor color : HouseColor.values()) professors.put(color, null);
+
         this.influenceBonus = null;
         this.tieWinner = null;
         temp = this.bag.boardSetUp();

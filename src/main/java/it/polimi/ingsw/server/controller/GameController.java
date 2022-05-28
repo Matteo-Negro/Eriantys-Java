@@ -356,6 +356,7 @@ public class GameController extends Thread {
         }
         this.getGameModel().updateTurnOrder();
         this.phase = Phase.ACTION;
+        this.setSubPhase(GameControllerStates.MOVE_STUDENT_1);
         notifyUsers(MessageCreator.status(this));
     }
 
@@ -369,15 +370,16 @@ public class GameController extends Thread {
             User currentUser = getUser(currentPlayer.getName());
             Log.debug("Current player" + currentPlayer.getName());
             this.activeUser = currentUser.getUsername();
-            notifyUsers(MessageCreator.turnEnable(currentUser.getUsername(), true));
 
             //WAITING FOR A CLOUD TO BE CHOSEN (refill command)
             Log.debug("Waiting for a cloud to be chosen.");
             while (this.getSubPhase() != GameControllerStates.END_TURN) {
+                notifyUsers(MessageCreator.turnEnable(currentUser.getUsername(), true));
+                Log.debug("Current subphase " + this.subPhase.toString());
                 synchronized (this.actionNeededLock) {
                     try {
                         this.actionNeededLock.wait();
-
+                        notifyUsers(MessageCreator.status(this));
                     } catch (InterruptedException ie) {
                         notifyUsers(MessageCreator.error("GameServerError"));
                         for (User user : this.getUsers()) this.removeUser(user);
@@ -441,15 +443,18 @@ public class GameController extends Thread {
      */
     public void moveStudent(JsonObject command) throws IllegalMoveException {
         try {
+            Log.debug("moveStudentFrom");
             moveStudentFrom(command);
         } catch (NoStudentException e) {
+            Log.warning(e);
             throw new IllegalMoveException();
         }
-
+        Log.debug("moveStudentTo");
         moveStudentTo(command);
         synchronized (this.actionNeededLock) {
             this.actionNeededLock.notifyAll();
         }
+        Log.debug("Student moved.");
         this.saveGame();
     }
 
@@ -465,10 +470,11 @@ public class GameController extends Thread {
             case "entrance" -> {
                 this.gameModel.getPlayerByName(command.get("player").getAsString()).getSchoolBoard().removeFromEntrance(HouseColor.valueOf(command.get("color").getAsString()));
 
-                //Updating sub-phase.
+
                 if (!isMovementEffectActive()) {
                     switch (this.getSubPhase()) {
                         case MOVE_STUDENT_1 -> this.setSubPhase(GameControllerStates.MOVE_STUDENT_2);
+
                         case MOVE_STUDENT_2 -> this.setSubPhase(GameControllerStates.MOVE_STUDENT_3);
                         case MOVE_STUDENT_3 -> {
                             if ((this.getExpectedPlayers() == 3)) {
@@ -482,7 +488,7 @@ public class GameController extends Thread {
                     }
                 }
             }
-            case "diningRoom" -> {
+            case "dining-room" -> {
                 this.gameModel.getPlayerByName(command.get("player").getAsString()).getSchoolBoard().removeFromDiningRoom(HouseColor.valueOf(command.get("color").getAsString()));
                 checkProfessor(command.get("color").getAsString(), command.get("player").getAsString());
             }
@@ -519,7 +525,7 @@ public class GameController extends Thread {
      */
     private void moveStudentTo(JsonObject command) throws IllegalMoveException {
         switch (command.get("to").getAsString()) {
-            case "diningRoom" -> {
+            case "dining-room" -> {
                 this.gameModel.getPlayerByName(command.get("player").getAsString()).getSchoolBoard().addToDiningRoom(HouseColor.valueOf(command.get("color").getAsString()));
 
                 checkProfessor(command.get("color").getAsString(), command.get("player").getAsString());
@@ -787,20 +793,25 @@ public class GameController extends Thread {
      * This method is a helper for the moveStudent method.
      */
     public void checkProfessor(String color, String player) {
-        String newProfessorOwner = this.gameModel.getGameBoard().getProfessors().get(HouseColor.valueOf(color)).getName();
-        int numStudent;
+        String newProfessorOwner = player;
+        if(this.gameModel.getGameBoard().getProfessors().get(HouseColor.valueOf(color))!=null)
+            newProfessorOwner = this.gameModel.getGameBoard().getProfessors().get(HouseColor.valueOf(color)).getName();
 
+        int numStudent;
         numStudent = this.gameModel.getPlayerByName(player).getSchoolBoard().getStudentsNumberOf(HouseColor.valueOf(color));
+
         for (Player p : this.gameModel.getPlayers()) {
             if (numStudent < p.getSchoolBoard().getStudentsNumberOf(HouseColor.valueOf(color))) {
                 numStudent = p.getSchoolBoard().getStudentsNumberOf(HouseColor.valueOf(color));
                 newProfessorOwner = p.getName();
-            } else if (this.gameModel.getGameBoard().getTieWinner().equals(p) && numStudent == p.getSchoolBoard().getStudentsNumberOf(HouseColor.valueOf(color))) {
+            } else if (this.gameModel.getGameBoard().getTieWinner()!=null && this.gameModel.getGameBoard().getTieWinner().equals(p) && numStudent == p.getSchoolBoard().getStudentsNumberOf(HouseColor.valueOf(color))) {
                 numStudent = p.getSchoolBoard().getStudentsNumberOf(HouseColor.valueOf(color));
                 newProfessorOwner = p.getName();
             }
         }
-        this.gameModel.getGameBoard().setProfessor(HouseColor.valueOf(color), this.gameModel.getPlayerByName(newProfessorOwner));
+
+        if(newProfessorOwner!=null)
+            this.gameModel.getGameBoard().setProfessor(HouseColor.valueOf(color), this.gameModel.getPlayerByName(newProfessorOwner));
     }
 
     public void notifyUsers(JsonObject message) {
