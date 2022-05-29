@@ -820,7 +820,7 @@ public class GameController extends Thread {
             newProfessorOwner = this.gameModel.getGameBoard().getProfessors().get(HouseColor.valueOf(color)).getName();
 
         int numStudent;
-        numStudent = this.gameModel.getPlayerByName(player).getSchoolBoard().getStudentsNumberOf(HouseColor.valueOf(color));
+        numStudent = this.gameModel.getPlayerByName(newProfessorOwner).getSchoolBoard().getStudentsNumberOf(HouseColor.valueOf(color));
 
         for (Player p : this.gameModel.getPlayers()) {
             if (numStudent < p.getSchoolBoard().getStudentsNumberOf(HouseColor.valueOf(color))) {
