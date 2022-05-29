@@ -396,12 +396,16 @@ public class GameController extends Thread {
             notifyUsers(MessageCreator.turnEnable(currentUser.getUsername(), false));
 
             try {
+                Log.debug("Calling next turn.");
                 this.getGameModel().nextTurn();
+                Log.debug("Setting subphase.");
                 this.setSubPhase(GameControllerStates.MOVE_STUDENT_1);
             } catch (RoundConcluded rc) {
+                Log.debug("Round concluded.");
                 this.round++;
                 this.phase = Phase.PLANNING;
                 this.setSubPhase(GameControllerStates.PLAY_ASSISTANT);
+                Log.debug("Phase and subphase set.");
             }
 
             notifyUsers(MessageCreator.status(this));

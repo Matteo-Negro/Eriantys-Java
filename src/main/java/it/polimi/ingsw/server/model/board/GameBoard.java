@@ -154,15 +154,12 @@ public class GameBoard {
         int maxDistance;
 
         maxDistance = playedAssistant.getMaxDistance();
-        Log.debug("max distance " + maxDistance);
 
         int runDistance = targetIsland.getId() - this.motherNatureIsland.getId();
         if(targetIsland.getId() < this.motherNatureIsland.getId()) runDistance = 12 + targetIsland.getId() - this.motherNatureIsland.getId();
-        Log.debug("run distance " + runDistance);
 
         if (runDistance > maxDistance)
             throw new IllegalMoveException("Player would like moves MotherNature over assistant card limit.");
-        Log.debug("Correct distance.");
         this.motherNatureIsland = this.islands.get(targetIsland.getId());
     }
 
@@ -267,12 +264,9 @@ public class GameBoard {
         island.setTower(tower);
 
         //Check if a merge to left is needed.
-        Log.debug("1");
         boolean mergeDone;
         do {
-            Log.debug("2");
             int islandsSize = getIslands().size();
-            Log.debug("islands number " + islandsSize);
 
             mergeDone = false;
             if(islandsSize <= 3) break;
@@ -285,14 +279,14 @@ public class GameBoard {
                     Log.debug("next island id " + getIslands().get((i + currentIslandSize + 1) % 12).getId());
                     Log.debug("prev island id " + getIslands().get((i + currentIslandSize - 1) % 12).getId());
                     if (getIslands().get((i + currentIslandSize + 1) % 12).getId() == island.getId() && islands.get(i).getTower().equals(island.getTower())) {
-
+                        Log.debug("Merging right");
                         merge(islands.get(i), island);
                         Log.debug("merge done right");
                         mergeDone = true;
                         break;
                     }
-                    if (islands.get((i - island.getSize() - 1) % 12).getId() == island.getId() && islands.get(i).getTower().equals(island.getTower())) {
-
+                    if (getIslands().get((i - island.getSize() - 1) % 12).getId() == island.getId() && islands.get(i).getTower().equals(island.getTower())) {
+                        Log.debug("Merging left");
                         merge(island, islands.get(i));
                         Log.debug("merge done left");
                         mergeDone = true;

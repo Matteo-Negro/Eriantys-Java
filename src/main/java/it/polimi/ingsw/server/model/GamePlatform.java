@@ -253,10 +253,16 @@ public class GamePlatform {
      */
     public void nextTurn() throws RoundConcluded {
         String player;
+        Log.debug(this.roundWinner);
         gameBoard.removeEffects();
-        player = turnOrder.get(turnOrder.indexOf(players.get(currentPlayer)) + 1 % playersNumber).getName();
-        if (player.equals(roundWinner))
+
+        Log.debug(players.get(currentPlayer).getName());
+        Log.debug("" + (turnOrder.indexOf(players.get(currentPlayer)) + 1) % playersNumber);
+        player = turnOrder.get((turnOrder.indexOf(players.get(currentPlayer)) + 1) % playersNumber).getName();
+
+        if (player.equals(roundWinner)){
             throw new RoundConcluded();
+        }
         currentPlayer = player;
     }
 
