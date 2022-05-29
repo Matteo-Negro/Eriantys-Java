@@ -315,9 +315,10 @@ public class GameController extends Thread {
         Player roundWinner = this.getGameModel().getRoundWinner();
         int indexOfRoundWinner = this.getGameModel().getPlayers().indexOf(roundWinner);
 
+        this.getGameModel().nextRound();
+        notifyUsers(MessageCreator.status(this));
+
         for (int i = 0; i < this.getExpectedPlayers(); i++) {
-            if (i == 0)
-                this.getGameModel().nextRound();
 
             Player currentPlayer = this.getGameModel().getPlayers().get((indexOfRoundWinner + i) % this.getExpectedPlayers());
             Log.debug("Current player" + currentPlayer.getName());
@@ -531,7 +532,8 @@ public class GameController extends Thread {
                     }
                 }
             }
-            case "bag" -> this.gameModel.getGameBoard().getBag().push(HouseColor.valueOf(command.get("color").getAsString()));
+            case "bag" ->
+                    this.gameModel.getGameBoard().getBag().push(HouseColor.valueOf(command.get("color").getAsString()));
             case "island" -> {
                 try {
                     this.gameModel.getGameBoard().getIslandById(command.get("toId").getAsInt()).addStudent(HouseColor.valueOf(command.get("color").getAsString()));
@@ -687,17 +689,22 @@ public class GameController extends Thread {
         try {
             switch (character) {
                 case 1, 7, 10, 11 -> this.movementEffectActive = true;
-                case 2 -> this.getGameModel().getGameBoard().setTieWinner(this.getGameModel().getPlayerByName(command.get("player").getAsString()));
-                case 3 -> this.getGameModel().getGameBoard().getInfluence(this.getGameModel().getGameBoard().getIslandById(command.get("island").getAsInt()));
-                case 4 -> this.getGameModel().getGameBoard().getAssistant(this.getGameModel().getPlayerByName(command.get("player").getAsString())).setBonus();
+                case 2 ->
+                        this.getGameModel().getGameBoard().setTieWinner(this.getGameModel().getPlayerByName(command.get("player").getAsString()));
+                case 3 ->
+                        this.getGameModel().getGameBoard().getInfluence(this.getGameModel().getGameBoard().getIslandById(command.get("island").getAsInt()));
+                case 4 ->
+                        this.getGameModel().getGameBoard().getAssistant(this.getGameModel().getPlayerByName(command.get("player").getAsString())).setBonus();
                 case 5 -> {
                     this.getGameModel().getGameBoard().getIslandById(command.get("island").getAsInt()).setBan();
                     ((HerbalistEffect) this.getGameModel().getGameBoard().getCharacters().get(character).getEffect()).effect("take");
                 }
                 case 6 -> {
                 }//Automatically managed by model.
-                case 8 -> this.getGameModel().getGameBoard().setInfluenceBonus(this.getGameModel().getPlayerByName(command.get("player").getAsString()));
-                case 9 -> this.getGameModel().getGameBoard().setIgnoreColor(HouseColor.valueOf(command.get("ignoreColor").getAsString()));
+                case 8 ->
+                        this.getGameModel().getGameBoard().setInfluenceBonus(this.getGameModel().getPlayerByName(command.get("player").getAsString()));
+                case 9 ->
+                        this.getGameModel().getGameBoard().setIgnoreColor(HouseColor.valueOf(command.get("ignoreColor").getAsString()));
                 case 12 -> {
                     for (Player p : this.getGameModel().getPlayers()) {
                         for (int i = 0; i < 3; i++) {
