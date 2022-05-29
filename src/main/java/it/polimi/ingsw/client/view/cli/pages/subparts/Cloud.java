@@ -2,6 +2,7 @@ package it.polimi.ingsw.client.view.cli.pages.subparts;
 
 import it.polimi.ingsw.client.view.cli.Utilities;
 import it.polimi.ingsw.client.view.cli.colours.DarkGrey;
+import it.polimi.ingsw.client.view.cli.colours.Grey;
 import it.polimi.ingsw.client.view.cli.colours.White;
 import it.polimi.ingsw.client.view.cli.coordinates.CloudNewLine;
 import it.polimi.ingsw.client.view.cli.coordinates.CloudReset;
@@ -114,6 +115,7 @@ public class Cloud {
         // Line #8
 
         ansi.a(Utilities.bold(true));
+        ansi.a(Utilities.foreground(students != null ? Grey.getInstance() : DarkGrey.getInstance()));
         ansi.a(String.format("     CL%01d     ", id));
         ansi.a(Utilities.bold(false));
         ansi.a(resetCursor());
