@@ -346,9 +346,7 @@ public class ClientCli extends Thread {
 
         if (this.hasCommunicationToken()) {
             String command = readLine(getPrettyUserName(), terminal, Autocompletion.get(), true, history).toLowerCase(Locale.ROOT);
-            terminal.writer().print(background(Black.getInstance()));
-            terminal.writer().print(foreground(White.getInstance()));
-            terminal.flush();
+            clearScreen(terminal, false);
 
             // Logout command.
             if (command.equals("exit") || command.equals("logout")) {
