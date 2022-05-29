@@ -614,10 +614,10 @@ public class ClientCli extends Thread {
      * @throws IllegalMoveException Thrown if the client model is not aligned with that of the game server.
      */
     private void checkEntranceRefill(JsonObject message) throws IllegalMoveException {
-        if (!getGameModel().getSubphase().equals(CHOOSE_CLOUD)) throw new IllegalMoveException();
+        if (!getGameModel().getSubphase().equals(CHOOSE_CLOUD))
+            throw new IllegalMoveException();
 
-        int cloudId = message.get("cloud").getAsInt();
-        if (getGameModel().getGameBoard().getClouds().get(cloudId).getStudents(true) == null)
+        if (getGameModel().getGameBoard().getClouds().get(message.get("cloud").getAsInt() - 1).getStudents(true) == null)
             throw new IllegalMoveException();
     }
 
