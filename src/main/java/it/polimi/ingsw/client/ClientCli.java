@@ -617,7 +617,7 @@ public class ClientCli extends Thread {
         if (!getGameModel().getSubphase().equals(CHOOSE_CLOUD))
             throw new IllegalMoveException();
 
-        if (getGameModel().getGameBoard().getClouds().get(message.get("cloud").getAsInt() - 1).getStudents(true) == null)
+        if (getGameModel().getGameBoard().getClouds().get(message.get("cloud").getAsInt()).getStudents(true) == null)
             throw new IllegalMoveException();
     }
 

@@ -654,8 +654,18 @@ public class GameController extends Thread {
      * @param command The json with the information about the choosing of the cloud.
      */
     public void chooseCloud(JsonObject command) {
-        this.gameModel.getPlayerByName(command.get("player").getAsString()).getSchoolBoard().addToEntrance(this.gameModel.getGameBoard().getClouds().get(command.get("cloud").getAsInt()).flush());
+        this.gameModel
+                .getPlayerByName(command.get("player").getAsString())
+                .getSchoolBoard()
+                .addToEntrance(
+                        this.gameModel
+                                .getGameBoard()
+                                .getClouds()
+                                .get(command.get("cloud")
+                                        .getAsInt())
+                                .flush());
         this.setSubPhase(GameControllerStates.END_TURN);
+        notifyUsers(MessageCreator.status(this));
         synchronized (this.actionNeededLock) {
             this.actionNeededLock.notifyAll();
         }

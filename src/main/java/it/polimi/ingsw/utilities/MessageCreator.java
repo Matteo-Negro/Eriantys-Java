@@ -348,7 +348,7 @@ public class MessageCreator {
         command.addProperty("type", "command");
         command.addProperty("subtype", "refill");
         command.addProperty("player", player);
-        command.addProperty("cloud", cloudId);
+        command.addProperty("cloud", cloudId - 1);
 
         return command;
     }
