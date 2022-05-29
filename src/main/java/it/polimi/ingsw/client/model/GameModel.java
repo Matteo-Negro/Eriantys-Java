@@ -49,6 +49,10 @@ public class GameModel {
         return new HashMap<>(waitingRoom);
     }
 
+    public int getRound() {
+        return round;
+    }
+
     public int getPlayersNumber(){
         return this.playersNumber;
     }

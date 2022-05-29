@@ -342,7 +342,7 @@ public class ClientCli extends Thread {
     private void manageGameRunning() {
         List<JsonObject> messages = new ArrayList<>();
 
-        Game.print(terminal, this.gameModel, this.getGameCode(), this.getGameModel().getPlayerByName(userName).isActive());
+        Game.print(terminal, this.gameModel, this.getGameCode(), this.gameModel.getRound(), this.getGameModel().getPlayerByName(userName).isActive());
 
         if (this.hasCommunicationToken()) {
             String command = readLine(getPrettyUserName(), terminal, Autocompletion.get(), true, history).toLowerCase(Locale.ROOT);

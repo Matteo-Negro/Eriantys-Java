@@ -3,12 +3,14 @@ package it.polimi.ingsw.client.view.cli.pages;
 import it.polimi.ingsw.client.model.GameModel;
 import it.polimi.ingsw.client.view.cli.pages.subparts.PlayerStuff;
 import it.polimi.ingsw.client.view.cli.pages.subparts.Realm;
+import it.polimi.ingsw.utilities.GameControllerStates;
 import it.polimi.ingsw.utilities.Phase;
 import org.fusesource.jansi.Ansi;
 import org.jline.terminal.Terminal;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 import static org.fusesource.jansi.Ansi.ansi;
 
@@ -31,8 +33,8 @@ public class Game {
      * @param currentPlayerTurn true if it's the turn of the current player.
      */
     // TODO: max 47 row (MAC 13")
-    public static void print(Terminal terminal, GameModel gameModel, String gameId, boolean currentPlayerTurn) {
-        terminal.writer().print(printBorder(terminal.getHeight(), terminal.getWidth(), gameId, currentPlayerTurn, gameModel.getPhase()));
+    public static void print(Terminal terminal, GameModel gameModel, String gameId, int round, boolean currentPlayerTurn) {
+        terminal.writer().print(printBorder(terminal.getHeight(), terminal.getWidth(), gameId, round, currentPlayerTurn, gameModel.getPhase(), gameModel.getSubphase()));
         terminal.flush();
         terminal.writer().print(ansi().cursor((terminal.getHeight() - 31 - 5) / 2, (terminal.getWidth() - 165 - 6) / 2));
         Realm.print(terminal, gameModel.getGameBoard().getIslands(), gameModel.getGameBoard().getClouds());
@@ -65,19 +67,24 @@ public class Game {
      * @param gameId            The id of the game.
      * @param currentPlayerTurn true if it's the turn of the current player.
      * @param phase             The current phase of the game.
+     * @param subphase          The current subphase of the game.
      * @return The generated Ansi stream.
      */
-    private static Ansi printBorder(int y, int x, String gameId, boolean currentPlayerTurn, Phase phase) {
+    private static Ansi printBorder(int y, int x, String gameId, int round, boolean currentPlayerTurn, Phase phase, GameControllerStates subphase) {
         Ansi ansi = new Ansi();
 
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy");
         LocalDateTime now = LocalDateTime.now();
 
         ansi.cursor(2, 2);
-        for (int c = 0; c < x - 2 - 20 - 23; c++) {
-            if (c == 0) ansi.a("┌──[ GameID: " + gameId + " ]─");
-            else if (c == x - 3 - 23 - 20) ansi.a("─[ " + dtf.format(now) + " ]──┐");
-            else ansi.a("─");
+        String stats = String.format("┌──[ ID: %s ]──[ Round: %d ]──[ Phase: %s ]", gameId, round, subphase.name().toLowerCase(Locale.ROOT));
+        for (int c = 0; c < x - 23 - stats.length(); c++) {
+            if (c == 0)
+                ansi.a(stats);
+            else if (c == x - 24 - stats.length())
+                ansi.a("[ " + dtf.format(now) + " ]──┐");
+            else
+                ansi.a("─");
         }
 
         for (int r = 3; r < y - 5; r++) {
