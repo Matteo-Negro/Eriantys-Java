@@ -155,12 +155,13 @@ public class GameBoard {
 
         maxDistance = playedAssistant.getMaxDistance();
 
-        int runDistance = targetIsland.getId() - this.motherNatureIsland.getId();
-        if(targetIsland.getId() < this.motherNatureIsland.getId()) runDistance = 12 + targetIsland.getId() - this.motherNatureIsland.getId();
+        int runDistance = targetIsland.getId() - this.motherNatureIsland.getId() - (this.motherNatureIsland.getSize() -1 );
+        if(targetIsland.getId() < this.motherNatureIsland.getId()) runDistance = 12 + targetIsland.getId() - this.motherNatureIsland.getId() - (this.motherNatureIsland.getSize() -1);
 
         if (runDistance > maxDistance)
             throw new IllegalMoveException("Player would like moves MotherNature over assistant card limit.");
-        this.motherNatureIsland = this.islands.get(targetIsland.getId());
+        this.motherNatureIsland = targetIsland;
+
     }
 
     /**
@@ -270,25 +271,19 @@ public class GameBoard {
 
             mergeDone = false;
             if(islandsSize <= 3) break;
-
+            Island nextIsland, prevIsland;
             for (int i = 0; i < islandsSize; i++) {
                 if(getIslands().get(i).getId() != island.getId() && islands.get(i).getTower() != null){
                     int currentIslandSize = getIslands().get(i).getSize();
-                    Log.debug("current island " + getIslands().get(i).getId());
-                    Log.debug("current island size" + currentIslandSize);
-                    Log.debug("next island id " + getIslands().get((i + currentIslandSize + 1) % 12).getId());
-                    Log.debug("prev island id " + getIslands().get((i + currentIslandSize - 1) % 12).getId());
-                    if (getIslands().get((i + currentIslandSize + 1) % 12).getId() == island.getId() && islands.get(i).getTower().equals(island.getTower())) {
-                        Log.debug("Merging right");
+                    nextIsland = getIslands().get((i + 1) % 12);
+                    prevIsland = getIslands().get((i - 1) % 12);
+                    if (nextIsland.getId() == island.getId() && islands.get(i).getTower().equals(island.getTower())) {
                         merge(islands.get(i), island);
-                        Log.debug("merge done right");
                         mergeDone = true;
                         break;
                     }
-                    if (getIslands().get((i - island.getSize() - 1) % 12).getId() == island.getId() && islands.get(i).getTower().equals(island.getTower())) {
-                        Log.debug("Merging left");
+                    if (prevIsland.getId() == island.getId() && islands.get(i).getTower().equals(island.getTower())) {
                         merge(island, islands.get(i));
-                        Log.debug("merge done left");
                         mergeDone = true;
                         break;
                     }
@@ -314,6 +309,7 @@ public class GameBoard {
             }
         }
         islands.remove(rightIsland);
+        this.motherNatureIsland = leftIsland;
     }
 
     /**

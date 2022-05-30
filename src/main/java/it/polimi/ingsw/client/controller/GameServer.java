@@ -151,7 +151,7 @@ public class GameServer extends Thread {
 
     private void manageStatus(JsonObject incomingMessage) {
 
-        int round = incomingMessage.get("round").getAsInt();
+        int round = incomingMessage.get("round").getAsInt() + 1;
         String activeUser = null;
         if (!(incomingMessage.get("activeUser") instanceof JsonNull))
             activeUser = incomingMessage.get("activeUser").getAsString();

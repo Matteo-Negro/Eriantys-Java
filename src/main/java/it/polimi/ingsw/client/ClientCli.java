@@ -379,6 +379,15 @@ public class ClientCli extends Thread {
                     for (JsonObject message : messages) {
                         if (checkMessage(message)) {
                             getGameServer().sendCommand(message);
+                            synchronized (this.lock){
+                                try{
+                                    this.getLock().wait();
+                                }catch(InterruptedException ie){
+                                    clearScreen(terminal, false);
+                                    errorOccurred("Command not allowed.");
+                                    return;
+                                }
+                            }
                             Log.debug("Command sent to game server.");
                         } else {
                             clearScreen(terminal, false);
@@ -559,6 +568,14 @@ public class ClientCli extends Thread {
                     if (message.get("toId").getAsInt() != 7 || !getGameModel().isExpert() || getGameModel().getGameBoard().getSpecialCharacterById(7) == null || !getGameModel().getGameBoard().getSpecialCharacterById(7).isActive())
                         throw new IllegalMoveException();
                 }
+                case "island" -> {
+                    int destinationIndex = message.get("toId").getAsInt();
+                    while(getGameModel().getGameBoard().getIslands().get(destinationIndex).hasPrev()){
+                        destinationIndex = (destinationIndex - 1) % 12;
+                    }
+                    message.remove("toId");
+                    message.addProperty("toId", destinationIndex);
+                }
             }
         }
     }
@@ -571,19 +588,21 @@ public class ClientCli extends Thread {
      */
     private void checkMotherNatureMove(JsonObject message) throws IllegalMoveException {
         if (!getGameModel().getSubphase().equals(MOVE_MOTHER_NATURE)) throw new IllegalMoveException();
-        int finalIsland = message.get("island").getAsInt()-1;
+        int finalIsland = message.get("island").getAsInt();
         int maxDistance = getGameModel().getPlayerByName(this.getUserName()).getCurrentPlayedAssistant().getMaxDistance();
 
-        int motherNatureIsland = 0;
-        for (int i = 0; i < getGameModel().getGameBoard().getIslands().size(); i++) {
-            Island isl = getGameModel().getGameBoard().getIslands().get(i);
-            if (isl.hasMotherNature()) motherNatureIsland = i;
+        int motherNatureIsland = getGameModel().getGameBoard().getMotherNatureIsland();
+        int motherNatureIslandSize = 1;
+
+        int i = motherNatureIsland;
+        while(getGameModel().getGameBoard().getIslands().get(i).hasNext()){
+            motherNatureIslandSize ++;
+            i = (i + 1) % 12;
         }
 
         int distanceWanted;
-        if (finalIsland < motherNatureIsland) distanceWanted = finalIsland + 12 - motherNatureIsland;
-        else distanceWanted = finalIsland - motherNatureIsland;
-
+        if (finalIsland < motherNatureIsland) distanceWanted = finalIsland + 12 - motherNatureIsland - (motherNatureIslandSize - 1);
+        else distanceWanted = finalIsland - motherNatureIsland - (motherNatureIslandSize - 1);
         if (distanceWanted > maxDistance) throw new IllegalMoveException();
     }
 
@@ -642,7 +661,7 @@ public class ClientCli extends Thread {
             this.gameModel = newGameModel;
             if (newGameModel != null) {
                 this.modelUpdated = true;
-                this.lock.notify();
+                this.lock.notifyAll();
             }
         }
     }

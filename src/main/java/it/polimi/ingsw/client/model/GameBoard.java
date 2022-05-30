@@ -5,7 +5,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import it.polimi.ingsw.utilities.HouseColor;
+import it.polimi.ingsw.utilities.Log;
 import it.polimi.ingsw.utilities.TowerType;
+import it.polimi.ingsw.utilities.parsers.JsonToObjects;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -51,16 +53,35 @@ public class GameBoard {
                 tower = TowerType.valueOf(island.getAsJsonObject().get("tower").getAsString());
             boolean ban = island.getAsJsonObject().get("ban").getAsBoolean();
             JsonObject containedStudents = island.getAsJsonObject().get("students").getAsJsonObject();
+            Map<HouseColor, Integer> students = JsonToObjects.parseStudents(containedStudents);
+            int studentsNumber = 0;
+            for(HouseColor color : HouseColor.values()) studentsNumber = studentsNumber + students.get(color);
             boolean motherNature;
             motherNature = id == this.motherNatureIsland;
+
             for (int i = 0; i < size; i++) {
-                if (i == 0) this.islands.add(new Island(false, false, tower, containedStudents, motherNature, ban));
+
+                if (i == 0) this.islands.add(new Island(false, false, tower, null, motherNature, ban));
                 else {
-                    this.islands.add(new Island(false, true, tower, null, motherNature, ban));
-                    this.islands.get(id + i - 1).setNext();
+                    this.islands.add(new Island(false, true, tower, null, false, ban));
+                    this.islands.get((id + i - 1) % 12).setNext();
                 }
             }
-            id += size;
+            int i = 0;
+
+            while(studentsNumber > 0){
+                for(HouseColor color : HouseColor.values()){
+                    if(students.get(color) > 0){
+                        students.put(color, students.get(color)-1);
+                        this.islands.get(id + i).addStudent(color);
+                        studentsNumber--;
+                        break;
+                    }
+                }
+                i = (i + 1) % size;
+            }
+
+            id = (id + size) % 12;
         }
     }
 
@@ -105,5 +126,9 @@ public class GameBoard {
         }
 
         return null;
+    }
+
+    public int getMotherNatureIsland(){
+        return this.motherNatureIsland;
     }
 }

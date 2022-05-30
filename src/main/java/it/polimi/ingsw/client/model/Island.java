@@ -39,7 +39,12 @@ public class Island {
         this.tower = tower;
         this.motherNature = motherNature;
         this.ban = ban;
-        this.students = JsonToObjects.parseStudents(students);
+        if(students != null)
+            this.students = JsonToObjects.parseStudents(students);
+        else{
+            this.students = new EnumMap<>(HouseColor.class);
+            for(HouseColor color : HouseColor.values()) this.students.put(color, 0);
+        }
     }
 
     /**
