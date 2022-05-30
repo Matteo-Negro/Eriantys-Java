@@ -4,7 +4,6 @@ import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import it.polimi.ingsw.client.controller.GameServer;
 import it.polimi.ingsw.client.model.GameModel;
-import it.polimi.ingsw.client.model.Island;
 import it.polimi.ingsw.client.model.Player;
 import it.polimi.ingsw.client.model.SpecialCharacter;
 import it.polimi.ingsw.client.view.cli.Autocompletion;
@@ -27,7 +26,8 @@ import java.util.List;
 import java.util.Locale;
 
 import static it.polimi.ingsw.client.view.cli.Utilities.*;
-import static it.polimi.ingsw.utilities.GameControllerStates.*;
+import static it.polimi.ingsw.utilities.GameControllerStates.CHOOSE_CLOUD;
+import static it.polimi.ingsw.utilities.GameControllerStates.MOVE_MOTHER_NATURE;
 import static org.fusesource.jansi.Ansi.ansi;
 import static org.jline.builtins.Completers.TreeCompleter.node;
 
@@ -361,46 +361,48 @@ public class ClientCli extends Thread {
                 return;
 
             if (command.contains("info")) {
-                // TODO: managed info printing (for now the searches for info but it's a void method)
-                CommandParser.infoGenerator(command);
-            } else {
-                //Command parsing and check.
-                try {
-                    messages.addAll(CommandParser.commandManager(command, gameModel.getPlayers()));
-                } catch (Exception e) {
-                    Log.warning(e);
-                    clearScreen(terminal, false);
-                    this.errorOccurred("Wrong command");
-                    return;
-                }
-                if (messages.isEmpty())
-                    return;
-                try {
-                    for (JsonObject message : messages) {
-                        if (checkMessage(message)) {
-                            getGameServer().sendCommand(message);
-                            synchronized (this.lock){
-                                try{
-                                    this.getLock().wait();
-                                }catch(InterruptedException ie){
-                                    clearScreen(terminal, false);
-                                    errorOccurred("Command not allowed.");
-                                    return;
-                                }
+                Pair<String, String> message = CommandParser.infoGenerator(command);
+                clearScreen(terminal, false);
+                printInfo(terminal, message.key(), message.value());
+                return;
+            }
+
+            //Command parsing and check.
+            try {
+                messages.addAll(CommandParser.commandManager(command, gameModel.getPlayers()));
+            } catch (Exception e) {
+                Log.warning(e);
+                clearScreen(terminal, false);
+                this.errorOccurred("Wrong command");
+                return;
+            }
+            if (messages.isEmpty())
+                return;
+            try {
+                for (JsonObject message : messages) {
+                    if (checkMessage(message)) {
+                        getGameServer().sendCommand(message);
+                        synchronized (this.lock) {
+                            try {
+                                this.getLock().wait();
+                            } catch (InterruptedException ie) {
+                                clearScreen(terminal, false);
+                                errorOccurred("Command not allowed.");
+                                return;
                             }
-                            Log.debug("Command sent to game server.");
-                        } else {
-                            clearScreen(terminal, false);
-                            errorOccurred("Command not allowed.");
-                            return;
                         }
+                        Log.debug("Command sent to game server.");
+                    } else {
+                        clearScreen(terminal, false);
+                        errorOccurred("Command not allowed.");
+                        return;
                     }
-                    clearScreen(terminal, false);
-                } catch (IllegalActionException iae) {
-                    clearScreen(terminal, false);
-                    errorOccurred("Connection lost.");
-                    setClientState(ClientStates.CONNECTION_LOST);
                 }
+                clearScreen(terminal, false);
+            } catch (IllegalActionException iae) {
+                clearScreen(terminal, false);
+                errorOccurred("Connection lost.");
+                setClientState(ClientStates.CONNECTION_LOST);
             }
         } else {
             synchronized (this.lock) {
@@ -570,7 +572,7 @@ public class ClientCli extends Thread {
                 }
                 case "island" -> {
                     int destinationIndex = message.get("toId").getAsInt();
-                    while(getGameModel().getGameBoard().getIslands().get(destinationIndex).hasPrev()){
+                    while (getGameModel().getGameBoard().getIslands().get(destinationIndex).hasPrev()) {
                         destinationIndex = (destinationIndex - 1) % 12;
                     }
                     message.remove("toId");
@@ -595,13 +597,14 @@ public class ClientCli extends Thread {
         int motherNatureIslandSize = 1;
 
         int i = motherNatureIsland;
-        while(getGameModel().getGameBoard().getIslands().get(i).hasNext()){
-            motherNatureIslandSize ++;
+        while (getGameModel().getGameBoard().getIslands().get(i).hasNext()) {
+            motherNatureIslandSize++;
             i = (i + 1) % 12;
         }
 
         int distanceWanted;
-        if (finalIsland < motherNatureIsland) distanceWanted = finalIsland + 12 - motherNatureIsland - (motherNatureIslandSize - 1);
+        if (finalIsland < motherNatureIsland)
+            distanceWanted = finalIsland + 12 - motherNatureIsland - (motherNatureIslandSize - 1);
         else distanceWanted = finalIsland - motherNatureIsland - (motherNatureIslandSize - 1);
         if (distanceWanted > maxDistance) throw new IllegalMoveException();
     }

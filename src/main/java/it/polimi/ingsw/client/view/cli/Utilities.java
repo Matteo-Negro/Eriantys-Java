@@ -124,6 +124,33 @@ public class Utilities {
     }
 
     /**
+     * Prints an error message on the top of the screen.
+     *
+     * @param terminal    Terminal where to execute.
+     * @param subject     Subject of the message.
+     * @param description Description of the message
+     */
+    public static void printInfo(Terminal terminal, String subject, String description) {
+        Ansi ansi = new Ansi();
+        ansi.cursor(0, 0);
+        ansi.saveCursorPosition();
+        ansi.bgCyan();
+        ansi.a(foreground(White.getInstance()));
+        for (int index = 0; index < terminal.getWidth(); index++)
+            ansi.append(" ");
+        ansi.a(bold(true));
+        ansi.cursor(0, (terminal.getWidth() - subject.length() - 2 - description.length()) / 2);
+        ansi.append(subject);
+        ansi.a(bold(false));
+        ansi.append(": ");
+        ansi.append(description);
+        ansi.cursor(0, 0);
+        ansi.a(background(Black.getInstance()));
+        terminal.writer().print(ansi);
+        terminal.flush();
+    }
+
+    /**
      * Prints a block of text.
      *
      * @param text Text to print.

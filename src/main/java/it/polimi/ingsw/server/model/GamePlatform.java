@@ -257,12 +257,12 @@ public class GamePlatform {
         gameBoard.removeEffects();
 
         Log.debug(players.get(currentPlayer).getName());
-        Log.debug("" + (turnOrder.indexOf(players.get(currentPlayer)) + 1) % playersNumber);
+        Log.debug(String.valueOf((turnOrder.indexOf(players.get(currentPlayer)) + 1) % playersNumber));
         player = turnOrder.get((turnOrder.indexOf(players.get(currentPlayer)) + 1) % playersNumber).getName();
 
-        if (player.equals(roundWinner)){
+        if (player.equals(roundWinner))
             throw new RoundConcluded();
-        }
+
         currentPlayer = player;
     }
 
@@ -302,9 +302,14 @@ public class GamePlatform {
         Player player;
         int roundWinnerIndex = clockwiseOrder.indexOf(players.get(roundWinner));
         List<Pair<Player, Assistant>> playedAssistantsOrder = new ArrayList<>();
-        for (int index = 0; index < playersNumber; index++) {
-            player = clockwiseOrder.get(roundWinnerIndex + index % playersNumber);
-            playedAssistantsOrder.add(new Pair<>(player, playedAssistants.get(player)));
+        try {
+            for (int index = 0; index < playersNumber; index++) {
+                player = clockwiseOrder.get((roundWinnerIndex + index) % playersNumber);
+                playedAssistantsOrder.add(new Pair<>(player, playedAssistants.get(player)));
+            }
+        } catch (Exception e) {
+            Log.error(e);
+            System.exit(1);
         }
         return playedAssistantsOrder;
     }

@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import it.polimi.ingsw.client.model.Player;
 import it.polimi.ingsw.utilities.HouseColor;
 import it.polimi.ingsw.utilities.MessageCreator;
+import it.polimi.ingsw.utilities.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,43 +74,36 @@ public class CommandParser {
         }
     }
 
-    public static void infoGenerator(String command) {
+    public static Pair<String, String> infoGenerator(String command) {
         String[] parsedCommand;
-        String result;
         int id;
 
         parsedCommand = command.split(" ");
-        id = Integer.parseInt(parsedCommand[1].replaceAll("^\\d", ""));
+        id = Integer.parseInt(parsedCommand[1].replaceAll("^[a-z]+", ""));
+
         if (parsedCommand[1].startsWith("ast"))
-            result = "The Assistant #" + id + " allow you to do " + (id / 2 + 1) + "steps";
-        else {
-            switch (id) {
-                case 1 ->
-                        result = "SpecialCharacter #" + id + "Take 1 Student from this card and place it on an Island of your choice.";
-                case 2 ->
-                        result = "SpecialCharacter #" + id + "Take control of any number of Professors, even if you have the same number of Students as the the player who controls them.";
-                case 3 ->
-                        result = "SpecialCharacter #" + id + "Choose an Island and resolve it as if Mother Nature had ended her movement there.";
-                case 4 ->
-                        result = "SpecialCharacter #" + id + "You may move Mother Nature up to 2 additional islands than is indicated on your played Assistant.";
-                case 5 ->
-                        result = "SpecialCharacter #" + id + "Place a Ban on an Island of your choice. The first time that Mother Nature ends her movements there the Island won't be resolved.";
-                case 6 ->
-                        result = "SpecialCharacter #" + id + "When resolving a Conquering on an Island, Tower do not count toward influence.";
-                case 7 ->
-                        result = "SpecialCharacter #" + id + "You may take up to 3 Students from this card and replace them with the same number of Students from your Entrance.";
-                case 8 ->
-                        result = "SpecialCharacter #" + id + "During the influence calculation this turn, you count as having 2 more influence.";
-                case 9 ->
-                        result = "SpecialCharacter #" + id + "Choose a color of Student: during the influence calculation this turn, that color adds no influence.";
-                case 10 ->
-                        result = "SpecialCharacter #" + id + "You may exchange up to 2 Students between your Entrance and your Dining Room.";
-                case 11 ->
-                        result = "SpecialCharacter #" + id + "Take 1 Student from this card and place it in your Dining Room.";
-                default ->
-                        result = "SpecialCharacter #" + id + "Choose a color of Student: every player (you too) must return 3 Students of that color from their Dining Room to the Bag.";
-            }
-        }
+            return new Pair<>(String.format("Assistant #%d", id), String.format("allows to do %d steps.", id / 2 + 1));
+
+        return new Pair<>(String.format("Special character #%d", id), switch (id) {
+            case 1 -> "take 1 Student from this card and place it on an Island of your choice.";
+            case 2 ->
+                    "take control of any number of Professors, even if you have the same number of Students as the the player who controls them.";
+            case 3 -> "choose an Island and resolve it as if Mother Nature had ended her movement there.";
+            case 4 ->
+                    "you may move Mother Nature up to 2 additional islands than is indicated on your played Assistant.";
+            case 5 ->
+                    "place a Ban on an Island of your choice. The first time that Mother Nature ends her movements there the Island won't be resolved.";
+            case 6 -> "when resolving a Conquering on an Island, Tower do not count toward influence.";
+            case 7 ->
+                    "you may take up to 3 Students from this card and replace them with the same number of Students from your Entrance.";
+            case 8 -> "during the influence calculation this turn, you count as having 2 more influence.";
+            case 9 ->
+                    "choose a color of Student: during the influence calculation this turn, that color adds no influence.";
+            case 10 -> "you may exchange up to 2 Students between your Entrance and your Dining Room.";
+            case 11 -> "Take 1 Student from this card and place it in your Dining Room.";
+            default ->
+                    "Choose a color of Student: every player (you too) must return 3 Students of that color from their Dining Room to the Bag.";
+        });
     }
 
     /*
