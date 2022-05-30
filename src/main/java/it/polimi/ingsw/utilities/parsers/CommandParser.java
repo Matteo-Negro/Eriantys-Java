@@ -142,7 +142,7 @@ public class CommandParser {
 
             case "move" -> jsonCommands.add(manageMove(command, players));
             case "refill" ->
-                    jsonCommands.add(MessageCreator.refillEntrance(playerName, Integer.parseInt(parsedCommand[3].replaceAll("\\D", ""))));
+                    jsonCommands.add(MessageCreator.refillEntrance(playerName, Integer.parseInt(parsedCommand[3].replaceAll("\\D", "")) - 1));
             case "pay" ->
                     jsonCommands.add(MessageCreator.payCharacter(playerName, Integer.parseInt(parsedCommand[1].replaceAll("\\D", ""))));
             case "resolve" ->
