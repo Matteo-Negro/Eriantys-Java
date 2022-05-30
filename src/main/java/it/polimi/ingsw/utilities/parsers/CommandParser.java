@@ -125,7 +125,6 @@ public class CommandParser {
     */
     public static List<JsonObject> commandManager(String command, List<Player> players) {
         String playerName = null;
-        List<JsonObject> jsonCommands = new ArrayList<>();
 
         if (command == null || command.isBlank())
             return new ArrayList<>();
@@ -136,23 +135,21 @@ public class CommandParser {
             if (p.isActive())
                 playerName = p.getName();
 
-        switch (parsedCommand[0]) {
+        return switch (parsedCommand[0]) {
             case "play" ->
-                    jsonCommands.add(MessageCreator.playAssistant(playerName, Integer.parseInt(parsedCommand[1].replaceAll("\\D", ""))));
-
-            case "move" -> jsonCommands.add(manageMove(command, players));
+                    List.of(MessageCreator.playAssistant(playerName, Integer.parseInt(parsedCommand[1].replaceAll("\\D", ""))));
+            case "move" -> List.of(manageMove(command, players));
             case "refill" ->
-                    jsonCommands.add(MessageCreator.refillEntrance(playerName, Integer.parseInt(parsedCommand[3].replaceAll("\\D", "")) - 1));
+                    List.of(MessageCreator.refillEntrance(playerName, Integer.parseInt(parsedCommand[3].replaceAll("\\D", "")) - 1));
             case "pay" ->
-                    jsonCommands.add(MessageCreator.payCharacter(playerName, Integer.parseInt(parsedCommand[1].replaceAll("\\D", ""))));
+                    List.of(MessageCreator.payCharacter(playerName, Integer.parseInt(parsedCommand[1].replaceAll("\\D", ""))));
             case "resolve" ->
-                    jsonCommands.add(MessageCreator.moveMotherNature(Integer.parseInt(parsedCommand[3].replaceAll("\\D", "")), false));
-            case "ignore" -> jsonCommands.add(MessageCreator.ignoreColor(parsedCommand[1]));
-            case "swap" -> jsonCommands.addAll(manageSwap());
-            case "ban" ->
-                    jsonCommands.add(MessageCreator.ban(Integer.parseInt(parsedCommand[1].replaceAll("\\D", ""))));
-        }
-        return jsonCommands;
+                    List.of(MessageCreator.moveMotherNature(Integer.parseInt(parsedCommand[3].replaceAll("\\D", "")), false));
+            case "ignore" -> List.of(MessageCreator.ignoreColor(parsedCommand[1]));
+            case "swap" -> manageSwap();
+            case "ban" -> List.of(MessageCreator.ban(Integer.parseInt(parsedCommand[1].replaceAll("\\D", ""))));
+            default -> List.of();
+        };
     }
 
     /**
@@ -182,34 +179,42 @@ public class CommandParser {
             // Move Student
             String color;
             String tmp;
-            String from = null;
+            String from;
             String fromId = null;
-            String to = null;
+            String to;
             String toId = null;
 
             color = parsedCommand[2];
             tmp = parsedCommand[4];
-            if (tmp.equals("entrance")) from = parsedCommand[4];
+            if (tmp.equals("entrance"))
+                from = parsedCommand[4];
             else {
                 from = "character";
                 fromId = parsedCommand[4].replaceAll("\\D", "");
             }
 
             tmp = parsedCommand[6];
-            if (tmp.equals("dining-room")) to = parsedCommand[6];
+            if (tmp.equals("dining-room"))
+                to = parsedCommand[6];
             else {
                 to = "island";
                 toId = parsedCommand[6].replaceAll("\\D", "");
             }
 
-            return MessageCreator.moveStudent(playerName, HouseColor.valueOf(color.toUpperCase(Locale.ROOT)), from, to, fromId == null ? null : Integer.parseInt(fromId)-1, toId == null ? null : Integer.parseInt(toId)-1);
+            return MessageCreator.moveStudent(
+                    playerName,
+                    HouseColor.valueOf(color.toUpperCase(Locale.ROOT)),
+                    from,
+                    to,
+                    fromId == null ? null : Integer.parseInt(fromId) - 1,
+                    toId == null ? null : Integer.parseInt(toId) - 1);
         } else {
             //Move Mother Nature
-            return MessageCreator.moveMotherNature(Integer.parseInt(parsedCommand[3].replaceAll("\\D", ""))-1, true);
+            return MessageCreator.moveMotherNature(Integer.parseInt(parsedCommand[3].replaceAll("\\D", "")) - 1, true);
         }
     }
 
     private static List<JsonObject> manageSwap() {
-        return null;
+        return List.of();
     }
 }
