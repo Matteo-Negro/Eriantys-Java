@@ -8,15 +8,14 @@ import it.polimi.ingsw.client.view.cli.pages.*;
 import it.polimi.ingsw.utilities.GraphicsType;
 import it.polimi.ingsw.utilities.Pair;
 import org.fusesource.jansi.Ansi;
+import org.jline.builtins.Completers;
 import org.jline.reader.History;
 import org.jline.reader.impl.history.DefaultHistory;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 import static it.polimi.ingsw.client.view.cli.Utilities.*;
 import static org.fusesource.jansi.Ansi.ansi;
@@ -136,7 +135,9 @@ public class View {
 
                     case JOIN_GAME -> command = readLine(" ", terminal, List.of(node("exit")), false, null).toUpperCase(Locale.ROOT);
 
-                    case GAME_LOGIN, END_GAME -> command = readLine(" ", terminal, List.of(node("exit")), false, null);
+                    case GAME_LOGIN -> command = readLine(" ", terminal, playersToNodes(), false, null);
+
+                    case END_GAME -> command = readLine(" ", terminal, List.of(node("exit")), false, null);
 
                     case GAME_WAITING_ROOM -> {
                     }
@@ -150,6 +151,15 @@ public class View {
         }
 
         return command;
+    }
+
+    private List<Completers.TreeCompleter.Node> playersToNodes() {
+        List<Completers.TreeCompleter.Node> nodes = new ArrayList<>();
+        for (Map.Entry<String, Boolean> entry : this.controller.getGameModel().getWaitingRoom().entrySet())
+            if (Boolean.FALSE.equals(entry.getValue()))
+                nodes.add(node(entry.getKey()));
+        nodes.add(node("exit"));
+        return Collections.unmodifiableList(nodes);
     }
 
     /**
