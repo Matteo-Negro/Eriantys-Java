@@ -19,7 +19,7 @@ public class Assistant {
      */
     public Assistant(int id, boolean bonus) {
         this.id = id;
-        this.maxDistance = id / 2 + 1;
+        this.maxDistance = (id - 1) / 2 + 1;
         this.bonus = bonus;
     }
 
