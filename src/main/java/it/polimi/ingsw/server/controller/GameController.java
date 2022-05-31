@@ -440,7 +440,7 @@ public class GameController extends Thread {
             Log.debug("Waiting for a cloud to be chosen.");
             while (this.getSubPhase() != GameControllerStates.END_TURN) {
                 notifyUsers(MessageCreator.turnEnable(currentUser.getUsername(), true));
-                Log.debug("Current subphase " + this.subPhase.toString());
+                Log.debug("Current subphase: " + this.subPhase.toString());
                 synchronized (this.actionNeededLock) {
                     try {
                         this.actionNeededLock.wait();
@@ -448,7 +448,8 @@ public class GameController extends Thread {
                         saveGame();
                     } catch (InterruptedException ie) {
                         notifyUsers(MessageCreator.error("GameServerError"));
-                        for (User user : this.getUsers()) this.removeUser(user);
+                        for (User user : this.getUsers())
+                            this.removeUser(user);
                         return;
                     }
                 }

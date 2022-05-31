@@ -236,6 +236,7 @@ public class GamePlatform {
             }
             cloud.refill(map);
         });
+        currentPlayer = roundWinner;
     }
 
     /**
