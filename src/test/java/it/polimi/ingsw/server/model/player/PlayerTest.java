@@ -68,7 +68,7 @@ class PlayerTest {
      */
     @Test
     void getCoins() {
-        assertEquals(0, this.player.getCoins());
+        assertEquals(1, this.player.getCoins());
     }
 
     /**
@@ -77,7 +77,7 @@ class PlayerTest {
     @Test
     void addCoins() {
         this.player.addCoins();
-        assertEquals(1, this.player.getCoins());
+        assertEquals(2, this.player.getCoins());
     }
 
     /**
@@ -121,7 +121,7 @@ class PlayerTest {
 
         for (int coin = 1; coin <= cost; coin++) this.player.addCoins();
         this.player.paySpecialCharacter(tmp);
-        assertEquals(0, this.player.getCoins());
+        assertEquals(1, this.player.getCoins());
         assertTrue(tmp.isActive());
     }
 

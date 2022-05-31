@@ -44,19 +44,20 @@ class AssistantTest {
     }
 
     /**
-     *  Test whether the assistant a has the bonus.
+     * Test whether the assistant a has the bonus.
      */
     @Test
     void hasBonus() {
         this.assistant.setBonus();
         assertTrue(this.assistant.hasBonus());
     }
+
     /**
      * Tests whether returns the right distance links to the ID of card.
      */
     @Test
     void getMaxDistance() {
-        assertEquals(this.id / 2 + 1, this.assistant.getMaxDistance());
+        assertEquals((this.id - 1) / 2 + 1, this.assistant.getMaxDistance());
     }
 
     /**
@@ -65,6 +66,6 @@ class AssistantTest {
     @Test
     void setBonus() {
         this.assistant.setBonus();
-        assertEquals(this.id / 2 + 3, this.assistant.getMaxDistance());
+        assertEquals((this.id - 1) / 2 + 3, this.assistant.getMaxDistance());
     }
 }
