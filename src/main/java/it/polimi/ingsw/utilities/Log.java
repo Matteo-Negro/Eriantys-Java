@@ -75,12 +75,12 @@ public class Log {
         }
     }
 
-    public static void warning(Exception exception) {
-        printWarning(exception.getMessage() + "\n" + getStackTrace(exception.getStackTrace()));
+    public static void warning(String message, Exception exception) {
+        printWarning(message + exception.getMessage() + "\n" + getStackTrace(exception.getStackTrace()));
     }
 
-    public static void warning(Error error) {
-        printWarning(error.getMessage() + "\n" + getStackTrace(error.getStackTrace()));
+    public static void warning(Exception exception) {
+        printWarning(exception.getMessage() + "\n" + getStackTrace(exception.getStackTrace()));
     }
 
     public static void warning(String message) {
@@ -105,10 +105,6 @@ public class Log {
 
     public static void error(Exception exception) {
         printError(exception.getMessage() + "\n" + getStackTrace(exception.getStackTrace()));
-    }
-
-    public static void error(Error error) {
-        printError(error.getMessage() + "\n" + getStackTrace(error.getStackTrace()));
     }
 
     public static void error(String message) {

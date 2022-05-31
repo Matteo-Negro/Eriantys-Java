@@ -43,6 +43,7 @@ public class GameController extends Thread {
     private boolean movementEffectActive;
     private String activeUser;
     private boolean initialized;
+    private boolean ended;
 
     /**
      * The game controller constructor.
@@ -67,6 +68,7 @@ public class GameController extends Thread {
         this.movementEffectActive = false;
         this.activeUser = null;
         this.initialized = false;
+        this.ended = false;
 
         Log.info("*** New GameController successfully created with : " + id);
     }
@@ -104,6 +106,7 @@ public class GameController extends Thread {
         this.movementEffectActive = false;
         this.activeUser = null;
         this.initialized = true;
+        this.ended = false;
 
         Log.info("*** Successfully restored game controller : " + id);
     }
@@ -335,7 +338,7 @@ public class GameController extends Thread {
     @Override
     public void run() {
         Log.debug("Game controller running");
-        while (true) {
+        while (!ended) {
             while (!this.isFull()) {
                 try {
                     synchronized (this.isFullLock) {
@@ -355,6 +358,15 @@ public class GameController extends Thread {
                 case PLANNING -> this.planningPhase();
                 case ACTION -> this.actionPhase();
             }
+        }
+        for (User user : this.getUsers()) {
+            this.removeUser(user);
+        }
+        try {
+            Files.delete(Paths.get(this.savePath, this.id + ".json"));
+            Log.info(String.format("Deleted %s after game end.", this.id));
+        } catch (Exception e) {
+            Log.warning(String.format("The following error occurred while trying to delete %s, please delete it manually: ", this.id), e);
         }
     }
 
@@ -479,12 +491,9 @@ public class GameController extends Thread {
             notifyUsers(MessageCreator.status(this));
             saveGame();
 
-            if (endGame()) {
-                for (User user : this.getUsers()) {
-                    this.removeUser(user);
-                }
+            endGame();
+            if (ended)
                 return;
-            }
         }
     }
 
@@ -830,28 +839,21 @@ public class GameController extends Thread {
      *
      * @return A boolean value, true whether the game will have to end.
      */
-    public boolean endGame() {
-        boolean end = false;
+    public void endGame() {
         List<Player> winners = new ArrayList<>();
         if (this.gameModel.getPlayers().stream().anyMatch(player -> player.getSchoolBoard().getTowersNumber() == 0)) {
-            end = true;
-            for (Player player : this.gameModel.getPlayers()) {
-                if (player.getSchoolBoard().getTowersNumber() == 0) winners.add(player);
-            }
-        } else if (this.gameModel.getGameBoard().getIslands().size() == 3) {
-            end = true;
+            ended = true;
+            for (Player player : this.gameModel.getPlayers())
+                if (player.getSchoolBoard().getTowersNumber() == 0)
+                    winners.add(player);
+        } else if ((this.gameModel.getGameBoard().getIslands().size() == 3) ||
+                (this.gameModel.getCurrentPlayer().equals(this.gameModel.getTurnOrder().get(this.expectedPlayers - 1)) &&
+                (this.gameModel.getGameBoard().getBag().isEmpty() || this.gameModel.getPlayers().get(0).getAssistants().isEmpty()))) {
+            ended = true;
             winners = checkForWinners();
-        } else if ((this.gameModel.getCurrentPlayer().equals(this.gameModel.getTurnOrder().get(this.expectedPlayers - 1)))) {
-            if (this.gameModel.getGameBoard().getBag().isEmpty() || this.gameModel.getPlayers().get(0).getAssistants().isEmpty()) {
-                end = true;
-                winners = checkForWinners();
-            }
         }
-        if (end) {
+        if (ended)
             notifyUsers(MessageCreator.win(winners));
-        }
-
-        return end;
     }
 
     /**

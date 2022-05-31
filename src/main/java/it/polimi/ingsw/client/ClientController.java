@@ -131,8 +131,6 @@ public class ClientController extends Thread {
             }
         } catch (Exception e) {
             Log.error(e);
-        } catch (Error e) {
-            Log.error(e);
         } finally {
             view.clear(true);
             if (this.gameServer != null)
@@ -390,10 +388,8 @@ public class ClientController extends Thread {
     private void manageEndGame() {
         //TODO Print end game screen on cli.
         view.printPage();
-        String command;
         do {
-            command = view.acquire(1);
-            if (command.equals("exit")) {
+            if (view.acquire(1).equals("exit")) {
                 this.setClientState(ClientStates.MAIN_MENU);
                 view.clear(false);
                 this.resetGame();
