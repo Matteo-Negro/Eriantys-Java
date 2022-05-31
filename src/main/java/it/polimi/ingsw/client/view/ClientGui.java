@@ -1,4 +1,4 @@
-package it.polimi.ingsw.client;
+package it.polimi.ingsw.client.view;
 
 import it.polimi.ingsw.client.view.gui.GameCreation;
 import it.polimi.ingsw.client.view.gui.JoinGame;

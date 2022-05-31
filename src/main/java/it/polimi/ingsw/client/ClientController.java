@@ -6,8 +6,10 @@ import it.polimi.ingsw.client.controller.GameServer;
 import it.polimi.ingsw.client.model.GameModel;
 import it.polimi.ingsw.client.model.Player;
 import it.polimi.ingsw.client.model.SpecialCharacter;
+import it.polimi.ingsw.client.view.ClientCli;
 import it.polimi.ingsw.client.view.View;
 import it.polimi.ingsw.utilities.*;
+import it.polimi.ingsw.utilities.exceptions.ExitException;
 import it.polimi.ingsw.utilities.exceptions.IllegalActionException;
 import it.polimi.ingsw.utilities.exceptions.IllegalMoveException;
 import it.polimi.ingsw.utilities.parsers.CommandParser;
@@ -21,6 +23,7 @@ import static it.polimi.ingsw.utilities.GameControllerStates.CHOOSE_CLOUD;
 import static it.polimi.ingsw.utilities.GameControllerStates.MOVE_MOTHER_NATURE;
 
 public class ClientController extends Thread {
+    private final GraphicsType graphics;
     private final View view;
     private final Object lock;
     private String userName;
@@ -42,8 +45,11 @@ public class ClientController extends Thread {
         this.userName = null;
         this.gameCode = null;
         this.lock = new Object();
-        this.view = new View(graphics, this);
-        view.clear(false);
+        this.graphics = graphics;
+
+        this.view = new ClientCli(this);
+        //if(this.graphics.equals(GraphicsType.GUI)) this.view = new ClientGui(this);
+        view.updateScreen(false);
     }
 
     /**
@@ -82,7 +88,7 @@ public class ClientController extends Thread {
         return this.userName;
     }
 
-    private boolean hasCommunicationToken() {
+    public boolean hasCommunicationToken() {
         return this.getGameModel().getPlayerByName(getUserName()).isActive();
     }
 
@@ -102,6 +108,15 @@ public class ClientController extends Thread {
      */
     public void setGameCode(String gameCode) {
         this.gameCode = gameCode;
+    }
+
+    /**
+     * Sets the game server.
+     *
+     * @param server The GameServer instance to set.
+     */
+    public void setGameServer(GameServer server) {
+        this.gameServer = server;
     }
 
     /**
@@ -132,7 +147,7 @@ public class ClientController extends Thread {
         } catch (Exception e) {
             Log.error(e);
         } finally {
-            view.clear(true);
+            view.updateScreen(true);
             if (this.gameServer != null)
                 gameServer.disconnected();
         }
@@ -142,16 +157,13 @@ public class ClientController extends Thread {
      * Manages the start-screen's I/O.
      */
     private void manageStartScreen() {
-        view.printPage();
-        String hostIp = view.acquire(1);
         try {
-            int hostTcpPort = Integer.parseInt(view.acquire(2));
-            Socket hostSocket = new Socket(hostIp, hostTcpPort);
+            Socket hostSocket = view.runStartScreen();
             hostSocket.setSoTimeout(10000);
             this.gameServer = new GameServer(hostSocket, this);
             new Thread(this.gameServer).start();
             setClientState(ClientStates.MAIN_MENU);
-            view.clear(false);
+            view.updateScreen(false);
         } catch (IOException | NumberFormatException e) {
             this.errorOccurred("Wrong data provided or server unreachable.");
         }
@@ -162,84 +174,60 @@ public class ClientController extends Thread {
      */
     private void manageMainMenu() {
         String option;
-
-        view.printPage();
-        option = view.acquire(1);
+        option = view.runMainMenu();
 
         switch (option) {
             case "1" -> {
                 this.setClientState(ClientStates.GAME_CREATION);
-                view.clear(false);
+                view.updateScreen(false);
             }
             case "2" -> {
                 this.setClientState(ClientStates.JOIN_GAME);
-                view.clear(false);
+                view.updateScreen(false);
             }
             default -> this.errorOccurred("Wrong command.");
         }
 
         if (!this.getClientState().equals(ClientStates.MAIN_MENU))
-            view.clear(false);
+            view.updateScreen(false);
     }
 
     /**
      * Manages the game-creation-screen's I/O.
      */
     private void manageGameCreation() {
-        int expectedPlayers;
-        boolean expert;
+        JsonObject command;
 
-        view.printPage();
-        String playersNumber = view.acquire(1);
-        switch (playersNumber) {
-            case "2", "3", "4" -> expectedPlayers = Integer.parseInt(playersNumber);
-            case "exit" -> {
-                this.setClientState(ClientStates.MAIN_MENU);
-                view.clear(false);
-                this.resetGame();
-                return;
-            }
-            default -> {
-                this.errorOccurred("Wrong command.");
-                return;
-            }
+        try {
+            command = view.runGameCreation();
+        } catch (ExitException ee) {
+            this.setClientState(ClientStates.MAIN_MENU);
+            view.updateScreen(false);
+            this.resetGame();
+            return;
+        } catch (IllegalArgumentException iae) {
+            this.errorOccurred("Wrong command.");
+            return;
         }
 
-        String difficulty = view.acquire(2);
-        switch (difficulty) {
-            case "normal" -> expert = false;
-            case "expert" -> expert = true;
-            case "exit" -> {
-                this.setClientState(ClientStates.MAIN_MENU);
-                view.clear(false);
-                this.resetGame();
-                return;
-            }
-            default -> {
-                this.errorOccurred("Wrong command.");
-                return;
-            }
-        }
-
-        this.gameServer.sendCommand(MessageCreator.gameCreation(expectedPlayers, expert));
+        this.gameServer.sendCommand(command);
 
         this.tryConnection();
 
         if (this.getClientState().equals(ClientStates.GAME_CREATION))
             this.setClientState(ClientStates.CONNECTION_LOST);
 
-        view.clear(false);
+        view.updateScreen(false);
     }
 
     /**
      * Manages the join-game-screen's I/O.
      */
     private void manageJoinGame() {
-        view.printPage();
-        String gameCode = view.acquire(1);
+        String gameCode = view.runJoinGame();
         if ("EXIT".equals(gameCode)) {
             this.setClientState(ClientStates.MAIN_MENU);
-            view.clear(false);
+            view.updateScreen(false);
             this.resetGame();
             return;
         }
@@ -253,20 +241,19 @@ public class ClientController extends Thread {
             return;
         }
 
-        view.clear(false);
+        view.updateScreen(false);
     }
 
     /**
      * Manages the login-screen's I/O.
      */
     private void manageGameLogin() {
-        view.printPage();
         String username;
 
-        username = view.acquire(1);
+        username = view.runGameLogin();
         if ("exit".equals(username)) {
             this.setClientState(ClientStates.MAIN_MENU);
-            view.clear(false);
+            view.updateScreen(false);
             this.resetGame();
             return;
         }
@@ -281,7 +268,7 @@ public class ClientController extends Thread {
 
         this.tryConnection();
 
-        view.clear(false);
+        view.updateScreen(false);
     }
 
     /**
@@ -291,7 +278,7 @@ public class ClientController extends Thread {
 
     private void manageWaitingRoom() {
         if (this.getGameModel() != null) {
-            view.printPage();
+            view.runWaitingRoom();
         }
         synchronized (this.lock) {
             try {
@@ -300,7 +287,7 @@ public class ClientController extends Thread {
                 resetGame();
             }
         }
-        view.clear(false);
+        view.updateScreen(false);
     }
 
     /**
@@ -308,19 +295,17 @@ public class ClientController extends Thread {
      */
     private void manageGameRunning() {
         List<JsonObject> messages = new ArrayList<>();
-        view.printPage();
+        String command = view.runGameRunning();
 
         if (this.hasCommunicationToken()) {
-            String command = view.acquire(1);
-            view.clear(false);
-
             // Logout command.
             if (command.equals("exit") || command.equals("logout")) {
-                this.getGameServer().sendCommand(MessageCreator.logout());
-                this.resetGame();
-                view.clear(false);
-                return;
-            }
+            this.getGameServer().sendCommand(MessageCreator.logout());
+            this.resetGame();
+            view.updateScreen(false);
+            return;
+        }
+            view.updateScreen(false);
 
             // Another player disconnected.
             if (getGameModel() == null)
@@ -328,7 +313,7 @@ public class ClientController extends Thread {
 
             if (command.contains("info")) {
                 Pair<String, String> message = CommandParser.infoGenerator(command);
-                view.clear(false);
+                view.updateScreen(false);
                 view.printInfo(message);
                 return;
             }
@@ -338,7 +323,7 @@ public class ClientController extends Thread {
                 messages.addAll(CommandParser.commandManager(command, gameModel.getPlayers()));
             } catch (Exception e) {
                 Log.warning(e);
-                view.clear(false);
+                view.updateScreen(false);
                 this.errorOccurred("Wrong command.");
                 return;
             }
@@ -352,21 +337,21 @@ public class ClientController extends Thread {
                             try {
                                 this.getLock().wait();
                             } catch (InterruptedException ie) {
-                                view.clear(false);
+                                view.updateScreen(false);
                                 errorOccurred("Command not allowed.");
                                 return;
                             }
                         }
                         Log.debug("Command sent to game server.");
                     } else {
-                        view.clear(false);
+                        view.updateScreen(false);
                         errorOccurred("Command not allowed.");
                         return;
                     }
                 }
-                view.clear(false);
+                view.updateScreen(false);
             } catch (IllegalActionException iae) {
-                view.clear(false);
+                view.updateScreen(false);
                 errorOccurred("Connection lost.");
                 setClientState(ClientStates.CONNECTION_LOST);
             }
@@ -379,26 +364,22 @@ public class ClientController extends Thread {
                 }
             }
         }
-        view.clear(false);
+        view.updateScreen(false);
     }
 
     /**
      * Manages the end-game-screen's I/O.
      */
     private void manageEndGame() {
-        //TODO Print end game screen on cli.
-        view.printPage();
-        do {
-            if (view.acquire(1).equals("exit")) {
-                this.setClientState(ClientStates.MAIN_MENU);
-                view.clear(false);
-                this.resetGame();
-                return;
-            } else {
-                this.errorOccurred("Wrong command.");
-            }
-        } while (this.getClientState().equals(ClientStates.END_GAME));
-        view.clear(false);
+        if (view.runEndGame().equals("exit")) {
+            this.setClientState(ClientStates.MAIN_MENU);
+            view.updateScreen(false);
+            this.resetGame();
+            return;
+        } else {
+            this.errorOccurred("Wrong command.");
+        }
+        view.updateScreen(false);
     }
 
     /**
@@ -641,7 +622,7 @@ public class ClientController extends Thread {
     /**
      * Flushes the current game model and sets the current state to MAIN_MENU.
      */
-    private void resetGame() {
+    public void resetGame() {
         this.setClientState(ClientStates.MAIN_MENU);
         this.gameModel = null;
         this.userName = null;
@@ -667,7 +648,7 @@ public class ClientController extends Thread {
                 this.lock.wait(10000);
             } catch (InterruptedException e) {
                 this.setClientState(ClientStates.CONNECTION_LOST);
-                view.clear(false);
+                view.updateScreen(false);
             }
         }
     }
