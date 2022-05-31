@@ -287,14 +287,15 @@ public class Autocompletion {
     private static List<String> getMotherNatureIslands() {
         List<String> result = new ArrayList<>();
         List<Island> islands = cli.getGameModel().getGameBoard().getIslands();
-        int index = (getMotherNatureIsland() + 1) % islands.size();
-        for (int moves = 0; moves < cli.getGameModel().getPlayerByName(cli.getUserName()).getCurrentPlayedAssistant().getMaxDistance(); moves++)
-            do {
-                if (islands.get(index).hasMotherNature())
-                    return Collections.unmodifiableList(result);
-                result.add(String.format("ISL%02d", index + 1));
+        int index = getMotherNatureIsland();
+        for (int moves = 0; moves < cli.getGameModel().getPlayerByName(cli.getUserName()).getCurrentPlayedAssistant().getMaxDistance(); moves++) {
+            index = (index + 1) % islands.size();
+            if (islands.get(index).hasMotherNature())
+                return Collections.unmodifiableList(result);
+            result.add(String.format("ISL%02d", index + 1));
+            while (islands.get(index).hasNext())
                 index = (index + 1) % islands.size();
-            } while (islands.get(index).hasNext());
+        }
         return Collections.unmodifiableList(result);
     }
 
