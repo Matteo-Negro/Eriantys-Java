@@ -383,4 +383,19 @@ public class MessageCreator {
         return command;
     }
 
+    /**
+     * Creates the "return" command.
+     *
+     * @param color The color to be return.
+     * @return JsonObject which represents the message.
+     */
+    public static JsonObject returnColor(String color) {
+        JsonObject command = new JsonObject();
+        command.addProperty("type", "command");
+        command.addProperty("subtype", "return");
+        command.addProperty("color", color);
+
+        return command;
+    }
+
 }

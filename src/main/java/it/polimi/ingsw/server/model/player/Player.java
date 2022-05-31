@@ -38,7 +38,7 @@ public class Player {
     public Player(String name, WizardType wizardType, int towersNumber, TowerType towerType, Map<HouseColor, Integer> entrance) {
         this.name = name;
         this.wizardType = wizardType;
-        this.coins = 0;
+        this.coins = 1;
         this.assistants = new ArrayList<>();
         for (int index = 1; index <= 10; index++)
             assistants.add(new Assistant(index));
