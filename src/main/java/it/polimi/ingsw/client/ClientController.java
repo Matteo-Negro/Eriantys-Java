@@ -341,7 +341,7 @@ public class ClientController extends Thread {
             } catch (Exception e) {
                 Log.warning(e);
                 view.clear(false);
-                this.errorOccurred("Wrong command");
+                this.errorOccurred("Wrong command.");
                 return;
             }
             if (messages.isEmpty())

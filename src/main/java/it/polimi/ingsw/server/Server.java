@@ -9,8 +9,6 @@ import it.polimi.ingsw.server.controller.User;
 import it.polimi.ingsw.server.model.GamePlatform;
 import it.polimi.ingsw.server.model.player.Player;
 import it.polimi.ingsw.utilities.Log;
-import it.polimi.ingsw.utilities.exceptions.AlreadyExistingPlayerException;
-import it.polimi.ingsw.utilities.exceptions.FullGameException;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -21,6 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.concurrent.ExecutorService;
@@ -113,15 +112,16 @@ public class Server {
      */
     private void loadGame(JsonObject json) {
 
-        Log.info("Loading game \"" + json.get("id").getAsString() + "\"...");
-
-        Map<String, Player> players = new HashMap<>();
-
-        for (JsonElement player : json.getAsJsonArray("players"))
-            players.put(player.getAsJsonObject().get("name").getAsString(), parsePlayer(player.getAsJsonObject()));
-
         try {
-            GameController gameController = new GameController(json.get("id").getAsString(),
+
+            Log.info("Loading game \"" + json.get("id").getAsString().toUpperCase() + "\"...");
+
+            Map<String, Player> players = new HashMap<>();
+
+            for (JsonElement player : json.getAsJsonArray("players"))
+                players.put(player.getAsJsonObject().get("name").getAsString(), parsePlayer(player.getAsJsonObject()));
+
+            GameController gameController = new GameController(json.get("id").getAsString().toUpperCase(Locale.ROOT),
                     new GamePlatform(
                             json.get("expert").getAsBoolean(),
                             parseGameBoard(json.getAsJsonObject("board"), json.get("expert").getAsBoolean(), players),
@@ -145,9 +145,8 @@ public class Server {
 
             Log.info("Loaded " + json.get("id").getAsString());
 
-        } catch (FullGameException | AlreadyExistingPlayerException e) {
-            Log.warning("An error occurred while loading " + json.get("id").getAsString() + ": " + e);
-            return;
+        } catch (Exception e) {
+            Log.warning("The following error occurred while loading " + json.get("id").getAsString().toUpperCase() + ": " + e);
         }
     }
 

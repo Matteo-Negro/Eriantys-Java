@@ -39,25 +39,23 @@ public class GameServer extends Thread {
         while (true) {
 
             synchronized (connectedLock) {
-                if (!connected) break;
+                if (!connected)
+                    break;
             }
 
             try {
                 incomingMessage = getMessage();
-                //Log.debug(incomingMessage.get("type").getAsString());
-                manageMessage(incomingMessage);
-            } catch (IOException ioe) {
+                if (!incomingMessage.get("type").getAsString().equals("pong"))
+                    manageMessage(incomingMessage);
+            } catch (Exception e) {
                 this.client.setClientState(ClientStates.CONNECTION_LOST);
             }
         }
     }
 
     public void manageMessage(JsonObject incomingMessage) {
-        //Log.debug("incoming message ");
         switch (incomingMessage.get("type").getAsString()) {
-            case "ping" -> {
-                //Log.debug("ping arrived");
-            }
+            case "ping" -> sendCommand(MessageCreator.pong());
             case "gameCreation" -> {
                 Log.debug("gameCreation reply");
                 sendCommand(MessageCreator.enterGame(incomingMessage.get("code").getAsString()));

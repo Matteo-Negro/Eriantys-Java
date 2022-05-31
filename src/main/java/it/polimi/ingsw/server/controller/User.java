@@ -89,14 +89,14 @@ public class User extends Thread {
                     synchronized (connectedLock) {
                         try {
                             this.connectedLock.wait(1500);
-                        } catch (InterruptedException ie) {
+                        } catch (InterruptedException e) {
                             this.disconnected();
                         }
                     }
                     this.sendMessage(MessageCreator.waitingRoomUpdate(this.gameController));
                     Log.debug("waiting room message sent.");
                 }
-            } catch (IOException | IllegalMoveException e) {
+            } catch (Exception e) {
                 // If socket time out expires.
                 disconnected();
             }
@@ -129,10 +129,12 @@ public class User extends Thread {
      * Manages the user's command parsing and calls the "createGame(int playersNumber, boolean expertMode)" method or "searchGame(String gameCode)" method if requested.
      *
      * @param command The command to manage.
+     * @throws IllegalMoveException Thrown if the player wants to do something illegal.
      */
     private void manageCommand(JsonObject command) throws IllegalMoveException {
         Log.debug(command.toString());
         switch (command.get("type").getAsString()) {
+            case "ping" -> sendMessage(MessageCreator.pong());
             case "gameCreation" -> {
                 Log.info("GameCreation message arrived");
                 sendMessage(MessageCreator.gameCreation(Matchmaking.gameCreation(command, server)));
@@ -163,7 +165,7 @@ public class User extends Thread {
             }
             case "command" -> {
                 switch (command.get("subtype").getAsString()) {
-                    case "playAssistant" ->{
+                    case "playAssistant" -> {
                         Log.debug("PlayAssistant command arrived.");
                         this.gameController.playAssistantCard(command.get("player").getAsString(), command.get("assistant").getAsInt());
                     }
@@ -171,7 +173,8 @@ public class User extends Thread {
                     case "move" -> {
                         switch (command.get("pawn").getAsString()) {
                             case "student" -> this.gameController.moveStudent(command);
-                            case "motherNature" -> this.gameController.moveMotherNature(command.get("island").getAsInt());
+                            case "motherNature" ->
+                                    this.gameController.moveMotherNature(command.get("island").getAsInt());
 
                         }
                     }
@@ -180,7 +183,7 @@ public class User extends Thread {
                     case "refill" -> this.gameController.chooseCloud(command);
                 }
             }
-            default -> sendMessage(MessageCreator.error("Wrong command."));
+            default -> disconnected();
         }
     }
 
