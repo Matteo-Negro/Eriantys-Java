@@ -47,13 +47,16 @@ public class GameBoard {
         this.islands = new ArrayList<>();
         int id = 0;
         for (JsonElement island : islands) {
+
             int size = island.getAsJsonObject().get("size").getAsInt();
             TowerType tower = null;
             if (!(island.getAsJsonObject().get("tower") instanceof JsonNull))
                 tower = TowerType.valueOf(island.getAsJsonObject().get("tower").getAsString());
+
             boolean ban = island.getAsJsonObject().get("ban").getAsBoolean();
             JsonObject containedStudents = island.getAsJsonObject().get("students").getAsJsonObject();
             Map<HouseColor, Integer> students = JsonToObjects.parseStudents(containedStudents);
+
             int studentsNumber = 0;
             for(HouseColor color : HouseColor.values()) studentsNumber = studentsNumber + students.get(color);
             boolean motherNature;

@@ -1,10 +1,7 @@
 package it.polimi.ingsw.client.controller;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonNull;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import it.polimi.ingsw.client.ClientCli;
+import com.google.gson.*;
+import it.polimi.ingsw.client.ClientController;
 import it.polimi.ingsw.client.model.GameModel;
 import it.polimi.ingsw.utilities.*;
 
@@ -20,12 +17,12 @@ public class GameServer extends Thread {
 
     private final BufferedReader inputStream;
     private final PrintWriter outputStream;
-    private final ClientCli client;
+    private final ClientController client;
     private final Object connectedLock;
     private boolean connected;
     private final Ping ping;
 
-    public GameServer(Socket hostSocket, ClientCli client) throws IOException {
+    public GameServer(Socket hostSocket, ClientController client) throws IOException {
         this.inputStream = new BufferedReader(new InputStreamReader(hostSocket.getInputStream()));
         this.outputStream = new PrintWriter(hostSocket.getOutputStream());
         this.client = client;
@@ -94,8 +91,9 @@ public class GameServer extends Thread {
                 this.manageTurnEnable(incomingMessage);
             }
 
-            case "endGame" -> {
+            case "win" -> {
                 Log.debug("endGame message arrived");
+                this.manageEndGame(incomingMessage);
             }
 
             case "error" -> {
@@ -183,6 +181,18 @@ public class GameServer extends Thread {
         }
     }
 
+    private void manageEndGame(JsonObject message) {
+        JsonArray winners = message.get("winners").getAsJsonArray();
+        synchronized (this.client.getLock()) {
+            for (JsonElement player : winners) {
+                if (player.getAsJsonObject().getAsString().equals(this.client.getUserName()))
+                    this.client.getGameModel().setWinner(true);
+            }
+            this.client.getLock().notify();
+        }
+        this.client.setClientState(ClientStates.END_GAME);
+    }
+
     public boolean isConnected() {
         return this.connected;
     }
@@ -210,7 +220,7 @@ public class GameServer extends Thread {
             default -> {
                 if (command.get("type").getAsString().equals("pong")) {
                     synchronized (this.outputStream) {
-                        this.outputStream.println(command.toString());
+                        this.outputStream.println(command);
                         outputStream.flush();
                     }
                 }

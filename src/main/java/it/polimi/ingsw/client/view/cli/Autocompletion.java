@@ -1,6 +1,6 @@
 package it.polimi.ingsw.client.view.cli;
 
-import it.polimi.ingsw.client.ClientCli;
+import it.polimi.ingsw.client.ClientController;
 import it.polimi.ingsw.client.model.Assistant;
 import it.polimi.ingsw.client.model.GameBoard;
 import it.polimi.ingsw.client.model.Island;
@@ -15,7 +15,7 @@ import java.util.*;
 import static org.jline.builtins.Completers.TreeCompleter.node;
 
 public class Autocompletion {
-    private static ClientCli cli = null;
+    private static ClientController cli = null;
     private static List<String> islands = null;
     private static List<String> toList = null;
     private static List<String> assistants = null;
@@ -24,7 +24,7 @@ public class Autocompletion {
     private Autocompletion() {
     }
 
-    public static void initialize(ClientCli cli) {
+    public static void initialize(ClientController cli) {
         if (Autocompletion.cli != null)
             return;
         Autocompletion.cli = cli;

@@ -1,6 +1,6 @@
 package it.polimi.ingsw;
 
-import it.polimi.ingsw.client.ClientCli;
+import it.polimi.ingsw.client.ClientController;
 import it.polimi.ingsw.client.ClientGui;
 import it.polimi.ingsw.utilities.GraphicsType;
 import it.polimi.ingsw.utilities.Log;
@@ -25,13 +25,14 @@ public class ClientLauncher {
             //new Client(parseArgument(args));
             try {
                 if (parseArgument((args)).equals(GraphicsType.CLI)) {
-                    new Thread(new ClientCli()).start();
+                    new Thread(new ClientController(parseArgument((args)))).start();
                 } else {
                     Application.launch(ClientGui.class);
                 }
             } catch (IOException ioe) {
                 Log.error("An error occurred while creating the controller class.");
             }
+
             /*else{
                 // create ClientGui
             }*/

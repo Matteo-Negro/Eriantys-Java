@@ -353,11 +353,16 @@ public class GameController extends Thread {
             notifyUsers(MessageCreator.turnEnable(currentUser.getUsername(), false));
             this.setSubPhase(GameControllerStates.PLAY_ASSISTANT);
             notifyUsers(MessageCreator.status(this));
+            Log.debug("Status message sent.");
         }
+        Log.debug("Updating turn order.");
         this.getGameModel().updateTurnOrder();
+        Log.debug("Turn order updated");
         this.phase = Phase.ACTION;
         this.setSubPhase(GameControllerStates.MOVE_STUDENT_1);
+        Log.debug("phase updated.");
         notifyUsers(MessageCreator.status(this));
+        Log.debug("Status message sent.");
     }
 
     /**
