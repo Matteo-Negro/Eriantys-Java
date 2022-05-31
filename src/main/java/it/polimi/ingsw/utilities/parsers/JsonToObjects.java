@@ -174,6 +174,8 @@ public class JsonToObjects {
      */
     private static List<SpecialCharacter> parseSpecialCharacters(JsonArray json) {
         List<SpecialCharacter> specialCharactersList = new ArrayList<>();
+        if (json == null)
+            return specialCharactersList;
         JsonObject specialCharacter;
         for (JsonElement item : json) {
             specialCharacter = item.getAsJsonObject();

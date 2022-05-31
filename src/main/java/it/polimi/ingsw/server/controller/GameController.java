@@ -42,10 +42,12 @@ public class GameController extends Thread {
     private GameControllerStates subPhase;
     private boolean movementEffectActive;
     private String activeUser;
+    private boolean initialized;
 
     /**
      * The game controller constructor.
      *
+     * @param id              The id of the game.
      * @param gameModel       The reference to the game model, that represent the game state.
      * @param expectedPlayers The number of expected player.
      * @param savePath        The path to the location where the game will be saved.
@@ -64,8 +66,46 @@ public class GameController extends Thread {
         this.subPhase = GameControllerStates.PLAY_ASSISTANT;
         this.movementEffectActive = false;
         this.activeUser = null;
+        this.initialized = false;
 
         Log.info("*** New GameController successfully created with : " + id);
+    }
+
+    /**
+     * Game controller constructor user for restoring the game.
+     *
+     * @param id              The id of the game.
+     * @param gameModel       The reference to the game model, that represent the game state.
+     * @param expectedPlayers The number of expected player.
+     * @param round           The number of the current round.
+     * @param phase           The current phase of the game.
+     * @param subPhase        The current subphase of the game.
+     * @param players         The list of players names who were present in the game.
+     * @param savePath        The path to the location where the game will be saved.
+     * @throws FullGameException              Thrown when the game to which the user is attempting to log in is already full and active.
+     * @throws AlreadyExistingPlayerException Thrown when the user is attempting to log into a game that has already got an active player with the same chosen username.
+     */
+    public GameController(String id, GamePlatform gameModel, int expectedPlayers, int round, String phase, String subPhase, Set<String> players, String savePath)
+            throws AlreadyExistingPlayerException, FullGameException {
+        this.connectedPlayers = 0;
+        this.expectedPlayers = expectedPlayers;
+        this.gameModel = gameModel;
+        this.id = id;
+        this.phase = Phase.valueOf(phase);
+        this.round = round;
+        this.savePath = savePath;
+        this.users = new HashMap<>();
+        for (String player : players)
+            addUser(player, null);
+        this.connectedPlayers = 0;
+        this.isFullLock = new Object();
+        this.actionNeededLock = new Object();
+        this.subPhase = GameControllerStates.valueOf(subPhase);
+        this.movementEffectActive = false;
+        this.activeUser = null;
+        this.initialized = true;
+
+        Log.info("*** Successfully restored game controller : " + id);
     }
 
     /**
@@ -201,7 +241,8 @@ public class GameController extends Thread {
      * @throws AlreadyExistingPlayerException Thrown when the user is attempting to log into a game that has already got an active player with the same chosen username.
      */
     public void addUser(String name, User user) throws FullGameException, AlreadyExistingPlayerException {
-        if (isFull()) throw new FullGameException();
+        if (isFull())
+            throw new FullGameException();
 
         synchronized (this.users) {
             if (this.users.get(name) != null || this.users.keySet().size() == this.expectedPlayers && !this.users.containsKey(name))
@@ -213,6 +254,9 @@ public class GameController extends Thread {
             if (this.gameModel.getPlayers().stream().noneMatch(player -> player.getName().equals(name)))
                 this.gameModel.addPlayer(name);
         }
+
+        if (isFull() && user != null)
+            saveGame();
     }
 
     /**
@@ -258,6 +302,9 @@ public class GameController extends Thread {
         json.add("clockwiseOrder", ObjectsToJson.toJsonArray(this.gameModel.getPlayers(), ObjectsToJson.GET_NAMES));
         json.add("turnOrder", ObjectsToJson.toJsonArray(this.gameModel.getTurnOrder(), ObjectsToJson.GET_NAMES));
         json.addProperty("expectedPlayers", this.expectedPlayers);
+        json.addProperty("round", this.getRound());
+        json.addProperty("phase", this.getPhase().toString());
+        json.addProperty("subPhase", this.getSubPhase().toString());
         json.add("players", ObjectsToJson.toJsonArray(this.gameModel.getPlayers(), ObjectsToJson.GET_PLAYERS));
         json.add("board", ObjectsToJson.toJsonObject(this.gameModel.getGameBoard()));
 
@@ -300,6 +347,10 @@ public class GameController extends Thread {
                     return;
                 }
             }
+            if (!initialized) {
+                this.getGameModel().nextRound();
+                initialized = true;
+            }
             switch (this.getPhase()) {
                 case PLANNING -> this.planningPhase();
                 case ACTION -> this.actionPhase();
@@ -311,50 +362,58 @@ public class GameController extends Thread {
      * This method manages the planning phase.
      */
     private void planningPhase() {
-        Log.debug("Planning phase");
-        Player roundWinner = this.getGameModel().getRoundWinner();
-        int indexOfRoundWinner = this.getGameModel().getPlayers().indexOf(roundWinner);
 
-        this.getGameModel().nextRound();
+        Log.info("Planning phase");
+
         notifyUsers(MessageCreator.status(this));
+        saveGame();
 
-        for (int i = 0; i < this.getExpectedPlayers(); i++) {
+        try {
+            for (int index = 0; index < expectedPlayers; index++) {
+                Player currentPlayer = gameModel.getCurrentPlayer();
+                Log.info("Current player: " + currentPlayer.getName());
 
-            Player currentPlayer = this.getGameModel().getPlayers().get((indexOfRoundWinner + i) % this.getExpectedPlayers());
-            Log.debug("Current player" + currentPlayer.getName());
+                // ENABLING THE CURRENT USER INPUT (taken from the clockwise order).
+                User currentUser = getUser(currentPlayer.getName());
+                this.activeUser = currentUser.getUsername();
+                notifyUsers(MessageCreator.turnEnable(currentUser.getUsername(), true));
 
-            //ENABLING THE CURRENT USER INPUT (taken from the clockwise order).
-            User currentUser = getUser(currentPlayer.getName());
-            this.activeUser = currentUser.getUsername();
-            notifyUsers(MessageCreator.turnEnable(currentUser.getUsername(), true));
-
-            //WAITING FOR ASSISTANT TO BE PLAYED
-            Log.debug("Waiting for assistant to be played.");
-            while (this.getSubPhase() != GameControllerStates.ASSISTANT_PLAYED) {
-                synchronized (this.actionNeededLock) {
-                    try {
-                        this.actionNeededLock.wait();
-                    } catch (InterruptedException ie) {
-                        notifyUsers(MessageCreator.error("GameServerError"));
-                        for (User user : this.getUsers()) this.removeUser(user);
-                        return;
+                // WAITING FOR ASSISTANT TO BE PLAYED
+                Log.debug("Waiting for assistant to be played.");
+                while (this.getSubPhase() != GameControllerStates.ASSISTANT_PLAYED) {
+                    synchronized (this.actionNeededLock) {
+                        try {
+                            this.actionNeededLock.wait();
+                        } catch (InterruptedException ie) {
+                            notifyUsers(MessageCreator.error("GameServerError"));
+                            for (User user : this.getUsers()) this.removeUser(user);
+                            return;
+                        }
+                    }
+                    synchronized (this.isFullLock) {
+                        if (!this.isFull()) {
+                            Log.debug("Game is not full.");
+                            return;
+                        }
                     }
                 }
-                synchronized (this.isFullLock) {
-                    if (!this.isFull()) {
-                        Log.debug("Game is not full.");
-                        return;
-                    }
-                }
+
+                // DISABLING THE CURRENT USER'S INPUT.
+                this.activeUser = null;
+                notifyUsers(MessageCreator.turnEnable(currentUser.getUsername(), false));
+                this.setSubPhase(GameControllerStates.PLAY_ASSISTANT);
+                gameModel.nextTurn();
+                notifyUsers(MessageCreator.status(this));
+                saveGame();
+                Log.debug("Status message sent.");
             }
-
-            //DISABLING THE CURRENT USER'S INPUT.
-            this.activeUser = null;
-            notifyUsers(MessageCreator.turnEnable(currentUser.getUsername(), false));
-            this.setSubPhase(GameControllerStates.PLAY_ASSISTANT);
-            notifyUsers(MessageCreator.status(this));
-            Log.debug("Status message sent.");
+        } catch (RoundConcluded e) {
+            Log.info("Every player has chosen an assistant.");
+        } catch (Exception e) {
+            Log.error(e);
+            System.exit(1);
         }
+
         Log.debug("Updating turn order.");
         this.getGameModel().updateTurnOrder();
         Log.debug("Turn order updated");
@@ -363,6 +422,7 @@ public class GameController extends Thread {
         Log.debug("phase updated.");
         notifyUsers(MessageCreator.status(this));
         Log.debug("Status message sent.");
+        saveGame();
     }
 
     /**
@@ -385,6 +445,7 @@ public class GameController extends Thread {
                     try {
                         this.actionNeededLock.wait();
                         notifyUsers(MessageCreator.status(this));
+                        saveGame();
                     } catch (InterruptedException ie) {
                         notifyUsers(MessageCreator.error("GameServerError"));
                         for (User user : this.getUsers()) this.removeUser(user);
@@ -407,6 +468,7 @@ public class GameController extends Thread {
                 this.setSubPhase(GameControllerStates.MOVE_STUDENT_1);
             } catch (RoundConcluded rc) {
                 Log.debug("Round concluded.");
+                this.getGameModel().nextRound();
                 this.round++;
                 this.phase = Phase.PLANNING;
                 this.setSubPhase(GameControllerStates.PLAY_ASSISTANT);
@@ -414,6 +476,7 @@ public class GameController extends Thread {
             }
 
             notifyUsers(MessageCreator.status(this));
+            saveGame();
 
             if (endGame()) {
                 for (User user : this.getUsers()) {
@@ -865,6 +928,7 @@ public class GameController extends Thread {
     public void checkStartCondition() {
         if (this.isFull()) {
             this.notifyUsers(MessageCreator.status(this));
+            saveGame();
             Log.debug("Status message sent to users.");
             this.notifyUsers(MessageCreator.gameStart());
             Log.debug("GameStart message sent to users.");

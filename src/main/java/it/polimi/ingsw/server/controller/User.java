@@ -145,6 +145,7 @@ public class User extends Thread {
                     gameController = null;
                 }
                 sendMessage(MessageCreator.enterGame(gameController));
+                Log.debug(MessageCreator.enterGame(gameController).toString());
             }
             case "login" -> {
                 Log.info("login message message arrived");

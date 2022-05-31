@@ -9,6 +9,8 @@ import it.polimi.ingsw.server.controller.User;
 import it.polimi.ingsw.server.model.GamePlatform;
 import it.polimi.ingsw.server.model.player.Player;
 import it.polimi.ingsw.utilities.Log;
+import it.polimi.ingsw.utilities.exceptions.AlreadyExistingPlayerException;
+import it.polimi.ingsw.utilities.exceptions.FullGameException;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -114,25 +116,39 @@ public class Server {
         Log.info("Loading game \"" + json.get("id").getAsString() + "\"...");
 
         Map<String, Player> players = new HashMap<>();
-        GameController gameController;
 
         for (JsonElement player : json.getAsJsonArray("players"))
             players.put(player.getAsJsonObject().get("name").getAsString(), parsePlayer(player.getAsJsonObject()));
 
-        gameController = new GameController(json.get("id").getAsString(), new GamePlatform(
-                json.get("expert").getAsBoolean(),
-                parseGameBoard(json.getAsJsonObject("board"), json.get("expert").getAsBoolean(), players),
-                parsePlayersList(json.getAsJsonArray("clockwiseOrder"), players),
-                parsePlayersList(json.getAsJsonArray("turnOrder"), players),
-                json.get("currentPlayer").getAsString()
-        ), json.get("expectedPlayers").getAsInt(), savePath);
+        try {
+            GameController gameController = new GameController(json.get("id").getAsString(),
+                    new GamePlatform(
+                            json.get("expert").getAsBoolean(),
+                            parseGameBoard(json.getAsJsonObject("board"), json.get("expert").getAsBoolean(), players),
+                            parsePlayersList(json.getAsJsonArray("clockwiseOrder"), players),
+                            parsePlayersList(json.getAsJsonArray("turnOrder"), players),
+                            json.get("currentPlayer").getAsString()
+                    ),
+                    json.get("expectedPlayers").getAsInt(),
+                    json.get("round").getAsInt(),
+                    json.get("phase").getAsString(),
+                    json.get("subPhase").getAsString(),
+                    players.keySet(),
+                    savePath
+            );
 
-        gameExecutor.submit(gameController);
+            gameExecutor.submit(gameController);
 
-        synchronized (games) {
-            games.put(json.get("id").getAsString(), gameController);
+            synchronized (games) {
+                games.put(json.get("id").getAsString(), gameController);
+            }
+
+            Log.info("Loaded " + json.get("id").getAsString());
+
+        } catch (FullGameException | AlreadyExistingPlayerException e) {
+            Log.warning("An error occurred while loading " + json.get("id").getAsString() + ": " + e);
+            return;
         }
-        Log.info("Loaded " + json.get("id").getAsString());
     }
 
     /**
@@ -147,7 +163,11 @@ public class Server {
         synchronized (games) {
             do id = getNewId();
             while (games.containsKey(id));
-            GameController gameController = new GameController(id, new GamePlatform(expectedPlayers, expertMode), expectedPlayers, savePath);
+            GameController gameController = new GameController(
+                    id,
+                    new GamePlatform(expectedPlayers, expertMode),
+                    expectedPlayers,
+                    savePath);
             gameExecutor.submit(gameController);
             games.put(id, gameController);
         }

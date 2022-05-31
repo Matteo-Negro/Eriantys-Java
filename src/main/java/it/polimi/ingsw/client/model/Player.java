@@ -11,7 +11,8 @@ import it.polimi.ingsw.utilities.exceptions.AlreadyPlayedException;
 import it.polimi.ingsw.utilities.exceptions.NegativeException;
 import it.polimi.ingsw.utilities.exceptions.NotEnoughCoinsException;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Contains all the data connected to the player on the client side.
@@ -42,7 +43,11 @@ public class Player {
         this.coins = coins;
         this.hand = new ArrayList<>();
         this.currentPlayedAssistant = null;
-        if(playedAssistant!=null) this.currentPlayedAssistant = new Assistant(playedAssistant.get("assistant").getAsInt(), playedAssistant.get("bonus").getAsBoolean());
+        if (playedAssistant != null)
+            this.currentPlayedAssistant = new Assistant(
+                    playedAssistant.get("assistant").getAsInt(),
+                    playedAssistant.get("bonus").getAsBoolean()
+            );
         this.parseHand(hand);
         this.parseSchoolBoard(schoolBoard);
     }
@@ -115,12 +120,13 @@ public class Player {
 
     /**
      * Gets an assistant by its identification number.
+     *
      * @param id The assistant id.
      * @return The assistant if it is found, null otherwise.
      */
-    public Assistant getAssistantById(int id){
-        for(Assistant a : this.getHand()){
-            if(a.getId() == id) return a;
+    public Assistant getAssistantById(int id) {
+        for (Assistant a : this.getHand()) {
+            if (a.getId() == id) return a;
         }
         return null;
     }
@@ -191,15 +197,15 @@ public class Player {
         this.active = active;
     }
 
-    private void parseHand(JsonArray hand){
-        for(JsonElement assistant : hand){
+    private void parseHand(JsonArray hand) {
+        for (JsonElement assistant : hand) {
             int id = assistant.getAsJsonObject().get("id").getAsInt();
             boolean bonus = assistant.getAsJsonObject().get("bonus").getAsBoolean();
             this.hand.add(new Assistant(id, bonus));
         }
     }
 
-    private void parseSchoolBoard(JsonObject schoolBoard){
+    private void parseSchoolBoard(JsonObject schoolBoard) {
         TowerType towerType = TowerType.valueOf(schoolBoard.get("towerType").getAsString());
         int towersNumber = schoolBoard.get("towersNumber").getAsInt();
         JsonObject entrance = schoolBoard.get("entrance").getAsJsonObject();

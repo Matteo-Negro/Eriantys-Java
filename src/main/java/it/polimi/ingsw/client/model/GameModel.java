@@ -13,7 +13,7 @@ import java.util.Map;
 
 public class GameModel {
     private final int playersNumber;
-    private Map<String, Boolean> waitingRoom;
+    private final Map<String, Boolean> waitingRoom;
 
     private int round;
     private Phase phase;
@@ -57,57 +57,61 @@ public class GameModel {
     }
 
     public boolean isWinner() {
-        return  winner;
+        return winner;
     }
 
-    public int getPlayersNumber(){
+    public int getPlayersNumber() {
         return this.playersNumber;
     }
 
-    public List<Player> getPlayers(){
+    public List<Player> getPlayers() {
         return this.players;
     }
 
-    public Player getPlayerByName(String name){
-        for(Player player : this.getPlayers()){
-            if(player.getName().equals(name)) return player;
+    public Player getPlayerByName(String name) {
+        for (Player player : this.getPlayers()) {
+            if (player.getName().equals(name)) return player;
         }
         return null;
     }
 
-    private void parsePlayers(JsonArray players, JsonObject gameBoard){
+    private void parsePlayers(JsonArray players, JsonObject gameBoard) {
         this.players = new ArrayList<>();
         JsonArray playedAssistants = gameBoard.get("playedAssistants").getAsJsonArray();
-        for(JsonElement player : players){
+        Log.error(playedAssistants.toString());
+        for (JsonElement player : players) {
             String name = player.getAsJsonObject().get("name").getAsString();
             WizardType wizard = WizardType.valueOf(player.getAsJsonObject().get("wizardType").getAsString());
             int coins = player.getAsJsonObject().get("coins").getAsInt();
             JsonArray assistants = player.getAsJsonObject().get("assistants").getAsJsonArray();
             JsonObject schoolBoard = player.getAsJsonObject().get("schoolBoard").getAsJsonObject();
             JsonObject playedAssistant = null;
-            for(JsonElement assistant : playedAssistants){
-                if(assistant.getAsJsonObject().get("player").getAsString().equals(player.getAsJsonObject().get("name").getAsString()))
+            for (JsonElement assistant : playedAssistants) {
+                if (assistant.getAsJsonObject().get("player").getAsString().equals(player.getAsJsonObject().get("name").getAsString()))
                     playedAssistant = assistant.getAsJsonObject();
             }
+            Log.error(String.valueOf(playedAssistant));
             this.players.add(new Player(name, wizard, coins, schoolBoard, assistants, playedAssistant));
         }
         JsonObject professors = gameBoard.get("professors").getAsJsonObject();
-        for(String color : professors.keySet()){
-            if(!(professors.get(color) instanceof JsonNull)){
+        for (String color : professors.keySet()) {
+            if (!(professors.get(color) instanceof JsonNull)) {
                 this.getPlayerByName(professors.get(color).getAsString()).getSchoolBoard().addProfessor(HouseColor.valueOf(color));
             }
         }
     }
 
-    private void parseGameBoard(JsonObject gameboard){
-        int motherNatureIsland = gameboard.get("motherNatureIsland").getAsInt();
+    private void parseGameBoard(JsonObject gameBoard) {
+        int motherNatureIsland = gameBoard.get("motherNatureIsland").getAsInt();
         String influenceBonus = null;
-        if(!(gameboard.get("influenceBonus") instanceof JsonNull)) influenceBonus = gameboard.get("influenceBonus").getAsString();
+        if (!gameBoard.get("influenceBonus").isJsonNull())
+            influenceBonus = gameBoard.get("influenceBonus").getAsString();
         HouseColor ignoreColor = null;
-        if(!(gameboard.get("ignoreColor") instanceof JsonNull)) ignoreColor = HouseColor.valueOf(gameboard.get("ignoreColor").getAsString());
-        JsonArray clouds = gameboard.get("clouds").getAsJsonArray();
-        JsonArray islands = gameboard.get("islands").getAsJsonArray();
-        JsonArray specialCharacters = gameboard.get("characters").getAsJsonArray();
+        if (!gameBoard.get("ignoreColor").isJsonNull())
+            ignoreColor = HouseColor.valueOf(gameBoard.get("ignoreColor").getAsString());
+        JsonArray clouds = gameBoard.get("clouds").getAsJsonArray();
+        JsonArray islands = gameBoard.get("islands").getAsJsonArray();
+        JsonArray specialCharacters = gameBoard.has("characters") ? gameBoard.get("characters").getAsJsonArray() : new JsonArray();
 
         this.gameBoard = new GameBoard(motherNatureIsland, influenceBonus, ignoreColor, islands, clouds, specialCharacters);
     }
@@ -132,7 +136,7 @@ public class GameModel {
         return subphase;
     }
 
-    public void setCurrentPlayer(String currentPlayer, boolean token){
+    public void setCurrentPlayer(String currentPlayer, boolean token) {
         this.currentPlayer = currentPlayer;
         this.getPlayerByName(currentPlayer).setActive(token);
     }
@@ -141,10 +145,10 @@ public class GameModel {
         this.winner = winner;
     }
 
-    public boolean isMovementEffectActive(){
-        if(this.isExpert()){
-            for(SpecialCharacter sc : this.getGameBoard().getSpecialCharacters()){
-                if(sc.isActive() && (sc.getId() == 1 || sc.getId() == 7 || sc.getId() == 11)) return true;
+    public boolean isMovementEffectActive() {
+        if (this.isExpert()) {
+            for (SpecialCharacter sc : this.getGameBoard().getSpecialCharacters()) {
+                if (sc.isActive() && (sc.getId() == 1 || sc.getId() == 7 || sc.getId() == 11)) return true;
             }
         }
         return false;

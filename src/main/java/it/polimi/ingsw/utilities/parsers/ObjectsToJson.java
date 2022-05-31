@@ -134,7 +134,8 @@ public enum ObjectsToJson {
         object.add("clouds", parseClouds(gameBoard.getClouds()));
         object.add("islands", parseIslands(gameBoard.getIslands()));
         object.add("playedAssistants", parsePlayedAssistants(gameBoard.getPlayedAssistants()));
-        object.add("characters", parseSpecialCharacters(gameBoard.getCharacters()));
+        if (gameBoard.getCharacters() != null)
+            object.add("characters", parseSpecialCharacters(gameBoard.getCharacters()));
         object.add("professors", parseProfessors(gameBoard.getProfessors()));
         object.addProperty("motherNatureIsland", gameBoard.getMotherNatureIsland().getId());
         if (gameBoard.getIgnoreColor() != null)

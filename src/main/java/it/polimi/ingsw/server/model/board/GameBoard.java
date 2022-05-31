@@ -103,14 +103,9 @@ public class GameBoard {
         this.islands = new ArrayList<>(statusIslands);
         this.clouds = new ArrayList<>(statusClouds);
         this.professors = new EnumMap<>(statusProfessors);
-        this.characters = null;
         this.influenceBonus = null;
         this.tieWinner = null;
-
-        if (isExp) {
-            this.characters = new ArrayList<>(statusCharacters);
-        }
-
+        this.characters = isExp ? new ArrayList<>(statusCharacters) : List.of();
         this.motherNatureIsland = this.islands.get(idMotherNatureIsland);
 
         Log.info("*** Saved GameBoard successfully restored.");
@@ -189,7 +184,8 @@ public class GameBoard {
         this.ignoreColor = null;
         this.influenceBonus = null;
         this.tieWinner = null;
-        for (SpecialCharacter c : this.getCharacters()) c.cleanEffect();
+        for (SpecialCharacter c : this.getCharacters())
+            c.cleanEffect();
     }
 
     /**
