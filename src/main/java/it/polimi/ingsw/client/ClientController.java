@@ -34,7 +34,7 @@ public class ClientController {
     /**
      * Default constructor.
      */
-    public ClientController(View view){
+    public ClientController(View view) {
         this.state = ClientStates.START_SCREEN;
         this.gameServer = null;
         this.gameModel = null;
@@ -152,7 +152,7 @@ public class ClientController {
 
         this.tryConnection();
 
-        if (this.getClientState().equals(ClientStates.GAME_CREATION)){
+        if (this.getClientState().equals(ClientStates.GAME_CREATION)) {
             Log.debug("manage game creation");
             this.setClientState(ClientStates.CONNECTION_LOST);
         }
@@ -423,17 +423,14 @@ public class ClientController {
         int finalIsland = message.get("island").getAsInt();
         int maxDistance = getGameModel().getPlayerByName(this.getUserName()).getCurrentPlayedAssistant().getMaxDistance();
         int motherNatureIsland = getGameModel().getGameBoard().getMotherNatureIsland();
-        TowerType prevTower = getGameModel().getGameBoard().getIslandById(motherNatureIsland).getTower();
 
-        int distanceWanted = 0;
+        int distanceWanted = (getGameModel().getGameBoard().getIslandById(motherNatureIsland).hasNext()) ? -1 : 0;
         for (int i = ((motherNatureIsland + 1) % 12); i != finalIsland; i = ((i + 1) % 12)) {
-            if (getGameModel().getGameBoard().getIslandById(i).getTower() == null || (prevTower != null && !prevTower.equals(getGameModel().getGameBoard().getIslandById(i).getTower())))
-                distanceWanted++;
-            prevTower = getGameModel().getGameBoard().getIslandById(i).getTower();
+            if (!getGameModel().getGameBoard().getIslandById(i).hasNext()) distanceWanted++;
         }
         distanceWanted++;
 
-        if (distanceWanted > maxDistance) throw new IllegalMoveException();
+        if (distanceWanted > maxDistance || distanceWanted == 0) throw new IllegalMoveException();
     }
 
     /**

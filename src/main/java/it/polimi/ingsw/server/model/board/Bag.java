@@ -13,14 +13,12 @@ import java.util.*;
 
 public class Bag {
     private final Stack<HouseColor> listStudents;
-    Map<HouseColor, Integer> result;
 
     /**
      * Bag Constructor, listStudents is initialized with the all 120 students and shuffled.
      */
     public Bag() {
         this.listStudents = new Stack<>();
-        this.result = new EnumMap<>(HouseColor.class);
 
         Arrays.stream(HouseColor.values()).forEach(color -> {
             for (int i = 0; i < 24; i++) {
@@ -40,7 +38,6 @@ public class Bag {
      */
     public Bag(Map<HouseColor, Integer> status) {
         this.listStudents = new Stack<>();
-        this.result = new EnumMap<>(HouseColor.class);
 
         Arrays.stream(HouseColor.values()).forEach(color -> {
             for (int i = 0; i < status.get(color); i++) {
@@ -81,6 +78,7 @@ public class Bag {
      */
     public List<HouseColor> boardSetUp() {
         ArrayList<HouseColor> setUp = new ArrayList<>();
+
         Arrays.stream(HouseColor.values()).forEach(color -> {
             setUp.add(color);
             setUp.add(color);
@@ -96,6 +94,8 @@ public class Bag {
      * @return A map that contains the number of students for each color.
      */
     public Map<HouseColor, Integer> getStatus() {
+        Map<HouseColor, Integer> result = new EnumMap<>(HouseColor.class);
+
         listStudents.forEach(color -> {
             if (result.containsKey(color)) {
                 result.put(color, result.get(color) + 1);
