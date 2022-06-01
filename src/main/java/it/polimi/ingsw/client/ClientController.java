@@ -215,8 +215,7 @@ public class ClientController {
             view.updateScreen(false);
 
             // Another player disconnected.
-            if (getGameModel() == null)
-                return;
+            if (getGameModel() == null) return;
 
             if (command.contains("info")) {
                 Pair<String, String> message = CommandParser.infoGenerator(command);
@@ -234,8 +233,7 @@ public class ClientController {
                 this.errorOccurred("Wrong command.");
                 return;
             }
-            if (messages.isEmpty())
-                return;
+            if (messages.isEmpty()) return;
             try {
                 for (JsonObject message : messages) {
                     if (checkMessage(message)) {
@@ -417,17 +415,19 @@ public class ClientController {
     private void checkMotherNatureMove(JsonObject message) throws IllegalMoveException {
         if (!getGameModel().getSubphase().equals(MOVE_MOTHER_NATURE)) throw new IllegalMoveException();
 
-        int finalIsland = message.get("island").getAsInt() - 1;
+        int finalIsland = message.get("island").getAsInt();
         int maxDistance = getGameModel().getPlayerByName(this.getUserName()).getCurrentPlayedAssistant().getMaxDistance();
         int motherNatureIsland = getGameModel().getGameBoard().getMotherNatureIsland();
         TowerType prevTower = getGameModel().getGameBoard().getIslandById(motherNatureIsland).getTower();
 
         int distanceWanted = 0;
         for (int i = motherNatureIsland + 1; i != finalIsland; i = (i + 1) % 12) {
-            if (getGameModel().getGameBoard().getIslandById(i).getTower() == null || !prevTower.equals(getGameModel().getGameBoard().getIslandById(i).getTower())) distanceWanted++;
+            if (getGameModel().getGameBoard().getIslandById(i).getTower() == null || !prevTower.equals(getGameModel().getGameBoard().getIslandById(i).getTower()))
+                distanceWanted++;
             prevTower = getGameModel().getGameBoard().getIslandById(i).getTower();
         }
         distanceWanted++;
+
         if (distanceWanted > maxDistance) throw new IllegalMoveException();
     }
 
@@ -458,8 +458,7 @@ public class ClientController {
      * @throws IllegalMoveException Thrown if the client model is not aligned with that of the game server.
      */
     private void checkEntranceRefill(JsonObject message) throws IllegalMoveException {
-        if (!getGameModel().getSubphase().equals(CHOOSE_CLOUD))
-            throw new IllegalMoveException();
+        if (!getGameModel().getSubphase().equals(CHOOSE_CLOUD)) throw new IllegalMoveException();
 
         if (getGameModel().getGameBoard().getClouds().get(message.get("cloud").getAsInt()).getStudents(true) == null)
             throw new IllegalMoveException();
