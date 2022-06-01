@@ -262,30 +262,28 @@ public class GameBoard {
 
         //Check if a merge to left is needed.
         boolean mergeDone;
-        do {
-            int islandsSize = getIslands().size();
+        try{
+            do{
+                List<Island> islands = getIslands();
+                int islandsSize = islands.size();
+                mergeDone = false;
+                for(int i=0; i<islandsSize; i++){
+                    Island currentIsland = islands.get(i);
+                    int nextId = (i + 1) % islandsSize;
+                    Island nextIsland = islands.get(nextId);
 
-            mergeDone = false;
-            if(islandsSize <= 3) break;
-            Island nextIsland, prevIsland;
-            for (int i = 0; i < islandsSize; i++) {
-                if(getIslands().get(i).getId() != island.getId() && islands.get(i).getTower() != null){
-                    int currentIslandSize = getIslands().get(i).getSize();
-                    nextIsland = getIslands().get((i + 1) % 12);
-                    prevIsland = getIslands().get((i - 1) % 12);
-                    if (nextIsland.getId() == island.getId() && islands.get(i).getTower().equals(island.getTower())) {
-                        merge(islands.get(i), island);
-                        mergeDone = true;
-                        break;
-                    }
-                    if (prevIsland.getId() == island.getId() && islands.get(i).getTower().equals(island.getTower())) {
-                        merge(island, islands.get(i));
-                        mergeDone = true;
-                        break;
+                    if(currentIsland.getId() != nextIsland.getId() && currentIsland.getTower() != null && nextIsland.getTower() != null){
+                        if(currentIsland.getTower().equals(nextIsland.getTower())){
+                            merge(currentIsland, nextIsland);
+                            mergeDone = true;
+                            break;
+                        }
                     }
                 }
-            }
-        } while (mergeDone);
+            }while(mergeDone);
+        }catch(Exception e){
+            Log.warning(e);
+        }
     }
 
     /**
@@ -296,7 +294,8 @@ public class GameBoard {
      */
     private void merge(Island leftIsland, Island rightIsland) {
         leftIsland.setSize(leftIsland.getSize() + rightIsland.getSize());
-
+        if(rightIsland.isBanned())
+                leftIsland.setBan();
         Map<HouseColor, Integer> rightStudents = rightIsland.getStudents();
 
         for (HouseColor color : rightStudents.keySet()) {
@@ -304,8 +303,9 @@ public class GameBoard {
                 leftIsland.addStudent(color);
             }
         }
+        if(getMotherNatureIsland().getId()==rightIsland.getId()) this.motherNatureIsland = leftIsland;
         islands.remove(rightIsland);
-        this.motherNatureIsland = leftIsland;
+
     }
 
     /**

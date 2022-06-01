@@ -45,9 +45,9 @@ public class GameBoard {
 
     private void parseIslands(JsonArray islands) {
         this.islands = new ArrayList<>();
-        int id = 0;
-        for (JsonElement island : islands) {
 
+        for (JsonElement island : islands) {
+            int id = island.getAsJsonObject().get("id").getAsInt();
             int size = island.getAsJsonObject().get("size").getAsInt();
             TowerType tower = null;
             if (!(island.getAsJsonObject().get("tower") instanceof JsonNull))
@@ -64,10 +64,10 @@ public class GameBoard {
 
             for (int i = 0; i < size; i++) {
 
-                if (i == 0) this.islands.add(new Island(false, false, tower, null, motherNature, ban));
+                if (i == 0) this.islands.add(new Island((id + i)%12,false, false, tower, null, motherNature, ban));
                 else {
-                    this.islands.add(new Island(false, true, tower, null, false, ban));
-                    this.islands.get((id + i - 1) % 12).setNext();
+                    this.islands.add(new Island((id + i)%12,false, true, tower, null, false, ban));
+                    getIslandById((id + i - 1) % 12).setNext();
                 }
             }
             int i = 0;
@@ -76,15 +76,13 @@ public class GameBoard {
                 for(HouseColor color : HouseColor.values()){
                     if(students.get(color) > 0){
                         students.put(color, students.get(color)-1);
-                        this.islands.get(id + i).addStudent(color);
+                        this.getIslandById((id + i) % 12).addStudent(color);
                         studentsNumber--;
                         break;
                     }
                 }
                 i = (i + 1) % size;
             }
-
-            id = (id + size) % 12;
         }
     }
 
@@ -136,6 +134,9 @@ public class GameBoard {
     }
 
     public Island getIslandById(int id) {
-        return islands.get(id);
+        for(Island isl : this.islands){
+            if(isl.getId() == id) return isl;
+        }
+        return null;
     }
 }

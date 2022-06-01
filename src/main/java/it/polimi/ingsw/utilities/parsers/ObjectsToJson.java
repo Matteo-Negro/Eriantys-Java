@@ -181,6 +181,7 @@ public enum ObjectsToJson {
      */
     private static JsonObject parseIsland(Island island) {
         JsonObject object = new JsonObject();
+        object.addProperty("id", island.getId());
         object.addProperty("size", island.getSize());
         if (island.getTower() != null)
             object.addProperty("tower", island.getTower().name());

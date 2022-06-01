@@ -191,7 +191,6 @@ public class ClientCli extends Thread implements View {
      */
     public void runGameRunning() {
         Game.print(terminal, this.controller.getGameModel(), this.controller.getGameCode(), this.controller.getGameModel().getRound(), this.controller.getGameModel().getPlayerByName(controller.getUserName()).isActive());
-
         if (this.controller.hasCommunicationToken()){
             this.controller.manageGameRunning(readLine(getPrettyUserName(), terminal, Autocompletion.get(), true, history).toLowerCase(Locale.ROOT));
 

@@ -16,6 +16,7 @@ import java.util.Map;
  */
 public class Island {
 
+    private int id;
     private final Map<HouseColor, Integer> students;
     private boolean ban;
     private boolean next;
@@ -33,7 +34,8 @@ public class Island {
      * @param motherNature true if Mother Nature is on the island.
      * @param ban          true if the island is banned.
      */
-    public Island(boolean next, boolean prev, TowerType tower, JsonObject students, boolean motherNature, boolean ban) {
+    public Island(int id, boolean next, boolean prev, TowerType tower, JsonObject students, boolean motherNature, boolean ban) {
+        this.id = id;
         this.next = next;
         this.prev = prev;
         this.tower = tower;
@@ -45,6 +47,15 @@ public class Island {
             this.students = new EnumMap<>(HouseColor.class);
             for(HouseColor color : HouseColor.values()) this.students.put(color, 0);
         }
+    }
+
+    /**
+     * Returns the island id.
+     *
+     * @return The id attribute.
+     */
+    public int getId() {
+        return this.id;
     }
 
     /**

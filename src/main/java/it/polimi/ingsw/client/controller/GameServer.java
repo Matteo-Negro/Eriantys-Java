@@ -48,6 +48,8 @@ public class GameServer extends Thread {
                 if (!incomingMessage.get("type").getAsString().equals("pong"))
                     manageMessage(incomingMessage);
             } catch (Exception e) {
+                Log.warning(e);
+                Log.debug("gameServer run.");
                 this.client.setClientState(ClientStates.CONNECTION_LOST);
             }
         }
@@ -136,8 +138,8 @@ public class GameServer extends Thread {
                 this.client.errorOccurred("Invalid username");
             }
         } else {
-            this.client.setClientState(ClientStates.CONNECTION_LOST);
             Log.debug("changed state Connection lost.");
+            this.client.setClientState(ClientStates.CONNECTION_LOST);
         }
 
         synchronized (this.client.getLock()) {
@@ -146,7 +148,7 @@ public class GameServer extends Thread {
     }
 
     private void manageStatus(JsonObject incomingMessage) {
-
+        Log.debug(incomingMessage.toString());
         int round = incomingMessage.get("round").getAsInt() + 1;
         String activeUser = null;
         if (!(incomingMessage.get("activeUser") instanceof JsonNull))
@@ -173,10 +175,7 @@ public class GameServer extends Thread {
 
     private void manageTurnEnable(JsonObject incomingMessage) {
         Log.debug("Token arrived.");
-        synchronized (this.client.getLock()) {
-            this.client.getGameModel().setCurrentPlayer(incomingMessage.get("player").getAsString(), incomingMessage.get("enable").getAsBoolean());
-            this.client.getLock().notify();
-        }
+        this.client.getGameModel().setCurrentPlayer(incomingMessage.get("player").getAsString(), incomingMessage.get("enable").getAsBoolean());
     }
 
     private void manageEndGame(JsonObject message) {

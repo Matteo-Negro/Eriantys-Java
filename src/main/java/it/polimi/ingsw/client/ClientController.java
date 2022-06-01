@@ -152,8 +152,11 @@ public class ClientController {
 
         this.tryConnection();
 
-        if (this.getClientState().equals(ClientStates.GAME_CREATION))
+        if (this.getClientState().equals(ClientStates.GAME_CREATION)){
+            Log.debug("manage game creation");
             this.setClientState(ClientStates.CONNECTION_LOST);
+        }
+
     }
 
     /**
@@ -248,6 +251,7 @@ public class ClientController {
                             }
                         }
                         Log.debug("Command sent to game server.");
+                        Log.debug(message.toString());
                     } else {
                         view.updateScreen(false);
                         errorOccurred("Command not allowed.");
@@ -256,6 +260,7 @@ public class ClientController {
                 }
                 view.updateScreen(false);
             } catch (IllegalActionException iae) {
+                Log.warning(iae);
                 view.updateScreen(false);
                 errorOccurred("Connection lost.");
                 setClientState(ClientStates.CONNECTION_LOST);
@@ -396,7 +401,7 @@ public class ClientController {
                 }
                 case "island" -> {
                     int destinationIndex = message.get("toId").getAsInt();
-                    while (getGameModel().getGameBoard().getIslands().get(destinationIndex).hasPrev()) {
+                    while (getGameModel().getGameBoard().getIslandById(destinationIndex).hasPrev()) {
                         destinationIndex = (destinationIndex - 1) % 12;
                     }
                     message.remove("toId");
@@ -421,8 +426,8 @@ public class ClientController {
         TowerType prevTower = getGameModel().getGameBoard().getIslandById(motherNatureIsland).getTower();
 
         int distanceWanted = 0;
-        for (int i = motherNatureIsland + 1; i != finalIsland; i = (i + 1) % 12) {
-            if (getGameModel().getGameBoard().getIslandById(i).getTower() == null || !prevTower.equals(getGameModel().getGameBoard().getIslandById(i).getTower()))
+        for (int i = ((motherNatureIsland + 1) % 12); i != finalIsland; i = ((i + 1) % 12)) {
+            if (getGameModel().getGameBoard().getIslandById(i).getTower() == null || (prevTower != null && !prevTower.equals(getGameModel().getGameBoard().getIslandById(i).getTower())))
                 distanceWanted++;
             prevTower = getGameModel().getGameBoard().getIslandById(i).getTower();
         }
@@ -471,6 +476,7 @@ public class ClientController {
         this.resetGame();
         this.getGameServer().disconnected();
         this.gameServer = null;
+        Log.debug("manageConnectionLost");
         this.errorOccurred("Connection lost.");
         this.setClientState(ClientStates.START_SCREEN);
     }
@@ -534,6 +540,7 @@ public class ClientController {
             try {
                 this.lock.wait(1500);
             } catch (InterruptedException e) {
+                Log.debug("error occurred.");
                 this.setClientState(ClientStates.CONNECTION_LOST);
                 view.updateScreen(false);
             }
@@ -548,6 +555,7 @@ public class ClientController {
             try {
                 this.lock.wait(10000);
             } catch (InterruptedException e) {
+                Log.debug("tryConnection.");
                 this.setClientState(ClientStates.CONNECTION_LOST);
                 view.updateScreen(false);
             }

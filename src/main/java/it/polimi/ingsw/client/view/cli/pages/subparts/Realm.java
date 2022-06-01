@@ -1,5 +1,6 @@
 package it.polimi.ingsw.client.view.cli.pages.subparts;
 
+import it.polimi.ingsw.client.model.GameBoard;
 import it.polimi.ingsw.client.model.Island;
 import it.polimi.ingsw.client.view.cli.Utilities;
 import it.polimi.ingsw.client.view.cli.coordinates.*;
@@ -23,8 +24,8 @@ public class Realm {
      *
      * @param terminal Terminal where to write.
      */
-    public static void print(Terminal terminal, List<it.polimi.ingsw.client.model.Island> islands, List<it.polimi.ingsw.client.model.Cloud> clouds) {
-        terminal.writer().print(printIslands(islands));
+    public static void print(Terminal terminal, GameBoard gameBoard, List<it.polimi.ingsw.client.model.Cloud> clouds) {
+        terminal.writer().print(printIslands(gameBoard));
         terminal.flush();
         terminal.writer().print(printClouds(clouds));
         terminal.flush();
@@ -35,7 +36,7 @@ public class Realm {
      *
      * @return The Ansi stream to print to terminal.
      */
-    private static Ansi printIslands(List<it.polimi.ingsw.client.model.Island> islands) {
+    private static Ansi printIslands(GameBoard gameboard) {
 
         Ansi ansi = new Ansi();
 
@@ -50,7 +51,7 @@ public class Realm {
                         default -> IslandE.getInstance();
                     }
             ));
-            ansi.a(printIsland(index, islands.get(index - 1)));
+            ansi.a(printIsland(index, gameboard.getIslandById(index - 1)));
         }
 
         // Second half
@@ -64,7 +65,7 @@ public class Realm {
                         default -> IslandE.getInstance();
                     }
             ));
-            ansi.a(printIsland(index, islands.get(index - 1)));
+            ansi.a(printIsland(index, gameboard.getIslandById(index - 1)));
         }
 
         ansi.a(Utilities.moveCursor(IslandsReset.getInstance()));
