@@ -6,10 +6,8 @@ import it.polimi.ingsw.client.controller.GameServer;
 import it.polimi.ingsw.client.model.GameModel;
 import it.polimi.ingsw.client.model.Player;
 import it.polimi.ingsw.client.model.SpecialCharacter;
-import it.polimi.ingsw.client.view.ClientCli;
 import it.polimi.ingsw.client.view.View;
 import it.polimi.ingsw.utilities.*;
-import it.polimi.ingsw.utilities.exceptions.ExitException;
 import it.polimi.ingsw.utilities.exceptions.IllegalActionException;
 import it.polimi.ingsw.utilities.exceptions.IllegalMoveException;
 import it.polimi.ingsw.utilities.parsers.CommandParser;
@@ -22,8 +20,7 @@ import java.util.List;
 import static it.polimi.ingsw.utilities.GameControllerStates.CHOOSE_CLOUD;
 import static it.polimi.ingsw.utilities.GameControllerStates.MOVE_MOTHER_NATURE;
 
-public class ClientController extends Thread {
-    private final GraphicsType graphics;
+public class ClientController {
     private final View view;
     private final Object lock;
     private String userName;
@@ -37,7 +34,7 @@ public class ClientController extends Thread {
     /**
      * Default constructor.
      */
-    public ClientController(GraphicsType graphics) throws IOException {
+    public ClientController(View view){
         this.state = ClientStates.START_SCREEN;
         this.gameServer = null;
         this.gameModel = null;
@@ -45,11 +42,7 @@ public class ClientController extends Thread {
         this.userName = null;
         this.gameCode = null;
         this.lock = new Object();
-        this.graphics = graphics;
-
-        this.view = new ClientCli(this);
-        //if(this.graphics.equals(GraphicsType.GUI)) this.view = new ClientGui(this);
-        view.updateScreen(false);
+        this.view = view;
     }
 
     /**
@@ -120,47 +113,12 @@ public class ClientController extends Thread {
     }
 
     /**
-     * The main client method, chooses the correct method to invoke basing on the current state.
+     * Manages the start-screen logic.
      */
-    @Override
-    public void run() {
-        boolean process = true;
+    public void manageStartScreen(Socket hostSocket) {
         try {
-            while (process) {
-                //Log.debug(this.getClientState().toString());
-                switch (getClientState()) {
-                    case START_SCREEN -> manageStartScreen();
-                    case MAIN_MENU -> manageMainMenu();
-                    case GAME_CREATION -> manageGameCreation();
-                    case JOIN_GAME -> manageJoinGame();
-                    case GAME_LOGIN -> manageGameLogin();
-                    case GAME_WAITING_ROOM -> manageWaitingRoom();
-                    case GAME_RUNNING -> manageGameRunning();
-                    case END_GAME -> {
-                        //visualize end game screen
-                        //transition to main menu
-                    }
-                    case CONNECTION_LOST -> manageConnectionLost();
-                    case EXIT -> process = false;
-                }
-            }
-        } catch (Exception e) {
-            Log.error(e);
-        } finally {
-            view.updateScreen(true);
-            if (this.gameServer != null)
-                gameServer.disconnected();
-        }
-    }
-
-    /**
-     * Manages the start-screen's I/O.
-     */
-    private void manageStartScreen() {
-        try {
-            Socket hostSocket = view.runStartScreen();
             hostSocket.setSoTimeout(10000);
-            this.gameServer = new GameServer(hostSocket, this);
+            setGameServer(new GameServer(hostSocket, this));
             new Thread(this.gameServer).start();
             setClientState(ClientStates.MAIN_MENU);
             view.updateScreen(false);
@@ -170,12 +128,9 @@ public class ClientController extends Thread {
     }
 
     /**
-     * Manages the main-menu-screen's I/O.
+     * Manages the main-menu logic.
      */
-    private void manageMainMenu() {
-        String option;
-        option = view.runMainMenu();
-
+    public void manageMainMenu(String option) {
         switch (option) {
             case "1" -> {
                 this.setClientState(ClientStates.GAME_CREATION);
@@ -187,44 +142,24 @@ public class ClientController extends Thread {
             }
             default -> this.errorOccurred("Wrong command.");
         }
-
-        if (!this.getClientState().equals(ClientStates.MAIN_MENU))
-            view.updateScreen(false);
     }
 
     /**
-     * Manages the game-creation-screen's I/O.
+     * Manages the game-creation logic.
      */
-    private void manageGameCreation() {
-        JsonObject command;
-
-        try {
-            command = view.runGameCreation();
-        } catch (ExitException ee) {
-            this.setClientState(ClientStates.MAIN_MENU);
-            view.updateScreen(false);
-            this.resetGame();
-            return;
-        } catch (IllegalArgumentException iae) {
-            this.errorOccurred("Wrong command.");
-            return;
-        }
-
+    public void manageGameCreation(JsonObject command) {
         this.gameServer.sendCommand(command);
 
         this.tryConnection();
 
         if (this.getClientState().equals(ClientStates.GAME_CREATION))
             this.setClientState(ClientStates.CONNECTION_LOST);
-
-        view.updateScreen(false);
     }
 
     /**
-     * Manages the join-game-screen's I/O.
+     * Manages the join-game logic.
      */
-    private void manageJoinGame() {
-        String gameCode = view.runJoinGame();
+    public void manageJoinGame(String gameCode) {
         if ("EXIT".equals(gameCode)) {
             this.setClientState(ClientStates.MAIN_MENU);
             view.updateScreen(false);
@@ -238,19 +173,13 @@ public class ClientController extends Thread {
 
         if (this.getClientState().equals(ClientStates.JOIN_GAME)) {
             this.errorOccurred("The desired game doesn't exist or is full.");
-            return;
         }
-
-        view.updateScreen(false);
     }
 
     /**
-     * Manages the login-screen's I/O.
+     * Manages the login logic.
      */
-    private void manageGameLogin() {
-        String username;
-
-        username = view.runGameLogin();
+    public void manageGameLogin(String username) {
         if ("exit".equals(username)) {
             this.setClientState(ClientStates.MAIN_MENU);
             view.updateScreen(false);
@@ -267,44 +196,22 @@ public class ClientController extends Thread {
         this.gameServer.sendCommand(MessageCreator.login(username));
 
         this.tryConnection();
-
-        view.updateScreen(false);
     }
 
     /**
-     * Manages the waiting-room-screen's I/O.
+     * Manages the game logic.
      */
-
-
-    private void manageWaitingRoom() {
-        if (this.getGameModel() != null) {
-            view.runWaitingRoom();
-        }
-        synchronized (this.lock) {
-            try {
-                this.lock.wait();
-            } catch (InterruptedException ie) {
-                resetGame();
-            }
-        }
-        view.updateScreen(false);
-    }
-
-    /**
-     * Manages the game-screen's I/O.
-     */
-    private void manageGameRunning() {
+    public void manageGameRunning(String command) {
         List<JsonObject> messages = new ArrayList<>();
-        String command = view.runGameRunning();
 
         if (this.hasCommunicationToken()) {
             // Logout command.
             if (command.equals("exit") || command.equals("logout")) {
-            this.getGameServer().sendCommand(MessageCreator.logout());
-            this.resetGame();
-            view.updateScreen(false);
-            return;
-        }
+                this.getGameServer().sendCommand(MessageCreator.logout());
+                this.resetGame();
+                view.updateScreen(false);
+                return;
+            }
             view.updateScreen(false);
 
             // Another player disconnected.
@@ -355,23 +262,14 @@ public class ClientController extends Thread {
                 errorOccurred("Connection lost.");
                 setClientState(ClientStates.CONNECTION_LOST);
             }
-        } else {
-            synchronized (this.lock) {
-                try {
-                    this.lock.wait(1500);
-                } catch (InterruptedException e) {
-                    this.resetGame();
-                }
-            }
         }
-        view.updateScreen(false);
     }
 
     /**
-     * Manages the end-game-screen's I/O.
+     * Manages end-game logic.
      */
-    private void manageEndGame() {
-        if (view.runEndGame().equals("exit")) {
+    public void manageEndGame(String command) {
+        if (command.equals("exit")) {
             this.setClientState(ClientStates.MAIN_MENU);
             view.updateScreen(false);
             this.resetGame();
@@ -574,7 +472,7 @@ public class ClientController extends Thread {
     /**
      * Manages the CONNECTION_LOST state of the client, terminating all the server-associated threads.
      */
-    private void manageConnectionLost() {
+    public void manageConnectionLost() {
         this.resetGame();
         this.getGameServer().disconnected();
         this.gameServer = null;
@@ -637,6 +535,14 @@ public class ClientController extends Thread {
     public void errorOccurred(String message) {
         view.printError(message);
         Log.warning(message);
+        synchronized (this.lock) {
+            try {
+                this.lock.wait(1500);
+            } catch (InterruptedException e) {
+                this.setClientState(ClientStates.CONNECTION_LOST);
+                view.updateScreen(false);
+            }
+        }
     }
 
     /**

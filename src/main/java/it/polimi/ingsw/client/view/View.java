@@ -9,21 +9,21 @@ import java.net.Socket;
 
 public interface View {
 
-    Socket runStartScreen() throws IOException;
+    void runStartScreen() throws IOException;
 
-    String runMainMenu();
+    void runMainMenu();
 
-    JsonObject runGameCreation() throws ExitException, IllegalArgumentException;
+    void runGameCreation();
 
-    String runJoinGame();
+    void runJoinGame();
 
-    String runGameLogin();
+    void runGameLogin();
 
     void runWaitingRoom();
 
-    String runGameRunning();
+    void runGameRunning();
 
-    String runEndGame();
+    void runEndGame();
 
     void updateScreen(boolean def);
 

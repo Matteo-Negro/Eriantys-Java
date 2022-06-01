@@ -1,6 +1,7 @@
 package it.polimi.ingsw;
 
 import it.polimi.ingsw.client.ClientController;
+import it.polimi.ingsw.client.view.ClientCli;
 import it.polimi.ingsw.client.view.ClientGui;
 import it.polimi.ingsw.utilities.GraphicsType;
 import it.polimi.ingsw.utilities.Log;
@@ -25,7 +26,7 @@ public class ClientLauncher {
             //new Client(parseArgument(args));
             try {
                 if (parseArgument((args)).equals(GraphicsType.CLI)) {
-                    new Thread(new ClientController(parseArgument((args)))).start();
+                    new Thread(new ClientCli()).start();
                 } else {
                     Application.launch(ClientGui.class);
                 }
