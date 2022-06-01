@@ -416,22 +416,18 @@ public class ClientController {
      */
     private void checkMotherNatureMove(JsonObject message) throws IllegalMoveException {
         if (!getGameModel().getSubphase().equals(MOVE_MOTHER_NATURE)) throw new IllegalMoveException();
-        int finalIsland = message.get("island").getAsInt();
+
+        int finalIsland = message.get("island").getAsInt() - 1;
         int maxDistance = getGameModel().getPlayerByName(this.getUserName()).getCurrentPlayedAssistant().getMaxDistance();
-
         int motherNatureIsland = getGameModel().getGameBoard().getMotherNatureIsland();
-        int motherNatureIslandSize = 1;
+        TowerType prevTower = getGameModel().getGameBoard().getIslandById(motherNatureIsland).getTower();
 
-        int i = motherNatureIsland;
-        while (getGameModel().getGameBoard().getIslands().get(i).hasNext()) {
-            motherNatureIslandSize++;
-            i = (i + 1) % 12;
+        int distanceWanted = 0;
+        for (int i = motherNatureIsland + 1; i != finalIsland; i = (i + 1) % 12) {
+            if (getGameModel().getGameBoard().getIslandById(i).getTower() == null || !prevTower.equals(getGameModel().getGameBoard().getIslandById(i).getTower())) distanceWanted++;
+            prevTower = getGameModel().getGameBoard().getIslandById(i).getTower();
         }
-
-        int distanceWanted;
-        if (finalIsland < motherNatureIsland)
-            distanceWanted = finalIsland + 12 - motherNatureIsland - (motherNatureIslandSize - 1);
-        else distanceWanted = finalIsland - motherNatureIsland - (motherNatureIslandSize - 1);
+        distanceWanted++;
         if (distanceWanted > maxDistance) throw new IllegalMoveException();
     }
 

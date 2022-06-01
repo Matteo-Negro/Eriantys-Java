@@ -134,4 +134,8 @@ public class GameBoard {
     public int getMotherNatureIsland(){
         return this.motherNatureIsland;
     }
+
+    public Island getIslandById(int id) {
+        return islands.get(id);
+    }
 }
