@@ -416,8 +416,6 @@ public class GameController extends Thread {
                 this.setSubPhase(GameControllerStates.PLAY_ASSISTANT);
                 gameModel.nextTurn();
                 notifyUsers(MessageCreator.status(this));
-                saveGame();
-                Log.debug("Status message sent.");
             }
         } catch (RoundConcluded e) {
             Log.info("Every player has chosen an assistant.");
@@ -426,14 +424,10 @@ public class GameController extends Thread {
             System.exit(1);
         }
 
-        Log.debug("Updating turn order.");
         this.getGameModel().updateTurnOrder();
-        Log.debug("Turn order updated");
         this.phase = Phase.ACTION;
         this.setSubPhase(GameControllerStates.MOVE_STUDENT_1);
-        Log.debug("phase updated.");
         notifyUsers(MessageCreator.status(this));
-        Log.debug("Status message sent.");
         saveGame();
     }
 
@@ -442,59 +436,53 @@ public class GameController extends Thread {
      */
     private void actionPhase() {
         Log.debug("Action phase");
-        for (Player currentPlayer : this.getGameModel().getTurnOrder()) {
-            //ENABLING THE INPUT OF THE CURRENT USER (taken from the turn list).
-            User currentUser = getUser(currentPlayer.getName());
-            Log.debug("Current player" + currentPlayer.getName());
-            this.activeUser = currentUser.getUsername();
 
-            //WAITING FOR A CLOUD TO BE CHOSEN (refill command)
-            Log.debug("Waiting for a cloud to be chosen.");
-            while (this.getSubPhase() != GameControllerStates.END_TURN) {
-                notifyUsers(MessageCreator.turnEnable(currentUser.getUsername(), true));
-                Log.debug("Current subphase: " + this.subPhase.toString());
-                synchronized (this.actionNeededLock) {
-                    try {
-                        this.actionNeededLock.wait();
-                        notifyUsers(MessageCreator.status(this));
-                        saveGame();
-                    } catch (InterruptedException ie) {
-                        notifyUsers(MessageCreator.error("GameServerError"));
-                        for (User user : this.getUsers())
-                            this.removeUser(user);
-                        return;
-                    }
-                }
-                synchronized (this.isFullLock) {
-                    if (!this.isFull()) return;
+        //ENABLING THE INPUT OF THE CURRENT USER (taken from the turn list).
+        User currentUser = getUser(getGameModel().getCurrentPlayer().getName());
+        Log.debug("Current player" + currentUser);
+        this.activeUser = currentUser.getUsername();
+
+        //WAITING FOR A CLOUD TO BE CHOSEN (refill command)
+        Log.debug("Waiting for a cloud to be chosen.");
+        while (this.getSubPhase() != GameControllerStates.END_TURN) {
+            notifyUsers(MessageCreator.turnEnable(currentUser.getUsername(), true));
+            Log.debug("Current subphase: " + this.subPhase.toString());
+            synchronized (this.actionNeededLock) {
+                try {
+                    this.actionNeededLock.wait();
+                    saveGame();
+                    notifyUsers(MessageCreator.status(this));
+                } catch (InterruptedException ie) {
+                    notifyUsers(MessageCreator.error("GameServerError"));
+                    for (User user : this.getUsers())
+                        this.removeUser(user);
+                    return;
                 }
             }
-
-            //DISABLING THE INPUT OF THE CURRENT USER.
-            this.activeUser = null;
-            notifyUsers(MessageCreator.turnEnable(currentUser.getUsername(), false));
-
-            try {
-                Log.debug("Calling next turn.");
-                this.getGameModel().nextTurn();
-                Log.debug("Setting subphase.");
-                this.setSubPhase(GameControllerStates.MOVE_STUDENT_1);
-            } catch (RoundConcluded rc) {
-                Log.debug("Round concluded.");
-                this.getGameModel().nextRound();
-                this.round++;
-                this.phase = Phase.PLANNING;
-                this.setSubPhase(GameControllerStates.PLAY_ASSISTANT);
-                Log.debug("Phase and subphase set.");
+            synchronized (this.isFullLock) {
+                if (!this.isFull()) return;
             }
-
-            notifyUsers(MessageCreator.status(this));
-            saveGame();
-
-            endGame();
-            if (ended)
-                return;
         }
+
+        //DISABLING THE INPUT OF THE CURRENT USER.
+        this.activeUser = null;
+        notifyUsers(MessageCreator.turnEnable(currentUser.getUsername(), false));
+
+        try {
+            Log.debug("Calling next turn.");
+            this.getGameModel().nextTurn();
+            Log.debug("Setting subphase.");
+            this.setSubPhase(GameControllerStates.MOVE_STUDENT_1);
+        } catch (RoundConcluded rc) {
+            Log.debug("Round concluded.");
+            this.getGameModel().nextRound();
+            this.round++;
+            this.phase = Phase.PLANNING;
+            this.setSubPhase(GameControllerStates.PLAY_ASSISTANT);
+            Log.debug("Phase and subphase set.");
+        }
+        saveGame();
+        notifyUsers(MessageCreator.status(this));
     }
 
     /**
@@ -511,7 +499,6 @@ public class GameController extends Thread {
             Log.warning(e);
             this.getUsers().remove(this.getUser(player));
         }
-        this.saveGame();
         synchronized (this.actionNeededLock) {
             this.actionNeededLock.notifyAll();
         }
@@ -534,7 +521,6 @@ public class GameController extends Thread {
         synchronized (this.actionNeededLock) {
             this.actionNeededLock.notifyAll();
         }
-        this.saveGame();
     }
 
     /**
@@ -614,8 +600,7 @@ public class GameController extends Thread {
                     }
                 }
             }
-            case "bag" ->
-                    this.gameModel.getGameBoard().getBag().push(HouseColor.valueOf(command.get("color").getAsString()));
+            case "bag" -> this.gameModel.getGameBoard().getBag().push(HouseColor.valueOf(command.get("color").getAsString()));
             case "island" -> {
                 try {
                     this.gameModel.getGameBoard().getIslandById(command.get("toId").getAsInt()).addStudent(HouseColor.valueOf(command.get("color").getAsString()));
@@ -682,7 +667,6 @@ public class GameController extends Thread {
         synchronized (this.actionNeededLock) {
             this.actionNeededLock.notifyAll();
         }
-        this.saveGame();
     }
 
     /**
@@ -762,7 +746,6 @@ public class GameController extends Thread {
         synchronized (this.actionNeededLock) {
             this.actionNeededLock.notifyAll();
         }
-        this.saveGame();
     }
 
     /**
@@ -792,22 +775,17 @@ public class GameController extends Thread {
         try {
             switch (character) {
                 case 1, 7, 10, 11 -> this.movementEffectActive = true;
-                case 2 ->
-                        this.getGameModel().getGameBoard().setTieWinner(this.getGameModel().getPlayerByName(command.get("player").getAsString()));
-                case 3 ->
-                        this.getGameModel().getGameBoard().getInfluence(this.getGameModel().getGameBoard().getIslandById(command.get("island").getAsInt()));
-                case 4 ->
-                        this.getGameModel().getGameBoard().getAssistant(this.getGameModel().getPlayerByName(command.get("player").getAsString())).setBonus();
+                case 2 -> this.getGameModel().getGameBoard().setTieWinner(this.getGameModel().getPlayerByName(command.get("player").getAsString()));
+                case 3 -> this.getGameModel().getGameBoard().getInfluence(this.getGameModel().getGameBoard().getIslandById(command.get("island").getAsInt()));
+                case 4 -> this.getGameModel().getGameBoard().getAssistant(this.getGameModel().getPlayerByName(command.get("player").getAsString())).setBonus();
                 case 5 -> {
                     this.getGameModel().getGameBoard().getIslandById(command.get("island").getAsInt()).setBan();
                     ((HerbalistEffect) this.getGameModel().getGameBoard().getCharacters().get(character).getEffect()).effect(HerbalistEffect.Action.TAKE);
                 }
                 case 6 -> {
                 }//Automatically managed by model.
-                case 8 ->
-                        this.getGameModel().getGameBoard().setInfluenceBonus(this.getGameModel().getPlayerByName(command.get("player").getAsString()));
-                case 9 ->
-                        this.getGameModel().getGameBoard().setIgnoreColor(HouseColor.valueOf(command.get("ignoreColor").getAsString()));
+                case 8 -> this.getGameModel().getGameBoard().setInfluenceBonus(this.getGameModel().getPlayerByName(command.get("player").getAsString()));
+                case 9 -> this.getGameModel().getGameBoard().setIgnoreColor(HouseColor.valueOf(command.get("ignoreColor").getAsString()));
                 case 12 -> {
                     for (Player p : this.getGameModel().getPlayers()) {
                         for (int i = 0; i < 3; i++) {
@@ -828,7 +806,9 @@ public class GameController extends Thread {
         } catch (IslandNotFoundException | NoMoreBansLeftException nfe) {
             throw new IllegalMoveException();
         }
-        this.saveGame();
+        synchronized (this.actionNeededLock) {
+            this.actionNeededLock.notifyAll();
+        }
     }
 
     /**

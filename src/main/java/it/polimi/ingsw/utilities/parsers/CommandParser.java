@@ -55,7 +55,7 @@ public class CommandParser {
         String[] parsedCommand = command.split(" ");
         switch (parsedCommand.length) {
             case 2 -> {
-                if (Pattern.matches("info|play|ban|resolve\sisl\\d\\d", command)) return true;
+                if (Pattern.matches("info|play|ban|resolve\sisl\\d\\d", command) || Pattern.matches("info|play\sast\\d\\d", command)) return true;
                 else if (Pattern.matches("info|pay\schr\\d\\d", command)) return true;
                 else return Pattern.matches("ignored\sblue|fuchsia|green|red|yellow", command);
             }
