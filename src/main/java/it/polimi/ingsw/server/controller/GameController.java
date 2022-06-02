@@ -87,8 +87,7 @@ public class GameController extends Thread {
      * @throws FullGameException              Thrown when the game to which the user is attempting to log in is already full and active.
      * @throws AlreadyExistingPlayerException Thrown when the user is attempting to log into a game that has already got an active player with the same chosen username.
      */
-    public GameController(String id, GamePlatform gameModel, int expectedPlayers, int round, String phase, String subPhase, Set<String> players, String savePath)
-            throws AlreadyExistingPlayerException, FullGameException {
+    public GameController(String id, GamePlatform gameModel, int expectedPlayers, int round, String phase, String subPhase, Set<String> players, String savePath) throws AlreadyExistingPlayerException, FullGameException {
         this.connectedPlayers = 0;
         this.expectedPlayers = expectedPlayers;
         this.gameModel = gameModel;
@@ -244,8 +243,7 @@ public class GameController extends Thread {
      * @throws AlreadyExistingPlayerException Thrown when the user is attempting to log into a game that has already got an active player with the same chosen username.
      */
     public void addUser(String name, User user) throws FullGameException, AlreadyExistingPlayerException {
-        if (isFull())
-            throw new FullGameException();
+        if (isFull()) throw new FullGameException();
 
         synchronized (this.users) {
             if (this.users.get(name) != null || this.users.keySet().size() == this.expectedPlayers && !this.users.containsKey(name))
@@ -258,8 +256,7 @@ public class GameController extends Thread {
                 this.gameModel.addPlayer(name);
         }
 
-        if (isFull() && user != null)
-            saveGame();
+        if (isFull() && user != null) saveGame();
     }
 
     /**
@@ -320,12 +317,7 @@ public class GameController extends Thread {
      * @param json The json to write.
      */
     private void writeFile(JsonObject json) {
-        try (BufferedWriter writer = Files.newBufferedWriter(
-                Paths.get(this.savePath, this.id + ".json"),
-                StandardCharsets.UTF_8,
-                StandardOpenOption.CREATE,
-                StandardOpenOption.TRUNCATE_EXISTING,
-                StandardOpenOption.WRITE)) {
+        try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(this.savePath, this.id + ".json"), StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE)) {
             writer.write(json.toString());
         } catch (IOException e) {
             Log.warning(e.getMessage());
@@ -600,7 +592,8 @@ public class GameController extends Thread {
                     }
                 }
             }
-            case "bag" -> this.gameModel.getGameBoard().getBag().push(HouseColor.valueOf(command.get("color").getAsString()));
+            case "bag" ->
+                    this.gameModel.getGameBoard().getBag().push(HouseColor.valueOf(command.get("color").getAsString()));
             case "island" -> {
                 try {
                     this.gameModel.getGameBoard().getIslandById(command.get("toId").getAsInt()).addStudent(HouseColor.valueOf(command.get("color").getAsString()));
@@ -657,8 +650,7 @@ public class GameController extends Thread {
             try {
                 if (specialCharacter.isPresent())
                     ((HerbalistEffect) specialCharacter.get().getEffect()).effect(HerbalistEffect.Action.RESTORE);
-                else
-                    throw new IllegalMoveException();
+                else throw new IllegalMoveException();
             } catch (NoMoreBansLeftException e) {
                 throw new IllegalMoveException();
             }
@@ -697,6 +689,7 @@ public class GameController extends Thread {
                                     player.getSchoolBoard().removeTowers(island.getSize());
                                 }
                             }
+                            endGame();
                         } catch (NotEnoughTowersException e1) {
                             endGame();
                         } catch (NegativeException e2) {
@@ -713,6 +706,7 @@ public class GameController extends Thread {
                                     }
                                 }
                                 this.getGameModel().getGameBoard().setTowerOnIsland(island, mostInfluential.get(0).getSchoolBoard().getTowerType());
+                                endGame();
                             } catch (NotEnoughTowersException e1) {
                                 endGame();
                             } catch (NegativeException e2) {
@@ -731,16 +725,7 @@ public class GameController extends Thread {
      * @param command The json with the information about the choosing of the cloud.
      */
     public void chooseCloud(JsonObject command) {
-        this.gameModel
-                .getPlayerByName(command.get("player").getAsString())
-                .getSchoolBoard()
-                .addToEntrance(
-                        this.gameModel
-                                .getGameBoard()
-                                .getClouds()
-                                .get(command.get("cloud")
-                                        .getAsInt())
-                                .flush());
+        this.gameModel.getPlayerByName(command.get("player").getAsString()).getSchoolBoard().addToEntrance(this.gameModel.getGameBoard().getClouds().get(command.get("cloud").getAsInt()).flush());
         this.setSubPhase(GameControllerStates.END_TURN);
         notifyUsers(MessageCreator.status(this));
         synchronized (this.actionNeededLock) {
@@ -775,17 +760,22 @@ public class GameController extends Thread {
         try {
             switch (character) {
                 case 1, 7, 10, 11 -> this.movementEffectActive = true;
-                case 2 -> this.getGameModel().getGameBoard().setTieWinner(this.getGameModel().getPlayerByName(command.get("player").getAsString()));
-                case 3 -> this.getGameModel().getGameBoard().getInfluence(this.getGameModel().getGameBoard().getIslandById(command.get("island").getAsInt()));
-                case 4 -> this.getGameModel().getGameBoard().getAssistant(this.getGameModel().getPlayerByName(command.get("player").getAsString())).setBonus();
+                case 2 ->
+                        this.getGameModel().getGameBoard().setTieWinner(this.getGameModel().getPlayerByName(command.get("player").getAsString()));
+                case 3 ->
+                        this.getGameModel().getGameBoard().getInfluence(this.getGameModel().getGameBoard().getIslandById(command.get("island").getAsInt()));
+                case 4 ->
+                        this.getGameModel().getGameBoard().getAssistant(this.getGameModel().getPlayerByName(command.get("player").getAsString())).setBonus();
                 case 5 -> {
                     this.getGameModel().getGameBoard().getIslandById(command.get("island").getAsInt()).setBan();
                     ((HerbalistEffect) this.getGameModel().getGameBoard().getCharacters().get(character).getEffect()).effect(HerbalistEffect.Action.TAKE);
                 }
                 case 6 -> {
                 }//Automatically managed by model.
-                case 8 -> this.getGameModel().getGameBoard().setInfluenceBonus(this.getGameModel().getPlayerByName(command.get("player").getAsString()));
-                case 9 -> this.getGameModel().getGameBoard().setIgnoreColor(HouseColor.valueOf(command.get("ignoreColor").getAsString()));
+                case 8 ->
+                        this.getGameModel().getGameBoard().setInfluenceBonus(this.getGameModel().getPlayerByName(command.get("player").getAsString()));
+                case 9 ->
+                        this.getGameModel().getGameBoard().setIgnoreColor(HouseColor.valueOf(command.get("ignoreColor").getAsString()));
                 case 12 -> {
                     for (Player p : this.getGameModel().getPlayers()) {
                         for (int i = 0; i < 3; i++) {
@@ -827,24 +817,18 @@ public class GameController extends Thread {
 
     /**
      * This method manages the win condition for the game.
-     *
-     * @return A boolean value, true whether the game will have to end.
      */
     public void endGame() {
         List<Player> winners = new ArrayList<>();
         if (this.gameModel.getPlayers().stream().anyMatch(player -> player.getSchoolBoard().getTowersNumber() == 0)) {
             ended = true;
             for (Player player : this.gameModel.getPlayers())
-                if (player.getSchoolBoard().getTowersNumber() == 0)
-                    winners.add(player);
-        } else if ((this.gameModel.getGameBoard().getIslands().size() == 3) ||
-                (this.gameModel.getCurrentPlayer().equals(this.gameModel.getTurnOrder().get(this.expectedPlayers - 1)) &&
-                        (this.gameModel.getGameBoard().getBag().isEmpty() || this.gameModel.getPlayers().get(0).getAssistants().isEmpty()))) {
+                if (player.getSchoolBoard().getTowersNumber() == 0) winners.add(player);
+        } else if ((this.gameModel.getGameBoard().getIslands().size() == 3) || (this.gameModel.getCurrentPlayer().equals(this.gameModel.getTurnOrder().get(this.expectedPlayers - 1)) && (this.gameModel.getGameBoard().getBag().isEmpty() || this.gameModel.getPlayers().get(0).getAssistants().isEmpty()))) {
             ended = true;
             winners = checkForWinners();
         }
-        if (ended)
-            notifyUsers(MessageCreator.win(winners));
+        if (ended) notifyUsers(MessageCreator.win(winners));
     }
 
     /**
@@ -905,8 +889,7 @@ public class GameController extends Thread {
     public void notifyUsers(JsonObject message) {
         synchronized (this.users) {
             for (User user : this.getUsers()) {
-                if (user != null)
-                    user.sendMessage(message);
+                if (user != null) user.sendMessage(message);
             }
         }
     }
