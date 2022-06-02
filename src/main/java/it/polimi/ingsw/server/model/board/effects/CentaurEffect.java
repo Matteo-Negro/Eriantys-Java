@@ -6,23 +6,11 @@ package it.polimi.ingsw.server.model.board.effects;
  * @author Riccardo Milici
  */
 
-public class CentaurEffect extends Effect {
-
-    /**
-     * Class constructor.
-     * It creates an instance of the class.
-     */
-    public CentaurEffect() {
-    }
+public class CentaurEffect implements Effect {
 
     @Override
     public int getId() {
         return 6;
-    }
-
-    @Override
-    public void effect() {
-
     }
 
     @Override

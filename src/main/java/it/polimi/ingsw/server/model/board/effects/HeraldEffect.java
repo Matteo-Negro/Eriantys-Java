@@ -6,23 +6,11 @@ package it.polimi.ingsw.server.model.board.effects;
  * @author Riccardo Milici
  */
 
-public class HeraldEffect extends Effect {
-
-    /**
-     * Class constructor.
-     * It creates an instance of the class.
-     */
-    public HeraldEffect() {
-    }
+public class HeraldEffect implements Effect {
 
     @Override
     public int getId() {
         return 3;
-    }
-
-    @Override
-    public void effect() {
-
     }
 
     @Override

@@ -23,7 +23,7 @@ public class GameBoard {
     private final Map<Player, Assistant> playedAssistants;
     private Player influenceBonus;
     private Player tieWinner;
-    private List<SpecialCharacter> characters;
+    private final List<SpecialCharacter> characters;
     private Island motherNatureIsland;
     private HouseColor ignoreColor;
 
@@ -43,7 +43,7 @@ public class GameBoard {
         this.clouds = new ArrayList<>();
         this.characters = new ArrayList<>();
         this.professors = new EnumMap<>(HouseColor.class);
-        for(HouseColor color : HouseColor.values()) professors.put(color, null);
+        for (HouseColor color : HouseColor.values()) professors.put(color, null);
 
         this.influenceBonus = null;
         this.tieWinner = null;
@@ -64,11 +64,11 @@ public class GameBoard {
                 for (HouseColor color : HouseColor.values()) students.put(color, 0);
                 int studentsNumber;
 
-                switch (randomVector.get(i)) {
-                    case 1, 11 -> studentsNumber = 4;
-                    case 7 -> studentsNumber = 6;
-                    default -> studentsNumber = 0;
-                }
+                studentsNumber = switch (randomVector.get(i)) {
+                    case 1, 11 -> 4;
+                    case 7 -> 6;
+                    default -> 0;
+                };
 
                 for (int c = 0; c < studentsNumber; c++) {
                     HouseColor color = this.getBag().pop();
@@ -150,8 +150,9 @@ public class GameBoard {
 
         maxDistance = playedAssistant.getMaxDistance();
 
-        int runDistance = targetIsland.getId() - this.motherNatureIsland.getId() - (this.motherNatureIsland.getSize() -1 );
-        if(targetIsland.getId() < this.motherNatureIsland.getId()) runDistance = 12 + targetIsland.getId() - this.motherNatureIsland.getId() - (this.motherNatureIsland.getSize() -1);
+        int runDistance = targetIsland.getId() - this.motherNatureIsland.getId() - (this.motherNatureIsland.getSize() - 1);
+        if (targetIsland.getId() < this.motherNatureIsland.getId())
+            runDistance = 12 + targetIsland.getId() - this.motherNatureIsland.getId() - (this.motherNatureIsland.getSize() - 1);
 
         if (runDistance > maxDistance)
             throw new IllegalMoveException("Player would like moves MotherNature over assistant card limit.");
@@ -222,14 +223,10 @@ public class GameBoard {
         // Student contribution
         this.professors.keySet().forEach(professorColor -> {
             if (!professorColor.equals(ignoreColor)) {
-                if (!result.containsKey(this.professors.get(professorColor))) {
-                    if(this.professors.get(professorColor)!=null) {
-                        result.put(this.professors.get(professorColor), 0);
-                    }
-                }
-                if(this.professors.get(professorColor)!=null) {
+                if (!result.containsKey(this.professors.get(professorColor)) && this.professors.get(professorColor) != null)
+                    result.put(this.professors.get(professorColor), 0);
+                if (this.professors.get(professorColor) != null)
                     result.put(this.professors.get(professorColor), result.get(this.professors.get(professorColor)) + targetIsland.getStudents().get(professorColor) + (influenceBonus != null && this.professors.get(professorColor).equals(this.influenceBonus) ? 2 : 0));
-                }
             }
         });
 
@@ -262,26 +259,27 @@ public class GameBoard {
 
         //Check if a merge to left is needed.
         boolean mergeDone;
-        try{
-            do{
+        try {
+            do {
                 List<Island> islands = getIslands();
                 int islandsSize = islands.size();
                 mergeDone = false;
-                for(int i=0; i<islandsSize; i++){
+                for (int i = 0; i < islandsSize; i++) {
                     Island currentIsland = islands.get(i);
                     int nextId = (i + 1) % islandsSize;
                     Island nextIsland = islands.get(nextId);
 
-                    if(currentIsland.getId() != nextIsland.getId() && currentIsland.getTower() != null && nextIsland.getTower() != null){
-                        if(currentIsland.getTower().equals(nextIsland.getTower())){
-                            merge(currentIsland, nextIsland);
-                            mergeDone = true;
-                            break;
-                        }
+                    if (currentIsland.getId() != nextIsland.getId() &&
+                            currentIsland.getTower() != null &&
+                            nextIsland.getTower() != null &&
+                            currentIsland.getTower().equals(nextIsland.getTower())) {
+                        merge(currentIsland, nextIsland);
+                        mergeDone = true;
+                        break;
                     }
                 }
-            }while(mergeDone);
-        }catch(Exception e){
+            } while (mergeDone);
+        } catch (Exception e) {
             Log.warning(e);
         }
     }
@@ -294,16 +292,15 @@ public class GameBoard {
      */
     private void merge(Island leftIsland, Island rightIsland) {
         leftIsland.setSize(leftIsland.getSize() + rightIsland.getSize());
-        if(rightIsland.isBanned())
-                leftIsland.setBan();
+        if (rightIsland.isBanned())
+            leftIsland.setBan();
         Map<HouseColor, Integer> rightStudents = rightIsland.getStudents();
 
-        for (HouseColor color : rightStudents.keySet()) {
-            for (int i = 0; i < rightStudents.get(color); i++) {
-                leftIsland.addStudent(color);
-            }
-        }
-        if(getMotherNatureIsland().getId()==rightIsland.getId()) this.motherNatureIsland = leftIsland;
+        for (Map.Entry<HouseColor, Integer> color : rightStudents.entrySet())
+            for (int i = 0; i < color.getValue(); i++)
+                leftIsland.addStudent(color.getKey());
+        if (getMotherNatureIsland().getId() == rightIsland.getId())
+            this.motherNatureIsland = leftIsland;
         this.islands.remove(rightIsland);
 
     }

@@ -1,15 +1,8 @@
 package it.polimi.ingsw.server.model.board.effects;
 
-import it.polimi.ingsw.server.model.player.Player;
-import it.polimi.ingsw.utilities.HouseColor;
-import it.polimi.ingsw.utilities.TowerType;
-import it.polimi.ingsw.utilities.WizardType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.EnumMap;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

@@ -1,5 +1,6 @@
 package it.polimi.ingsw.server.model.board.effects;
 
+import it.polimi.ingsw.utilities.exceptions.NoMoreBansLeftException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,10 +45,27 @@ class HerablistEffectTest {
      */
     @Test
     void effect() {
-        herbalistEffect.effect("take");
-        assertEquals(4, herbalistEffect.getAvailableBans());
-        herbalistEffect.effect("restore");
-        assertEquals(5, herbalistEffect.getAvailableBans());
+        try {
+            for (int index = 0; index < 4; index++)
+                herbalistEffect.effect(HerbalistEffect.Action.TAKE);
+            assert true;
+        } catch (NoMoreBansLeftException e) {
+            assert false;
+        }
+        assertEquals(0, herbalistEffect.getAvailableBans());
+        try {
+            herbalistEffect.effect(HerbalistEffect.Action.TAKE);
+            assert false;
+        } catch (NoMoreBansLeftException e) {
+            assert true;
+        }
+        try {
+            herbalistEffect.effect(HerbalistEffect.Action.RESTORE);
+            assert true;
+        } catch (NoMoreBansLeftException e) {
+            assert false;
+        }
+        assertEquals(1, herbalistEffect.getAvailableBans());
     }
 
     /**
@@ -63,6 +81,6 @@ class HerablistEffectTest {
      */
     @Test
     void getAvailableBans() {
-        assertEquals(5, herbalistEffect.getAvailableBans());
+        assertEquals(4, herbalistEffect.getAvailableBans());
     }
 }

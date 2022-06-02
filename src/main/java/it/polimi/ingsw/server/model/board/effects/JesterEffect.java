@@ -13,7 +13,7 @@ import java.util.Objects;
  * @author Riccardo Milici
  */
 
-public class JesterEffect extends Effect {
+public class JesterEffect implements Effect {
 
     private final Map<HouseColor, Integer> students;
 
@@ -43,11 +43,6 @@ public class JesterEffect extends Effect {
     @Override
     public int getId() {
         return 7;
-    }
-
-    @Override
-    public void effect() {
-
     }
 
     /**

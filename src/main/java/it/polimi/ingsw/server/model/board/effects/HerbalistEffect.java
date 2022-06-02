@@ -1,5 +1,7 @@
 package it.polimi.ingsw.server.model.board.effects;
 
+import it.polimi.ingsw.utilities.exceptions.NoMoreBansLeftException;
+
 import java.util.Objects;
 
 /**
@@ -8,7 +10,7 @@ import java.util.Objects;
  * @author Riccardo Milici
  */
 
-public class HerbalistEffect extends Effect {
+public class HerbalistEffect implements Effect {
 
     private int availableBans;
 
@@ -17,7 +19,7 @@ public class HerbalistEffect extends Effect {
      * It creates an instance of the class containing a maximum number of possible bans for the islands.
      */
     public HerbalistEffect() {
-        availableBans = 5;
+        availableBans = 4;
     }
 
     /**
@@ -34,23 +36,17 @@ public class HerbalistEffect extends Effect {
         return 5;
     }
 
-    @Override
-    public void effect() {
-
-    }
-
     /**
      * effect() method overload.
      * Decides to call the takeBan() method or the restoreBan() method, through a conditional branch on command parameter.
      *
-     * @param command The action to be performed.
+     * @param action The action to be performed.
      */
-    public void effect(String command) {
-        switch (command) {
-            case "take" -> takeBan();
-            case "restore" -> restoreBan();
-        }
-
+    public void effect(Action action) throws NoMoreBansLeftException {
+        if (action.equals(Action.TAKE))
+            takeBan();
+        else
+            restoreBan();
     }
 
     @Override
@@ -70,7 +66,9 @@ public class HerbalistEffect extends Effect {
     /**
      * Decreases the number of the available bans.
      */
-    private void takeBan() {
+    private void takeBan() throws NoMoreBansLeftException {
+        if (availableBans == 0)
+            throw new NoMoreBansLeftException();
         availableBans--;
     }
 
@@ -104,4 +102,6 @@ public class HerbalistEffect extends Effect {
     public int hashCode() {
         return Objects.hash(availableBans);
     }
+
+    public enum Action {TAKE, RESTORE}
 }

@@ -666,7 +666,18 @@ public class GameController extends Thread {
         }
         if (!targetIsland.isBanned()) {
             motherNatureAction(targetIsland);
-        } else targetIsland.removeBan();
+        } else {
+            targetIsland.removeBan();
+            Optional<SpecialCharacter> specialCharacter = getGameModel().getGameBoard().getCharacters().stream().filter(character -> character.getId() == 5).findFirst();
+            try {
+                if (specialCharacter.isPresent())
+                    ((HerbalistEffect) specialCharacter.get().getEffect()).effect(HerbalistEffect.Action.RESTORE);
+                else
+                    throw new IllegalMoveException();
+            } catch (NoMoreBansLeftException e) {
+                throw new IllegalMoveException();
+            }
+        }
 
         synchronized (this.actionNeededLock) {
             this.actionNeededLock.notifyAll();
@@ -686,7 +697,7 @@ public class GameController extends Thread {
         influence = this.gameModel.getGameBoard().getInfluence(island);
 
         final int max;
-        if (influence.keySet().size() != 0) {
+        if (!influence.keySet().isEmpty()) {
             max = Collections.max(influence.values());
 
             if (max > 0) {
@@ -789,7 +800,7 @@ public class GameController extends Thread {
                         this.getGameModel().getGameBoard().getAssistant(this.getGameModel().getPlayerByName(command.get("player").getAsString())).setBonus();
                 case 5 -> {
                     this.getGameModel().getGameBoard().getIslandById(command.get("island").getAsInt()).setBan();
-                    ((HerbalistEffect) this.getGameModel().getGameBoard().getCharacters().get(character).getEffect()).effect("take");
+                    ((HerbalistEffect) this.getGameModel().getGameBoard().getCharacters().get(character).getEffect()).effect(HerbalistEffect.Action.TAKE);
                 }
                 case 6 -> {
                 }//Automatically managed by model.
@@ -814,7 +825,7 @@ public class GameController extends Thread {
                     }
                 }
             }
-        } catch (IslandNotFoundException nfe) {
+        } catch (IslandNotFoundException | NoMoreBansLeftException nfe) {
             throw new IllegalMoveException();
         }
         this.saveGame();
@@ -848,7 +859,7 @@ public class GameController extends Thread {
                     winners.add(player);
         } else if ((this.gameModel.getGameBoard().getIslands().size() == 3) ||
                 (this.gameModel.getCurrentPlayer().equals(this.gameModel.getTurnOrder().get(this.expectedPlayers - 1)) &&
-                (this.gameModel.getGameBoard().getBag().isEmpty() || this.gameModel.getPlayers().get(0).getAssistants().isEmpty()))) {
+                        (this.gameModel.getGameBoard().getBag().isEmpty() || this.gameModel.getPlayers().get(0).getAssistants().isEmpty()))) {
             ended = true;
             winners = checkForWinners();
         }

@@ -39,6 +39,83 @@ class SpecialCharacterTest {
     }
 
     /**
+     * Tries to build every possible effect.
+     */
+    @Test
+    void constructorsTest() {
+        Map<HouseColor, Integer> students = new EnumMap<>(HouseColor.class);
+
+        equals(new SpecialCharacter(1, students),
+                new SpecialCharacter(
+                        1,
+                        1,
+                        false,
+                        false,
+                        false,
+                        students,
+                        0
+                ));
+        equals(new SpecialCharacter(5, students),
+                new SpecialCharacter(
+                        5,
+                        2,
+                        false,
+                        false,
+                        false,
+                        students,
+                        4
+                ));
+        equals(new SpecialCharacter(7, students),
+                new SpecialCharacter(
+                        7,
+                        1,
+                        false,
+                        false,
+                        false,
+                        students,
+                        0
+                ));
+        equals(new SpecialCharacter(11, students),
+                new SpecialCharacter(
+                        11,
+                        2,
+                        false,
+                        false,
+                        false,
+                        students,
+                        0
+                ));
+        for (int index = 1; index <= 12; index++)
+            equals(index);
+        try {
+            new SpecialCharacter(13, null);
+            assert false;
+        } catch (IllegalStateException e) {
+            assert true;
+        }
+    }
+
+    /**
+     * Utility function for testing the equality of two special characters.
+     *
+     * @param specialCharacter1 First special character.
+     * @param specialCharacter2 Second special character.
+     */
+    private void equals(SpecialCharacter specialCharacter1, SpecialCharacter specialCharacter2) {
+        assertEquals(specialCharacter1, specialCharacter2);
+        assertEquals(specialCharacter1.hashCode(), specialCharacter2.hashCode());
+    }
+
+    /**
+     * Utility function for testing the equality of two special characters according to id.
+     *
+     * @param id The id of the special character to test.
+     */
+    private void equals(int id) {
+        assertEquals(id, new SpecialCharacter(id, new EnumMap<>(HouseColor.class)).getId());
+    }
+
+    /**
      * Tests if returns the correct ID.
      */
     @Test

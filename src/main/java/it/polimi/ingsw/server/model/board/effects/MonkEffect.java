@@ -13,7 +13,7 @@ import java.util.Objects;
  * @author Riccardo Milici
  */
 
-public class MonkEffect extends Effect {
+public class MonkEffect implements Effect {
 
     private final Map<HouseColor, Integer> students;
 
@@ -43,11 +43,6 @@ public class MonkEffect extends Effect {
     @Override
     public int getId() {
         return 1;
-    }
-
-    @Override
-    public void effect() {
-
     }
 
     /**

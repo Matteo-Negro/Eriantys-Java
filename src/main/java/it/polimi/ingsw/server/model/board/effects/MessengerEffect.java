@@ -6,24 +6,11 @@ package it.polimi.ingsw.server.model.board.effects;
  * @author Riccardo Milici
  */
 
-public class MessengerEffect extends Effect {
-
-    /**
-     * Class constructor.
-     * It creates an instance of the class.
-     */
-    public MessengerEffect() {
-
-    }
+public class MessengerEffect implements Effect {
 
     @Override
     public int getId() {
         return 4;
-    }
-
-    @Override
-    public void effect() {
-
     }
 
     @Override

@@ -5,6 +5,7 @@ import it.polimi.ingsw.utilities.HouseColor;
 import it.polimi.ingsw.utilities.Log;
 
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * The character card containing the corresponding effect
@@ -33,7 +34,7 @@ public class SpecialCharacter {
         isActive = false;
         alreadyPaid = false;
         paidInRound = false;
-        assignedEffect = getEffectBy(id, students, 5);
+        assignedEffect = getEffectBy(id, students, 4);
         effectCost = assignedEffect.getCost();
 
         Log.info("*** New SpecialCharacter successfully created with id: " + id);
@@ -163,5 +164,18 @@ public class SpecialCharacter {
      */
     public boolean isActive() {
         return isActive;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SpecialCharacter that = (SpecialCharacter) o;
+        return id == that.id && effectCost == that.effectCost && alreadyPaid == that.alreadyPaid && paidInRound == that.paidInRound && isActive == that.isActive && Objects.equals(assignedEffect, that.assignedEffect);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, effectCost, assignedEffect, alreadyPaid, paidInRound, isActive);
     }
 }

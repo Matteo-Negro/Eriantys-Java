@@ -32,7 +32,7 @@ class SchoolBoardTest {
      */
     @BeforeEach
     void setUp() {
-        for(HouseColor color : HouseColor.values()) entrance.put(color, 0);
+        for (HouseColor color : HouseColor.values()) entrance.put(color, 0);
         this.schoolBoard = new SchoolBoard(this.towersNumber, this.towerType, this.entrance);
     }
 

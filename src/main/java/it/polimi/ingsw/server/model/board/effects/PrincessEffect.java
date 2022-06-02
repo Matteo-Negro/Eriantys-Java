@@ -13,7 +13,7 @@ import java.util.Objects;
  * @author Riccardo Milici
  */
 
-public class PrincessEffect extends Effect {
+public class PrincessEffect implements Effect {
 
     private final Map<HouseColor, Integer> students;
 
@@ -39,11 +39,6 @@ public class PrincessEffect extends Effect {
     @Override
     public int getId() {
         return 11;
-    }
-
-    @Override
-    public void effect() {
-
     }
 
     /**

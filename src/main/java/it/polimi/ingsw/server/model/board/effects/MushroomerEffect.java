@@ -6,23 +6,11 @@ package it.polimi.ingsw.server.model.board.effects;
  * @author Riccardo Milici
  */
 
-public class MushroomerEffect extends Effect {
-
-    /**
-     * Class constructor.
-     * It creates an instance of the class.
-     */
-    public MushroomerEffect() {
-    }
+public class MushroomerEffect implements Effect {
 
     @Override
     public int getId() {
         return 9;
-    }
-
-    @Override
-    public void effect() {
-
     }
 
     @Override

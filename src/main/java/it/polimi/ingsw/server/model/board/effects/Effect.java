@@ -6,24 +6,19 @@ package it.polimi.ingsw.server.model.board.effects;
  * @author Riccardo Milici
  */
 
-public abstract class Effect {
+public interface Effect {
 
     /**
      * Returns the identification number of the specific effect object.
      *
      * @return id attribute
      */
-    public abstract int getId();
-
-    /**
-     * Activates the effect of the object.
-     */
-    public abstract void effect();
+    int getId();
 
     /**
      * returns the activation cost of the effect.
      *
      * @return cost attribute
      */
-    public abstract int getCost();
+    int getCost();
 }

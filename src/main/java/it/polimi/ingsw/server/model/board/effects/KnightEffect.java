@@ -6,23 +6,11 @@ package it.polimi.ingsw.server.model.board.effects;
  * @author Riccardo Milici
  */
 
-public class KnightEffect extends Effect {
-
-    /**
-     * Class constructor.
-     * It creates an instance of the class.
-     */
-    public KnightEffect() {
-    }
+public class KnightEffect implements Effect {
 
     @Override
     public int getId() {
         return 8;
-    }
-
-    @Override
-    public void effect() {
-
     }
 
     @Override
