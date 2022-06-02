@@ -207,6 +207,14 @@ public class ClientController {
      * Manages the game logic.
      */
     public void manageGameRunning(String command) {
+        try {
+            if (!CommandParser.checker(command)) throw new Exception();
+        } catch (Exception e) {
+            Log.warning(e);
+            this.errorOccurred("Wrong command.");
+            return;
+        }
+
         List<JsonObject> messages;
 
         view.updateScreen(false);
@@ -421,6 +429,10 @@ public class ClientController {
         int finalIsland = message.get("island").getAsInt();
         int maxDistance = getGameModel().getPlayerByName(this.getUserName()).getCurrentPlayedAssistant().getMaxDistance();
         int motherNatureIsland = getGameModel().getGameBoard().getMotherNatureIsland();
+
+        while (getGameModel().getGameBoard().getIslandById(finalIsland).hasPrev()) {
+            finalIsland = (finalIsland - 1) % 12;
+        }
 
         int distanceWanted = (getGameModel().getGameBoard().getIslandById(motherNatureIsland).hasNext()) ? -1 : 0;
         for (int i = ((motherNatureIsland + 1) % 12); i != finalIsland; i = ((i + 1) % 12)) {
