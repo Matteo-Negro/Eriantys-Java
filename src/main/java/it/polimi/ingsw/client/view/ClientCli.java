@@ -110,7 +110,7 @@ public class ClientCli extends Thread implements View {
      */
     public void runMainMenu() {
         MainMenu.print(terminal);
-        this.controller.manageMainMenu(readLine(" ", terminal, List.of(node("1"), node("2")), false, null));
+        this.controller.manageMainMenu(readLine(" ", terminal, List.of(node("1"), node("2"), node("exit")), false, null));
     }
 
     /**

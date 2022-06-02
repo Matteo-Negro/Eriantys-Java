@@ -103,11 +103,6 @@ public class JoinGame {
                 code.get(code.size() - 1).deselect();
             }
         });
-
-        scene.setOnMouseClicked(event -> {
-            event.consume();
-            processButton(getCode());
-        });
     }
 
     private static void processCodeField(int index) {

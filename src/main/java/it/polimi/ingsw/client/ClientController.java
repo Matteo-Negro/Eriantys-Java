@@ -143,6 +143,11 @@ public class ClientController {
                 this.setClientState(ClientStates.JOIN_GAME);
                 updateScreen();
             }
+            case "exit" -> {
+                this.setClientState(ClientStates.CONNECTION_LOST);
+                updateScreen();
+                manageConnectionLost();
+            }
             default -> this.errorOccurred("Wrong command.");
         }
     }

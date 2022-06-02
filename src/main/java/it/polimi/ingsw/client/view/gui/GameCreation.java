@@ -85,12 +85,6 @@ public class GameCreation {
         AtomicInteger players = new AtomicInteger(2);
         AtomicBoolean expertMode = new AtomicBoolean(false);
 
-        scene.setOnKeyPressed(event -> {
-            event.consume();
-            if (event.getCode() == KeyCode.ENTER)
-                processButton(players.get(), expertMode.get());
-        });
-
         back.setOnMouseClicked(event -> {
             event.consume();
             client.changeScene(ClientStates.MAIN_MENU);

@@ -1,10 +1,7 @@
 package it.polimi.ingsw.client.view;
 
 import it.polimi.ingsw.client.ClientController;
-import it.polimi.ingsw.client.view.gui.GameCreation;
-import it.polimi.ingsw.client.view.gui.JoinGame;
-import it.polimi.ingsw.client.view.gui.MainMenu;
-import it.polimi.ingsw.client.view.gui.StartScreen;
+import it.polimi.ingsw.client.view.gui.*;
 import it.polimi.ingsw.utilities.ClientStates;
 import it.polimi.ingsw.utilities.Log;
 import it.polimi.ingsw.utilities.Pair;
@@ -29,13 +26,14 @@ public class ClientGui extends Application implements View {
         stage = primaryStage;
         controller = new ClientController(this);
 
-        Log.info("Initializing scenes");
+        Log.info("Initializing scenes...");
         try {
             StartScreen.initialize(this);
             MainMenu.initialize(this);
             GameCreation.initialize(this);
             JoinGame.initialize(this);
-            Log.info("Initialization completed");
+            Login.initialize(this);
+            Log.info("Initialization completed.");
         } catch (IOException e) {
             Log.error("Cannot initialize scenes because of the following error: ", e);
             return;
@@ -76,7 +74,7 @@ public class ClientGui extends Application implements View {
             case END_GAME -> null;
             case EXIT -> null;
             case GAME_CREATION -> GameCreation.getScene();
-            case GAME_LOGIN -> null;
+            case GAME_LOGIN -> Login.getScene();
             case GAME_RUNNING -> null;
             case GAME_WAITING_ROOM -> null;
             case JOIN_GAME -> JoinGame.getScene();
@@ -88,10 +86,10 @@ public class ClientGui extends Application implements View {
             case END_GAME -> defaultTitle;
             case EXIT -> defaultTitle;
             case GAME_CREATION -> defaultTitle + " | Create a new game";
-            case GAME_LOGIN -> defaultTitle + " | Game code";
+            case GAME_LOGIN -> defaultTitle + " | Login";
             case GAME_RUNNING -> defaultTitle;
             case GAME_WAITING_ROOM -> defaultTitle;
-            case JOIN_GAME -> defaultTitle;
+            case JOIN_GAME -> defaultTitle + " | Join a game";
             case MAIN_MENU -> defaultTitle + " | Menu";
             case START_SCREEN -> defaultTitle;
         });

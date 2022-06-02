@@ -67,12 +67,6 @@ public class StartScreen {
      */
     private static void addEvents() {
 
-        scene.setOnKeyPressed(event -> {
-            event.consume();
-            if (event.getCode() == KeyCode.ENTER)
-                processButton();
-        });
-
         submit.setOnMouseClicked(event -> {
             event.consume();
             processButton();
