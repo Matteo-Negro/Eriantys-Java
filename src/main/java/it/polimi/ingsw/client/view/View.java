@@ -1,11 +1,8 @@
 package it.polimi.ingsw.client.view;
 
-import com.google.gson.JsonObject;
 import it.polimi.ingsw.utilities.Pair;
-import it.polimi.ingsw.utilities.exceptions.ExitException;
 
 import java.io.IOException;
-import java.net.Socket;
 
 public interface View {
 
@@ -27,8 +24,8 @@ public interface View {
 
     void updateScreen(boolean def);
 
-    void printError(String message);
+    void showError(String message);
 
-    void printInfo(Pair<String, String> info);
+    void showInfo(Pair<String, String> info);
 
 }

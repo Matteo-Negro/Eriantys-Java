@@ -83,8 +83,8 @@ public class ClientCli extends Thread implements View {
         terminal.writer().print(ansi().cursorMove(-18, 1));
         terminal.writer().print(ansi().saveCursorPosition());
         terminal.flush();
-        int hostTcpPort = Integer.parseInt(readLine(" ", terminal, List.of(node("36803")), false, null));
         try {
+            int hostTcpPort = Integer.parseInt(readLine(" ", terminal, List.of(node("36803")), false, null));
             this.controller.manageStartScreen(new Socket(hostIp, hostTcpPort));
         } catch (Exception e) {
             Log.warning(e);
@@ -98,7 +98,6 @@ public class ClientCli extends Thread implements View {
     public void runMainMenu() {
         MainMenu.print(terminal);
         this.controller.manageMainMenu(readLine(" ", terminal, List.of(node("1"), node("2")), false, null));
-        updateScreen(false);
     }
 
     /**
@@ -153,7 +152,6 @@ public class ClientCli extends Thread implements View {
     public void runJoinGame() {
         JoinGame.print(terminal);
         this.controller.manageJoinGame(readLine(" ", terminal, List.of(node("exit")), false, null).toUpperCase(Locale.ROOT));
-        updateScreen(false);
     }
 
     /**
@@ -162,7 +160,6 @@ public class ClientCli extends Thread implements View {
     public void runGameLogin() {
         Login.print(terminal, this.controller.getGameModel().getWaitingRoom(), this.controller.getGameModel().getPlayersNumber());
         this.controller.manageGameLogin(readLine(" ", terminal, playersToNodes(), false, null));
-        updateScreen(false);
     }
 
     /**
@@ -195,10 +192,9 @@ public class ClientCli extends Thread implements View {
      */
     public void runGameRunning() {
         Game.print(terminal, this.controller.getGameModel(), this.controller.getGameCode(), this.controller.getGameModel().getRound(), this.controller.getGameModel().getPlayerByName(controller.getUserName()).isActive());
-        if (this.controller.hasCommunicationToken()) {
+        if (this.controller.hasCommunicationToken())
             this.controller.manageGameRunning(readLine(getPrettyUserName(), terminal, Autocompletion.get(), true, history).toLowerCase(Locale.ROOT));
-
-        } else {
+        else {
             synchronized (this.controller.getLock()) {
                 try {
                     this.controller.getLock().wait(1500);
@@ -206,8 +202,8 @@ public class ClientCli extends Thread implements View {
                     this.controller.resetGame();
                 }
             }
+            updateScreen(false);
         }
-        updateScreen(false);
     }
 
     /**
@@ -270,7 +266,7 @@ public class ClientCli extends Thread implements View {
      *
      * @param message The message to show.
      */
-    public void printError(String message) {
+    public void showError(String message) {
         Utilities.printError(terminal, message);
     }
 
@@ -279,7 +275,7 @@ public class ClientCli extends Thread implements View {
      *
      * @param info The info to show.
      */
-    public void printInfo(Pair<String, String> info) {
+    public void showInfo(Pair<String, String> info) {
         Utilities.printInfo(terminal, info.key(), info.value());
     }
 

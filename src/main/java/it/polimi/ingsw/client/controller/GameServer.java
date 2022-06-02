@@ -227,7 +227,6 @@ public class GameServer extends Thread {
     }
 
     public void disconnected() {
-
         synchronized (this.connectedLock) {
             setConnected(false);
         }

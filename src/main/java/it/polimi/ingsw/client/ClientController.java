@@ -156,7 +156,6 @@ public class ClientController {
             Log.debug("manage game creation");
             this.setClientState(ClientStates.CONNECTION_LOST);
         }
-
     }
 
     /**
@@ -176,28 +175,31 @@ public class ClientController {
 
         if (this.getClientState().equals(ClientStates.JOIN_GAME)) {
             this.errorOccurred("The desired game doesn't exist or is full.");
+            return;
         }
+
+        view.updateScreen(false);
     }
 
     /**
      * Manages the login logic.
      */
     public void manageGameLogin(String username) {
+        view.updateScreen(false);
+
         if ("exit".equals(username)) {
             this.setClientState(ClientStates.MAIN_MENU);
-            view.updateScreen(false);
             this.resetGame();
             return;
         }
+
         if (this.getGameModel().getWaitingRoom().containsKey(username) && this.getGameModel().getWaitingRoom().get(username).equals(true) || username.equals("")) {
             this.errorOccurred("Invalid username.");
             return;
         }
 
         this.userName = username;
-
         this.gameServer.sendCommand(MessageCreator.login(username));
-
         this.tryConnection();
     }
 
@@ -205,66 +207,62 @@ public class ClientController {
      * Manages the game logic.
      */
     public void manageGameRunning(String command) {
-        List<JsonObject> messages = new ArrayList<>();
+        List<JsonObject> messages;
 
-        if (this.hasCommunicationToken()) {
-            // Logout command.
-            if (command.equals("exit") || command.equals("logout")) {
-                this.getGameServer().sendCommand(MessageCreator.logout());
-                this.resetGame();
-                view.updateScreen(false);
-                return;
-            }
-            view.updateScreen(false);
+        view.updateScreen(false);
 
-            // Another player disconnected.
-            if (getGameModel() == null) return;
+        // Logout command.
+        if (command.equals("exit") || command.equals("logout")) {
+            this.getGameServer().sendCommand(MessageCreator.logout());
+            this.resetGame();
+            return;
+        }
 
-            if (command.contains("info")) {
-                Pair<String, String> message = CommandParser.infoGenerator(command);
-                view.updateScreen(false);
-                view.printInfo(message);
-                return;
-            }
+        // Another player disconnected.
+        if (getGameModel() == null)
+            return;
 
-            //Command parsing and check.
-            try {
-                messages.addAll(CommandParser.commandManager(command, gameModel.getPlayers()));
-            } catch (Exception e) {
-                Log.warning(e);
-                view.updateScreen(false);
-                this.errorOccurred("Wrong command.");
-                return;
-            }
-            if (messages.isEmpty()) return;
-            try {
-                for (JsonObject message : messages) {
-                    if (checkMessage(message)) {
-                        getGameServer().sendCommand(message);
-                        synchronized (this.lock) {
-                            try {
-                                this.getLock().wait();
-                            } catch (InterruptedException ie) {
-                                view.updateScreen(false);
-                                errorOccurred("Command not allowed.");
-                                return;
-                            }
+        if (command.contains("info")) {
+            Pair<String, String> message = CommandParser.infoGenerator(command);
+            view.showInfo(message);
+            return;
+        }
+
+        //Command parsing and check.
+        try {
+            messages = new ArrayList<>(CommandParser.commandManager(command, gameModel.getPlayers()));
+        } catch (Exception e) {
+            Log.warning(e);
+            this.errorOccurred("Wrong command.");
+            return;
+        }
+
+        if (messages.isEmpty())
+            return;
+
+        try {
+            for (JsonObject message : messages) {
+                if (checkMessage(message)) {
+                    getGameServer().sendCommand(message);
+                    synchronized (this.lock) {
+                        try {
+                            this.getLock().wait();
+                        } catch (InterruptedException ie) {
+                            errorOccurred("Command not allowed.");
+                            return;
                         }
-                        Log.debug("Command sent to game server.");
-                        Log.debug(message.toString());
-                    } else {
-                        view.updateScreen(false);
-                        errorOccurred("Command not allowed.");
-                        return;
                     }
+                    Log.debug("Command sent to game server.");
+                    Log.debug(message.toString());
+                } else {
+                    errorOccurred("Command not allowed.");
+                    return;
                 }
-                view.updateScreen(false);
-            } catch (IllegalActionException iae) {
-                Log.warning(iae);
-                view.updateScreen(false);
-                errorOccurred("Connection lost.");
-                setClientState(ClientStates.CONNECTION_LOST);
             }
+        } catch (IllegalActionException iae) {
+            Log.warning(iae);
+            errorOccurred("Connection lost.");
+            setClientState(ClientStates.CONNECTION_LOST);
         }
     }
 
@@ -531,17 +529,9 @@ public class ClientController {
      * @param message The message to print.
      */
     public void errorOccurred(String message) {
-        view.printError(message);
+        view.updateScreen(false);
+        view.showError(message);
         Log.warning(message);
-        synchronized (this.lock) {
-            try {
-                this.lock.wait(1500);
-            } catch (InterruptedException e) {
-                Log.debug("error occurred.");
-                this.setClientState(ClientStates.CONNECTION_LOST);
-                view.updateScreen(false);
-            }
-        }
     }
 
     /**
