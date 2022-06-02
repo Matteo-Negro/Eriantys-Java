@@ -26,8 +26,6 @@ public class JoinGame {
     private static List<TextField> code;
     @FXML
     private static Button enter;
-    @FXML
-    private static Label error;
 
     private JoinGame() {
     }
@@ -70,7 +68,6 @@ public class JoinGame {
                 (TextField) scene.lookup("#code_5")
         );
         enter = (Button) scene.lookup("#submit");
-        error = (Label) scene.lookup("#error");
     }
 
     /**
@@ -146,8 +143,7 @@ public class JoinGame {
     }
 
     private static void processButton(String code) {
-        error.setText("Not implemented.");
-        // TODO: enter game
-        // client.changeScene(ClientStates.GAME_LOGIN);
+        client.getController().manageJoinGame(code);
+        client.changeScene();
     }
 }

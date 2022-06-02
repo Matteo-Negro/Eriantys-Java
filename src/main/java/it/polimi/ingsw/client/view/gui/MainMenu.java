@@ -87,13 +87,21 @@ public class MainMenu {
 
         exit.setOnMouseClicked(event -> {
             event.consume();
-            client.changeScene(ClientStates.START_SCREEN);
+            manageExit();
         });
 
         exit.setOnKeyPressed(event -> {
             event.consume();
             if (event.getCode() == KeyCode.ENTER)
-                client.changeScene(ClientStates.START_SCREEN);
+                manageExit();
         });
+    }
+
+    /**
+     * Logs of from the server.
+     */
+    private static void manageExit() {
+        client.getController().manageConnectionLost();
+        client.changeScene();
     }
 }

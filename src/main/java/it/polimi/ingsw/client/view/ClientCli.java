@@ -76,15 +76,28 @@ public class ClientCli extends Thread implements View {
     /**
      * Manages the start-screen's I/O.
      */
-    public void runStartScreen() throws IOException {
+    public void runStartScreen() {
+
         SplashScreen.print(terminal);
+
+        int hostTcpPort;
         String hostIp = readLine(" ", terminal, List.of(node("localhost"), node("127.0.0.1")), false, null);
+
+        if (hostIp.isBlank())
+            hostIp = "localhost";
+
         terminal.writer().print(ansi().restoreCursorPosition());
         terminal.writer().print(ansi().cursorMove(-18, 1));
         terminal.writer().print(ansi().saveCursorPosition());
         terminal.flush();
+
         try {
-            int hostTcpPort = Integer.parseInt(readLine(" ", terminal, List.of(node("36803")), false, null));
+            hostTcpPort = Integer.parseInt(readLine(" ", terminal, List.of(node("36803")), false, null));
+        } catch (NumberFormatException e) {
+            hostTcpPort = 36803;
+        }
+
+        try {
             this.controller.manageStartScreen(new Socket(hostIp, hostTcpPort));
         } catch (Exception e) {
             Log.warning(e);

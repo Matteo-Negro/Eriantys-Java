@@ -1,19 +1,23 @@
 package it.polimi.ingsw.client.view;
 
+import it.polimi.ingsw.client.ClientController;
 import it.polimi.ingsw.client.view.gui.GameCreation;
 import it.polimi.ingsw.client.view.gui.JoinGame;
 import it.polimi.ingsw.client.view.gui.MainMenu;
 import it.polimi.ingsw.client.view.gui.StartScreen;
 import it.polimi.ingsw.utilities.ClientStates;
 import it.polimi.ingsw.utilities.Log;
+import it.polimi.ingsw.utilities.Pair;
 import javafx.application.Application;
+import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 
-public class ClientGui extends Application {
+public class ClientGui extends Application implements View {
 
     private Stage stage;
+    private ClientController controller;
 
     /**
      * @param primaryStage the primary stage for this application, onto which the application scene can be set.
@@ -23,6 +27,7 @@ public class ClientGui extends Application {
     public void start(Stage primaryStage) {
 
         stage = primaryStage;
+        controller = new ClientController(this);
 
         Log.info("Initializing scenes");
         try {
@@ -30,11 +35,11 @@ public class ClientGui extends Application {
             MainMenu.initialize(this);
             GameCreation.initialize(this);
             JoinGame.initialize(this);
+            Log.info("Initialization completed");
         } catch (IOException e) {
-            Log.error("Cannot initialize scenes: ", e);
+            Log.error("Cannot initialize scenes because of the following error: ", e);
             return;
         }
-        Log.info("Initialization completed");
 
         primaryStage.sizeToScene();
         primaryStage.setResizable(false);
@@ -46,14 +51,28 @@ public class ClientGui extends Application {
 
     /**
      * Changes the scene according to the state.
+     */
+    public void changeScene() {
+        changeScene(getController().getClientState());
+    }
+
+    /**
+     * Changes the scene according to the state.
      *
      * @param state State of the game.
      */
     public void changeScene(ClientStates state) {
+
+        if (!getController().getClientState().equals(ClientStates.CONNECTION_LOST))
+            getController().setClientState(state);
+        else
+            getController().manageConnectionLost();
+
         Log.info("Displaying " + state);
         final String defaultTitle = "Eriantys";
+
         stage.setScene(switch (state) {
-            case CONNECTION_LOST -> null;
+            case CONNECTION_LOST, START_SCREEN -> StartScreen.getScene();
             case END_GAME -> null;
             case EXIT -> null;
             case GAME_CREATION -> GameCreation.getScene();
@@ -62,8 +81,8 @@ public class ClientGui extends Application {
             case GAME_WAITING_ROOM -> null;
             case JOIN_GAME -> JoinGame.getScene();
             case MAIN_MENU -> MainMenu.getScene();
-            case START_SCREEN -> StartScreen.getScene();
         });
+
         stage.setTitle(switch (state) {
             case CONNECTION_LOST -> defaultTitle;
             case END_GAME -> defaultTitle;
@@ -76,5 +95,40 @@ public class ClientGui extends Application {
             case MAIN_MENU -> defaultTitle + " | Menu";
             case START_SCREEN -> defaultTitle;
         });
+    }
+
+    /**
+     * Prints an error on screen.
+     *
+     * @param message The message to show.
+     */
+    @Override
+    public void showError(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setHeaderText(message);
+        alert.show();
+    }
+
+    /**
+     * Prints an info on screen.
+     *
+     * @param info The info to show.
+     */
+    @Override
+    public void showInfo(Pair<String, String> info) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(info.key());
+        alert.setHeaderText(info.value());
+        alert.show();
+    }
+
+    /**
+     * Gets the controller.
+     *
+     * @return The controller.
+     */
+    public ClientController getController() {
+        return controller;
     }
 }

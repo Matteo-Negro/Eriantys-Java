@@ -35,8 +35,9 @@ public class GameServer extends Thread {
     public void run() {
         new Thread(ping).start();
         JsonObject incomingMessage;
+        boolean loop = true;
 
-        while (true) {
+        while (loop) {
 
             synchronized (connectedLock) {
                 if (!connected)
@@ -48,11 +49,12 @@ public class GameServer extends Thread {
                 if (!incomingMessage.get("type").getAsString().equals("pong"))
                     manageMessage(incomingMessage);
             } catch (Exception e) {
-                Log.warning(e);
-                Log.debug("gameServer run.");
-                this.client.setClientState(ClientStates.CONNECTION_LOST);
+                Log.error(e);
+                loop = false;
             }
         }
+
+        this.client.setClientState(ClientStates.CONNECTION_LOST);
     }
 
     public void manageMessage(JsonObject incomingMessage) {

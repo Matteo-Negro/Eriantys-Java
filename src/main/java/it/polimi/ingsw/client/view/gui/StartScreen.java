@@ -6,11 +6,11 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 
 import java.io.IOException;
+import java.net.Socket;
 import java.util.Objects;
 
 public class StartScreen {
@@ -22,8 +22,6 @@ public class StartScreen {
     private static TextField ip;
     @FXML
     private static TextField port;
-    @FXML
-    private static Label error;
     @FXML
     private static Button submit;
 
@@ -61,7 +59,6 @@ public class StartScreen {
     private static void lookup() {
         ip = (TextField) scene.lookup("#ip");
         port = (TextField) scene.lookup("#port");
-        error = (Label) scene.lookup("#error");
         submit = (Button) scene.lookup("#submit");
     }
 
@@ -92,6 +89,7 @@ public class StartScreen {
      * Connects to the server.
      */
     private static void processButton() {
+
         String socketIp = ip.getText();
         int socketPort;
 
@@ -104,13 +102,12 @@ public class StartScreen {
             socketPort = 36803;
         }
 
-//        try {
-//            Socket hostSocket = new Socket(socketIp, socketPort);
-//            hostSocket.setSoTimeout(10000);
-//        } catch (IOException e) {
-//            error.setText("Wrong data provided or server unreachable.");
-//        }
+        try {
+            client.getController().manageStartScreen(new Socket(socketIp, socketPort));
+        } catch (Exception e) {
+            client.showError("Wrong data provided or server unreachable.");
+        }
 
-        client.changeScene(ClientStates.MAIN_MENU);
+        client.changeScene();
     }
 }

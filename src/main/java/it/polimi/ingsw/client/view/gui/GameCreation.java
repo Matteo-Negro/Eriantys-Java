@@ -2,6 +2,7 @@ package it.polimi.ingsw.client.view.gui;
 
 import it.polimi.ingsw.client.view.ClientGui;
 import it.polimi.ingsw.utilities.ClientStates;
+import it.polimi.ingsw.utilities.MessageCreator;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -146,7 +147,7 @@ public class GameCreation {
     }
 
     private static void processButton(int player, boolean expertMode) {
-        // TODO: create new game
-        client.changeScene(ClientStates.START_SCREEN);
+        client.getController().manageGameCreation(MessageCreator.gameCreation(player, expertMode));
+        client.changeScene();
     }
 }

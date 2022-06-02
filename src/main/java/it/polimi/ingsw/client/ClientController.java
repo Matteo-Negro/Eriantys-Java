@@ -6,6 +6,7 @@ import it.polimi.ingsw.client.controller.GameServer;
 import it.polimi.ingsw.client.model.GameModel;
 import it.polimi.ingsw.client.model.Player;
 import it.polimi.ingsw.client.model.SpecialCharacter;
+import it.polimi.ingsw.client.view.ClientCli;
 import it.polimi.ingsw.client.view.View;
 import it.polimi.ingsw.utilities.*;
 import it.polimi.ingsw.utilities.exceptions.IllegalActionException;
@@ -29,6 +30,7 @@ public class ClientController {
     private GameModel gameModel;
     private ClientStates state;
     private boolean modelUpdated;
+    private final boolean cli;
 
 
     /**
@@ -43,6 +45,7 @@ public class ClientController {
         this.gameCode = null;
         this.lock = new Object();
         this.view = view;
+        cli = view instanceof ClientCli;
     }
 
     /**
@@ -121,7 +124,7 @@ public class ClientController {
             setGameServer(new GameServer(hostSocket, this));
             new Thread(this.gameServer).start();
             setClientState(ClientStates.MAIN_MENU);
-            view.updateScreen(false);
+            updateScreen();
         } catch (IOException | NumberFormatException e) {
             this.errorOccurred("Wrong data provided or server unreachable.");
         }
@@ -134,11 +137,11 @@ public class ClientController {
         switch (option) {
             case "1" -> {
                 this.setClientState(ClientStates.GAME_CREATION);
-                view.updateScreen(false);
+                updateScreen();
             }
             case "2" -> {
                 this.setClientState(ClientStates.JOIN_GAME);
-                view.updateScreen(false);
+                updateScreen();
             }
             default -> this.errorOccurred("Wrong command.");
         }
@@ -162,9 +165,10 @@ public class ClientController {
      * Manages the join-game logic.
      */
     public void manageJoinGame(String gameCode) {
+        updateScreen();
+
         if ("EXIT".equals(gameCode)) {
             this.setClientState(ClientStates.MAIN_MENU);
-            view.updateScreen(false);
             this.resetGame();
             return;
         }
@@ -173,19 +177,15 @@ public class ClientController {
 
         this.tryConnection();
 
-        if (this.getClientState().equals(ClientStates.JOIN_GAME)) {
+        if (this.getClientState().equals(ClientStates.JOIN_GAME))
             this.errorOccurred("The desired game doesn't exist or is full.");
-            return;
-        }
-
-        view.updateScreen(false);
     }
 
     /**
      * Manages the login logic.
      */
     public void manageGameLogin(String username) {
-        view.updateScreen(false);
+        updateScreen();
 
         if ("exit".equals(username)) {
             this.setClientState(ClientStates.MAIN_MENU);
@@ -217,7 +217,7 @@ public class ClientController {
 
         List<JsonObject> messages;
 
-        view.updateScreen(false);
+        updateScreen();
 
         // Logout command.
         if (command.equals("exit") || command.equals("logout")) {
@@ -280,13 +280,13 @@ public class ClientController {
     public void manageEndGame(String command) {
         if (command.equals("exit")) {
             this.setClientState(ClientStates.MAIN_MENU);
-            view.updateScreen(false);
+            updateScreen();
             this.resetGame();
             return;
         } else {
             this.errorOccurred("Wrong command.");
         }
-        view.updateScreen(false);
+        updateScreen();
     }
 
     /**
@@ -541,7 +541,7 @@ public class ClientController {
      * @param message The message to print.
      */
     public void errorOccurred(String message) {
-        view.updateScreen(false);
+        updateScreen();
         view.showError(message);
         Log.warning(message);
     }
@@ -556,8 +556,16 @@ public class ClientController {
             } catch (InterruptedException e) {
                 Log.debug("tryConnection.");
                 this.setClientState(ClientStates.CONNECTION_LOST);
-                view.updateScreen(false);
+                updateScreen();
             }
         }
+    }
+
+    /**
+     * If the client runs on a cli, clears the screen.
+     */
+    private void updateScreen() {
+        if (cli)
+            ((ClientCli) view).updateScreen(false);
     }
 }
