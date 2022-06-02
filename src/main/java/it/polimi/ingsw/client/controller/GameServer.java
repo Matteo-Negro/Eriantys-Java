@@ -116,7 +116,7 @@ public class GameServer extends Thread {
                     Log.debug("changed state Game login.");
                 }
                 synchronized (this.client.getLock()) {
-                    this.client.getLock().notify();
+                    this.client.getLock().notifyAll();
                 }
             }
             /*case GAME_WAITING_ROOM -> {
@@ -145,7 +145,7 @@ public class GameServer extends Thread {
         }
 
         synchronized (this.client.getLock()) {
-            this.client.getLock().notify();
+            this.client.getLock().notifyAll();
         }
     }
 
@@ -165,13 +165,11 @@ public class GameServer extends Thread {
     }
 
     private void manageError(JsonObject incomingMessage) {
-        if (this.client.getClientState().equals(ClientStates.GAME_RUNNING)) {
-            if (incomingMessage.get("message").getAsString().equals("UserDisconnected")) {
-                this.client.setClientState(ClientStates.GAME_WAITING_ROOM);
-                Log.debug("changed state Waiting room.");
-                this.client.errorOccurred("One or more users disconnected.");
-                this.client.initializeGameModel(null);
-            }
+        if (this.client.getClientState().equals(ClientStates.GAME_RUNNING) && incomingMessage.get("message").getAsString().equals("UserDisconnected")) {
+            this.client.setClientState(ClientStates.GAME_WAITING_ROOM);
+            Log.debug("changed state Waiting room.");
+            this.client.initializeGameModel(null);
+            this.client.errorOccurred("One or more users disconnected.");
         }
     }
 
