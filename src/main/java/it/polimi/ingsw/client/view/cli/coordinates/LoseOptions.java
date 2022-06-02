@@ -30,7 +30,7 @@ public class LoseOptions implements DeltaCoordinates {
      */
     @Override
     public int getX() {
-        return 22;
+        return 17;
     }
 
     /**

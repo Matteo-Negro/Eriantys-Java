@@ -18,8 +18,7 @@ public class LoseNewLine implements DeltaCoordinates {
      * @return The generated instance.
      */
     public static LoseNewLine getInstance() {
-        if (instance == null)
-            instance = new LoseNewLine();
+        if (instance == null) instance = new LoseNewLine();
         return instance;
     }
 
@@ -30,7 +29,7 @@ public class LoseNewLine implements DeltaCoordinates {
      */
     @Override
     public int getX() {
-        return -40;
+        return -39;
     }
 
     /**

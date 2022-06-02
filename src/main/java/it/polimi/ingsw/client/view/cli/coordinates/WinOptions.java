@@ -18,8 +18,7 @@ public class WinOptions implements DeltaCoordinates {
      * @return The generated instance.
      */
     public static WinOptions getInstance() {
-        if (instance == null)
-            instance = new WinOptions();
+        if (instance == null) instance = new WinOptions();
         return instance;
     }
 
@@ -30,7 +29,7 @@ public class WinOptions implements DeltaCoordinates {
      */
     @Override
     public int getX() {
-        return 20;
+        return 13;
     }
 
     /**
