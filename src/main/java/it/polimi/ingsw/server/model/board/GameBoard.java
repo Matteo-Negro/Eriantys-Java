@@ -304,7 +304,7 @@ public class GameBoard {
             }
         }
         if(getMotherNatureIsland().getId()==rightIsland.getId()) this.motherNatureIsland = leftIsland;
-        islands.remove(rightIsland);
+        this.islands.remove(rightIsland);
 
     }
 

@@ -182,7 +182,8 @@ public class GameServer extends Thread {
         JsonArray winners = message.get("winners").getAsJsonArray();
         synchronized (this.client.getLock()) {
             for (JsonElement player : winners) {
-                if (player.getAsJsonObject().getAsString().equals(this.client.getUserName()))
+                Log.debug("Winner: " + player.getAsString());
+                if (player.getAsString().equals(this.client.getUserName()))
                     this.client.getGameModel().setWinner(true);
             }
             this.client.getLock().notify();

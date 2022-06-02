@@ -141,7 +141,7 @@ public class JsonToObjects {
             island = json.get(index).getAsJsonObject();
             islandsList.add(new Island(
                     parseStudents(island.getAsJsonObject("students")),
-                    index,
+                    island.get("id").getAsInt(),
                     island.get("size").getAsInt(),
                     island.get("ban").getAsBoolean(),
                     island.get("tower").isJsonNull() ? null : TowerType.valueOf(island.get("tower").getAsString())

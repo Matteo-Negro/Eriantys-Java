@@ -84,8 +84,12 @@ public class ClientCli extends Thread implements View {
         terminal.writer().print(ansi().saveCursorPosition());
         terminal.flush();
         int hostTcpPort = Integer.parseInt(readLine(" ", terminal, List.of(node("36803")), false, null));
-
-        this.controller.manageStartScreen(new Socket(hostIp, hostTcpPort));
+        try {
+            this.controller.manageStartScreen(new Socket(hostIp, hostTcpPort));
+        } catch (Exception e) {
+            Log.warning(e);
+            this.controller.errorOccurred("Wrong data provided or server unreachable.");
+        }
     }
 
     /**
@@ -191,10 +195,10 @@ public class ClientCli extends Thread implements View {
      */
     public void runGameRunning() {
         Game.print(terminal, this.controller.getGameModel(), this.controller.getGameCode(), this.controller.getGameModel().getRound(), this.controller.getGameModel().getPlayerByName(controller.getUserName()).isActive());
-        if (this.controller.hasCommunicationToken()){
+        if (this.controller.hasCommunicationToken()) {
             this.controller.manageGameRunning(readLine(getPrettyUserName(), terminal, Autocompletion.get(), true, history).toLowerCase(Locale.ROOT));
 
-        }else {
+        } else {
             synchronized (this.controller.getLock()) {
                 try {
                     this.controller.getLock().wait(1500);
