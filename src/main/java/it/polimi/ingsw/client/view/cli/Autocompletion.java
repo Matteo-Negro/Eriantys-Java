@@ -288,6 +288,8 @@ public class Autocompletion {
         List<String> result = new ArrayList<>();
         List<Island> islands = cli.getGameModel().getGameBoard().getIslands();
         int index = getMotherNatureIsland();
+        while (islands.get(index).hasNext())
+            index = (index + 1) % islands.size();
         for (int moves = 0; moves < cli.getGameModel().getPlayerByName(cli.getUserName()).getCurrentPlayedAssistant().getMaxDistance(); moves++) {
             index = (index + 1) % islands.size();
             if (islands.get(index).hasMotherNature())
