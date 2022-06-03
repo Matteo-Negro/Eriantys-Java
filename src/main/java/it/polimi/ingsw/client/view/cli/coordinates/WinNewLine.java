@@ -30,7 +30,7 @@ public class WinNewLine implements DeltaCoordinates {
      */
     @Override
     public int getX() {
-        return -38;
+        return -39;
     }
 
     /**

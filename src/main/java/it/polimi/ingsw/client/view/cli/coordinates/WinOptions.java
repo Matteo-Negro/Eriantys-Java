@@ -29,7 +29,7 @@ public class WinOptions implements DeltaCoordinates {
      */
     @Override
     public int getX() {
-        return 13;
+        return 15;
     }
 
     /**
