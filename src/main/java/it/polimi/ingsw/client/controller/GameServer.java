@@ -1,7 +1,6 @@
 package it.polimi.ingsw.client.controller;
 
 import com.google.gson.*;
-import it.polimi.ingsw.client.ClientController;
 import it.polimi.ingsw.client.model.GameModel;
 import it.polimi.ingsw.utilities.*;
 
@@ -182,9 +181,10 @@ public class GameServer extends Thread {
         JsonArray winners = message.get("winners").getAsJsonArray();
         synchronized (this.client.getLock()) {
             for (JsonElement player : winners) {
-                Log.debug("Winner: " + player.getAsString());
-                if (player.getAsString().equals(this.client.getUserName()))
-                    this.client.getGameModel().setWinner(true);
+                if (player.getAsString().equals(this.client.getUserName())) {
+                    this.client.setWinner(true);
+                    break;
+                }
             }
             this.client.getLock().notify();
         }

@@ -149,10 +149,16 @@ public class GameBoard {
         int maxDistance;
 
         maxDistance = playedAssistant.getMaxDistance();
-
-        int runDistance = targetIsland.getId() - this.motherNatureIsland.getId() - (this.motherNatureIsland.getSize() - 1);
-        if (targetIsland.getId() < this.motherNatureIsland.getId())
-            runDistance = 12 + targetIsland.getId() - this.motherNatureIsland.getId() - (this.motherNatureIsland.getSize() - 1);
+        int runDistance = 1;
+        try {
+            Island nextIsland = getIslandById((this.motherNatureIsland.getId() + this.motherNatureIsland.getSize()) % 12);
+            while(nextIsland.getId() != targetIsland.getId()){
+                nextIsland = getIslandById((nextIsland.getId() + nextIsland.getSize()) % 12);
+                runDistance ++;
+            }
+        }catch(IslandNotFoundException infe){
+            throw new IllegalMoveException();
+        }
 
         if (runDistance > maxDistance)
             throw new IllegalMoveException("Player would like moves MotherNature over assistant card limit.");

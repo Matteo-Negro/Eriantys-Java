@@ -243,13 +243,9 @@ public class GamePlatform {
      * Reorders the turn players according to the played assistants.
      */
     public void updateTurnOrder() {
-        Log.debug("Getting played assistants.");
         Map<Player, Assistant> playedAssistants = gameBoard.getPlayedAssistants();
-        Log.debug("Getting new order");
         getNewOrder(roundWinner, playedAssistants);
-        Log.debug("Round winner " + turnOrder.get(0).getName());
         roundWinner = turnOrder.get(0).getName();
-        Log.debug("Current player " + roundWinner);
         currentPlayer = roundWinner;
     }
 
@@ -278,15 +274,12 @@ public class GamePlatform {
      */
     private void getNewOrder(String roundWinner, Map<Player, Assistant> playedAssistants) {
         Player player;
-        Log.debug("1");
         List<Pair<Player, Assistant>> playedAssistantsOrder = reorderPlayedCards(roundWinner, playedAssistants);
 
         List<Player> remainingPlayers = new ArrayList<>(clockwiseOrder);
         turnOrder.clear();
-        Log.debug("2");
 
         while (!remainingPlayers.isEmpty()) {
-            Log.debug("3");
             player = playedAssistantsOrder.stream()
                     .filter(pair -> pair.value().getId() == remainingPlayers.stream()
                             .mapToInt(item -> playedAssistants.get(item).getId())
@@ -295,12 +288,9 @@ public class GamePlatform {
                     .toList()
                     .get(0)
                     .key();
-            Log.debug("4");
             turnOrder.add(player);
-            Log.debug("5");
             remainingPlayers.remove(player);
         }
-        Log.debug("6");
     }
 
     /**
@@ -313,7 +303,6 @@ public class GamePlatform {
     private List<Pair<Player, Assistant>> reorderPlayedCards(String roundWinner, Map<Player, Assistant> playedAssistants) {
         Player player;
         int roundWinnerIndex = clockwiseOrder.indexOf(players.get(roundWinner));
-        Log.debug("1.1");
         List<Pair<Player, Assistant>> playedAssistantsOrder = new ArrayList<>();
         try {
             for (int index = 0; index < playersNumber; index++) {
@@ -324,7 +313,6 @@ public class GamePlatform {
             Log.error(e);
             System.exit(1);
         }
-        Log.debug("1.5");
         return playedAssistantsOrder;
     }
 }

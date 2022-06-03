@@ -18,7 +18,6 @@ public class GameModel {
     private int round;
     private Phase phase;
     private GameControllerStates subphase;
-    private boolean winner;
 
     private String currentPlayer;
     private boolean expert;
@@ -30,7 +29,6 @@ public class GameModel {
         this.waitingRoom = new HashMap<>(waitingRoom);
         this.playersNumber = expectedPlayers;
         this.currentPlayer = null;
-        this.winner = false;
     }
 
     public GameModel(int statusPlayersNumber, int statusRound, Phase statusPhase, GameControllerStates statusSubphase, boolean statusExpert, String statusCurrentPlayer, JsonArray statusPlayers, JsonObject statusGameBoard) {
@@ -43,7 +41,6 @@ public class GameModel {
         this.currentPlayer = statusCurrentPlayer;
         this.parsePlayers(statusPlayers, statusGameBoard);
         this.parseGameBoard(statusGameBoard);
-        this.winner = false;
     }
 
     public Map<String, Boolean> getWaitingRoom() {
@@ -54,10 +51,6 @@ public class GameModel {
 
     public int getRound() {
         return round;
-    }
-
-    public boolean isWinner() {
-        return winner;
     }
 
     public int getPlayersNumber() {
@@ -139,10 +132,6 @@ public class GameModel {
     public void setCurrentPlayer(String currentPlayer, boolean token) {
         this.currentPlayer = currentPlayer;
         this.getPlayerByName(currentPlayer).setActive(token);
-    }
-
-    public void setWinner(boolean winner) {
-        this.winner = winner;
     }
 
     public boolean isMovementEffectActive() {

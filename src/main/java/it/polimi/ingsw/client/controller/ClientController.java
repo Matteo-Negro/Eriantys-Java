@@ -1,8 +1,7 @@
-package it.polimi.ingsw.client;
+package it.polimi.ingsw.client.controller;
 
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
-import it.polimi.ingsw.client.controller.GameServer;
 import it.polimi.ingsw.client.model.GameModel;
 import it.polimi.ingsw.client.model.Player;
 import it.polimi.ingsw.client.model.SpecialCharacter;
@@ -28,6 +27,7 @@ public class ClientController {
     private String gameCode;
     private GameServer gameServer;
     private GameModel gameModel;
+    private boolean winner;
     private ClientStates state;
     private boolean modelUpdated;
     private final boolean cli;
@@ -43,6 +43,7 @@ public class ClientController {
         this.modelUpdated = false;
         this.userName = null;
         this.gameCode = null;
+        this.winner = false;
         this.lock = new Object();
         this.view = view;
         cli = view instanceof ClientCli;
@@ -86,6 +87,14 @@ public class ClientController {
 
     public boolean hasCommunicationToken() {
         return this.getGameModel().getPlayerByName(getUserName()).isActive();
+    }
+
+    public boolean isWinner() {
+        return winner;
+    }
+
+    public void setWinner(boolean winner) {
+        this.winner = winner;
     }
 
     /**
@@ -282,7 +291,7 @@ public class ClientController {
      * Manages end-game logic.
      */
     public void manageEndGame(String command) {
-        if (command.equals("exit")) {
+        if (command.equals("") || command.equals("exit")) {
             this.setClientState(ClientStates.MAIN_MENU);
             updateScreen();
             this.resetGame();
@@ -342,7 +351,7 @@ public class ClientController {
             if (!message.get("subtype").getAsString().equals("playAssistant") || getGameModel().getPlayerByName(this.getUserName()).getAssistantById(assistantId) == null)
                 throw new IllegalMoveException();
             for (Player p : getGameModel().getPlayers()) {
-                if (p.getCurrentPlayedAssistant() != null && assistantId == p.getCurrentPlayedAssistant().getId())
+                if (assistantId < 1 || assistantId > 10 || p.getCurrentPlayedAssistant() != null && assistantId == p.getCurrentPlayedAssistant().getId())
                     throw new IllegalMoveException();
             }
         }
@@ -411,6 +420,7 @@ public class ClientController {
                 }
                 case "island" -> {
                     int destinationIndex = message.get("toId").getAsInt();
+                    if (destinationIndex < 0 || destinationIndex > 11) throw new IllegalMoveException();
                     while (getGameModel().getGameBoard().getIslandById(destinationIndex).hasPrev()) {
                         destinationIndex = (destinationIndex - 1) % 12;
                     }
@@ -431,6 +441,7 @@ public class ClientController {
         if (!getGameModel().getSubphase().equals(MOVE_MOTHER_NATURE)) throw new IllegalMoveException();
 
         int finalIsland = message.get("island").getAsInt();
+        if (finalIsland < 0 || finalIsland > 11) throw new IllegalMoveException();
         int maxDistance = getGameModel().getPlayerByName(this.getUserName()).getCurrentPlayedAssistant().getMaxDistance();
         int motherNatureIsland = getGameModel().getGameBoard().getMotherNatureIsland();
 
@@ -537,6 +548,7 @@ public class ClientController {
         this.gameModel = null;
         this.userName = null;
         this.gameCode = null;
+        this.setWinner(false);
     }
 
     /**

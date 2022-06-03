@@ -1,6 +1,5 @@
 package it.polimi.ingsw;
 
-import it.polimi.ingsw.client.ClientController;
 import it.polimi.ingsw.client.view.ClientCli;
 import it.polimi.ingsw.client.view.ClientGui;
 import it.polimi.ingsw.utilities.GraphicsType;

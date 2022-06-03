@@ -1,6 +1,6 @@
 package it.polimi.ingsw.client.view;
 
-import it.polimi.ingsw.client.ClientController;
+import it.polimi.ingsw.client.controller.ClientController;
 import it.polimi.ingsw.client.view.cli.Autocompletion;
 import it.polimi.ingsw.client.view.cli.Utilities;
 import it.polimi.ingsw.client.view.cli.colours.*;
@@ -223,8 +223,12 @@ public class ClientCli extends Thread implements View {
      * Manages the end-game-screen's I/O.
      */
     public void runEndGame() {
-        if (this.controller.getGameModel().isWinner()) WinPage.print(terminal);
-        else LosePage.print(terminal);
+        if (this.controller.isWinner()){
+            WinPage.print(terminal);
+        }
+        else{
+            LosePage.print(terminal);
+        }
         this.controller.manageEndGame(readLine(" ", terminal, List.of(node("exit")), false, null));
     }
 

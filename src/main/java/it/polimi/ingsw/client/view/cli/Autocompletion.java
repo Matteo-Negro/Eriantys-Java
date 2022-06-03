@@ -1,6 +1,6 @@
 package it.polimi.ingsw.client.view.cli;
 
-import it.polimi.ingsw.client.ClientController;
+import it.polimi.ingsw.client.controller.ClientController;
 import it.polimi.ingsw.client.model.Assistant;
 import it.polimi.ingsw.client.model.GameBoard;
 import it.polimi.ingsw.client.model.Island;
