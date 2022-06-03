@@ -146,7 +146,6 @@ public class ClientController {
             case "exit" -> {
                 this.setClientState(ClientStates.CONNECTION_LOST);
                 updateScreen();
-                manageConnectionLost();
             }
             default -> this.errorOccurred("Wrong command.");
         }

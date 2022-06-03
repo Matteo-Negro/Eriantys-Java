@@ -681,8 +681,6 @@ public class GameController extends Thread {
 
                 if (mostInfluential.size() == 1 || (mostInfluential.size() == 2 && mostInfluential.get(0).getSchoolBoard().getTowerType().equals(mostInfluential.get(1).getSchoolBoard().getTowerType()))) {
                     if (island.getTower() == null) {
-                        this.getGameModel().getGameBoard().setTowerOnIsland(island, mostInfluential.get(0).getSchoolBoard().getTowerType());
-
                         try {
                             for (Player player : this.gameModel.getPlayers()) {
                                 if (player.getSchoolBoard().getTowerType().equals(mostInfluential.get(0).getSchoolBoard().getTowerType())) {
@@ -695,6 +693,8 @@ public class GameController extends Thread {
                         } catch (NegativeException e2) {
                             throw new IllegalMoveException();
                         }
+
+                        this.getGameModel().getGameBoard().setTowerOnIsland(island, mostInfluential.get(0).getSchoolBoard().getTowerType());
                     } else {
                         if (!island.getTower().equals(mostInfluential.get(0).getSchoolBoard().getTowerType())) {
                             try {
@@ -706,6 +706,7 @@ public class GameController extends Thread {
                                     }
                                 }
                                 this.getGameModel().getGameBoard().setTowerOnIsland(island, mostInfluential.get(0).getSchoolBoard().getTowerType());
+
                                 endGame();
                             } catch (NotEnoughTowersException e1) {
                                 endGame();
