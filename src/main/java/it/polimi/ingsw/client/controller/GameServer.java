@@ -39,14 +39,12 @@ public class GameServer extends Thread {
         while (loop) {
 
             synchronized (connectedLock) {
-                if (!connected)
-                    break;
+                if (!connected) break;
             }
 
             try {
                 incomingMessage = getMessage();
-                if (!incomingMessage.get("type").getAsString().equals("pong"))
-                    manageMessage(incomingMessage);
+                if (!incomingMessage.get("type").getAsString().equals("pong")) manageMessage(incomingMessage);
             } catch (Exception e) {
                 Log.error(e);
                 loop = false;
@@ -64,9 +62,7 @@ public class GameServer extends Thread {
                 sendCommand(MessageCreator.enterGame(incomingMessage.get("code").getAsString()));
                 this.client.setGameCode(incomingMessage.get("code").getAsString());
             }
-            case "enterGame" -> {
-                manageEnterGame(incomingMessage);
-            }
+            case "enterGame" -> manageEnterGame(incomingMessage);
             case "waitingRoomUpdate" -> {
                 Log.debug("WaitingRoomUpdate reply");
                 manageWaitingRoomUpdate(incomingMessage);
@@ -180,11 +176,15 @@ public class GameServer extends Thread {
     private void manageEndGame(JsonObject message) {
         JsonArray winners = message.get("winners").getAsJsonArray();
         synchronized (this.client.getLock()) {
-            for (JsonElement player : winners) {
-                if (player.getAsString().equals(this.client.getUserName())) {
-                    this.client.setWinner(true);
-                    break;
+            if (winners.isJsonNull()) this.client.setEndState(EndType.DRAW);
+            else {
+                for (JsonElement player : winners) {
+                    if (player.getAsString().equals(this.client.getUserName())) {
+                        this.client.setEndState(EndType.WON);
+                        break;
+                    }
                 }
+                if (this.client.getEndState() == null) this.client.setEndState(EndType.LOST);
             }
             this.client.getLock().notify();
         }

@@ -524,7 +524,6 @@ public class GameController extends Thread {
             case "entrance" -> {
                 this.gameModel.getPlayerByName(command.get("player").getAsString()).getSchoolBoard().removeFromEntrance(HouseColor.valueOf(command.get("color").getAsString()));
 
-
                 if (!isMovementEffectActive()) {
                     switch (this.getSubPhase()) {
                         case MOVE_STUDENT_1 -> this.setSubPhase(GameControllerStates.MOVE_STUDENT_2);
@@ -729,6 +728,7 @@ public class GameController extends Thread {
         synchronized (this.actionNeededLock) {
             this.actionNeededLock.notifyAll();
         }
+        endGame();
     }
 
     /**

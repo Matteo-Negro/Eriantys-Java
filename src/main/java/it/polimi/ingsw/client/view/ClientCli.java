@@ -5,10 +5,7 @@ import it.polimi.ingsw.client.view.cli.Autocompletion;
 import it.polimi.ingsw.client.view.cli.Utilities;
 import it.polimi.ingsw.client.view.cli.colours.*;
 import it.polimi.ingsw.client.view.cli.pages.*;
-import it.polimi.ingsw.utilities.ClientStates;
-import it.polimi.ingsw.utilities.Log;
-import it.polimi.ingsw.utilities.MessageCreator;
-import it.polimi.ingsw.utilities.Pair;
+import it.polimi.ingsw.utilities.*;
 import org.fusesource.jansi.Ansi;
 import org.jline.builtins.Completers;
 import org.jline.reader.History;
@@ -223,12 +220,15 @@ public class ClientCli extends Thread implements View {
      * Manages the end-game-screen's I/O.
      */
     public void runEndGame() {
-        if (this.controller.isWinner()){
+        if (this.controller.getEndState().equals(EndType.WON)){
             WinPage.print(terminal);
         }
-        else{
+        else if (this.controller.getEndState().equals(EndType.LOST)) {
             LosePage.print(terminal);
+        } else {
+            DrawPage.print(terminal);
         }
+        // TODO: Check for it
         this.controller.manageEndGame(readLine(" ", terminal, List.of(node("exit")), false, null));
     }
 

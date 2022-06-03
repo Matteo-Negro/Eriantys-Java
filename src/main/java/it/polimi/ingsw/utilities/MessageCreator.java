@@ -156,7 +156,7 @@ public class MessageCreator {
         JsonArray winners = new JsonArray();
         for (Player player : playerList) winners.add(player.getName());
         reply.addProperty("type", "win");
-        reply.add("winners", winners);
+        reply.add("winners", (!winners.isEmpty())? winners : JsonNull.INSTANCE);
         return reply;
     }
 

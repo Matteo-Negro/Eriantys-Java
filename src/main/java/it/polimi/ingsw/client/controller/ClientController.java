@@ -27,7 +27,7 @@ public class ClientController {
     private String gameCode;
     private GameServer gameServer;
     private GameModel gameModel;
-    private boolean winner;
+    private EndType endState;
     private ClientStates state;
     private boolean modelUpdated;
     private final boolean cli;
@@ -43,7 +43,7 @@ public class ClientController {
         this.modelUpdated = false;
         this.userName = null;
         this.gameCode = null;
-        this.winner = false;
+        this.endState = null;
         this.lock = new Object();
         this.view = view;
         cli = view instanceof ClientCli;
@@ -89,12 +89,12 @@ public class ClientController {
         return this.getGameModel().getPlayerByName(getUserName()).isActive();
     }
 
-    public boolean isWinner() {
-        return winner;
+    public EndType getEndState() {
+        return this.endState;
     }
 
-    public void setWinner(boolean winner) {
-        this.winner = winner;
+    public void setEndState(EndType end) {
+        this.endState = end;
     }
 
     /**
@@ -240,8 +240,7 @@ public class ClientController {
         }
 
         // Another player disconnected.
-        if (getGameModel() == null)
-            return;
+        if (getGameModel() == null) return;
 
         if (command.contains("info")) {
             Pair<String, String> message = CommandParser.infoGenerator(command);
@@ -258,8 +257,7 @@ public class ClientController {
             return;
         }
 
-        if (messages.isEmpty())
-            return;
+        if (messages.isEmpty()) return;
 
         try {
             for (JsonObject message : messages) {
@@ -548,7 +546,7 @@ public class ClientController {
         this.gameModel = null;
         this.userName = null;
         this.gameCode = null;
-        this.setWinner(false);
+        this.setEndState(null);
     }
 
     /**
@@ -581,7 +579,6 @@ public class ClientController {
      * If the client runs on a cli, clears the screen.
      */
     private void updateScreen() {
-        if (cli)
-            ((ClientCli) view).updateScreen(false);
+        if (cli) ((ClientCli) view).updateScreen(false);
     }
 }
