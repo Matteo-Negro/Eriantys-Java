@@ -137,7 +137,7 @@ public enum ObjectsToJson {
         if (gameBoard.getCharacters() != null)
             object.add("characters", parseSpecialCharacters(gameBoard.getCharacters()));
         object.add("professors", parseProfessors(gameBoard.getProfessors()));
-        object.addProperty("motherNatureIsland", gameBoard.getMotherNatureIsland().getId());
+        object.addProperty("motherNatureIsland", gameBoard.getIslands().indexOf(gameBoard.getMotherNatureIsland()));
         if (gameBoard.getIgnoreColor() != null)
             object.addProperty("ignoreColor", gameBoard.getIgnoreColor().toString());
         else object.add("ignoreColor", JsonNull.INSTANCE);

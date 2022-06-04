@@ -71,7 +71,6 @@ public class GameModel {
     private void parsePlayers(JsonArray players, JsonObject gameBoard) {
         this.players = new ArrayList<>();
         JsonArray playedAssistants = gameBoard.get("playedAssistants").getAsJsonArray();
-        Log.error(playedAssistants.toString());
         for (JsonElement player : players) {
             String name = player.getAsJsonObject().get("name").getAsString();
             WizardType wizard = WizardType.valueOf(player.getAsJsonObject().get("wizardType").getAsString());
@@ -83,7 +82,6 @@ public class GameModel {
                 if (assistant.getAsJsonObject().get("player").getAsString().equals(player.getAsJsonObject().get("name").getAsString()))
                     playedAssistant = assistant.getAsJsonObject();
             }
-            Log.error(String.valueOf(playedAssistant));
             this.players.add(new Player(name, wizard, coins, schoolBoard, assistants, playedAssistant));
         }
         JsonObject professors = gameBoard.get("professors").getAsJsonObject();
@@ -95,7 +93,6 @@ public class GameModel {
     }
 
     private void parseGameBoard(JsonObject gameBoard) {
-        int motherNatureIsland = gameBoard.get("motherNatureIsland").getAsInt();
         String influenceBonus = null;
         if (!gameBoard.get("influenceBonus").isJsonNull())
             influenceBonus = gameBoard.get("influenceBonus").getAsString();
@@ -106,7 +103,7 @@ public class GameModel {
         JsonArray islands = gameBoard.get("islands").getAsJsonArray();
         JsonArray specialCharacters = gameBoard.has("characters") ? gameBoard.get("characters").getAsJsonArray() : new JsonArray();
 
-        this.gameBoard = new GameBoard(motherNatureIsland, influenceBonus, ignoreColor, islands, clouds, specialCharacters);
+        this.gameBoard = new GameBoard(gameBoard.get("motherNatureIsland").getAsInt(), influenceBonus, ignoreColor, islands, clouds, specialCharacters);
     }
 
     public boolean isExpert() {

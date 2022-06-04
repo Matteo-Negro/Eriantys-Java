@@ -5,7 +5,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import it.polimi.ingsw.utilities.HouseColor;
-import it.polimi.ingsw.utilities.Log;
 import it.polimi.ingsw.utilities.TowerType;
 import it.polimi.ingsw.utilities.parsers.JsonToObjects;
 
@@ -23,12 +22,13 @@ public class GameBoard {
     private List<SpecialCharacter> specialCharacters;
 
     public GameBoard(int statusMotherNatureIsland, String statusInfluenceBonus, HouseColor statusIgnoreColor, JsonArray statusIslands, JsonArray statusClouds, JsonArray statusSpecialCharacters) {
-        this.motherNatureIsland = statusMotherNatureIsland;
         this.influenceBonus = statusInfluenceBonus;
         this.ignoreColor = statusIgnoreColor;
         this.parseClouds(statusClouds);
         this.parseSpecialCharacters(statusSpecialCharacters);
         this.parseIslands(statusIslands);
+        this.motherNatureIsland = islands.get(statusMotherNatureIsland).getId();
+        islands.get(statusMotherNatureIsland).hasMotherNature(true);
     }
 
     private void parseClouds(JsonArray clouds) {
@@ -58,24 +58,23 @@ public class GameBoard {
             Map<HouseColor, Integer> students = JsonToObjects.parseStudents(containedStudents);
 
             int studentsNumber = 0;
-            for(HouseColor color : HouseColor.values()) studentsNumber = studentsNumber + students.get(color);
-            boolean motherNature;
-            motherNature = id == this.motherNatureIsland;
+            for (HouseColor color : HouseColor.values())
+                studentsNumber = studentsNumber + students.get(color);
 
             for (int i = 0; i < size; i++) {
 
-                if (i == 0) this.islands.add(new Island((id + i)%12,false, false, tower, null, motherNature, ban));
+                if (i == 0) this.islands.add(new Island((id + i) % 12, false, false, tower, null, false, ban));
                 else {
-                    this.islands.add(new Island((id + i)%12,false, true, tower, null, false, ban));
+                    this.islands.add(new Island((id + i) % 12, false, true, tower, null, false, ban));
                     getIslandById((id + i - 1) % 12).setNext();
                 }
             }
-            int i = 0;
 
-            while(studentsNumber > 0){
-                for(HouseColor color : HouseColor.values()){
-                    if(students.get(color) > 0){
-                        students.put(color, students.get(color)-1);
+            int i = 0;
+            while (studentsNumber > 0) {
+                for (HouseColor color : HouseColor.values()) {
+                    if (students.get(color) > 0) {
+                        students.put(color, students.get(color) - 1);
                         this.getIslandById((id + i) % 12).addStudent(color);
                         studentsNumber--;
                         break;
@@ -129,13 +128,13 @@ public class GameBoard {
         return null;
     }
 
-    public int getMotherNatureIsland(){
+    public int getMotherNatureIsland() {
         return this.motherNatureIsland;
     }
 
     public Island getIslandById(int id) {
-        for(Island isl : this.islands){
-            if(isl.getId() == id) return isl;
+        for (Island isl : this.islands) {
+            if (isl.getId() == id) return isl;
         }
         return null;
     }
