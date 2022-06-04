@@ -146,7 +146,7 @@ public class Server {
             Log.info("Loaded " + json.get("id").getAsString());
 
         } catch (Exception e) {
-            Log.warning("The following error occurred while loading " + json.get("id").getAsString().toUpperCase() + ": " + e);
+            Log.warning("Cannot to load " + json.get("id").getAsString().toUpperCase() + " because of the following error: ", e);
         }
     }
 
