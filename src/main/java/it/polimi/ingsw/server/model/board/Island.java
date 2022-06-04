@@ -7,6 +7,7 @@ import it.polimi.ingsw.utilities.TowerType;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Island Class, board main element.
@@ -146,5 +147,30 @@ public class Island {
      */
     public void removeBan() {
         this.ban = false;
+    }
+
+    /**
+     * Standard redefinition of "equals" method.
+     *
+     * @param o Object to compare.
+     * @return true if the two objects are the same.
+     */
+    public boolean equals(Object o){
+        if(this == o) return true;
+
+        if(o == null || o.getClass()!=this.getClass()) return false;
+
+        Island that = (Island) o;
+        return id == that.getId() && this.students.equals(that.students) && this.size == that.size && this.ban == that.ban && this.tower.equals(that.tower);
+    }
+
+    /**
+     * Calculates the hash.
+     *
+     * @return The calculated hash.
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, students, size, ban, tower);
     }
 }

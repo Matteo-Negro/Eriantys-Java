@@ -423,4 +423,29 @@ public class GameBoard {
             this.clouds.add(new Cloud(i));
         }
     }
+
+    /**
+     * Standard redefinition of "equals" method.
+     *
+     * @param o Object to compare.
+     * @return true if the two objects are the same.
+     */
+    public boolean equals(Object o){
+        if(this == o) return true;
+
+        if(o == null || o.getClass()!=this.getClass()) return false;
+
+        GameBoard that = (GameBoard) o;
+        return this.bag.equals(that.bag) && this.clouds.equals(that.clouds) && this.islands.equals(that.islands) && this.professors.equals(that.professors) && this.playedAssistants.equals(that.playedAssistants) && this.influenceBonus.equals(that.influenceBonus) && this.tieWinner.equals(that.tieWinner) && this.characters.equals(that.characters) && this.ignoreColor.equals(that.ignoreColor) && this.motherNatureIsland.equals(that.motherNatureIsland);
+    }
+
+    /**
+     * Calculates the hash.
+     *
+     * @return The calculated hash.
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(bag, clouds, islands, professors, playedAssistants, influenceBonus, tieWinner, characters, ignoreColor, motherNatureIsland);
+    }
 }

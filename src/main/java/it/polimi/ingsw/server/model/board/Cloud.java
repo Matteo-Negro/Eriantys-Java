@@ -6,6 +6,7 @@ import it.polimi.ingsw.utilities.Log;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Cloud Class, it's one of GameBoard elements, here you can find the refill for the SchoolBoard's entrance.
@@ -92,5 +93,30 @@ public class Cloud {
         Arrays.stream(HouseColor.values()).forEach(color -> this.students.put(color, 0));
 
         return returnMap;
+    }
+
+    /**
+     * Standard redefinition of "equals" method.
+     *
+     * @param o Object to compare.
+     * @return true if the two objects are the same.
+     */
+    public boolean equals(Object o){
+        if(this == o) return true;
+
+        if(o == null || o.getClass()!=this.getClass()) return false;
+
+        Cloud that = (Cloud) o;
+        return this.id == that.id && this.students.equals(that.students);
+    }
+
+    /**
+     * Calculates the hash.
+     *
+     * @return The calculated hash.
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, students);
     }
 }

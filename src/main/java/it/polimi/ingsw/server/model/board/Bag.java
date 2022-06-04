@@ -100,7 +100,7 @@ public class Bag {
             if (result.containsKey(color)) {
                 result.put(color, result.get(color) + 1);
             } else {
-                result.put(color, 0);
+                result.put(color, 1);
             }
         });
 
@@ -121,5 +121,30 @@ public class Bag {
      */
     private void randomize() {
         Collections.shuffle(this.listStudents);
+    }
+
+    /**
+     * Standard redefinition of "equals" method.
+     *
+     * @param o Object to compare.
+     * @return true if the two objects are the same.
+     */
+    public boolean equals(Object o){
+        if(this == o) return true;
+
+        if(o == null || o.getClass()!=this.getClass()) return false;
+
+        Bag that = (Bag) o;
+        return this.listStudents.equals(that.listStudents);
+    }
+
+    /**
+     * Calculates the hash.
+     *
+     * @return The calculated hash.
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(listStudents);
     }
 }
