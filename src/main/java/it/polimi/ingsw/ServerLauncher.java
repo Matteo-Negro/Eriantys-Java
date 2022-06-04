@@ -6,6 +6,12 @@ import it.polimi.ingsw.utilities.Pair;
 
 import java.io.IOException;
 
+/**
+ * The server launcher.
+ * It instantiates the core classes needed in order to run the server.
+ *
+ * @author Riccardo Motta.
+ */
 public class ServerLauncher {
 
     public static void main(String[] args) {
@@ -26,6 +32,12 @@ public class ServerLauncher {
         }
     }
 
+    /**
+     * This method analyzes the input arguments.
+     *
+     * @param args The arguments to analyze.
+     * @return A pair containing the save path for the database and the TCP port for the server socket.
+     */
     private static Pair<String, Integer> parseArguments(String[] args) {
 
         String path = null;
@@ -46,7 +58,6 @@ public class ServerLauncher {
                 foundPath = false;
             }
         }
-
         return new Pair<>(path, port);
     }
 }

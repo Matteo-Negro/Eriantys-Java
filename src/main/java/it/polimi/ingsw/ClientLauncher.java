@@ -10,6 +10,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The client launcher.
+ * It instantiates the core classes needed in order to run te client.
+ *
+ * @author Riccardo Motta.
+ */
 public class ClientLauncher {
 
     public static void main(String[] args) {

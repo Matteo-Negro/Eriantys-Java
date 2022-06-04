@@ -12,6 +12,14 @@ import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This class represents an interface for the client to the network, in order to handle
+ * the communication between client and server.
+ *
+ * @author Riccardo Milici
+ * @author Riccardo Motta
+ * @author Matteo Negro
+ */
 public class GameServer extends Thread {
 
     private final BufferedReader inputStream;
@@ -21,6 +29,13 @@ public class GameServer extends Thread {
     private boolean connected;
     private final Ping ping;
 
+    /**
+     * Default class constructor.
+     *
+     * @param hostSocket The TCP socket associated with the current connection.
+     * @param client     The ClientController instance that's currently running.
+     * @throws IOException Thrown if an error occurs during the input and output streams creation.
+     */
     public GameServer(Socket hostSocket, ClientController client) throws IOException {
         this.inputStream = new BufferedReader(new InputStreamReader(hostSocket.getInputStream()));
         this.outputStream = new PrintWriter(hostSocket.getOutputStream());
@@ -31,6 +46,9 @@ public class GameServer extends Thread {
         Log.info("GameServer instance created");
     }
 
+    /**
+     * The main GameServer method, gets the messages from the server through the network.
+     */
     public void run() {
         new Thread(ping).start();
         JsonObject incomingMessage;
@@ -54,9 +72,15 @@ public class GameServer extends Thread {
         this.client.setClientState(ClientStates.CONNECTION_LOST);
     }
 
+    /**
+     * Reads the type of the incoming message and calls the correct method to manage it.
+     *
+     * @param incomingMessage The incoming message from the server.
+     */
     public void manageMessage(JsonObject incomingMessage) {
         switch (incomingMessage.get("type").getAsString()) {
-            case "ping" -> sendCommand(MessageCreator.pong());
+            case "ping" -> {
+            }
             case "gameCreation" -> {
                 Log.debug("gameCreation reply");
                 sendCommand(MessageCreator.enterGame(incomingMessage.get("code").getAsString()));
@@ -100,6 +124,11 @@ public class GameServer extends Thread {
         }
     }
 
+    /**
+     * Manages the "enterGame" reply message.
+     *
+     * @param message The message.
+     */
     private void manageEnterGame(JsonObject message) {
 
         switch (this.client.getClientState()) {
@@ -114,18 +143,47 @@ public class GameServer extends Thread {
                     this.client.getLock().notifyAll();
                 }
             }
-            /*case GAME_WAITING_ROOM -> {
-                parseEnterGame(message);
-            }*/
             default -> {
             }
         }
     }
 
+    /**
+     * Helper function which parses the "enterGame" reply message from the server, initializing the GameModel.
+     *
+     * @param message The message to parse.
+     */
+    private void parseEnterGame(JsonObject message) {
+        Map<String, Boolean> waitingRoom = new HashMap<>();
+
+        int expectedPlayers = message.get("expectedPlayers").getAsInt();
+        JsonArray players = message.get("players").getAsJsonArray();
+
+        for (int i = 0; i < players.size(); i++) {
+
+            String player = players.get(i).getAsJsonObject().get("name").getAsString();
+            boolean online = players.get(i).getAsJsonObject().get("online").getAsBoolean();
+            waitingRoom.put(player, online);
+
+        }
+        GameModel newGameModel = new GameModel(expectedPlayers, waitingRoom);
+        this.client.initializeGameModel(newGameModel);
+    }
+
+    /**
+     * Manages the "waitingRoomUpdate" message.
+     *
+     * @param message The message.
+     */
     private void manageWaitingRoomUpdate(JsonObject message) {
         if (this.client.getClientState().equals(ClientStates.GAME_WAITING_ROOM)) parseEnterGame(message);
     }
 
+    /**
+     * Manages the "login" reply message.
+     *
+     * @param message The message.
+     */
     private void manageLogin(JsonObject message) {
         if (this.client.getClientState().equals(ClientStates.GAME_LOGIN)) {
             if (message.get("success").getAsBoolean()) {
@@ -144,22 +202,33 @@ public class GameServer extends Thread {
         }
     }
 
-    private void manageStatus(JsonObject incomingMessage) {
-        int round = incomingMessage.get("round").getAsInt() + 1;
+    /**
+     * Manages the "status" message, creating an updated GameModel instance.
+     *
+     * @param message The message.
+     */
+    private void manageStatus(JsonObject message) {
+        Log.debug(message.toString());
+        int round = message.get("round").getAsInt() + 1;
         String activeUser = null;
-        if (!(incomingMessage.get("activeUser") instanceof JsonNull))
-            activeUser = incomingMessage.get("activeUser").getAsString();
-        boolean expert = incomingMessage.get("expert").getAsBoolean();
-        Phase phase = Phase.valueOf(incomingMessage.get("phase").getAsString());
-        GameControllerStates subphase = GameControllerStates.valueOf(incomingMessage.get("subPhase").getAsString());
-        JsonArray players = incomingMessage.get("players").getAsJsonArray();
-        JsonObject gameBoard = incomingMessage.get("gameBoard").getAsJsonObject();
+        if (!(message.get("activeUser") instanceof JsonNull))
+            activeUser = message.get("activeUser").getAsString();
+        boolean expert = message.get("expert").getAsBoolean();
+        Phase phase = Phase.valueOf(message.get("phase").getAsString());
+        GameControllerStates subphase = GameControllerStates.valueOf(message.get("subPhase").getAsString());
+        JsonArray players = message.get("players").getAsJsonArray();
+        JsonObject gameBoard = message.get("gameBoard").getAsJsonObject();
         GameModel model = new GameModel(players.size(), round, phase, subphase, expert, activeUser, players, gameBoard);
         this.client.initializeGameModel(model);
     }
 
-    private void manageError(JsonObject incomingMessage) {
-        if (this.client.getClientState().equals(ClientStates.GAME_RUNNING) && incomingMessage.get("message").getAsString().equals("UserDisconnected")) {
+    /**
+     * Manages the "error" message, exiting the current game if needed.
+     *
+     * @param message The message.
+     */
+    private void manageError(JsonObject message) {
+        if (this.client.getClientState().equals(ClientStates.GAME_RUNNING) && message.get("message").getAsString().equals("UserDisconnected")) {
             this.client.setClientState(ClientStates.GAME_WAITING_ROOM);
             Log.debug("changed state Waiting room.");
             this.client.initializeGameModel(null);
@@ -167,11 +236,21 @@ public class GameServer extends Thread {
         }
     }
 
-    private void manageTurnEnable(JsonObject incomingMessage) {
+    /**
+     * Manages the "turnEnable" message, carrying the communication token.
+     *
+     * @param message The message.
+     */
+    private void manageTurnEnable(JsonObject message) {
         Log.debug("Token arrived.");
-        this.client.getGameModel().setCurrentPlayer(incomingMessage.get("player").getAsString(), incomingMessage.get("enable").getAsBoolean());
+        this.client.getGameModel().setCurrentPlayer(message.get("player").getAsString(), message.get("enable").getAsBoolean());
     }
 
+    /**
+     * Manages the "win" message, setting the endState attribute of the clientController to the correct state.
+     *
+     * @param message The message.
+     */
     private void manageEndGame(JsonObject message) {
         JsonArray winners = message.get("winners").getAsJsonArray();
         synchronized (this.client.getLock()) {
@@ -190,14 +269,30 @@ public class GameServer extends Thread {
         this.client.setClientState(ClientStates.END_GAME);
     }
 
+    /**
+     * Returns true if the connection to the server is still alive.
+     *
+     * @return The boolean value stored into the connected attribute.
+     */
     public boolean isConnected() {
         return this.connected;
     }
 
+    /**
+     * Sets the connection attribute to the given connection status.
+     *
+     * @param connectionStatus The connection status to set.
+     */
     public void setConnected(boolean connectionStatus) {
         this.connected = connectionStatus;
     }
 
+    /**
+     * Gets a message from the server and converts it into a JsonObject.
+     *
+     * @return The JsonObject containing the incoming message.
+     * @throws IOException Thrown if an error occurs during the message extraction from the input stream.
+     */
     public JsonObject getMessage() throws IOException {
         try {
             return JsonParser.parseString(this.inputStream.readLine()).getAsJsonObject();
@@ -206,6 +301,11 @@ public class GameServer extends Thread {
         }
     }
 
+    /**
+     * Sends a command to the server, converting a JsonObject, containing the message, into a String.
+     *
+     * @param command The command to send.
+     */
     public void sendCommand(JsonObject command) {
         switch (this.client.getClientState()) {
             case GAME_CREATION, GAME_LOGIN, JOIN_GAME, GAME_RUNNING -> {
@@ -225,28 +325,13 @@ public class GameServer extends Thread {
         }
     }
 
+    /**
+     * Sets the connection status to false and stops the ping thread.
+     */
     public void disconnected() {
         synchronized (this.connectedLock) {
             setConnected(false);
         }
         this.ping.stopPing();
     }
-
-    private void parseEnterGame(JsonObject message) {
-        Map<String, Boolean> waitingRoom = new HashMap<>();
-
-        int expectedPlayers = message.get("expectedPlayers").getAsInt();
-        JsonArray players = message.get("players").getAsJsonArray();
-
-        for (int i = 0; i < players.size(); i++) {
-
-            String player = players.get(i).getAsJsonObject().get("name").getAsString();
-            boolean online = players.get(i).getAsJsonObject().get("online").getAsBoolean();
-            waitingRoom.put(player, online);
-
-        }
-        GameModel newGameModel = new GameModel(expectedPlayers, waitingRoom);
-        this.client.initializeGameModel(newGameModel);
-    }
-
 }

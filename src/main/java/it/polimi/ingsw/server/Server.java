@@ -69,6 +69,12 @@ public class Server {
         Log.info("Load completed.");
     }
 
+    /**
+     * The main server method, it runs the Server instance as a parallel thread,
+     * managing the new connection requests from the clients.
+     *
+     * @throws IOException Thrown if an error occurs during the server or client socket creation.
+     */
     public void start() throws IOException {
 
         ExecutorService userExecutor = Executors.newCachedThreadPool();

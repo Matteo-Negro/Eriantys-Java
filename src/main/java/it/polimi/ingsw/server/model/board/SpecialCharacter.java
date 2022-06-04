@@ -166,6 +166,12 @@ public class SpecialCharacter {
         return isActive;
     }
 
+    /**
+     * Standard redefinition of "equals" method.
+     *
+     * @param o Object to compare.
+     * @return true if the two objects are the same.
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -174,6 +180,11 @@ public class SpecialCharacter {
         return id == that.id && effectCost == that.effectCost && alreadyPaid == that.alreadyPaid && paidInRound == that.paidInRound && isActive == that.isActive && Objects.equals(assignedEffect, that.assignedEffect);
     }
 
+    /**
+     * Calculates the hash.
+     *
+     * @return The hash-code of the object.
+     */
     @Override
     public int hashCode() {
         return Objects.hash(id, effectCost, assignedEffect, alreadyPaid, paidInRound, isActive);

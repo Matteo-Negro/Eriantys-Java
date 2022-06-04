@@ -20,6 +20,13 @@ import java.util.List;
 import static it.polimi.ingsw.utilities.GameControllerStates.CHOOSE_CLOUD;
 import static it.polimi.ingsw.utilities.GameControllerStates.MOVE_MOTHER_NATURE;
 
+/**
+ * This is the client controller, it runs the main client's finite state machine.
+ *
+ * @author Riccardo Milici
+ * @author Riccardo Motta
+ * @author Matteo Negro
+ */
 public class ClientController {
     private final View view;
     private final Object lock;
@@ -29,18 +36,16 @@ public class ClientController {
     private GameModel gameModel;
     private EndType endState;
     private ClientStates state;
-    private boolean modelUpdated;
     private final boolean cli;
 
 
     /**
-     * Default constructor.
+     * Default class constructor.
      */
     public ClientController(View view) {
         this.state = ClientStates.START_SCREEN;
         this.gameServer = null;
         this.gameModel = null;
-        this.modelUpdated = false;
         this.userName = null;
         this.gameCode = null;
         this.endState = null;
@@ -85,14 +90,29 @@ public class ClientController {
         return this.userName;
     }
 
+    /**
+     * Returns true if this client has got the communication-enable token.
+     *
+     * @return The active status associated with the username of this client, saved into the game model.
+     */
     public boolean hasCommunicationToken() {
         return this.getGameModel().getPlayerByName(getUserName()).isActive();
     }
 
+    /**
+     * Returns the states which indicates the final result of a game (WON, LOST or DRAW).
+     *
+     * @return The endState attribute.
+     */
     public EndType getEndState() {
         return this.endState;
     }
 
+    /**
+     * Sets the endState attribute to the specified state.
+     *
+     * @param end The state to set.
+     */
     public void setEndState(EndType end) {
         this.endState = end;
     }
@@ -510,7 +530,6 @@ public class ClientController {
         synchronized (this.lock) {
             this.gameModel = newGameModel;
             if (newGameModel != null) {
-                this.modelUpdated = true;
                 this.lock.notifyAll();
             }
         }

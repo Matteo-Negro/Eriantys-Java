@@ -134,7 +134,6 @@ public class User extends Thread {
     private void manageCommand(JsonObject command) throws IllegalMoveException {
         Log.debug(command.toString());
         switch (command.get("type").getAsString()) {
-            case "ping" -> sendMessage(MessageCreator.pong());
             case "gameCreation" -> {
                 Log.info("GameCreation message arrived");
                 sendMessage(MessageCreator.gameCreation(Matchmaking.gameCreation(command, server)));
@@ -173,8 +172,7 @@ public class User extends Thread {
                     case "move" -> {
                         switch (command.get("pawn").getAsString()) {
                             case "student" -> this.gameController.moveStudent(command);
-                            case "motherNature" ->
-                                    this.gameController.moveMotherNature(command.get("island").getAsInt());
+                            case "motherNature" -> this.gameController.moveMotherNature(command.get("island").getAsInt());
 
                         }
                     }

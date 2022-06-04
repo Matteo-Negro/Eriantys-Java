@@ -21,6 +21,13 @@ import static it.polimi.ingsw.client.view.cli.Utilities.*;
 import static org.fusesource.jansi.Ansi.ansi;
 import static org.jline.builtins.Completers.TreeCompleter.node;
 
+/**
+ * This is the main view class which manages the CLI graphics' operations.
+ *
+ * @author Riccardo Milici
+ * @author Riccardo Motta
+ * @author Matteo Negro
+ */
 public class ClientCli extends Thread implements View {
     private final ClientController controller;
     private final Terminal terminal;

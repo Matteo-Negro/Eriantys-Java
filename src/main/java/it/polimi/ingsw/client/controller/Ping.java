@@ -1,14 +1,27 @@
 package it.polimi.ingsw.client.controller;
 
-import com.google.gson.JsonObject;
 import it.polimi.ingsw.utilities.Log;
+import it.polimi.ingsw.utilities.MessageCreator;
 
+/**
+ * This is the ping class for the client, it runs a parallel thread which sends a periodical signal
+ * to the server, in order to keep the connection alive.
+ *
+ * @author Riccardo Milici
+ * @author Riccardo Motta
+ * @author Matteo Negro
+ */
 public class Ping extends Thread {
 
     private final GameServer host;
     private final Object lock;
     private boolean stop;
 
+    /**
+     * Default class constructor.
+     *
+     * @param host The GameServer instance which instantiated this class.
+     */
     public Ping(GameServer host) {
         this.host = host;
         this.lock = new Object();
@@ -17,25 +30,28 @@ public class Ping extends Thread {
         Log.info("Ping instance created");
     }
 
+    /**
+     * The main ping method, sends a "pong" message periodically.
+     */
     @Override
     public void run() {
-        JsonObject pongMessage = new JsonObject();
-        pongMessage.addProperty("type", "pong");
         //Log.info("Pong running");
         while (!stop && this.host.isConnected()) {
             synchronized (lock) {
                 //Log.debug("Pong sent");
-                this.host.sendCommand(pongMessage);
+                this.host.sendCommand(MessageCreator.pong());
                 try {
                     lock.wait(1000);
                 } catch (InterruptedException e) {
                     this.stopPing();
                 }
             }
-
         }
     }
 
+    /**
+     * Stops the ping thread, setting the stop attribute to true.
+     */
     public void stopPing() {
         synchronized (this.lock) {
             this.stop = true;

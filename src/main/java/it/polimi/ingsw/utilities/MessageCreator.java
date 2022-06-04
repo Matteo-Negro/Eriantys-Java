@@ -136,6 +136,17 @@ public class MessageCreator {
     }
 
     /**
+     * Creates the "ping" message.
+     *
+     * @return JsonObject which represents the message.
+     */
+    public static JsonObject ping() {
+        JsonObject reply = new JsonObject();
+        reply.addProperty("type", "ping");
+        return reply;
+    }
+
+    /**
      * Creates the "pong" message.
      *
      * @return JsonObject which represents the message.

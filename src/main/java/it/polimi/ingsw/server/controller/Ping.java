@@ -1,8 +1,16 @@
 package it.polimi.ingsw.server.controller;
 
-import com.google.gson.JsonObject;
 import it.polimi.ingsw.utilities.Log;
+import it.polimi.ingsw.utilities.MessageCreator;
 
+/**
+ * This is the ping class for the server, it runs a parallel thread which sends a periodical signal
+ * to the client, in order to keep the connection alive.
+ *
+ * @author Riccardo Milici
+ * @author Riccardo Motta
+ * @author Matteo Negro
+ */
 public class Ping extends Thread {
 
     private final User user;
@@ -26,12 +34,10 @@ public class Ping extends Thread {
      */
     @Override
     public void run() {
-        JsonObject ping = new JsonObject();
-        ping.addProperty("type", "ping");
         Log.info("Ping running");
         while (!stop) {
             synchronized (lock) {
-                user.sendMessage(ping);
+                user.sendMessage(MessageCreator.ping());
                 //Log.debug("Ping");
                 try {
                     lock.wait(1000);
@@ -42,6 +48,9 @@ public class Ping extends Thread {
         }
     }
 
+    /**
+     * It stops the ping thread.
+     */
     public void stopPing() {
         Log.debug("Ping stopped.");
         this.stop = true;

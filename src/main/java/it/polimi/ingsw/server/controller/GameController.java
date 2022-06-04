@@ -879,6 +879,11 @@ public class GameController extends Thread {
             this.gameModel.getGameBoard().setProfessor(HouseColor.valueOf(color), this.gameModel.getPlayerByName(newProfessorOwner));
     }
 
+    /**
+     * Sends a message to the users.
+     *
+     * @param message The JsonObject containing the message.
+     */
     public void notifyUsers(JsonObject message) {
         synchronized (this.users) {
             for (User user : this.getUsers()) {
@@ -887,6 +892,12 @@ public class GameController extends Thread {
         }
     }
 
+    /**
+     * Sends a message to the users except for the one given as argument.
+     *
+     * @param message   The JsonObject containing the message.
+     * @param exception The user to ignore.
+     */
     public void notifyUsersExcept(JsonObject message, User exception) {
         synchronized (this.users) {
             for (User user : this.getUsers()) {
@@ -895,6 +906,9 @@ public class GameController extends Thread {
         }
     }
 
+    /**
+     * Checks the start condition of the game, if it's full it starts the game.
+     */
     public void checkStartCondition() {
         if (this.isFull()) {
             this.notifyUsers(MessageCreator.status(this));

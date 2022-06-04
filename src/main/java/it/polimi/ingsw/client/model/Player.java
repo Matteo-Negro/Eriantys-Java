@@ -182,7 +182,7 @@ public class Player {
     /**
      * Returns the state of the player, true whether it's the current player.
      *
-     * @return
+     * @return The active attribute.
      */
     public boolean isActive() {
         return this.active;
@@ -197,6 +197,11 @@ public class Player {
         this.active = active;
     }
 
+    /**
+     * This method instantiates and initializes the assistants in the player's hand through the info contained into the given JsonArray.
+     *
+     * @param hand The JsonArray containing the hand info.
+     */
     private void parseHand(JsonArray hand) {
         for (JsonElement assistant : hand) {
             int id = assistant.getAsJsonObject().get("id").getAsInt();
@@ -205,6 +210,11 @@ public class Player {
         }
     }
 
+    /**
+     * This method instantiates and initializes the player's school board through the info contained into the given JsonObject.
+     *
+     * @param schoolBoard The JsonObject containing the school board info.
+     */
     private void parseSchoolBoard(JsonObject schoolBoard) {
         TowerType towerType = TowerType.valueOf(schoolBoard.get("towerType").getAsString());
         int towersNumber = schoolBoard.get("towersNumber").getAsInt();
