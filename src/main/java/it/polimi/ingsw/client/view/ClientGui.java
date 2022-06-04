@@ -33,6 +33,7 @@ public class ClientGui extends Application implements View {
             GameCreation.initialize(this);
             JoinGame.initialize(this);
             Login.initialize(this);
+            WaitingRoom.initialize(this);
             Log.info("Initialization completed.");
         } catch (IOException e) {
             Log.error("Cannot initialize scenes because of the following error: ", e);
@@ -76,23 +77,23 @@ public class ClientGui extends Application implements View {
             case GAME_CREATION -> GameCreation.getScene();
             case GAME_LOGIN -> Login.getScene();
             case GAME_RUNNING -> null;
-            case GAME_WAITING_ROOM -> null;
+            case GAME_WAITING_ROOM -> WaitingRoom.getScene();
             case JOIN_GAME -> JoinGame.getScene();
             case MAIN_MENU -> MainMenu.getScene();
         });
 
         stage.setTitle(switch (state) {
-            case CONNECTION_LOST -> defaultTitle;
-            case END_GAME -> defaultTitle;
-            case EXIT -> defaultTitle;
-            case GAME_CREATION -> defaultTitle + " | Create a new game";
-            case GAME_LOGIN -> defaultTitle + " | Login";
-            case GAME_RUNNING -> defaultTitle;
-            case GAME_WAITING_ROOM -> defaultTitle;
-            case JOIN_GAME -> defaultTitle + " | Join a game";
-            case MAIN_MENU -> defaultTitle + " | Menu";
-            case START_SCREEN -> defaultTitle;
-        });
+            case CONNECTION_LOST -> "";
+            case END_GAME -> "";
+            case EXIT -> "";
+            case GAME_CREATION -> "Create a new game";
+            case GAME_LOGIN -> "Login";
+            case GAME_RUNNING -> "";
+            case GAME_WAITING_ROOM -> "Waiting for the other players";
+            case JOIN_GAME -> "Join a game";
+            case MAIN_MENU -> "Menu";
+            case START_SCREEN -> "";
+        } + " | " + defaultTitle);
     }
 
     /**

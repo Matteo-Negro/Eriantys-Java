@@ -104,6 +104,12 @@ public class Login {
             manageLogin();
         });
 
+        login.setOnKeyPressed(event -> {
+            event.consume();
+            if (event.getCode() == KeyCode.ENTER)
+                manageLogin();
+        });
+
         back.setOnKeyPressed(event -> {
             event.consume();
             if (event.getCode() == KeyCode.ENTER)

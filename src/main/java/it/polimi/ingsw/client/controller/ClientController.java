@@ -533,7 +533,7 @@ public class ClientController {
     public void setClientState(ClientStates newState) {
         synchronized (this.lock) {
             this.state = newState;
-            this.lock.notify();
+            this.lock.notifyAll();
         }
 
     }
