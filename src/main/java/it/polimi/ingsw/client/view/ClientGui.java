@@ -15,10 +15,10 @@ public class ClientGui extends Application implements View {
 
     private Stage stage;
     private ClientController controller;
+    private static final String defaultTitle = "Eriantys";
 
     /**
-     * @param primaryStage the primary stage for this application, onto which the application scene can be set.
-     *                     Applications may create other stages, if needed, but they will not be primary stages.
+     * @param primaryStage the primary stage for the application.
      */
     @Override
     public void start(Stage primaryStage) {
@@ -28,20 +28,18 @@ public class ClientGui extends Application implements View {
 
         Log.info("Initializing scenes...");
         try {
-            StartScreen.initialize(this);
-            MainMenu.initialize(this);
+            End.initialize(this);
             GameCreation.initialize(this);
             JoinGame.initialize(this);
             Login.initialize(this);
+            MainMenu.initialize(this);
+            StartScreen.initialize(this);
             WaitingRoom.initialize(this);
             Log.info("Initialization completed.");
         } catch (IOException e) {
             Log.error("Cannot initialize scenes because of the following error: ", e);
             return;
         }
-
-        primaryStage.sizeToScene();
-        primaryStage.setResizable(false);
 
         changeScene(ClientStates.START_SCREEN);
 
@@ -68,11 +66,10 @@ public class ClientGui extends Application implements View {
             getController().manageConnectionLost();
 
         Log.info("Displaying " + state);
-        final String defaultTitle = "Eriantys";
 
         stage.setScene(switch (state) {
             case CONNECTION_LOST, START_SCREEN -> StartScreen.getScene();
-            case END_GAME -> null;
+            case END_GAME -> End.getScene();
             case EXIT -> null;
             case GAME_CREATION -> GameCreation.getScene();
             case GAME_LOGIN -> Login.getScene();
@@ -82,17 +79,29 @@ public class ClientGui extends Application implements View {
             case MAIN_MENU -> MainMenu.getScene();
         });
 
+        switch (state) {
+            case CONNECTION_LOST -> {
+            }
+            case END_GAME, GAME_CREATION, GAME_LOGIN, GAME_WAITING_ROOM, JOIN_GAME, MAIN_MENU, START_SCREEN -> {
+                stage.sizeToScene();
+                stage.setResizable(false);
+            }
+            case EXIT -> {
+            }
+            case GAME_RUNNING -> {
+            }
+        }
+
         stage.setTitle(switch (state) {
-            case CONNECTION_LOST -> "";
-            case END_GAME -> "";
+            case CONNECTION_LOST, START_SCREEN -> "Connect to a game server";
+            case END_GAME -> "This is the end";
             case EXIT -> "";
             case GAME_CREATION -> "Create a new game";
             case GAME_LOGIN -> "Login";
-            case GAME_RUNNING -> "";
+            case GAME_RUNNING -> "Do your best! Good luck!";
             case GAME_WAITING_ROOM -> "Waiting for the other players";
             case JOIN_GAME -> "Join a game";
             case MAIN_MENU -> "Menu";
-            case START_SCREEN -> "";
         } + " | " + defaultTitle);
     }
 

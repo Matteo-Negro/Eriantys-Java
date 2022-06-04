@@ -1,7 +1,7 @@
 package it.polimi.ingsw.utilities;
 
 public enum EndType {
-    WON,
+    DRAW,
     LOST,
-    DRAW
+    WON
 }
