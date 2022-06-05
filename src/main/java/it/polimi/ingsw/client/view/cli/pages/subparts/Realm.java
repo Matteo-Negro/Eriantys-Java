@@ -4,7 +4,6 @@ import it.polimi.ingsw.client.model.GameBoard;
 import it.polimi.ingsw.client.model.Island;
 import it.polimi.ingsw.client.view.cli.Utilities;
 import it.polimi.ingsw.client.view.cli.coordinates.*;
-import it.polimi.ingsw.utilities.Log;
 import org.fusesource.jansi.Ansi;
 import org.jline.terminal.Terminal;
 

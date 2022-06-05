@@ -269,7 +269,8 @@ public class SchoolBoard {
      */
     private static Ansi defaultForeground(boolean active, WizardType wizard) {
         return switch (wizard) {
-            case FUCHSIA -> Utilities.foreground(active ? WizardFuchsia.getInstance() : WizardDarkFuchsia.getInstance());
+            case FUCHSIA ->
+                    Utilities.foreground(active ? WizardFuchsia.getInstance() : WizardDarkFuchsia.getInstance());
             case GREEN -> Utilities.foreground(active ? WizardGreen.getInstance() : WizardDarkGreen.getInstance());
             case WHITE -> Utilities.foreground(active ? WizardWhite.getInstance() : WizardDarkWhite.getInstance());
             case YELLOW -> Utilities.foreground(active ? WizardYellow.getInstance() : WizardDarkYellow.getInstance());
