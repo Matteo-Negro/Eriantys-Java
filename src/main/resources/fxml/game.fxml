@@ -1,0 +1,486 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="727.0" prefWidth="1255.0" side="BOTTOM" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1">
+  <tabs>
+    <Tab text="Realm">
+         <content>
+            <AnchorPane prefHeight="724.0" prefWidth="1194.0" style="-fx-background-color: black;" />
+         </content></Tab>
+    <Tab text="Boards">
+         <content>
+            <BorderPane prefHeight="200.0" prefWidth="200.0">
+               <center>
+                  <ScrollPane style="-fx-background-color: black; -fx-fit-to-height: true; -fx-fit-to-width: true;" BorderPane.alignment="CENTER">
+                     <content>
+                        <VBox alignment="TOP_CENTER" prefHeight="653.0" prefWidth="1042.0" style="-fx-background-color: black;">
+                           <children>
+                              <Label text="Player 1" textFill="WHITE">
+                                 <font>
+                                    <Font name="System Bold" size="36.0" />
+                                 </font></Label>
+                              <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                                 <children>
+                                    <AnchorPane fx:id="school_board" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="305.0" prefWidth="703.0">
+                                       <children>
+                                          <ImageView fitHeight="305.0" fitWidth="715.0" layoutX="-18.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                             <image>
+                                                <Image url="@../realm/schoolboard.png" />
+                                             </image>
+                                          </ImageView>
+                                          <ImageView fx:id="coins" fitHeight="305.0" fitWidth="792.0" layoutX="-8.0" layoutY="24.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                             <image>
+                                                <Image url="@../realm/schoolboard_coins.png" />
+                                             </image>
+                                          </ImageView>
+                                          <GridPane alignment="CENTER" layoutX="7.0" layoutY="29.0" prefHeight="247.0" prefWidth="81.0">
+                                             <columnConstraints>
+                                                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                             </columnConstraints>
+                                             <rowConstraints>
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
+                                             </rowConstraints>
+                                             <children>
+                                                <ImageView fx:id="entrance_0" fitHeight="33.0" fitWidth="33.0" GridPane.columnIndex="1">
+                                                   <image>
+                                                      <Image url="@../pawns/students/red.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="entrance_1" fitHeight="33.0" fitWidth="33.0" GridPane.rowIndex="1">
+                                                   <image>
+                                                      <Image url="@../pawns/students/red.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="entrance_2" fitHeight="33.0" fitWidth="33.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                                   <image>
+                                                      <Image url="@../pawns/students/red.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="entrance_3" fitHeight="33.0" fitWidth="33.0" GridPane.rowIndex="2">
+                                                   <image>
+                                                      <Image url="@../pawns/students/red.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="entrance_4" fitHeight="33.0" fitWidth="33.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                                   <image>
+                                                      <Image url="@../pawns/students/red.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="entrance_5" fitHeight="33.0" fitWidth="33.0" GridPane.rowIndex="3">
+                                                   <image>
+                                                      <Image url="@../pawns/students/red.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="entrance_6" fitHeight="33.0" fitWidth="33.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                                   <image>
+                                                      <Image url="@../pawns/students/red.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="entrance_7" fitHeight="33.0" fitWidth="33.0" GridPane.rowIndex="4">
+                                                   <image>
+                                                      <Image url="@../pawns/students/red.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="entrance_8" fitHeight="33.0" fitWidth="33.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                                   <image>
+                                                      <Image url="@../pawns/students/red.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </children>
+                                          </GridPane>
+                                          <GridPane alignment="CENTER" layoutX="130.0" layoutY="29.0" prefHeight="247.0" prefWidth="334.0">
+                                             <columnConstraints>
+                                                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                             </columnConstraints>
+                                             <rowConstraints>
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
+                                             </rowConstraints>
+                                             <children>
+                                                <ImageView fx:id="dn_green_0" fitHeight="33.0" fitWidth="33.0">
+                                                   <image>
+                                                      <Image url="@../pawns/students/green.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="dn_green_1" fitHeight="33.0" fitWidth="33.0" GridPane.columnIndex="1">
+                                                   <image>
+                                                      <Image url="@../pawns/students/green.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="dn_green_2" fitHeight="33.0" fitWidth="33.0" GridPane.columnIndex="2">
+                                                   <image>
+                                                      <Image url="@../pawns/students/green.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="dn_green_3" fitHeight="33.0" fitWidth="33.0" GridPane.columnIndex="3">
+                                                   <image>
+                                                      <Image url="@../pawns/students/green.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="dn_green_4" fitHeight="33.0" fitWidth="33.0" GridPane.columnIndex="4">
+                                                   <image>
+                                                      <Image url="@../pawns/students/green.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="dn_green_5" fitHeight="33.0" fitWidth="33.0" GridPane.columnIndex="5">
+                                                   <image>
+                                                      <Image url="@../pawns/students/green.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="dn_green_6" fitHeight="33.0" fitWidth="33.0" GridPane.columnIndex="6">
+                                                   <image>
+                                                      <Image url="@../pawns/students/green.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="dn_green_7" fitHeight="33.0" fitWidth="33.0" GridPane.columnIndex="7">
+                                                   <image>
+                                                      <Image url="@../pawns/students/green.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="dn_green_8" fitHeight="33.0" fitWidth="33.0" GridPane.columnIndex="8">
+                                                   <image>
+                                                      <Image url="@../pawns/students/green.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="dn_green_9" fitHeight="33.0" fitWidth="33.0" GridPane.columnIndex="9">
+                                                   <image>
+                                                      <Image url="@../pawns/students/green.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="dn_red_0" fitHeight="33.0" fitWidth="33.0" GridPane.rowIndex="1">
+                                                   <image>
+                                                      <Image url="@../pawns/students/red.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="dn_red_1" fitHeight="33.0" fitWidth="33.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                                   <image>
+                                                      <Image url="@../pawns/students/red.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="dn_red_2" fitHeight="33.0" fitWidth="33.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                                                   <image>
+                                                      <Image url="@../pawns/students/red.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="dn_red_3" fitHeight="33.0" fitWidth="33.0" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                                                   <image>
+                                                      <Image url="@../pawns/students/red.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="dn_red_4" fitHeight="33.0" fitWidth="33.0" GridPane.columnIndex="4" GridPane.rowIndex="1">
+                                                   <image>
+                                                      <Image url="@../pawns/students/red.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="dn_red_5" fitHeight="33.0" fitWidth="33.0" GridPane.columnIndex="5" GridPane.rowIndex="1">
+                                                   <image>
+                                                      <Image url="@../pawns/students/red.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="dn_red_6" fitHeight="33.0" fitWidth="33.0" GridPane.columnIndex="6" GridPane.rowIndex="1">
+                                                   <image>
+                                                      <Image url="@../pawns/students/red.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="dn_red_7" fitHeight="33.0" fitWidth="33.0" GridPane.columnIndex="7" GridPane.rowIndex="1">
+                                                   <image>
+                                                      <Image url="@../pawns/students/red.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="dn_red_8" fitHeight="33.0" fitWidth="33.0" GridPane.columnIndex="8" GridPane.rowIndex="1">
+                                                   <image>
+                                                      <Image url="@../pawns/students/red.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="dn_red_9" fitHeight="33.0" fitWidth="33.0" GridPane.columnIndex="9" GridPane.rowIndex="1">
+                                                   <image>
+                                                      <Image url="@../pawns/students/red.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="dn_yellow_0" fitHeight="33.0" fitWidth="33.0" GridPane.rowIndex="2">
+                                                   <image>
+                                                      <Image url="@../pawns/students/yellow.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="dn_yellow_1" fitHeight="33.0" fitWidth="33.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                                   <image>
+                                                      <Image url="@../pawns/students/yellow.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="dn_yellow_2" fitHeight="33.0" fitWidth="33.0" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                                                   <image>
+                                                      <Image url="@../pawns/students/yellow.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="dn_yellow_3" fitHeight="33.0" fitWidth="33.0" GridPane.columnIndex="3" GridPane.rowIndex="2">
+                                                   <image>
+                                                      <Image url="@../pawns/students/yellow.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="dn_yellow_4" fitHeight="33.0" fitWidth="33.0" GridPane.columnIndex="4" GridPane.rowIndex="2">
+                                                   <image>
+                                                      <Image url="@../pawns/students/yellow.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="dn_yellow_5" fitHeight="33.0" fitWidth="33.0" GridPane.columnIndex="5" GridPane.rowIndex="2">
+                                                   <image>
+                                                      <Image url="@../pawns/students/yellow.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="dn_yellow_6" fitHeight="33.0" fitWidth="33.0" GridPane.columnIndex="6" GridPane.rowIndex="2">
+                                                   <image>
+                                                      <Image url="@../pawns/students/yellow.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="dn_yellow_7" fitHeight="33.0" fitWidth="33.0" GridPane.columnIndex="7" GridPane.rowIndex="2">
+                                                   <image>
+                                                      <Image url="@../pawns/students/yellow.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="dn_yellow_8" fitHeight="33.0" fitWidth="33.0" GridPane.columnIndex="8" GridPane.rowIndex="2">
+                                                   <image>
+                                                      <Image url="@../pawns/students/yellow.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="dn_yellow_9" fitHeight="33.0" fitWidth="33.0" GridPane.columnIndex="9" GridPane.rowIndex="2">
+                                                   <image>
+                                                      <Image url="@../pawns/students/yellow.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="dn_fuchsia_0" fitHeight="33.0" fitWidth="33.0" GridPane.rowIndex="3">
+                                                   <image>
+                                                      <Image url="@../pawns/students/fuchsia.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="dn_fuchsia_1" fitHeight="33.0" fitWidth="33.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                                   <image>
+                                                      <Image url="@../pawns/students/fuchsia.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="dn_fuchsia_2" fitHeight="33.0" fitWidth="33.0" GridPane.columnIndex="2" GridPane.rowIndex="3">
+                                                   <image>
+                                                      <Image url="@../pawns/students/fuchsia.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="dn_fuchsia_3" fitHeight="33.0" fitWidth="33.0" GridPane.columnIndex="3" GridPane.rowIndex="3">
+                                                   <image>
+                                                      <Image url="@../pawns/students/fuchsia.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="dn_fuchsia_4" fitHeight="33.0" fitWidth="33.0" GridPane.columnIndex="4" GridPane.rowIndex="3">
+                                                   <image>
+                                                      <Image url="@../pawns/students/fuchsia.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="dn_fuchsia_5" fitHeight="33.0" fitWidth="33.0" GridPane.columnIndex="5" GridPane.rowIndex="3">
+                                                   <image>
+                                                      <Image url="@../pawns/students/fuchsia.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="dn_fuchsia_6" fitHeight="33.0" fitWidth="33.0" GridPane.columnIndex="6" GridPane.rowIndex="3">
+                                                   <image>
+                                                      <Image url="@../pawns/students/fuchsia.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="dn_fuchsia_7" fitHeight="33.0" fitWidth="33.0" GridPane.columnIndex="7" GridPane.rowIndex="3">
+                                                   <image>
+                                                      <Image url="@../pawns/students/fuchsia.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="dn_fuchsia_8" fitHeight="33.0" fitWidth="33.0" GridPane.columnIndex="8" GridPane.rowIndex="3">
+                                                   <image>
+                                                      <Image url="@../pawns/students/fuchsia.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="dn_fuchsia_9" fitHeight="33.0" fitWidth="33.0" GridPane.columnIndex="9" GridPane.rowIndex="3">
+                                                   <image>
+                                                      <Image url="@../pawns/students/fuchsia.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="dn_blue_0" fitHeight="33.0" fitWidth="33.0" GridPane.rowIndex="4">
+                                                   <image>
+                                                      <Image url="@../pawns/students/blue.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="dn_blue_1" fitHeight="33.0" fitWidth="33.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                                   <image>
+                                                      <Image url="@../pawns/students/blue.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="dn_blue_2" fitHeight="33.0" fitWidth="33.0" GridPane.columnIndex="2" GridPane.rowIndex="4">
+                                                   <image>
+                                                      <Image url="@../pawns/students/blue.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="dn_blue_3" fitHeight="33.0" fitWidth="33.0" GridPane.columnIndex="3" GridPane.rowIndex="4">
+                                                   <image>
+                                                      <Image url="@../pawns/students/blue.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="dn_blue_4" fitHeight="33.0" fitWidth="33.0" GridPane.columnIndex="4" GridPane.rowIndex="4">
+                                                   <image>
+                                                      <Image url="@../pawns/students/blue.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="dn_blue_5" fitHeight="33.0" fitWidth="33.0" GridPane.columnIndex="5" GridPane.rowIndex="4">
+                                                   <image>
+                                                      <Image url="@../pawns/students/blue.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="dn_blue_6" fitHeight="33.0" fitWidth="33.0" GridPane.columnIndex="6" GridPane.rowIndex="4">
+                                                   <image>
+                                                      <Image url="@../pawns/students/blue.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="dn_blue_7" fitHeight="33.0" fitWidth="33.0" GridPane.columnIndex="7" GridPane.rowIndex="4">
+                                                   <image>
+                                                      <Image url="@../pawns/students/blue.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="dn_blue_8" fitHeight="33.0" fitWidth="33.0" GridPane.columnIndex="8" GridPane.rowIndex="4">
+                                                   <image>
+                                                      <Image url="@../pawns/students/blue.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="dn_blue_9" fitHeight="33.0" fitWidth="33.0" GridPane.columnIndex="9" GridPane.rowIndex="4">
+                                                   <image>
+                                                      <Image url="@../pawns/students/blue.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </children>
+                                          </GridPane>
+                                          <GridPane alignment="CENTER" layoutX="494.0" layoutY="29.0" prefHeight="247.0" prefWidth="37.0">
+                                             <columnConstraints>
+                                                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                             </columnConstraints>
+                                             <rowConstraints>
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
+                                             </rowConstraints>
+                                             <children>
+                                                <ImageView fx:id="professor_blue" fitHeight="39.0" fitWidth="45.0" GridPane.rowIndex="4">
+                                                   <image>
+                                                      <Image url="@../pawns/professors/blue.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="professor_fuchsia" fitHeight="39.0" fitWidth="45.0" GridPane.rowIndex="3">
+                                                   <image>
+                                                      <Image url="@../pawns/professors/fuchsia.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="professor_yellow" fitHeight="39.0" fitWidth="45.0" GridPane.rowIndex="2">
+                                                   <image>
+                                                      <Image url="@../pawns/professors/yellow.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="professor_red" fitHeight="39.0" fitWidth="45.0" GridPane.rowIndex="1">
+                                                   <image>
+                                                      <Image url="@../pawns/professors/red.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="professor_green" fitHeight="39.0" fitWidth="45.0">
+                                                   <image>
+                                                      <Image url="@../pawns/professors/green.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </children>
+                                          </GridPane>
+                                          <GridPane alignment="CENTER" layoutX="561.0" layoutY="58.0" prefHeight="168.0" prefWidth="111.0" AnchorPane.leftAnchor="561.0">
+                                             <columnConstraints>
+                                                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                             </columnConstraints>
+                                             <rowConstraints>
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="BOTTOM" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="BOTTOM" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="BOTTOM" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="BOTTOM" vgrow="SOMETIMES" />
+                                             </rowConstraints>
+                                             <children>
+                                                <ImageView fx:id="tower_0" fitHeight="58.0" fitWidth="37.0">
+                                                   <image>
+                                                      <Image url="@../pawns/towers/board/white.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="tower_1" fitHeight="58.0" fitWidth="37.0" GridPane.columnIndex="1">
+                                                   <image>
+                                                      <Image url="@../pawns/towers/board/white.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="tower_2" fitHeight="58.0" fitWidth="37.0" GridPane.rowIndex="1">
+                                                   <image>
+                                                      <Image url="@../pawns/towers/board/white.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="tower_3" fitHeight="58.0" fitWidth="37.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                                   <image>
+                                                      <Image url="@../pawns/towers/board/white.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="tower_4" fitHeight="58.0" fitWidth="37.0" GridPane.rowIndex="2">
+                                                   <image>
+                                                      <Image url="@../pawns/towers/board/white.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="tower_5" fitHeight="58.0" fitWidth="37.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                                   <image>
+                                                      <Image url="@../pawns/towers/board/white.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="tower_6" fitHeight="58.0" fitWidth="37.0" GridPane.rowIndex="3">
+                                                   <image>
+                                                      <Image url="@../pawns/towers/board/white.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fx:id="tower_7" fitHeight="58.0" fitWidth="37.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                                   <image>
+                                                      <Image url="@../pawns/towers/board/white.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </children>
+                                          </GridPane>
+                                       </children>
+                                    </AnchorPane>
+                                 </children></HBox>
+                           </children>
+                        </VBox>
+                     </content>
+                  </ScrollPane>
+               </center></BorderPane>
+         </content></Tab>
+  </tabs>
+</TabPane>
