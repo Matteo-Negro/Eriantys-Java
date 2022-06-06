@@ -54,7 +54,7 @@ public class Autocompletion {
      * Initializes the list of destinations.
      */
     private static void initializeToList() {
-        if (islands != null)
+        if (toList != null)
             return;
         List<String> toList = new ArrayList<>();
         toList.add("dining-room");
