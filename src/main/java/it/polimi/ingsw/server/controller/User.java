@@ -85,7 +85,7 @@ public class User extends Thread {
                 incomingMessage = getCommand();
                 if (!incomingMessage.get("type").getAsString().equals("pong") && !incomingMessage.get("type").getAsString().equals("error"))
                     manageCommand(incomingMessage);
-                if (this.gameController != null && !this.gameController.isFull() && this.isLogged()) {
+                if (this.gameController != null && !this.gameController.isFull() && this.isLogged() && !this.gameController.isEnded()) {
                     synchronized (connectedLock) {
                         try {
                             this.connectedLock.wait(1500);

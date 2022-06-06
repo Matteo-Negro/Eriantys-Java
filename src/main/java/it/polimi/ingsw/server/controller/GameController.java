@@ -192,6 +192,15 @@ public class GameController extends Thread {
     }
 
     /**
+     * This method tells if the game is ended.
+     *
+     * @return The ended attribute.
+     */
+    public boolean isEnded() {
+        return this.ended;
+    }
+
+    /**
      * This method returns a set of usernames of the online player.
      *
      * @return The set of usernames.
@@ -447,6 +456,7 @@ public class GameController extends Thread {
             synchronized (this.actionNeededLock) {
                 try {
                     this.actionNeededLock.wait();
+                    if(isEnded()) return;
                     saveGame();
                     notifyUsers(MessageCreator.status(this));
                 } catch (InterruptedException ie) {
@@ -470,7 +480,14 @@ public class GameController extends Thread {
             this.setSubPhase(GameControllerStates.MOVE_STUDENT_1);
         } catch (RoundConcluded rc) {
             Log.debug("Round concluded.");
-            this.getGameModel().nextRound();
+            try {
+                this.getGameModel().nextRound();
+            } catch (EmptyStackException ese) {
+                List<Player> winners;
+                ended = true;
+                winners = checkForWinners();
+                notifyUsers(MessageCreator.win(winners));
+            }
             this.round++;
             this.phase = Phase.PLANNING;
             this.setSubPhase(GameControllerStates.PLAY_ASSISTANT);
@@ -729,11 +746,10 @@ public class GameController extends Thread {
     public void chooseCloud(JsonObject command) {
         this.gameModel.getPlayerByName(command.get("player").getAsString()).getSchoolBoard().addToEntrance(this.gameModel.getGameBoard().getClouds().get(command.get("cloud").getAsInt()).flush());
         this.setSubPhase(GameControllerStates.END_TURN);
-        notifyUsers(MessageCreator.status(this));
+        endGame();
         synchronized (this.actionNeededLock) {
             this.actionNeededLock.notifyAll();
         }
-        endGame();
     }
 
     /**
@@ -817,16 +833,22 @@ public class GameController extends Thread {
      * This method manages the win condition for the game.
      */
     public void endGame() {
-        List<Player> winners = new ArrayList<>();
-        if (this.gameModel.getPlayers().stream().anyMatch(player -> player.getSchoolBoard().getTowersNumber() == 0)) {
-            ended = true;
-            for (Player player : this.gameModel.getPlayers())
-                if (player.getSchoolBoard().getTowersNumber() == 0) winners.add(player);
-        } else if ((this.gameModel.getGameBoard().getIslands().size() == 3) || (this.gameModel.getCurrentPlayer().equals(this.gameModel.getTurnOrder().get(this.expectedPlayers - 1)) && (this.gameModel.getGameBoard().getBag().isEmpty() || this.gameModel.getPlayers().get(0).getAssistants().isEmpty()))) {
-            ended = true;
-            winners = checkForWinners();
+        synchronized (this.users) {
+            List<Player> winners = new ArrayList<>();
+            boolean assistantsEmpty = true;
+            for(int i = 0; i<this.gameModel.getPlayers().get(0).getAssistants().size(); i++) if(this.gameModel.getPlayers().get(0).getAssistants().get(i) != null) assistantsEmpty = false;
+
+            if (this.gameModel.getPlayers().stream().anyMatch(player -> player.getSchoolBoard().getTowersNumber() == 0)) {
+                ended = true;
+                for (Player player : this.gameModel.getPlayers())
+                    if (player.getSchoolBoard().getTowersNumber() == 0) winners.add(player);
+            } else if ((this.gameModel.getGameBoard().getIslands().size() == 3) || (this.gameModel.getCurrentPlayer().equals(this.gameModel.getTurnOrder().get(this.expectedPlayers - 1)) && (this.gameModel.getGameBoard().getBag().isEmpty() || assistantsEmpty))) {
+                ended = true;
+                winners = checkForWinners();
+            }
+
+            if (ended) notifyUsers(MessageCreator.win(winners));
         }
-        if (ended) notifyUsers(MessageCreator.win(winners));
     }
 
     /**
@@ -841,17 +863,23 @@ public class GameController extends Thread {
         }
         int min = Collections.min(numTowerPlayers.values());
         List<Player> possibleWinners = numTowerPlayers.entrySet().stream().filter(entry -> entry.getValue() == min).map(Map.Entry::getKey).toList();
+
         if (possibleWinners.size() == 1 || (possibleWinners.size() == 2 && possibleWinners.get(0).getSchoolBoard().getTowerType().equals(possibleWinners.get(1).getSchoolBoard().getTowerType()))) {
             winners.addAll(possibleWinners);
         } else {
             Map<Player, Integer> numProfessorsPlayers = new HashMap<>();
             Player player;
+
             for (HouseColor color : HouseColor.values()) {
-                player = this.gameModel.getGameBoard().getProfessors().get(color);
-                numProfessorsPlayers.put(player, numProfessorsPlayers.containsKey(player) ? numProfessorsPlayers.get(player) + 1 : 1);
+                if(this.gameModel.getGameBoard().getProfessors().get(color) != null){
+                    player = this.gameModel.getGameBoard().getProfessors().get(color);
+                    numProfessorsPlayers.put(player, numProfessorsPlayers.containsKey(player) ? numProfessorsPlayers.get(player) + 1 : 1);
+                }
             }
             int max = Collections.max(numProfessorsPlayers.values());
+
             possibleWinners = numProfessorsPlayers.entrySet().stream().filter(entry -> entry.getValue() == max).map(Map.Entry::getKey).toList();
+
             if (possibleWinners.size() == 1 || (possibleWinners.size() == 2 && possibleWinners.get(0).getSchoolBoard().getTowerType().equals(possibleWinners.get(1).getSchoolBoard().getTowerType()))) {
                 winners.addAll(possibleWinners);
             }

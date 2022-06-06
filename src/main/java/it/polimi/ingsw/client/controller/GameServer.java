@@ -80,6 +80,7 @@ public class GameServer extends Thread {
     public void manageMessage(JsonObject incomingMessage) {
         switch (incomingMessage.get("type").getAsString()) {
             case "ping" -> {
+                //Log.debug(incomingMessage.get("type").getAsString());
             }
             case "gameCreation" -> {
                 Log.debug("gameCreation reply");
@@ -118,7 +119,7 @@ public class GameServer extends Thread {
             }
 
             case "error" -> {
-                Log.debug("Error message arrived");
+                Log.debug("Error message arrived: " + incomingMessage.get("message").getAsString());
                 this.manageError(incomingMessage);
             }
         }
@@ -251,10 +252,11 @@ public class GameServer extends Thread {
      * @param message The message.
      */
     private void manageEndGame(JsonObject message) {
-        JsonArray winners = message.get("winners").getAsJsonArray();
+        JsonArray winners;
         synchronized (this.client.getLock()) {
-            if (winners.isJsonNull()) this.client.setEndState(EndType.DRAW);
+            if (message.get("winners") instanceof JsonNull) this.client.setEndState(EndType.DRAW);
             else {
+                winners = message.get("winners").getAsJsonArray();
                 for (JsonElement player : winners) {
                     if (player.getAsString().equals(this.client.getUserName())) {
                         this.client.setEndState(EndType.WON);
