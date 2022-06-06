@@ -330,4 +330,26 @@ public class GameBoardTest {
             System.out.println("Illegal move.");
         }
     }
+
+    /**
+     * Tests if two game boards of the same players number and difficulty are different.
+     */
+    @Test
+    void gameBoardsEquals() {
+        GameBoard sampleGameBoard = new GameBoard(4, true);
+        this.gameBoard = new GameBoard(4, true);
+
+        assertNotEquals(sampleGameBoard, gameBoard);
+    }
+
+    /**
+     * Tests if two game boards of the same players number and difficulty have different hash codes.
+     */
+    @Test
+    void gameBoardsHash() {
+        GameBoard sampleGameBoard = new GameBoard(4, true);
+        this.gameBoard = new GameBoard(4, true);
+
+        assertNotEquals(sampleGameBoard.hashCode(), gameBoard.hashCode());
+    }
 }

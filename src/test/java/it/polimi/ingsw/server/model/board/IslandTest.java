@@ -140,4 +140,45 @@ public class IslandTest {
         island.removeBan();
         assertFalse(island.isBanned());
     }
+
+    /**
+     * Tests if the island restore is performed correctly.
+     */
+    @Test
+    void restoreIsland() {
+        Map<HouseColor, Integer> sampleContainedStudents = new EnumMap<>(HouseColor.class);
+        for(HouseColor color : HouseColor.values()) sampleContainedStudents.put(color, 4);
+        int sampleId = 4;
+        int sampleSize = 4;
+        boolean sampleBan = true;
+        TowerType sampleTower = TowerType.WHITE;
+
+        Island sampleIsland = new Island(sampleContainedStudents, sampleId, sampleSize, sampleBan, sampleTower);
+
+        assertEquals(sampleContainedStudents, sampleIsland.getStudents());
+        assertEquals(sampleId, sampleIsland.getId());
+        assertEquals(sampleSize, sampleIsland.getSize());
+        assertEquals(sampleBan, sampleIsland.isBanned());
+        assertEquals(sampleTower, sampleIsland.getTower());
+    }
+
+    /**
+     * Tests if two identical islands are identified correctly.
+     */
+    @Test
+    void islandsEquals() {
+        Island sampleIsland = new Island(HouseColor.BLUE ,1);
+        sampleIsland.setTower(TowerType.WHITE);
+        island.setTower(TowerType.WHITE);
+        assertEquals(island, sampleIsland);
+    }
+
+    /**
+     * Tests if two identical islands have the same hash code.
+     */
+    @Test
+    void islandsHash() {
+        Island sampleIsland = new Island(HouseColor.BLUE ,1);
+        assertEquals(sampleIsland.hashCode(), island.hashCode());
+    }
 }
