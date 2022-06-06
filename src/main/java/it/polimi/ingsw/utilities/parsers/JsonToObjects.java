@@ -186,7 +186,8 @@ public class JsonToObjects {
                     specialCharacter.get("paidInRound").getAsBoolean(),
                     specialCharacter.get("active").getAsBoolean(),
                     specialCharacter.has("containedStudents") ? parseStudents(specialCharacter.get("containedStudents").getAsJsonObject()) : null,
-                    specialCharacter.has("availableBans") ? specialCharacter.get("availableBans").getAsInt() : 0
+                    specialCharacter.has("availableBans") ? specialCharacter.get("availableBans").getAsInt() : 0,
+                    specialCharacter.get("usesNumber").getAsInt()
             ));
         }
         return specialCharactersList;

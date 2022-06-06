@@ -3,6 +3,8 @@ package it.polimi.ingsw.server.controller;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import it.polimi.ingsw.server.Server;
+import it.polimi.ingsw.server.model.board.SpecialCharacter;
+import it.polimi.ingsw.utilities.HouseColor;
 import it.polimi.ingsw.utilities.Log;
 import it.polimi.ingsw.utilities.MessageCreator;
 import it.polimi.ingsw.utilities.exceptions.FullGameException;
@@ -14,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Locale;
 
 /**
  * The entity containing the tcp connection socket of the client connected to the game server and its input and output streams.
@@ -77,14 +80,14 @@ public class User extends Thread {
 
         while (true) {
             synchronized (connectedLock) {
-                if (!connected)
-                    break;
+                if (!connected) break;
             }
 
             try {
                 incomingMessage = getCommand();
                 if (!incomingMessage.get("type").getAsString().equals("pong") && !incomingMessage.get("type").getAsString().equals("error"))
                     manageCommand(incomingMessage);
+
                 if (this.gameController != null && !this.gameController.isFull() && this.isLogged() && !this.gameController.isEnded()) {
                     synchronized (connectedLock) {
                         try {
@@ -94,7 +97,7 @@ public class User extends Thread {
                         }
                     }
                     this.sendMessage(MessageCreator.waitingRoomUpdate(this.gameController));
-                    Log.debug("waiting room message sent.");
+                    // Log.debug("waiting room message sent.");
                 }
             } catch (Exception e) {
                 // If socket time out expires.
@@ -163,6 +166,27 @@ public class User extends Thread {
                 removeFromGame();
             }
             case "command" -> {
+                if (gameController.getGameModel().isExpert() && ((command.get("subtype").getAsString().equals("ban")) || (command.get("special") != null && command.get("special").getAsBoolean()) || (command.get("move") != null && !command.get("move").getAsBoolean()))) {
+                    SpecialCharacter specialCharacter = null;
+                    for (SpecialCharacter sc : gameController.getGameModel().getGameBoard().getCharacters()) {
+                        if (sc.isActive()) {
+                            specialCharacter = sc;
+                            break;
+                        }
+                    }
+                    if (specialCharacter == null) disconnected();
+
+                    switch (specialCharacter.getId()) {
+                        case 1, 3, 5, 11, 12 -> {
+                            if (specialCharacter.getUsesNumber() > 0) throw new IllegalMoveException();
+                            specialCharacter.increaseUsesNumber();
+                        }
+                        case 7, 10 -> {
+                            if (specialCharacter.getUsesNumber() > 6) throw new IllegalMoveException();
+                            specialCharacter.increaseUsesNumber();
+                        }
+                    }
+                }
                 switch (command.get("subtype").getAsString()) {
                     case "playAssistant" -> {
                         Log.debug("PlayAssistant command arrived.");
@@ -172,13 +196,18 @@ public class User extends Thread {
                     case "move" -> {
                         switch (command.get("pawn").getAsString()) {
                             case "student" -> this.gameController.moveStudent(command);
-                            case "motherNature" -> this.gameController.moveMotherNature(command.get("island").getAsInt());
+                            case "motherNature" ->
+                                    this.gameController.moveMotherNature(command.get("island").getAsInt(), command.get("move").getAsBoolean());
 
                         }
                     }
                     case "ban" -> this.gameController.setBan(command.get("island").getAsInt());
                     case "pay" -> this.gameController.paySpecialCharacter(command);
                     case "refill" -> this.gameController.chooseCloud(command);
+                    case "ignore" ->
+                            this.gameController.setIgnoredColor(HouseColor.valueOf(command.get("color").getAsString().toUpperCase(Locale.ROOT)));
+                    case "return" ->
+                            this.gameController.returnStudents(HouseColor.valueOf(command.get("color").getAsString().toUpperCase(Locale.ROOT)));
                 }
             }
             default -> disconnected();

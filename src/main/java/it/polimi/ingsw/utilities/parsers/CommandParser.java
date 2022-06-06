@@ -60,10 +60,10 @@ public class CommandParser {
             case 2 -> {
                 if (Pattern.matches("(info|play|ban|resolve)\s(isl|ast)\\d\\d", command)) return true;
                 else if (Pattern.matches("(info|pay)\schr\\d\\d", command)) return true;
-                else return Pattern.matches("ignored\s(blue|fuchsia|green|red|yellow)", command);
+                else return Pattern.matches("ignore\s(blue|fuchsia|green|red|yellow)", command);
             }
             case 3 -> {
-                if (Pattern.matches("take\schr-\\d\\d-students\s(blue|fuchsia|green|red|yellow)", command)) return true;
+                if (Pattern.matches("take\schr\\d\\d-student\s(blue|fuchsia|green|red|yellow)", command)) return true;
                 else return Pattern.matches("return\sstudents\s(blue|fuchsia|green|red|yellow)", command);
             }
             case 4 -> {
@@ -146,12 +146,12 @@ public class CommandParser {
             case "pay" ->
                     List.of(MessageCreator.payCharacter(playerName, Integer.parseInt(parsedCommand[1].replaceAll("\\D", ""))));
             case "resolve" ->
-                    List.of(MessageCreator.moveMotherNature(Integer.parseInt(parsedCommand[3].replaceAll("\\D", "")), false));
+                    List.of(MessageCreator.moveMotherNature(Integer.parseInt(parsedCommand[1].replaceAll("\\D", "")) - 1, false));
             case "ignore" -> List.of(MessageCreator.ignoreColor(parsedCommand[1]));
             case "swap" -> manageSwap(command, playerName);
-            case "ban" -> List.of(MessageCreator.ban(Integer.parseInt(parsedCommand[1].replaceAll("\\D", ""))));
+            case "ban" -> List.of(MessageCreator.ban(Integer.parseInt(parsedCommand[1].replaceAll("\\D", "")) - 1));
             case "take" ->
-                    List.of(MessageCreator.moveStudent(playerName, HouseColor.valueOf(parsedCommand[2].toUpperCase(Locale.ROOT)), "card", "dining-room", Integer.parseInt(parsedCommand[1].replaceAll("\\D", "")), null));
+                    List.of(MessageCreator.moveStudent(playerName, HouseColor.valueOf(parsedCommand[2].toUpperCase(Locale.ROOT)), "card", "dining-room", Integer.parseInt(parsedCommand[1].replaceAll("\\D", "")), null, true));
             default -> List.of(MessageCreator.returnColor(parsedCommand[2]));
         };
     }
@@ -187,12 +187,14 @@ public class CommandParser {
             String fromId = null;
             String to;
             String toId = null;
+            boolean special = false;
 
             color = parsedCommand[2];
             tmp = parsedCommand[4];
             if (tmp.equals("entrance")) from = parsedCommand[4];
             else {
-                from = "character";
+                from = "card";
+                special = true;
                 fromId = parsedCommand[4].replaceAll("\\D", "");
             }
 
@@ -203,7 +205,7 @@ public class CommandParser {
                 toId = parsedCommand[6].replaceAll("\\D", "");
             }
 
-            return MessageCreator.moveStudent(playerName, HouseColor.valueOf(color.toUpperCase(Locale.ROOT)), from, to, fromId == null ? null : Integer.parseInt(fromId) - 1, toId == null ? null : Integer.parseInt(toId) - 1);
+            return MessageCreator.moveStudent(playerName, HouseColor.valueOf(color.toUpperCase(Locale.ROOT)), from, to, fromId == null ? null : Integer.parseInt(fromId), toId == null ? null : (Integer.parseInt(toId) - 1), special);
         } else {
             //Move Mother Nature
             return MessageCreator.moveMotherNature(Integer.parseInt(parsedCommand[3].replaceAll("\\D", "")) - 1, true);
@@ -221,11 +223,12 @@ public class CommandParser {
         List<JsonObject> messages = new ArrayList<>();
         String[] parsedCommand = command.split(" ");
         if (command.contains("chr") && command.contains("entrance")) {
-            messages.add(MessageCreator.moveStudent(playerName, HouseColor.valueOf(parsedCommand[(parsedCommand[1].startsWith("chr")) ? 5 : 2].toUpperCase(Locale.ROOT)), "entrance", "card", null, Integer.parseInt(command.replaceAll("\\D", ""))));
-            messages.add(MessageCreator.moveStudent(playerName, HouseColor.valueOf(parsedCommand[(parsedCommand[1].startsWith("chr")) ? 2 : 5].toUpperCase(Locale.ROOT)), "card", "entrance", Integer.parseInt(command.replaceAll("\\D", "")), null));
+            messages.add(MessageCreator.moveStudent(playerName, HouseColor.valueOf(parsedCommand[(parsedCommand[1].startsWith("chr")) ? 2 : 5].toUpperCase(Locale.ROOT)), "card", "entrance", Integer.parseInt(command.replaceAll("\\D", "")), null, true));
+            messages.add(MessageCreator.moveStudent(playerName, HouseColor.valueOf(parsedCommand[(parsedCommand[1].startsWith("chr")) ? 5 : 2].toUpperCase(Locale.ROOT)), "entrance", "card", null, Integer.parseInt(command.replaceAll("\\D", "")), true));
+
         } else {
-            messages.add(MessageCreator.moveStudent(playerName, HouseColor.valueOf(parsedCommand[(parsedCommand[1].startsWith("entrance")) ? 2 : 5].toUpperCase(Locale.ROOT)), "entrance", "dining-room", null, null));
-            messages.add(MessageCreator.moveStudent(playerName, HouseColor.valueOf(parsedCommand[(parsedCommand[1].startsWith("entrance")) ? 5 : 2].toUpperCase(Locale.ROOT)), "dining-room", "entrance", null, null));
+            messages.add(MessageCreator.moveStudent(playerName, HouseColor.valueOf(parsedCommand[(parsedCommand[1].startsWith("entrance")) ? 5 : 2].toUpperCase(Locale.ROOT)), "dining-room", "entrance", null, null, true));
+            messages.add(MessageCreator.moveStudent(playerName, HouseColor.valueOf(parsedCommand[(parsedCommand[1].startsWith("entrance")) ? 2 : 5].toUpperCase(Locale.ROOT)), "entrance", "dining-room", null, null, true));
         }
         return messages;
     }

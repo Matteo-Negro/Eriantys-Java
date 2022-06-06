@@ -123,16 +123,18 @@ public class GameBoard {
             boolean alreadyPaid = character.getAsJsonObject().get("alreadyPaid").getAsBoolean();
             boolean paidInRound = character.getAsJsonObject().get("paidInRound").getAsBoolean();
             boolean active = character.getAsJsonObject().get("active").getAsBoolean();
+            int usesNumber = character.getAsJsonObject().get("usesNumber").getAsInt();
             switch (id) {
                 case 1, 7, 11 -> {
                     JsonObject containedStudents = character.getAsJsonObject().get("containedStudents").getAsJsonObject();
-                    this.specialCharacters.add(new SpecialCharacter(id, active, alreadyPaid, paidInRound, containedStudents, null, cost));
+                    this.specialCharacters.add(new SpecialCharacter(id, active, alreadyPaid, paidInRound, containedStudents, null, cost, usesNumber));
                 }
                 case 5 -> {
                     Integer availableBans = character.getAsJsonObject().get("availableBans").getAsInt();
-                    this.specialCharacters.add(new SpecialCharacter(id, active, alreadyPaid, paidInRound, null, availableBans, cost));
+                    this.specialCharacters.add(new SpecialCharacter(id, active, alreadyPaid, paidInRound, null, availableBans, cost, usesNumber));
                 }
-                default -> this.specialCharacters.add(new SpecialCharacter(id, active, alreadyPaid, paidInRound, null, null, cost));
+                default ->
+                        this.specialCharacters.add(new SpecialCharacter(id, active, alreadyPaid, paidInRound, null, null, cost, usesNumber));
             }
         }
     }

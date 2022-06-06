@@ -45,46 +45,10 @@ class SpecialCharacterTest {
     void constructorsTest() {
         Map<HouseColor, Integer> students = new EnumMap<>(HouseColor.class);
 
-        equals(new SpecialCharacter(1, students),
-                new SpecialCharacter(
-                        1,
-                        1,
-                        false,
-                        false,
-                        false,
-                        students,
-                        0
-                ));
-        equals(new SpecialCharacter(5, students),
-                new SpecialCharacter(
-                        5,
-                        2,
-                        false,
-                        false,
-                        false,
-                        students,
-                        4
-                ));
-        equals(new SpecialCharacter(7, students),
-                new SpecialCharacter(
-                        7,
-                        1,
-                        false,
-                        false,
-                        false,
-                        students,
-                        0
-                ));
-        equals(new SpecialCharacter(11, students),
-                new SpecialCharacter(
-                        11,
-                        2,
-                        false,
-                        false,
-                        false,
-                        students,
-                        0
-                ));
+        equals(new SpecialCharacter(1, students), new SpecialCharacter(1, 1, false, false, false, students, 0, 0));
+        equals(new SpecialCharacter(5, students), new SpecialCharacter(5, 2, false, false, false, students, 4, 0));
+        equals(new SpecialCharacter(7, students), new SpecialCharacter(7, 1, false, false, false, students, 0, 0));
+        equals(new SpecialCharacter(11, students), new SpecialCharacter(11, 2, false, false, false, students, 0, 0));
         for (int index = 1; index <= 12; index++)
             equals(index);
         try {

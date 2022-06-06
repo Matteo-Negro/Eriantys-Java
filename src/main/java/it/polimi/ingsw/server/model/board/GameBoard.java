@@ -56,8 +56,8 @@ public class GameBoard {
 
         if (isExp) {
             for (int i = 1; i <= 12; i++) randomVector.add(i);
-
             Collections.shuffle(randomVector);
+
             for (int i = 0; i < 3; i++) {
 
                 Map<HouseColor, Integer> students = new EnumMap<>(HouseColor.class);
@@ -153,11 +153,11 @@ public class GameBoard {
         int runDistance = 1;
         try {
             Island nextIsland = getIslandById((this.motherNatureIsland.getId() + this.motherNatureIsland.getSize()) % 12);
-            while(nextIsland.getId() != targetIsland.getId()){
+            while (nextIsland.getId() != targetIsland.getId()) {
                 nextIsland = getIslandById((nextIsland.getId() + nextIsland.getSize()) % 12);
-                runDistance ++;
+                runDistance++;
             }
-        }catch(IslandNotFoundException infe){
+        } catch (IslandNotFoundException infe) {
             throw new IllegalMoveException();
         }
 
@@ -275,10 +275,7 @@ public class GameBoard {
                     int nextId = (i + 1) % islandsSize;
                     Island nextIsland = islands.get(nextId);
 
-                    if (currentIsland.getId() != nextIsland.getId() &&
-                            currentIsland.getTower() != null &&
-                            nextIsland.getTower() != null &&
-                            currentIsland.getTower().equals(nextIsland.getTower())) {
+                    if (currentIsland.getId() != nextIsland.getId() && currentIsland.getTower() != null && nextIsland.getTower() != null && currentIsland.getTower().equals(nextIsland.getTower())) {
                         merge(currentIsland, nextIsland);
                         mergeDone = true;
                         break;
@@ -298,15 +295,13 @@ public class GameBoard {
      */
     private void merge(Island leftIsland, Island rightIsland) {
         leftIsland.setSize(leftIsland.getSize() + rightIsland.getSize());
-        if (rightIsland.isBanned())
-            leftIsland.setBan();
+        if (rightIsland.isBanned()) leftIsland.setBan();
         Map<HouseColor, Integer> rightStudents = rightIsland.getStudents();
 
         for (Map.Entry<HouseColor, Integer> color : rightStudents.entrySet())
             for (int i = 0; i < color.getValue(); i++)
                 leftIsland.addStudent(color.getKey());
-        if (getMotherNatureIsland().getId() == rightIsland.getId())
-            this.motherNatureIsland = leftIsland;
+        if (getMotherNatureIsland().getId() == rightIsland.getId()) this.motherNatureIsland = leftIsland;
         this.islands.remove(rightIsland);
 
     }
@@ -430,10 +425,10 @@ public class GameBoard {
      * @param o Object to compare.
      * @return true if the two objects are the same.
      */
-    public boolean equals(Object o){
-        if(this == o) return true;
+    public boolean equals(Object o) {
+        if (this == o) return true;
 
-        if(o == null || o.getClass()!=this.getClass()) return false;
+        if (o == null || o.getClass() != this.getClass()) return false;
 
         GameBoard that = (GameBoard) o;
         return this.bag.equals(that.bag) && this.clouds.equals(that.clouds) && this.islands.equals(that.islands) && this.professors.equals(that.professors) && this.playedAssistants.equals(that.playedAssistants) && this.influenceBonus.equals(that.influenceBonus) && this.tieWinner.equals(that.tieWinner) && this.characters.equals(that.characters) && this.ignoreColor.equals(that.ignoreColor) && this.motherNatureIsland.equals(that.motherNatureIsland);

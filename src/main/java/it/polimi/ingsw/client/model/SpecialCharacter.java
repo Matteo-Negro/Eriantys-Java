@@ -22,6 +22,7 @@ public class SpecialCharacter {
     private boolean alreadyPaid;
     private boolean paidInRound;
     private Integer availableBans;
+    private Integer usesNumber;
 
     /**
      * Class constructor.
@@ -34,7 +35,7 @@ public class SpecialCharacter {
      * @param availableBans Number of ban marker available.
      * @param cost          Price to activate the effect.
      */
-    public SpecialCharacter(int id, boolean active, boolean alreadyPaid, boolean paidInRound, JsonObject students, Integer availableBans, int cost) {
+    public SpecialCharacter(int id, boolean active, boolean alreadyPaid, boolean paidInRound, JsonObject students, Integer availableBans, int cost, int usesNumber) {
         this.id = id;
         this.active = active;
         this.alreadyPaid = alreadyPaid;
@@ -42,7 +43,24 @@ public class SpecialCharacter {
         this.availableBans = availableBans;
         this.cost = cost;
         this.students = null;
-        if(students!=null) this.students = JsonToObjects.parseStudents(students);
+        this.usesNumber = usesNumber;
+        if (students != null) this.students = JsonToObjects.parseStudents(students);
+    }
+
+    /**
+     * Increase the counter of uses of the card.
+     */
+    public void increaseUsesNumber() {
+        this.usesNumber += 1;
+    }
+
+    /**
+     * Tells the number of uses of the card in this turn.
+     *
+     * @return The number of uses of the card in this turn.
+     */
+    public Integer getUsesNumber() {
+        return this.usesNumber;
     }
 
     /**
@@ -78,7 +96,7 @@ public class SpecialCharacter {
      * @return students attribute.
      */
     public Map<HouseColor, Integer> getStudents() {
-        if(this.students!=null) return new EnumMap<>(this.students);
+        if (this.students != null) return new EnumMap<>(this.students);
         return null;
     }
 
@@ -96,7 +114,7 @@ public class SpecialCharacter {
      *
      * @return The paidInRound attribute.
      */
-    public boolean isPaidInRound(){
+    public boolean isPaidInRound() {
         return this.paidInRound;
     }
 

@@ -297,7 +297,7 @@ public class MessageCreator {
      * @param toId   The final island's id (null if the move doesn't involve islands or characters).
      * @return JsonObject which represents the message.
      */
-    public static JsonObject moveStudent(String player, HouseColor color, String from, String to, Integer fromId, Integer toId) {
+    public static JsonObject moveStudent(String player, HouseColor color, String from, String to, Integer fromId, Integer toId, boolean special) {
         JsonObject command = new JsonObject();
         command.addProperty("type", "command");
         command.addProperty("subtype", "move");
@@ -310,6 +310,7 @@ public class MessageCreator {
         else command.addProperty("fromId", fromId);
         if (toId == null) command.add("toId", JsonNull.INSTANCE);
         else command.addProperty("toId", toId);
+        command.addProperty("special", special);
 
         return command;
     }

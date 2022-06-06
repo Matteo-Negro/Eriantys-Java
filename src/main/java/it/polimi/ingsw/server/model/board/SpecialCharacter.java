@@ -19,8 +19,10 @@ public class SpecialCharacter {
     private final int effectCost;
     private final Effect assignedEffect;
     private boolean alreadyPaid;
+    private boolean firstTime;
     private boolean paidInRound;
     private boolean isActive;
+    private int usesNumber;
 
     /**
      * Class constructor.
@@ -34,6 +36,8 @@ public class SpecialCharacter {
         isActive = false;
         alreadyPaid = false;
         paidInRound = false;
+        firstTime = true;
+        usesNumber = 0;
         assignedEffect = getEffectBy(id, students, 4);
         effectCost = assignedEffect.getCost();
 
@@ -48,15 +52,17 @@ public class SpecialCharacter {
      * @param statusAlreadyPaid True if the special character has already been paid, and it's effect has already been activated during this game.
      * @param statusPaidInRound True if the special character has already been paid, and it's effect has already been activated during this round.
      * @param statusIsActive    True if the special character's effect is active.
+     * @param usesNumber        The number of uses.
      */
-    public SpecialCharacter(int statusId, int statusEffectCost, boolean statusAlreadyPaid, boolean statusPaidInRound, boolean statusIsActive, Map<HouseColor, Integer> statusStudents, int bans) {
-
+    public SpecialCharacter(int statusId, int statusEffectCost, boolean statusAlreadyPaid, boolean statusPaidInRound, boolean statusIsActive, Map<HouseColor, Integer> statusStudents, int bans, int usesNumber) {
         this.id = statusId;
         this.effectCost = statusEffectCost;
         this.assignedEffect = getEffectBy(statusId, statusStudents, bans);
         this.alreadyPaid = statusAlreadyPaid;
+        this.firstTime = !this.alreadyPaid;
         this.paidInRound = statusPaidInRound;
         this.isActive = statusIsActive;
+        this.usesNumber = usesNumber;
 
         Log.info("*** Saved SpecialCharacter successfully restored with id: " + statusId);
     }
@@ -100,10 +106,10 @@ public class SpecialCharacter {
      * @return effectCost or effectCost+1 attribute
      */
     public int getEffectCost() {
-
-        if (alreadyPaid) return effectCost + 1;
-
-        else return effectCost;
+        if (alreadyPaid && firstTime) {
+            firstTime = false;
+            return effectCost + 1;
+        } else return effectCost;
 
     }
 
@@ -130,6 +136,7 @@ public class SpecialCharacter {
      */
     public void cleanEffect() {
         isActive = false;
+        usesNumber = 0;
     }
 
     /**
@@ -164,6 +171,22 @@ public class SpecialCharacter {
      */
     public boolean isActive() {
         return isActive;
+    }
+
+    /**
+     * Tells the number of uses of the card in this turn.
+     *
+     * @return The number of uses of the card in this turn.
+     */
+    public Integer getUsesNumber() {
+        return this.usesNumber;
+    }
+
+    /**
+     * Increase the counter of uses of the card.
+     */
+    public void increaseUsesNumber() {
+        usesNumber += 1;
     }
 
     /**

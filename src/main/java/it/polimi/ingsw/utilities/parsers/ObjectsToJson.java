@@ -246,6 +246,7 @@ public enum ObjectsToJson {
         object.addProperty("alreadyPaid", specialCharacter.isAlreadyPaid());
         object.addProperty("paidInRound", specialCharacter.isPaidInRound());
         object.addProperty("active", specialCharacter.isActive());
+        object.addProperty("usesNumber", specialCharacter.getUsesNumber());
         switch (specialCharacter.getEffect().getId()) {
             case 1 ->
                     object.add(containedStudents, parseStudents(((MonkEffect) specialCharacter.getEffect()).getStudents()));

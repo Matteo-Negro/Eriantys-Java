@@ -109,7 +109,7 @@ public class SchoolBoard {
      * @param students Students to add.
      */
     public void addToEntrance(Map<HouseColor, Integer> students) {
-        for (HouseColor color : HouseColor.values())
+        for (HouseColor color : students.keySet())
             entrance.replace(color, entrance.get(color) + students.get(color));
     }
 

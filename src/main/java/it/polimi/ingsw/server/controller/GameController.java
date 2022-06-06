@@ -41,7 +41,6 @@ public class GameController extends Thread {
     private int round;
     private Phase phase;
     private GameControllerStates subPhase;
-    private boolean movementEffectActive;
     private String activeUser;
     private boolean initialized;
     private boolean ended;
@@ -68,7 +67,6 @@ public class GameController extends Thread {
         this.isFullLock = new Object();
         this.actionNeededLock = new Object();
         this.subPhase = GameControllerStates.PLAY_ASSISTANT;
-        this.movementEffectActive = false;
         this.activeUser = null;
         this.initialized = false;
         this.ended = false;
@@ -106,7 +104,6 @@ public class GameController extends Thread {
         this.isFullLock = new Object();
         this.actionNeededLock = new Object();
         this.subPhase = GameControllerStates.valueOf(subPhase);
-        this.movementEffectActive = false;
         this.activeUser = null;
         this.initialized = true;
         this.ended = false;
@@ -239,15 +236,6 @@ public class GameController extends Thread {
     }
 
     /**
-     * This method is used in order to check if a special character, with a movement effect, has been paid and is now active during this turn.
-     *
-     * @return The boolean value stored into the movementEffectActive attribute.
-     */
-    public boolean isMovementEffectActive() {
-        return this.movementEffectActive;
-    }
-
-    /**
      * This method adds user to the data structures that contains the online users.
      *
      * @param name The name of the user that will be added.
@@ -359,10 +347,8 @@ public class GameController extends Thread {
                 this.getGameModel().nextRound();
                 initialized = true;
             }
-            if (this.getPhase() == Phase.PLANNING)
-                this.planningPhase();
-            else
-                this.actionPhase();
+            if (this.getPhase() == Phase.PLANNING) this.planningPhase();
+            else this.actionPhase();
         }
         for (User user : this.getUsers()) {
             this.removeUser(user);
@@ -456,7 +442,7 @@ public class GameController extends Thread {
             synchronized (this.actionNeededLock) {
                 try {
                     this.actionNeededLock.wait();
-                    if(isEnded()) return;
+                    if (isEnded()) return;
                     saveGame();
                     notifyUsers(MessageCreator.status(this));
                 } catch (InterruptedException ie) {
@@ -546,7 +532,7 @@ public class GameController extends Thread {
             case "entrance" -> {
                 this.gameModel.getPlayerByName(command.get("player").getAsString()).getSchoolBoard().removeFromEntrance(HouseColor.valueOf(command.get("color").getAsString()));
 
-                if (!isMovementEffectActive()) {
+                if (!command.get("special").getAsBoolean()) {
                     switch (this.getSubPhase()) {
                         case MOVE_STUDENT_1 -> this.setSubPhase(GameControllerStates.MOVE_STUDENT_2);
 
@@ -610,7 +596,8 @@ public class GameController extends Thread {
                     }
                 }
             }
-            case "bag" -> this.gameModel.getGameBoard().getBag().push(HouseColor.valueOf(command.get("color").getAsString()));
+            case "bag" ->
+                    this.gameModel.getGameBoard().getBag().push(HouseColor.valueOf(command.get("color").getAsString()));
             case "island" -> {
                 try {
                     this.gameModel.getGameBoard().getIslandById(command.get("toId").getAsInt()).addStudent(HouseColor.valueOf(command.get("color").getAsString()));
@@ -636,7 +623,12 @@ public class GameController extends Thread {
                     }
                 }
                 if (!check) throw new IllegalMoveException();
+            }
+            case "entrance" -> {
+                Map<HouseColor, Integer> tmp = new EnumMap<>(HouseColor.class);
+                tmp.put(HouseColor.valueOf(command.get("color").getAsString().toUpperCase(Locale.ROOT)), 1);
 
+                this.gameModel.getCurrentPlayer().getSchoolBoard().addToEntrance(tmp);
             }
             default -> throw new IllegalMoveException();
         }
@@ -647,15 +639,15 @@ public class GameController extends Thread {
      *
      * @param idIsland The id of the island where mother nature will be set.
      */
-    public void moveMotherNature(int idIsland) throws IllegalMoveException {
+    public void moveMotherNature(int idIsland, boolean move) throws IllegalMoveException {
         Island targetIsland;
 
         try {
             targetIsland = this.gameModel.getGameBoard().getIslandById(idIsland);
-
-            this.gameModel.getGameBoard().moveMotherNature(targetIsland, this.gameModel.getGameBoard().getPlayedAssistants().get(this.gameModel.getCurrentPlayer()));
-
-            this.setSubPhase(GameControllerStates.CHOOSE_CLOUD);
+            if (move) {
+                this.gameModel.getGameBoard().moveMotherNature(targetIsland, this.gameModel.getGameBoard().getPlayedAssistants().get(this.gameModel.getCurrentPlayer()));
+                this.setSubPhase(GameControllerStates.CHOOSE_CLOUD);
+            }
         } catch (IslandNotFoundException e) {
             Log.warning(e);
             throw new IllegalMoveException();
@@ -696,7 +688,6 @@ public class GameController extends Thread {
 
             if (max > 0) {
                 List<Player> mostInfluential = influence.entrySet().stream().filter(entry -> entry.getValue() == max).map(Map.Entry::getKey).toList();
-
                 if (mostInfluential.size() == 1 || (mostInfluential.size() == 2 && mostInfluential.get(0).getSchoolBoard().getTowerType().equals(mostInfluential.get(1).getSchoolBoard().getTowerType()))) {
                     if (island.getTower() == null) {
                         try {
@@ -758,56 +749,52 @@ public class GameController extends Thread {
      * @param command The json that contains all the information of the special character that will be paid.
      */
     public void paySpecialCharacter(JsonObject command) throws IllegalMoveException {
-
-        boolean characterAlreadyPaid = false;
-        for (SpecialCharacter c : this.getGameModel().getGameBoard().getCharacters()) {
-            if (c.isActive()) {
-                characterAlreadyPaid = true;
-                break;
+        boolean characterAlreadyPlayed = false;
+        try {
+            for (SpecialCharacter c : this.getGameModel().getGameBoard().getCharacters()) {
+                if (c.isActive()) {
+                    characterAlreadyPlayed = true;
+                    break;
+                }
             }
+        } catch (Exception e) {
+            Log.warning(e);
         }
-        if (characterAlreadyPaid) throw new IllegalMoveException();
+        if (characterAlreadyPlayed) throw new IllegalMoveException();
 
         int character = command.get("character").getAsInt();
-        this.gameModel.getGameBoard().getCharacters().get(character).activateEffect();
         try {
-            this.getGameModel().getPlayerByName(command.get("player").getAsString()).paySpecialCharacter(this.getGameModel().getGameBoard().getCharacters().get(character));
-        } catch (NotEnoughCoinsException | NullPointerException ne) {
+            SpecialCharacter param = null;
+            for (SpecialCharacter c : this.getGameModel().getGameBoard().getCharacters())
+                if (c.getId() == command.get("character").getAsInt()) {
+                    param = c;
+                    break;
+                }
+            if (param == null) throw new IllegalMoveException();
+            this.getGameModel().getPlayerByName(command.get("player").getAsString()).paySpecialCharacter(param);
+        } catch (Exception e) {
+            Log.warning(e);
             throw new IllegalMoveException();
         }
 
         try {
             switch (character) {
-                case 1, 7, 10, 11 -> this.movementEffectActive = true;
-                case 2 -> this.getGameModel().getGameBoard().setTieWinner(this.getGameModel().getPlayerByName(command.get("player").getAsString()));
-                case 3 -> this.getGameModel().getGameBoard().getInfluence(this.getGameModel().getGameBoard().getIslandById(command.get("island").getAsInt()));
-                case 4 -> this.getGameModel().getGameBoard().getAssistant(this.getGameModel().getPlayerByName(command.get("player").getAsString())).setBonus();
-                case 5 -> {
-                    this.getGameModel().getGameBoard().getIslandById(command.get("island").getAsInt()).setBan();
-                    ((HerbalistEffect) this.getGameModel().getGameBoard().getCharacters().get(character).getEffect()).effect(HerbalistEffect.Action.TAKE);
+                case 2 -> {
+                    this.getGameModel().getGameBoard().setTieWinner(this.getGameModel().getPlayerByName(command.get("player").getAsString()));
+                    Arrays.stream(HouseColor.values()).forEach(color -> {
+                        if (this.gameModel.getGameBoard().getProfessors().get(color) != null)
+                            checkProfessor(String.valueOf(color), this.gameModel.getCurrentPlayer().getName());
+                    });
                 }
-                case 6 -> {
-                }//Automatically managed by model.
-                case 8 -> this.getGameModel().getGameBoard().setInfluenceBonus(this.getGameModel().getPlayerByName(command.get("player").getAsString()));
-                case 9 -> this.getGameModel().getGameBoard().setIgnoreColor(HouseColor.valueOf(command.get("ignoreColor").getAsString()));
-                case 12 -> {
-                    for (Player p : this.getGameModel().getPlayers()) {
-                        for (int i = 0; i < 3; i++) {
-                            try {
-                                p.getSchoolBoard().removeFromDiningRoom(HouseColor.valueOf(command.get("color").getAsString()));
-                            } catch (NoStudentException nse) {
-                                for (HouseColor color : HouseColor.values()) {
-                                    p.getSchoolBoard().getDiningRoom().replace(color, 0);
-                                }
-                            }
-                        }
-                        for (HouseColor color : HouseColor.values()) {
-                            this.checkProfessor(color.toString(), p.getName());
-                        }
-                    }
+                case 4 ->
+                        this.gameModel.getGameBoard().getPlayedAssistants().get(this.gameModel.getPlayerByName(command.get("player").getAsString())).setBonus();
+                case 8 ->
+                        gameModel.getGameBoard().setInfluenceBonus(this.getGameModel().getPlayerByName(command.get("player").getAsString()));
+                default -> {
                 }
             }
-        } catch (IslandNotFoundException | NoMoreBansLeftException nfe) {
+        } catch (Exception nfe) {
+            // TODO Before -> IslandNotFoundException | NoMoreBansLeftException (is it necessary>?)
             throw new IllegalMoveException();
         }
         synchronized (this.actionNeededLock) {
@@ -824,8 +811,51 @@ public class GameController extends Thread {
     public void setBan(int island) throws IllegalMoveException {
         try {
             this.gameModel.getGameBoard().getIslandById(island).setBan();
-        } catch (IslandNotFoundException e) {
+            for (SpecialCharacter sc : this.gameModel.getGameBoard().getCharacters()) {
+                if (sc.getId() == 5) ((HerbalistEffect) sc.getEffect()).effect(HerbalistEffect.Action.TAKE);
+            }
+        } catch (IslandNotFoundException | NoMoreBansLeftException e) {
             throw new IllegalMoveException();
+        }
+        synchronized (this.actionNeededLock) {
+            this.actionNeededLock.notifyAll();
+        }
+    }
+
+    /**
+     * This method sets thr ignored color.
+     *
+     * @param color The color which will be ignored.
+     */
+    public void setIgnoredColor(HouseColor color) {
+        gameModel.getGameBoard().setIgnoreColor(color);
+        synchronized (this.actionNeededLock) {
+            this.actionNeededLock.notifyAll();
+        }
+    }
+
+    /**
+     * Method calls to use 'return' effect.
+     *
+     * @param color The color that will be returned.
+     */
+    public void returnStudents(HouseColor color) {
+        for (Player p : gameModel.getPlayers()) {
+            for (int i = 0; i < 3; i++) {
+                try {
+                    p.getSchoolBoard().removeFromDiningRoom(color);
+                } catch (NoStudentException nse) {
+                    for (HouseColor c : HouseColor.values()) {
+                        p.getSchoolBoard().getDiningRoom().replace(c, 0);
+                    }
+                }
+            }
+            for (HouseColor c : HouseColor.values()) {
+                this.checkProfessor(c.toString(), p.getName());
+            }
+        }
+        synchronized (this.actionNeededLock) {
+            this.actionNeededLock.notifyAll();
         }
     }
 
@@ -836,7 +866,8 @@ public class GameController extends Thread {
         synchronized (this.users) {
             List<Player> winners = new ArrayList<>();
             boolean assistantsEmpty = true;
-            for(int i = 0; i<this.gameModel.getPlayers().get(0).getAssistants().size(); i++) if(this.gameModel.getPlayers().get(0).getAssistants().get(i) != null) assistantsEmpty = false;
+            for (int i = 0; i < this.gameModel.getPlayers().get(0).getAssistants().size(); i++)
+                if (this.gameModel.getPlayers().get(0).getAssistants().get(i) != null) assistantsEmpty = false;
 
             if (this.gameModel.getPlayers().stream().anyMatch(player -> player.getSchoolBoard().getTowersNumber() == 0)) {
                 ended = true;
@@ -871,7 +902,7 @@ public class GameController extends Thread {
             Player player;
 
             for (HouseColor color : HouseColor.values()) {
-                if(this.gameModel.getGameBoard().getProfessors().get(color) != null){
+                if (this.gameModel.getGameBoard().getProfessors().get(color) != null) {
                     player = this.gameModel.getGameBoard().getProfessors().get(color);
                     numProfessorsPlayers.put(player, numProfessorsPlayers.containsKey(player) ? numProfessorsPlayers.get(player) + 1 : 1);
                 }

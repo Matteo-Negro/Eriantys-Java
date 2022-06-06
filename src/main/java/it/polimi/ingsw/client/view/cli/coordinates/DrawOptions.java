@@ -30,7 +30,7 @@ public class DrawOptions implements DeltaCoordinates {
      */
     @Override
     public int getX() {
-        return 0;
+        return 2;
     }
 
     /**

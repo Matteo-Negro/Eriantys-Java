@@ -92,32 +92,26 @@ public class GameServer extends Thread {
                 Log.debug("WaitingRoomUpdate reply");
                 manageWaitingRoomUpdate(incomingMessage);
             }
-
             case "login" -> {
                 Log.debug("login reply");
                 manageLogin(incomingMessage);
             }
-
             case "status" -> {
                 Log.debug("status message arrived");
                 manageStatus(incomingMessage);
             }
-
             case "gameStart" -> {
                 Log.debug("gameStart message arrived");
                 this.client.setClientState(ClientStates.GAME_RUNNING);
             }
-
             case "turnEnable" -> {
                 Log.debug("turnEnable message arrived");
                 this.manageTurnEnable(incomingMessage);
             }
-
             case "win" -> {
                 Log.debug("endGame message arrived");
                 this.manageEndGame(incomingMessage);
             }
-
             case "error" -> {
                 Log.debug("Error message arrived: " + incomingMessage.get("message").getAsString());
                 this.manageError(incomingMessage);
@@ -211,8 +205,7 @@ public class GameServer extends Thread {
     private void manageStatus(JsonObject message) {
         int round = message.get("round").getAsInt() + 1;
         String activeUser = null;
-        if (!(message.get("activeUser") instanceof JsonNull))
-            activeUser = message.get("activeUser").getAsString();
+        if (!(message.get("activeUser") instanceof JsonNull)) activeUser = message.get("activeUser").getAsString();
         boolean expert = message.get("expert").getAsBoolean();
         Phase phase = Phase.valueOf(message.get("phase").getAsString());
         GameControllerStates subphase = GameControllerStates.valueOf(message.get("subPhase").getAsString());

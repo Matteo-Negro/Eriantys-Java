@@ -163,24 +163,24 @@ public class SpecialCharacter {
         // Line #10
 
         ansi.a("│ ");
-        ansi.a(parseStudent(tmp.get(0), active));
+        ansi.a(parseStudent((tmp.size() > 0) ? tmp.get(0) : null, active));
         ansi.a(" ");
-        if (students.size() == 6) ansi.a(parseStudent(tmp.get(4), active));
+        if (students.size() == 6) ansi.a(parseStudent((tmp.size() > 4) ? tmp.get(4) : null, active));
         else ansi.a(" ");
         ansi.a(" ");
-        ansi.a(parseStudent(tmp.get(1), active));
+        ansi.a(parseStudent((tmp.size() > 1) ? tmp.get(1) : null, active));
         ansi.a(" │");
         ansi.a(newLine());
 
         // Line #11
 
         ansi.a("│ ");
-        ansi.a(parseStudent(tmp.get(2), active));
+        ansi.a(parseStudent((tmp.size() > 2) ? tmp.get(2) : null, active));
         ansi.a(" ");
-        if (students.size() == 6) ansi.a(parseStudent(tmp.get(5), active));
+        if (students.size() == 6) ansi.a(parseStudent((tmp.size() > 5) ? tmp.get(5) : null, active));
         else ansi.a(" ");
         ansi.a(" ");
-        ansi.a(parseStudent(tmp.get(3), active));
+        ansi.a(parseStudent((tmp.size() > 3) ? tmp.get(3) : null, active));
         ansi.a(" │");
         ansi.a(newLine());
 
