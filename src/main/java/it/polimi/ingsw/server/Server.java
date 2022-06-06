@@ -127,7 +127,9 @@ public class Server {
             for (JsonElement player : json.getAsJsonArray("players"))
                 players.put(player.getAsJsonObject().get("name").getAsString(), parsePlayer(player.getAsJsonObject()));
 
-            GameController gameController = new GameController(json.get("id").getAsString().toUpperCase(Locale.ROOT),
+            GameController gameController = new GameController(
+                    this,
+                    json.get("id").getAsString().toUpperCase(Locale.ROOT),
                     new GamePlatform(
                             json.get("expert").getAsBoolean(),
                             parseGameBoard(json.getAsJsonObject("board"), json.get("expert").getAsBoolean(), players),
@@ -169,6 +171,7 @@ public class Server {
             do id = getNewId();
             while (games.containsKey(id));
             GameController gameController = new GameController(
+                    this,
                     id,
                     new GamePlatform(expectedPlayers, expertMode),
                     expectedPlayers,
@@ -187,7 +190,6 @@ public class Server {
      */
     public void removeGame(String id) {
         synchronized (games) {
-            games.get(id).interrupt();
             games.remove(id);
         }
 

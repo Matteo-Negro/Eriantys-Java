@@ -292,7 +292,6 @@ public class ClientController {
                         }
                     }
                     Log.debug("Command sent to game server.");
-                    Log.debug(message.toString());
                 } else {
                     errorOccurred("Command not allowed.");
                     return;

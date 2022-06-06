@@ -208,7 +208,6 @@ public class GameServer extends Thread {
      * @param message The message.
      */
     private void manageStatus(JsonObject message) {
-        Log.debug(message.toString());
         int round = message.get("round").getAsInt() + 1;
         String activeUser = null;
         if (!(message.get("activeUser") instanceof JsonNull))

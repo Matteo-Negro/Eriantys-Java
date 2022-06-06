@@ -1,6 +1,7 @@
 package it.polimi.ingsw.server.controller;
 
 import com.google.gson.JsonObject;
+import it.polimi.ingsw.server.Server;
 import it.polimi.ingsw.server.model.GamePlatform;
 import it.polimi.ingsw.server.model.board.Island;
 import it.polimi.ingsw.server.model.board.SpecialCharacter;
@@ -44,6 +45,7 @@ public class GameController extends Thread {
     private String activeUser;
     private boolean initialized;
     private boolean ended;
+    private final Server server;
 
     /**
      * The game controller constructor.
@@ -53,7 +55,8 @@ public class GameController extends Thread {
      * @param expectedPlayers The number of expected player.
      * @param savePath        The path to the location where the game will be saved.
      */
-    public GameController(String id, GamePlatform gameModel, int expectedPlayers, String savePath) {
+    public GameController(Server server, String id, GamePlatform gameModel, int expectedPlayers, String savePath) {
+        this.server = server;
         this.connectedPlayers = 0;
         this.expectedPlayers = expectedPlayers;
         this.gameModel = gameModel;
@@ -87,7 +90,8 @@ public class GameController extends Thread {
      * @throws FullGameException              Thrown when the game to which the user is attempting to log in is already full and active.
      * @throws AlreadyExistingPlayerException Thrown when the user is attempting to log into a game that has already got an active player with the same chosen username.
      */
-    public GameController(String id, GamePlatform gameModel, int expectedPlayers, int round, String phase, String subPhase, Set<String> players, String savePath) throws AlreadyExistingPlayerException, FullGameException {
+    public GameController(Server server, String id, GamePlatform gameModel, int expectedPlayers, int round, String phase, String subPhase, Set<String> players, String savePath) throws AlreadyExistingPlayerException, FullGameException {
+        this.server = server;
         this.connectedPlayers = 0;
         this.expectedPlayers = expectedPlayers;
         this.gameModel = gameModel;
@@ -346,10 +350,10 @@ public class GameController extends Thread {
                 this.getGameModel().nextRound();
                 initialized = true;
             }
-            switch (this.getPhase()) {
-                case PLANNING -> this.planningPhase();
-                case ACTION -> this.actionPhase();
-            }
+            if (this.getPhase() == Phase.PLANNING)
+                this.planningPhase();
+            else
+                this.actionPhase();
         }
         for (User user : this.getUsers()) {
             this.removeUser(user);
@@ -357,6 +361,7 @@ public class GameController extends Thread {
         try {
             Files.delete(Paths.get(this.savePath, this.id + ".json"));
             Log.info(String.format("Deleted %s after game end.", this.id));
+            server.removeGame(id);
         } catch (Exception e) {
             Log.warning(String.format("The following error occurred while trying to delete %s, please delete it manually: ", this.id), e);
         }
