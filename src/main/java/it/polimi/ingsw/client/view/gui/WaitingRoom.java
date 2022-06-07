@@ -66,7 +66,8 @@ public class WaitingRoom {
      * Looks for every used element in the scene.
      */
     private static void lookup() {
-        back = (Button) scene.lookup("#back");
+        //TODO Logout from waiting room has to be implemented.
+        //back = (Button) scene.lookup("#back");
         code = (Label) scene.lookup("#code");
         names = (VBox) scene.lookup("#names");
         online = (Label) scene.lookup("#online");
@@ -76,7 +77,7 @@ public class WaitingRoom {
      * Adds all the events to the scene.
      */
     private static void addEvents() {
-        back.setOnMouseClicked(event -> {
+        /*back.setOnMouseClicked(event -> {
             event.consume();
             disconnect();
         });
@@ -85,12 +86,15 @@ public class WaitingRoom {
             event.consume();
             if (event.getCode() == KeyCode.ENTER)
                 disconnect();
-        });
+        });*/
     }
 
     private static void disconnect() {
-        client.getController().resetGame();
-        client.changeScene(ClientStates.MAIN_MENU);
+        if(!client.getController().getClientState().equals(ClientStates.CONNECTION_LOST)){
+            client.getController().resetGame();
+            client.getController().setClientState(ClientStates.MAIN_MENU);
+        }
+        client.changeScene();
     }
 
     public static void update(List<Label> players) {

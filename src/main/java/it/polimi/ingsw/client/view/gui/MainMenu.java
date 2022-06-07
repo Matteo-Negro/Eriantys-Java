@@ -65,24 +65,29 @@ public class MainMenu {
 
         create.setOnMouseClicked(event -> {
             event.consume();
-            client.changeScene(ClientStates.GAME_CREATION);
+            client.getController().manageMainMenu("1");
+            client.changeScene();
         });
 
         create.setOnKeyPressed(event -> {
             event.consume();
             if (event.getCode() == KeyCode.ENTER)
-                client.changeScene(ClientStates.GAME_CREATION);
+                client.getController().manageMainMenu("1");
+            client.changeScene();
         });
 
         enter.setOnMouseClicked(event -> {
             event.consume();
-            client.changeScene(ClientStates.JOIN_GAME);
+            client.getController().manageMainMenu("2");
+            client.changeScene();
         });
 
         enter.setOnKeyPressed(event -> {
             event.consume();
             if (event.getCode() == KeyCode.ENTER)
-                client.changeScene(ClientStates.JOIN_GAME);
+                client.getController().manageMainMenu("2");
+            client.changeScene();
+
         });
 
         exit.setOnMouseClicked(event -> {

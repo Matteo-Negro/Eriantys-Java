@@ -55,7 +55,6 @@ public class UpdateWaitingRoom extends Thread {
                 }
             }
         }
-
-        WaitingRoom.changeScene(ClientStates.GAME_RUNNING);
+        WaitingRoom.changeScene();
     }
 }

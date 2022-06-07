@@ -77,13 +77,17 @@ public class JoinGame {
 
         back.setOnMouseClicked(event -> {
             event.consume();
-            client.changeScene(ClientStates.MAIN_MENU);
+            if(!client.getController().getClientState().equals(ClientStates.CONNECTION_LOST))
+                client.getController().setClientState(ClientStates.MAIN_MENU);
+            client.changeScene();
         });
 
         back.setOnKeyPressed(event -> {
             event.consume();
             if (event.getCode() == KeyCode.ENTER)
-                client.changeScene(ClientStates.MAIN_MENU);
+                if(!client.getController().getClientState().equals(ClientStates.CONNECTION_LOST))
+                    client.getController().setClientState(ClientStates.MAIN_MENU);
+            client.changeScene();
         });
 
         for (int index = 0; index < code.size(); index++)
@@ -138,7 +142,8 @@ public class JoinGame {
     }
 
     private static void processButton(String code) {
-        client.getController().manageJoinGame(code);
+        if(!client.getController().getClientState().equals(ClientStates.CONNECTION_LOST))
+            client.getController().manageJoinGame(code);
         client.changeScene();
     }
 }

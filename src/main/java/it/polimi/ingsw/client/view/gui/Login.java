@@ -90,13 +90,17 @@ public class Login {
     private static void addEvents() {
         back.setOnMouseClicked(event -> {
             event.consume();
-            client.changeScene(ClientStates.MAIN_MENU);
+            if(!client.getController().getClientState().equals(ClientStates.CONNECTION_LOST))
+                client.getController().setClientState(ClientStates.MAIN_MENU);
+            client.changeScene();
         });
 
         back.setOnKeyPressed(event -> {
             event.consume();
             if (event.getCode() == KeyCode.ENTER)
-                client.changeScene(ClientStates.MAIN_MENU);
+                if(!client.getController().getClientState().equals(ClientStates.CONNECTION_LOST))
+                    client.getController().setClientState(ClientStates.MAIN_MENU);
+            client.changeScene();
         });
 
         login.setOnMouseClicked(event -> {
@@ -109,19 +113,14 @@ public class Login {
             if (event.getCode() == KeyCode.ENTER)
                 manageLogin();
         });
-
-        back.setOnKeyPressed(event -> {
-            event.consume();
-            if (event.getCode() == KeyCode.ENTER)
-                manageLogin();
-        });
     }
 
     /**
      * Manages the login to the game.
      */
     private static void manageLogin() {
-        client.getController().manageGameLogin(name.getText());
+        if(!client.getController().getClientState().equals(ClientStates.CONNECTION_LOST))
+            client.getController().manageGameLogin(name.getText());
         client.changeScene();
     }
 }

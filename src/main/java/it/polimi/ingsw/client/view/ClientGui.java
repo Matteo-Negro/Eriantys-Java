@@ -41,7 +41,7 @@ public class ClientGui extends Application implements View {
             return;
         }
 
-        changeScene(ClientStates.START_SCREEN);
+        changeScene();
 
         primaryStage.show();
     }
@@ -60,9 +60,7 @@ public class ClientGui extends Application implements View {
      */
     public void changeScene(ClientStates state) {
 
-        if (!getController().getClientState().equals(ClientStates.CONNECTION_LOST))
-            getController().setClientState(state);
-        else
+        if (getController().getClientState().equals(ClientStates.CONNECTION_LOST))
             getController().manageConnectionLost();
 
         Log.info("Displaying " + state);

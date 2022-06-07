@@ -165,11 +165,13 @@ public class ClientController {
     public void manageMainMenu(String option) {
         switch (option) {
             case "1" -> {
-                this.setClientState(ClientStates.GAME_CREATION);
+                if(!getClientState().equals(ClientStates.CONNECTION_LOST))
+                    this.setClientState(ClientStates.GAME_CREATION);
                 updateScreen();
             }
             case "2" -> {
-                this.setClientState(ClientStates.JOIN_GAME);
+                if(!getClientState().equals(ClientStates.CONNECTION_LOST))
+                    this.setClientState(ClientStates.JOIN_GAME);
                 updateScreen();
             }
             case "exit" -> {
@@ -201,7 +203,8 @@ public class ClientController {
         updateScreen();
 
         if ("EXIT".equals(gameCode)) {
-            this.setClientState(ClientStates.MAIN_MENU);
+            if(!getClientState().equals(ClientStates.CONNECTION_LOST))
+                this.setClientState(ClientStates.MAIN_MENU);
             this.resetGame();
             return;
         }
@@ -221,7 +224,8 @@ public class ClientController {
         updateScreen();
 
         if ("exit".equals(username)) {
-            this.setClientState(ClientStates.MAIN_MENU);
+            if(!getClientState().equals(ClientStates.CONNECTION_LOST))
+                this.setClientState(ClientStates.MAIN_MENU);
             this.resetGame();
             return;
         }
@@ -240,6 +244,9 @@ public class ClientController {
      * Manages the game logic.
      */
     public void manageGameRunning(String command) {
+        if(getClientState().equals(ClientStates.CONNECTION_LOST))
+            return;
+
         try {
             if (!CommandParser.checker(command)) throw new Exception();
         } catch (Exception e) {
@@ -333,7 +340,8 @@ public class ClientController {
      */
     public void manageEndGame(String command) {
         if (command.equals("") || command.equals("exit")) {
-            this.setClientState(ClientStates.MAIN_MENU);
+            if(!getClientState().equals(ClientStates.CONNECTION_LOST))
+                this.setClientState(ClientStates.MAIN_MENU);
             updateScreen();
             this.resetGame();
             return;

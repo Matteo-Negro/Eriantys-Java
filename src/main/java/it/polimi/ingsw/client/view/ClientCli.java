@@ -136,7 +136,8 @@ public class ClientCli extends Thread implements View {
         switch (playersNumber) {
             case "2", "3", "4" -> expectedPlayers = Integer.parseInt(playersNumber);
             case "exit" -> {
-                this.controller.setClientState(ClientStates.MAIN_MENU);
+                if(!controller.getClientState().equals(ClientStates.CONNECTION_LOST))
+                    this.controller.setClientState(ClientStates.MAIN_MENU);
                 updateScreen(false);
                 this.controller.resetGame();
                 return;
@@ -152,7 +153,8 @@ public class ClientCli extends Thread implements View {
             case "normal" -> expert = false;
             case "expert" -> expert = true;
             case "exit" -> {
-                this.controller.setClientState(ClientStates.MAIN_MENU);
+                if(!controller.getClientState().equals(ClientStates.CONNECTION_LOST))
+                    this.controller.setClientState(ClientStates.MAIN_MENU);
                 updateScreen(false);
                 this.controller.resetGame();
                 return;
@@ -212,7 +214,7 @@ public class ClientCli extends Thread implements View {
      */
     public void runGameRunning() {
         Game.print(terminal, this.controller.getGameModel(), this.controller.getGameCode(), this.controller.getGameModel().getRound(), this.controller.getGameModel().getPlayerByName(controller.getUserName()).isActive());
-        if (this.controller.hasCommunicationToken())
+        if (this.controller.hasCommunicationToken() && !this.controller.getClientState().equals(ClientStates.CONNECTION_LOST))
             this.controller.manageGameRunning(readLine(getPrettyUserName(), terminal, Autocompletion.get(), true, history).toLowerCase(Locale.ROOT));
         else {
             synchronized (this.controller.getLock()) {

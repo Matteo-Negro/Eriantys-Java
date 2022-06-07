@@ -87,7 +87,9 @@ public class GameCreation {
 
         back.setOnMouseClicked(event -> {
             event.consume();
-            client.changeScene(ClientStates.MAIN_MENU);
+            if(!client.getController().getClientState().equals(ClientStates.CONNECTION_LOST))
+                client.getController().setClientState(ClientStates.MAIN_MENU);
+            client.changeScene();
         });
 
         create.setOnMouseClicked(event -> {
@@ -141,7 +143,8 @@ public class GameCreation {
     }
 
     private static void processButton(int player, boolean expertMode) {
-        client.getController().manageGameCreation(MessageCreator.gameCreation(player, expertMode));
+        if(!client.getController().getClientState().equals(ClientStates.CONNECTION_LOST))
+            client.getController().manageGameCreation(MessageCreator.gameCreation(player, expertMode));
         client.changeScene();
     }
 }
