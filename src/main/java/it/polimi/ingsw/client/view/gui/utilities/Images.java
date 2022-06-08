@@ -1,5 +1,6 @@
 package it.polimi.ingsw.client.view.gui.utilities;
 
+import it.polimi.ingsw.utilities.HouseColor;
 import it.polimi.ingsw.utilities.TowerType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -12,69 +13,67 @@ public class Images {
     private static List<Image> clouds = null;
     private static List<Image> islands = null;
     private static Image motherNature = null;
+    private static Map<HouseColor, Image> studentsRealm = null;
     private static Map<TowerType, Image> towers = null;
 
     private Images() {
     }
 
     static ImageView island() {
-
-        if (islands == null)
-            initializeIslands();
-
         ImageView imageView = new ImageView();
         imageView.setFitWidth(162);
         imageView.setFitHeight(156);
-
-        imageView.setImage(islands.get(ThreadLocalRandom.current().nextInt(islands.size())));
-
+        imageView.setImage(getIslandById(ThreadLocalRandom.current().nextInt(3)));
         return imageView;
     }
 
     static ImageView motherNature(boolean visible) {
-
         if (motherNature == null)
             motherNature = new Image("/pawns/mother_nature.png");
-
         ImageView imageView = new ImageView();
         imageView.setFitWidth(30);
         imageView.setFitHeight(43);
-
         imageView.setImage(motherNature);
         imageView.setVisible(visible);
-
         return imageView;
     }
 
     static ImageView tower(TowerType tower) {
-
-        if (towers == null)
-            initializeTowers();
-
         ImageView imageView = new ImageView();
         imageView.setFitWidth(32);
         imageView.setFitHeight(52);
-
-        if (tower != null)
-            imageView.setImage(towers.get(tower));
+        imageView.setImage(getTowerByColor(tower));
         imageView.setVisible(tower != null);
-
         return imageView;
     }
 
-    static Image getCloud(int id) {
+    static ImageView student(HouseColor houseColor) {
+        ImageView imageView = new ImageView();
+        imageView.setFitWidth(20);
+        imageView.setFitHeight(20);
+        imageView.setImage(getStudentByColor(houseColor));
+        return imageView;
+    }
+
+    static Image getCloudById(int id) {
         if (clouds == null)
             initializeClouds();
         return clouds.get(id % clouds.size());
     }
 
-    static Image getIsland(int id) {
+    static Image getIslandById(int id) {
         if (islands == null)
             initializeIslands();
         return islands.get(id % islands.size());
     }
 
-    static Image getTower(TowerType towerType) {
+    static Image getStudentByColor(HouseColor houseColor) {
+        if (studentsRealm == null)
+            initializeStudentsRealm();
+        return studentsRealm.get(houseColor);
+    }
+
+    static Image getTowerByColor(TowerType towerType) {
         if (towers == null)
             initializeTowers();
         return towers.get(towerType);
@@ -92,6 +91,13 @@ public class Images {
         for (int index = 1; index <= 3; index++)
             images.add(new Image(String.format("/realm/islands/%d.png", index)));
         islands = Collections.unmodifiableList(images);
+    }
+
+    private static void initializeStudentsRealm() {
+        Map<HouseColor, Image> images = new EnumMap<>(HouseColor.class);
+        for (HouseColor houseColor : HouseColor.values())
+            images.put(houseColor, new Image(String.format("/pawns/students/realm/%s.png", houseColor.name().toLowerCase(Locale.ROOT))));
+        studentsRealm = Collections.unmodifiableMap(images);
     }
 
     private static void initializeTowers() {

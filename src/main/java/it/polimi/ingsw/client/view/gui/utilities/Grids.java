@@ -1,6 +1,7 @@
 package it.polimi.ingsw.client.view.gui.utilities;
 
 import it.polimi.ingsw.client.model.Island;
+import it.polimi.ingsw.utilities.HouseColor;
 import javafx.collections.ObservableList;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
@@ -115,6 +116,15 @@ public class Grids {
         for (int index = 0; index < 3 - row; index++) {
             columns.add(new ColumnConstraints());
             columns.get(index).setHgrow(Priority.SOMETIMES);
+        }
+
+        if (row == 0) {
+            gridPane.add(Boxes.islandStudent(HouseColor.GREEN, island.getStudents().get(HouseColor.GREEN), islandContainer), 0, 0);
+            gridPane.add(Boxes.islandStudent(HouseColor.RED, island.getStudents().get(HouseColor.RED), islandContainer), 1, 0);
+            gridPane.add(Boxes.islandStudent(HouseColor.YELLOW, island.getStudents().get(HouseColor.YELLOW), islandContainer), 2, 0);
+        } else {
+            gridPane.add(Boxes.islandStudent(HouseColor.FUCHSIA, island.getStudents().get(HouseColor.FUCHSIA), islandContainer), 0, 0);
+            gridPane.add(Boxes.islandStudent(HouseColor.BLUE, island.getStudents().get(HouseColor.BLUE), islandContainer), 1, 0);
         }
 
         return gridPane;
