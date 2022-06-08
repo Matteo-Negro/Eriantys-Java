@@ -8,7 +8,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
 
 import java.io.IOException;
@@ -28,7 +27,7 @@ public class WaitingRoom {
     private static VBox names;
     @FXML
     private static Label online;
-    private static UpdateWaitingRoom update;
+    private static it.polimi.ingsw.client.view.gui.updates.WaitingRoom update;
 
     private WaitingRoom() {
     }
@@ -42,11 +41,11 @@ public class WaitingRoom {
     public static void initialize(ClientGui client) throws IOException {
         if (client == null)
             return;
-        WaitingRoom.client = client;
+        it.polimi.ingsw.client.view.gui.WaitingRoom.client = client;
         scene = new Scene(FXMLLoader.load(Objects.requireNonNull(WaitingRoom.class.getResource("/fxml/waiting_room.fxml"))));
         lookup();
         addEvents();
-        update = new UpdateWaitingRoom(client);
+        update = new it.polimi.ingsw.client.view.gui.updates.WaitingRoom(client);
     }
 
     /**
@@ -90,7 +89,7 @@ public class WaitingRoom {
     }
 
     private static void disconnect() {
-        if(!client.getController().getClientState().equals(ClientStates.CONNECTION_LOST)){
+        if (!client.getController().getClientState().equals(ClientStates.CONNECTION_LOST)) {
             client.getController().resetGame();
             client.getController().setClientState(ClientStates.MAIN_MENU);
         }

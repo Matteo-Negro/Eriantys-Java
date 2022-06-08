@@ -1,6 +1,7 @@
 package it.polimi.ingsw.client.view.gui;
 
 import it.polimi.ingsw.client.view.ClientGui;
+import it.polimi.ingsw.client.view.gui.utilities.ExitEvent;
 import it.polimi.ingsw.utilities.ClientStates;
 import it.polimi.ingsw.utilities.MessageCreator;
 import javafx.fxml.FXML;
@@ -15,7 +16,7 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class GameCreation {
+public class Create {
 
     private static Scene scene = null;
     private static ClientGui client = null;
@@ -36,7 +37,7 @@ public class GameCreation {
     private static RadioButton players4;
 
 
-    private GameCreation() {
+    private Create() {
     }
 
     /**
@@ -46,8 +47,8 @@ public class GameCreation {
      * @throws IOException Thrown if there is an error somewhere.
      */
     public static void initialize(ClientGui client) throws IOException {
-        GameCreation.client = client;
-        scene = new Scene(FXMLLoader.load(Objects.requireNonNull(GameCreation.class.getResource("/fxml/game_creation.fxml"))));
+        Create.client = client;
+        scene = new Scene(FXMLLoader.load(Objects.requireNonNull(Create.class.getResource("/fxml/game_creation.fxml"))));
         lookup();
         addEvents();
     }
@@ -85,12 +86,7 @@ public class GameCreation {
         AtomicInteger players = new AtomicInteger(2);
         AtomicBoolean expertMode = new AtomicBoolean(false);
 
-        back.setOnMouseClicked(event -> {
-            event.consume();
-            if(!client.getController().getClientState().equals(ClientStates.CONNECTION_LOST))
-                client.getController().setClientState(ClientStates.MAIN_MENU);
-            client.changeScene();
-        });
+        ExitEvent.addEvent(back, client);
 
         create.setOnMouseClicked(event -> {
             event.consume();
@@ -143,7 +139,7 @@ public class GameCreation {
     }
 
     private static void processButton(int player, boolean expertMode) {
-        if(!client.getController().getClientState().equals(ClientStates.CONNECTION_LOST))
+        if (!client.getController().getClientState().equals(ClientStates.CONNECTION_LOST))
             client.getController().manageGameCreation(MessageCreator.gameCreation(player, expertMode));
         client.changeScene();
     }

@@ -207,9 +207,9 @@ public class Server {
         int number = '0';
         for (int index = 0; index < 5; index++)
             if (ThreadLocalRandom.current().nextBoolean())
-                id.append((char) (letter + ThreadLocalRandom.current().nextInt(0, 26)));
+                id.append((char) (letter + ThreadLocalRandom.current().nextInt(26)));
             else
-                id.append((char) (number + ThreadLocalRandom.current().nextInt(0, 10)));
+                id.append((char) (number + ThreadLocalRandom.current().nextInt(10)));
         return id.toString();
     }
 

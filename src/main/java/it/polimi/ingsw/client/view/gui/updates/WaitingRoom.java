@@ -1,4 +1,4 @@
-package it.polimi.ingsw.client.view.gui;
+package it.polimi.ingsw.client.view.gui.updates;
 
 import it.polimi.ingsw.client.view.ClientGui;
 import it.polimi.ingsw.utilities.ClientStates;
@@ -10,12 +10,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class UpdateWaitingRoom extends Thread {
+public class WaitingRoom extends Thread {
 
     private final ClientGui client;
     private final Object lock;
 
-    public UpdateWaitingRoom(ClientGui client) {
+    public WaitingRoom(ClientGui client) {
         this.client = client;
         lock = new Object();
     }
@@ -46,7 +46,7 @@ public class UpdateWaitingRoom extends Thread {
                         players.add(label);
                     }
 
-                WaitingRoom.update(players);
+                it.polimi.ingsw.client.view.gui.WaitingRoom.update(players);
 
                 try {
                     lock.wait(1000);
@@ -55,6 +55,6 @@ public class UpdateWaitingRoom extends Thread {
                 }
             }
         }
-        WaitingRoom.changeScene();
+        it.polimi.ingsw.client.view.gui.WaitingRoom.changeScene();
     }
 }

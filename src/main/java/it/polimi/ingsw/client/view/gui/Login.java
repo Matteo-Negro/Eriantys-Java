@@ -1,6 +1,7 @@
 package it.polimi.ingsw.client.view.gui;
 
 import it.polimi.ingsw.client.view.ClientGui;
+import it.polimi.ingsw.client.view.gui.utilities.ExitEvent;
 import it.polimi.ingsw.utilities.ClientStates;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -55,8 +56,8 @@ public class Login {
      */
     public static Scene getScene() {
         name.setText("");
+        name.requestFocus();
         names.getChildren().clear();
-        login.requestFocus();
         Platform.runLater(() -> {
             int index = client.getController().getGameModel().getWaitingRoom().size();
             for (Map.Entry<String, Boolean> entry : client.getController().getGameModel().getWaitingRoom().entrySet()) {
@@ -88,20 +89,8 @@ public class Login {
      * Adds all the events to the scene.
      */
     private static void addEvents() {
-        back.setOnMouseClicked(event -> {
-            event.consume();
-            if(!client.getController().getClientState().equals(ClientStates.CONNECTION_LOST))
-                client.getController().setClientState(ClientStates.MAIN_MENU);
-            client.changeScene();
-        });
 
-        back.setOnKeyPressed(event -> {
-            event.consume();
-            if (event.getCode() == KeyCode.ENTER)
-                if(!client.getController().getClientState().equals(ClientStates.CONNECTION_LOST))
-                    client.getController().setClientState(ClientStates.MAIN_MENU);
-            client.changeScene();
-        });
+        ExitEvent.addEvent(back, client);
 
         login.setOnMouseClicked(event -> {
             event.consume();
@@ -113,13 +102,19 @@ public class Login {
             if (event.getCode() == KeyCode.ENTER)
                 manageLogin();
         });
+
+        name.setOnKeyPressed(event -> {
+            event.consume();
+            if (event.getCode() == KeyCode.ENTER)
+                manageLogin();
+        });
     }
 
     /**
      * Manages the login to the game.
      */
     private static void manageLogin() {
-        if(!client.getController().getClientState().equals(ClientStates.CONNECTION_LOST))
+        if (!client.getController().getClientState().equals(ClientStates.CONNECTION_LOST))
             client.getController().manageGameLogin(name.getText());
         client.changeScene();
     }

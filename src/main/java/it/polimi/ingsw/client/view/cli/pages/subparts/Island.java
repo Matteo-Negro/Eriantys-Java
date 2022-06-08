@@ -137,11 +137,11 @@ public class Island {
         ansi.a(Boolean.TRUE.equals(connections.get(IslandConnection.WEST)) ? "·" : " ");
         ansi.a(defaultForeground(ban));
         ansi.a("\\  ");
-        ansi.a(parseStudent(students.get(HouseColor.BLUE), HouseColor.BLUE, ban));
-        ansi.a(" ");
-        ansi.a(parseStudent(students.get(HouseColor.FUCHSIA), HouseColor.FUCHSIA, ban));
-        ansi.a(" ");
         ansi.a(parseStudent(students.get(HouseColor.GREEN), HouseColor.GREEN, ban));
+        ansi.a(" ");
+        ansi.a(parseStudent(students.get(HouseColor.RED), HouseColor.RED, ban));
+        ansi.a(" ");
+        ansi.a(parseStudent(students.get(HouseColor.YELLOW), HouseColor.YELLOW, ban));
         ansi.a("  /");
         ansi.a(Utilities.foreground(Grey.getInstance()));
         ansi.a(Boolean.TRUE.equals(connections.get(IslandConnection.EAST)) ? "··" : "  ");
@@ -166,9 +166,9 @@ public class Island {
         ansi.a(Boolean.TRUE.equals(connections.get(IslandConnection.SOUTH_WEST)) ? "···" : "   ");
         ansi.a(defaultForeground(ban));
         ansi.a("\\  ");
-        ansi.a(parseStudent(students.get(HouseColor.RED), HouseColor.RED, ban));
+        ansi.a(parseStudent(students.get(HouseColor.FUCHSIA), HouseColor.FUCHSIA, ban));
         ansi.a(" ");
-        ansi.a(parseStudent(students.get(HouseColor.YELLOW), HouseColor.YELLOW, ban));
+        ansi.a(parseStudent(students.get(HouseColor.BLUE), HouseColor.BLUE, ban));
         ansi.a("  /");
         ansi.a(Utilities.foreground(Grey.getInstance()));
         ansi.a(Boolean.TRUE.equals(connections.get(IslandConnection.SOUTH_EAST)) ? "··· " : "    ");

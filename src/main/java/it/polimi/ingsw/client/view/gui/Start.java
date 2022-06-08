@@ -1,7 +1,6 @@
 package it.polimi.ingsw.client.view.gui;
 
 import it.polimi.ingsw.client.view.ClientGui;
-import it.polimi.ingsw.utilities.ClientStates;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -13,7 +12,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.Objects;
 
-public class StartScreen {
+public class Start {
 
     private static Scene scene = null;
     private static ClientGui client = null;
@@ -25,7 +24,7 @@ public class StartScreen {
     @FXML
     private static Button submit;
 
-    private StartScreen() {
+    private Start() {
     }
 
     /**
@@ -37,8 +36,8 @@ public class StartScreen {
     public static void initialize(ClientGui client) throws IOException {
         if (client == null)
             return;
-        StartScreen.client = client;
-        scene = new Scene(FXMLLoader.load(Objects.requireNonNull(StartScreen.class.getResource("/fxml/splash_screen.fxml"))));
+        Start.client = client;
+        scene = new Scene(FXMLLoader.load(Objects.requireNonNull(Start.class.getResource("/fxml/splash_screen.fxml"))));
         lookup();
         addEvents();
     }

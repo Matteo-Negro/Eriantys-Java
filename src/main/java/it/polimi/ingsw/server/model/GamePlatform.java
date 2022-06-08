@@ -136,7 +136,7 @@ public class GamePlatform {
         for (WizardType wizard : WizardType.values())
             if (clockwiseOrder.stream().noneMatch(player -> player.getWizard().equals(wizard)))
                 wizards.add(wizard);
-        return wizards.get(ThreadLocalRandom.current().nextInt(0, wizards.size()));
+        return wizards.get(ThreadLocalRandom.current().nextInt(wizards.size()));
     }
 
     /**
@@ -168,7 +168,7 @@ public class GamePlatform {
             for (int index = playersNumber - (int) clockwiseOrder.stream().filter(player -> player.getSchoolBoard().getTowerType().equals(TowerType.BLACK)).count(); index > 1; index--)
                 towers.add(TowerType.BLACK);
         }
-        return towers.get(ThreadLocalRandom.current().nextInt(0, towers.size()));
+        return towers.get(ThreadLocalRandom.current().nextInt(towers.size()));
     }
 
     /**

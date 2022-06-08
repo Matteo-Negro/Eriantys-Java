@@ -28,14 +28,7 @@ public class ClientGui extends Application implements View {
 
         Log.info("Initializing scenes...");
         try {
-            End.initialize(this);
-            GameCreation.initialize(this);
-            JoinGame.initialize(this);
-            Login.initialize(this);
-            MainMenu.initialize(this);
-            StartScreen.initialize(this);
-            WaitingRoom.initialize(this);
-            Log.info("Initialization completed.");
+            Start.initialize(this);
         } catch (IOException e) {
             Log.error("Cannot initialize scenes because of the following error: ", e);
             return;
@@ -44,6 +37,23 @@ public class ClientGui extends Application implements View {
         changeScene();
 
         primaryStage.show();
+
+        new Thread(() -> {
+            try {
+                Create.initialize(this);
+                End.initialize(this);
+                Game.initialize(this);
+                Join.initialize(this);
+                Login.initialize(this);
+                Menu.initialize(this);
+                Start.initialize(this);
+                WaitingRoom.initialize(this);
+                Log.info("Initialization completed.");
+            } catch (IOException e) {
+                Log.error("Cannot initialize scenes because of the following error: ", e);
+                throw new RuntimeException();
+            }
+        }).start();
     }
 
     /**
@@ -66,29 +76,19 @@ public class ClientGui extends Application implements View {
         Log.info("Displaying " + state);
 
         stage.setScene(switch (state) {
-            case CONNECTION_LOST, START_SCREEN -> StartScreen.getScene();
+            case CONNECTION_LOST, START_SCREEN -> Start.getScene();
             case END_GAME -> End.getScene();
             case EXIT -> null;
-            case GAME_CREATION -> GameCreation.getScene();
+            case GAME_CREATION -> Create.getScene();
             case GAME_LOGIN -> Login.getScene();
-            case GAME_RUNNING -> null;
+            case GAME_RUNNING -> Game.getScene();
             case GAME_WAITING_ROOM -> WaitingRoom.getScene();
-            case JOIN_GAME -> JoinGame.getScene();
-            case MAIN_MENU -> MainMenu.getScene();
+            case JOIN_GAME -> Join.getScene();
+            case MAIN_MENU -> Menu.getScene();
         });
 
-        switch (state) {
-            case CONNECTION_LOST -> {
-            }
-            case END_GAME, GAME_CREATION, GAME_LOGIN, GAME_WAITING_ROOM, JOIN_GAME, MAIN_MENU, START_SCREEN -> {
-                stage.sizeToScene();
-                stage.setResizable(false);
-            }
-            case EXIT -> {
-            }
-            case GAME_RUNNING -> {
-            }
-        }
+        stage.sizeToScene();
+        stage.setResizable(state.equals(ClientStates.GAME_RUNNING));
 
         stage.setTitle(switch (state) {
             case CONNECTION_LOST, START_SCREEN -> "Connect to a game server";

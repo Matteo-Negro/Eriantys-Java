@@ -1,12 +1,12 @@
 package it.polimi.ingsw.client.view.gui;
 
 import it.polimi.ingsw.client.view.ClientGui;
+import it.polimi.ingsw.client.view.gui.utilities.ExitEvent;
 import it.polimi.ingsw.utilities.ClientStates;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 
@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
-public class JoinGame {
+public class Join {
 
     private static Scene scene = null;
     private static ClientGui client = null;
@@ -27,7 +27,7 @@ public class JoinGame {
     @FXML
     private static Button enter;
 
-    private JoinGame() {
+    private Join() {
     }
 
     /**
@@ -37,8 +37,8 @@ public class JoinGame {
      * @throws IOException Thrown if there is an error somewhere.
      */
     public static void initialize(ClientGui client) throws IOException {
-        JoinGame.client = client;
-        scene = new Scene(FXMLLoader.load(Objects.requireNonNull(JoinGame.class.getResource("/fxml/join.fxml"))));
+        Join.client = client;
+        scene = new Scene(FXMLLoader.load(Objects.requireNonNull(Join.class.getResource("/fxml/join.fxml"))));
         lookup();
         addEvents();
     }
@@ -75,20 +75,7 @@ public class JoinGame {
      */
     private static void addEvents() {
 
-        back.setOnMouseClicked(event -> {
-            event.consume();
-            if(!client.getController().getClientState().equals(ClientStates.CONNECTION_LOST))
-                client.getController().setClientState(ClientStates.MAIN_MENU);
-            client.changeScene();
-        });
-
-        back.setOnKeyPressed(event -> {
-            event.consume();
-            if (event.getCode() == KeyCode.ENTER)
-                if(!client.getController().getClientState().equals(ClientStates.CONNECTION_LOST))
-                    client.getController().setClientState(ClientStates.MAIN_MENU);
-            client.changeScene();
-        });
+        ExitEvent.addEvent(back, client);
 
         for (int index = 0; index < code.size(); index++)
             processCodeField(index);
@@ -134,15 +121,15 @@ public class JoinGame {
 
     private static String getCode() {
         StringBuilder code = new StringBuilder();
-        for (TextField field : JoinGame.code)
+        for (TextField field : Join.code)
             code.append(field.getText());
-        if (code.length() < JoinGame.code.size())
+        if (code.length() < Join.code.size())
             return "";
         return code.toString();
     }
 
     private static void processButton(String code) {
-        if(!client.getController().getClientState().equals(ClientStates.CONNECTION_LOST))
+        if (!client.getController().getClientState().equals(ClientStates.CONNECTION_LOST))
             client.getController().manageJoinGame(code);
         client.changeScene();
     }

@@ -1,7 +1,6 @@
 package it.polimi.ingsw.client.view.gui;
 
 import it.polimi.ingsw.client.view.ClientGui;
-import it.polimi.ingsw.utilities.ClientStates;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -11,10 +10,11 @@ import javafx.scene.input.KeyCode;
 import java.io.IOException;
 import java.util.Objects;
 
-public class MainMenu {
+public class Menu {
 
     private static Scene scene = null;
     private static ClientGui client = null;
+    private static final Object lock = new Object();
 
     @FXML
     private static Button create;
@@ -23,7 +23,7 @@ public class MainMenu {
     @FXML
     private static Button exit;
 
-    private MainMenu() {
+    private Menu() {
     }
 
     /**
@@ -33,8 +33,8 @@ public class MainMenu {
      * @throws IOException Thrown if there is an error somewhere.
      */
     public static void initialize(ClientGui client) throws IOException {
-        MainMenu.client = client;
-        scene = new Scene(FXMLLoader.load(Objects.requireNonNull(MainMenu.class.getResource("/fxml/menu.fxml"))));
+        Menu.client = client;
+        scene = new Scene(FXMLLoader.load(Objects.requireNonNull(Menu.class.getResource("/fxml/menu.fxml"))));
         lookup();
         addEvents();
     }
@@ -45,6 +45,15 @@ public class MainMenu {
      * @return The scene.
      */
     public static Scene getScene() {
+        synchronized (lock) {
+            while (create == null) {
+                try {
+                    lock.wait(100);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException();
+                }
+            }
+        }
         create.requestFocus();
         return scene;
     }
