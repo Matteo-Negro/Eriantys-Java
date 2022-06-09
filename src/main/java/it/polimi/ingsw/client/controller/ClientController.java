@@ -96,6 +96,8 @@ public class ClientController {
      * @return The active status associated with the username of this client, saved into the game model.
      */
     public boolean hasCommunicationToken() {
+        if (this.getGameModel() == null)
+            return false;
         return this.getGameModel().getPlayerByName(getUserName()).isActive();
     }
 
