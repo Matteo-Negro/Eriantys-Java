@@ -2,6 +2,7 @@ package it.polimi.ingsw.client.view.gui.utilities;
 
 import it.polimi.ingsw.utilities.HouseColor;
 import javafx.geometry.Pos;
+import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 
 public class Boxes {
@@ -15,7 +16,10 @@ public class Boxes {
         hBox.setFillHeight(true);
         hBox.setAlignment(Pos.CENTER);
 
-        hBox.getChildren().add(Images.student(houseColor));
+        Label label = Labels.studentsNumber(students);
+        islandContainer.setStudentsLabels(houseColor, label);
+
+        hBox.getChildren().addAll(Images.student(houseColor), label);
         hBox.setVisible(students != 0);
 
         islandContainer.setStudentsBoxes(houseColor, hBox);
