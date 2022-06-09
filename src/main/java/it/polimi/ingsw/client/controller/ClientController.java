@@ -96,6 +96,8 @@ public class ClientController {
      * @return The active status associated with the username of this client, saved into the game model.
      */
     public boolean hasCommunicationToken() {
+        if (this.getGameModel() == null)
+            return false;
         return this.getGameModel().getPlayerByName(getUserName()).isActive();
     }
 
@@ -667,6 +669,7 @@ public class ClientController {
      * Updates the view screen.
      */
     private void updateScreen() {
-        view.updateScreen(false);
+        if (cli)
+            ((ClientCli) view).updateScreen(false);
     }
 }

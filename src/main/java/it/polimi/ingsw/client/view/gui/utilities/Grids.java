@@ -19,12 +19,11 @@ public class Grids {
     static GridPane island(Island island, IslandContainer islandContainer) {
 
         GridPane gridPane = new GridPane();
-        gridPane.setGridLinesVisible(true);
-        gridPane.setPrefWidth(162);
-        gridPane.setPrefHeight(156);
-
         ObservableList<RowConstraints> rows = gridPane.getRowConstraints();
         ObservableList<ColumnConstraints> columns = gridPane.getColumnConstraints();
+
+        gridPane.setPrefWidth(162);
+        gridPane.setPrefHeight(156);
 
         for (int index = 0; index < 3; index++) {
             rows.add(new RowConstraints());
@@ -52,8 +51,6 @@ public class Grids {
     private static GridPane islandTowerMotherNature(Island island, IslandContainer islandContainer) {
 
         GridPane gridPane = new GridPane();
-        gridPane.setGridLinesVisible(true);
-
         ObservableList<RowConstraints> rows = gridPane.getRowConstraints();
         ObservableList<ColumnConstraints> columns = gridPane.getColumnConstraints();
 
@@ -83,8 +80,6 @@ public class Grids {
     private static GridPane islandStudents(Island island, IslandContainer islandContainer) {
 
         GridPane gridPane = new GridPane();
-        gridPane.setGridLinesVisible(true);
-
         ObservableList<RowConstraints> rows = gridPane.getRowConstraints();
         ObservableList<ColumnConstraints> columns = gridPane.getColumnConstraints();
 
@@ -105,8 +100,6 @@ public class Grids {
     private static GridPane islandStudents(int row, Island island, IslandContainer islandContainer) {
 
         GridPane gridPane = new GridPane();
-        gridPane.setGridLinesVisible(true);
-
         ObservableList<RowConstraints> rows = gridPane.getRowConstraints();
         ObservableList<ColumnConstraints> columns = gridPane.getColumnConstraints();
 

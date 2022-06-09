@@ -15,14 +15,14 @@ public class IslandContainer {
     private ImageView motherNature;
     private Group pane;
     private Map<HouseColor, HBox> studentsBoxes;
-    private Map<HouseColor, Label> studentsNumbers;
+    private Map<HouseColor, Label> studentsLabels;
     private ImageView tower;
 
     IslandContainer() {
         motherNature = null;
         pane = null;
         studentsBoxes = null;
-        studentsNumbers = null;
+        studentsLabels = null;
         tower = null;
     }
 
@@ -48,9 +48,15 @@ public class IslandContainer {
         studentsBoxes.put(houseColor, hBox);
     }
 
+    void setStudentsLabels(HouseColor houseColor, Label label) {
+        if (studentsLabels == null)
+            studentsLabels = new EnumMap<>(HouseColor.class);
+        studentsLabels.put(houseColor, label);
+    }
+
     public void setStudentsNumber(HouseColor houseColor, int number) {
         studentsBoxes.get(houseColor).setVisible(number != 0);
-        studentsNumbers.get(houseColor).setText(String.format("x%1d", number));
+        studentsLabels.get(houseColor).setText(String.format("x%1d", number));
     }
 
     void setTower(ImageView tower) {
@@ -58,7 +64,9 @@ public class IslandContainer {
     }
 
     public void setTower(TowerType towerType) {
-        if (towerType != null)
+        if (towerType != null) {
             tower.setImage(Images.getTowerByColor(towerType));
+            tower.setVisible(true);
+        }
     }
 }
