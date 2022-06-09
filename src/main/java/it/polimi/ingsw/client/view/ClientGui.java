@@ -128,4 +128,13 @@ public class ClientGui extends Application implements View {
     public ClientController getController() {
         return controller;
     }
+
+    /**
+     * Changes the current scene.
+     *
+     * @param def Boolean parameter used by CLI.
+     */
+    public void updateScreen(boolean def) {
+        changeScene();
+    }
 }

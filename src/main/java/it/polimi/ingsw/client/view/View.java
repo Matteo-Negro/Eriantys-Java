@@ -23,4 +23,11 @@ public interface View {
      * @param info The info to show.
      */
     void showInfo(Pair<String, String> info);
+
+    /**
+     * Updates the view screen.
+     *
+     * @param def Boolean parameter used by CLI.
+     */
+    void updateScreen(boolean def);
 }

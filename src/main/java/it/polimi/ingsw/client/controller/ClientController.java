@@ -160,7 +160,6 @@ public class ClientController {
             this.errorOccurred("Wrong data provided or server unreachable.");
         }
         updateScreen();
-
     }
 
     /**
@@ -278,6 +277,7 @@ public class ClientController {
 
         if (command.contains("info")) {
             Pair<String, String> message = CommandParser.infoGenerator(command);
+            updateScreen();
             view.showInfo(message);
             return;
         }
@@ -669,7 +669,6 @@ public class ClientController {
      * Updates the view screen.
      */
     private void updateScreen() {
-        if (cli)
-            ((ClientCli) view).updateScreen(false);
+        view.updateScreen(false);
     }
 }

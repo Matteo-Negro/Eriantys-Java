@@ -224,10 +224,10 @@ public class ClientCli extends Thread implements View {
                     } catch (InterruptedException e) {
                         this.controller.resetGame();
                     }
+                    updateScreen(false);
                 }
             }
         }
-        updateScreen(false);
         if(controller.getClientState().equals(ClientStates.GAME_WAITING_ROOM))
             showError("One or more users disconnected.");
     }
