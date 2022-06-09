@@ -89,7 +89,7 @@ public class GameServer extends Thread {
             }
             case "enterGame" -> manageEnterGame(incomingMessage);
             case "waitingRoomUpdate" -> {
-                Log.debug("WaitingRoomUpdate reply");
+                //Log.debug("WaitingRoomUpdate reply");
                 manageWaitingRoomUpdate(incomingMessage);
             }
             case "login" -> {
@@ -288,10 +288,12 @@ public class GameServer extends Thread {
      * @throws IOException Thrown if an error occurs during the message extraction from the input stream.
      */
     public JsonObject getMessage() throws IOException {
-        try {
-            return JsonParser.parseString(this.inputStream.readLine()).getAsJsonObject();
-        } catch (Exception e) {
-            throw new IOException(e);
+        synchronized (this.inputStream){
+            try {
+                return JsonParser.parseString(this.inputStream.readLine()).getAsJsonObject();
+            } catch (Exception e) {
+                throw new IOException(e);
+            }
         }
     }
 
@@ -301,18 +303,22 @@ public class GameServer extends Thread {
      * @param command The command to send.
      */
     public void sendCommand(JsonObject command) {
-        switch (this.client.getClientState()) {
-            case GAME_CREATION, GAME_LOGIN, JOIN_GAME, GAME_RUNNING -> {
-                synchronized (this.outputStream) {
-                    this.outputStream.println(command.toString());
-                    outputStream.flush();
-                }
-            }
-            default -> {
-                if (command.get("type").getAsString().equals("pong")) {
-                    synchronized (this.outputStream) {
-                        this.outputStream.println(command);
+        synchronized (this.outputStream) {
+            switch (this.client.getClientState()) {
+                case GAME_CREATION, GAME_LOGIN, JOIN_GAME, GAME_RUNNING -> {
+                        this.outputStream.println(command.toString());
                         outputStream.flush();
+                }
+                case GAME_WAITING_ROOM -> {
+                    if (command.get("type").getAsString().equals("logout") || command.get("type").getAsString().equals("pong"))
+                        this.outputStream.println(command);
+                    outputStream.flush();
+                    //Log.debug("sent " + command);
+                }
+                default -> {
+                    if (command.get("type").getAsString().equals("pong")) {
+                            this.outputStream.println(command);
+                            outputStream.flush();
                     }
                 }
             }

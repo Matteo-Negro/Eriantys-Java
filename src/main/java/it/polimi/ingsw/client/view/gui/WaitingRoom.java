@@ -2,12 +2,15 @@ package it.polimi.ingsw.client.view.gui;
 
 import it.polimi.ingsw.client.view.ClientGui;
 import it.polimi.ingsw.utilities.ClientStates;
+import it.polimi.ingsw.utilities.Log;
+import it.polimi.ingsw.utilities.MessageCreator;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
 
 import java.io.IOException;
@@ -65,8 +68,7 @@ public class WaitingRoom {
      * Looks for every used element in the scene.
      */
     private static void lookup() {
-        //TODO Logout from waiting room has to be implemented.
-        //back = (Button) scene.lookup("#back");
+        back = (Button) scene.lookup("#back");
         code = (Label) scene.lookup("#code");
         names = (VBox) scene.lookup("#names");
         online = (Label) scene.lookup("#online");
@@ -76,7 +78,7 @@ public class WaitingRoom {
      * Adds all the events to the scene.
      */
     private static void addEvents() {
-        /*back.setOnMouseClicked(event -> {
+        back.setOnMouseClicked(event -> {
             event.consume();
             disconnect();
         });
@@ -85,11 +87,12 @@ public class WaitingRoom {
             event.consume();
             if (event.getCode() == KeyCode.ENTER)
                 disconnect();
-        });*/
+        });
     }
 
     private static void disconnect() {
-        if (!client.getController().getClientState().equals(ClientStates.CONNECTION_LOST)) {
+        if(!client.getController().getClientState().equals(ClientStates.CONNECTION_LOST)){
+            client.getController().getGameServer().sendCommand(MessageCreator.logout());
             client.getController().resetGame();
             client.getController().setClientState(ClientStates.MAIN_MENU);
         }
@@ -106,9 +109,5 @@ public class WaitingRoom {
 
     public static void changeScene() {
         Platform.runLater(() -> client.changeScene());
-    }
-
-    public static void changeScene(ClientStates state) {
-        Platform.runLater(() -> client.changeScene(state));
     }
 }

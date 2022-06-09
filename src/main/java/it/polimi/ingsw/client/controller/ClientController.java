@@ -230,7 +230,7 @@ public class ClientController {
             return;
         }
 
-        if (this.getGameModel().getWaitingRoom().containsKey(username) && this.getGameModel().getWaitingRoom().get(username).equals(true) || username.equals("")) {
+        if (this.getGameModel().getWaitingRoom().containsKey(username) && this.getGameModel().getWaitingRoom().get(username).equals(true) || this.getGameModel().getWaitingRoom().keySet().size() == this.getGameModel().getPlayersNumber() && !this.getGameModel().getWaitingRoom().keySet().contains(username) || username.equals("")) {
             this.errorOccurred("Invalid username.");
             return;
         }
@@ -658,9 +658,9 @@ public class ClientController {
     }
 
     /**
-     * If the client runs on a cli, clears the screen.
+     * Updates the view screen.
      */
     private void updateScreen() {
-        if (cli) ((ClientCli) view).updateScreen(false);
+        view.updateScreen(false);
     }
 }

@@ -69,6 +69,15 @@ public class User extends Thread {
     }
 
     /**
+     * Returns the current GameController instance.
+     *
+     * @return The gameController attribute.
+     */
+    public GameController getGameController() {
+        return this.gameController;
+    }
+
+    /**
      * Every time checks if the user is online and when receives a command, processes it.
      */
     @Override
@@ -85,20 +94,11 @@ public class User extends Thread {
 
             try {
                 incomingMessage = getCommand();
-                if (!incomingMessage.get("type").getAsString().equals("pong") && !incomingMessage.get("type").getAsString().equals("error"))
+                if (!incomingMessage.get("type").getAsString().equals("pong") && !incomingMessage.get("type").getAsString().equals("error")){
                     manageCommand(incomingMessage);
-
-                if (this.gameController != null && !this.gameController.isFull() && this.isLogged() && !this.gameController.isEnded()) {
-                    synchronized (connectedLock) {
-                        try {
-                            this.connectedLock.wait(1500);
-                        } catch (InterruptedException e) {
-                            this.disconnected();
-                        }
-                    }
-                    this.sendMessage(MessageCreator.waitingRoomUpdate(this.gameController));
-                    // Log.debug("waiting room message sent.");
                 }
+                if(this.ping.isInWaitingRoom() != (this.gameController != null && !this.gameController.isFull() && this.isLogged() && !this.gameController.isEnded()))
+                    this.ping.setInWaitingRoom(this.gameController != null && !this.gameController.isFull() && this.isLogged() && !this.gameController.isEnded());
             } catch (Exception e) {
                 // If socket time out expires.
                 disconnected();
@@ -112,8 +112,10 @@ public class User extends Thread {
      * @return A JsonObject containing the command received.
      * @throws IOException Thrown if an error occurs during the socket input stream read.
      */
-    private synchronized JsonObject getCommand() throws IOException {
-        return JsonParser.parseString(inputStream.readLine()).getAsJsonObject();
+    private JsonObject getCommand() throws IOException {
+        synchronized (this.inputStream){
+            return JsonParser.parseString(inputStream.readLine()).getAsJsonObject();
+        }
     }
 
     /**
@@ -137,12 +139,8 @@ public class User extends Thread {
     private void manageCommand(JsonObject command) throws IllegalMoveException {
         Log.debug(command.toString());
         switch (command.get("type").getAsString()) {
-            case "gameCreation" -> {
-                Log.info("GameCreation message arrived");
-                sendMessage(MessageCreator.gameCreation(Matchmaking.gameCreation(command, server)));
-            }
+            case "gameCreation" -> sendMessage(MessageCreator.gameCreation(Matchmaking.gameCreation(command, server)));
             case "enterGame" -> {
-                Log.info("enterGame message arrived");
                 try {
                     gameController = Matchmaking.enterGame(command.get("code").getAsString(), server);
                 } catch (FullGameException | GameNotFoundException e) {
@@ -152,7 +150,6 @@ public class User extends Thread {
                 Log.debug(MessageCreator.enterGame(gameController).toString());
             }
             case "login" -> {
-                Log.info("login message message arrived");
                 setLogged(Matchmaking.login(gameController, command.get("name").getAsString(), this));
                 sendMessage(MessageCreator.login(this.isLogged()));
                 if (this.isLogged()) {
@@ -161,10 +158,7 @@ public class User extends Thread {
                     this.gameController.checkStartCondition();
                 }
             }
-            case "logout" -> {
-                Log.info("logout message message arrived");
-                removeFromGame();
-            }
+            case "logout" -> removeFromGame();
             case "command" -> {
                 if (gameController.getGameModel().isExpert() && ((command.get("subtype").getAsString().equals("ban")) || (command.get("special") != null && command.get("special").getAsBoolean()) || (command.get("move") != null && !command.get("move").getAsBoolean()))) {
                     SpecialCharacter specialCharacter = null;
@@ -188,10 +182,7 @@ public class User extends Thread {
                     }
                 }
                 switch (command.get("subtype").getAsString()) {
-                    case "playAssistant" -> {
-                        Log.debug("PlayAssistant command arrived.");
-                        this.gameController.playAssistantCard(command.get("player").getAsString(), command.get("assistant").getAsInt());
-                    }
+                    case "playAssistant" -> this.gameController.playAssistantCard(command.get("player").getAsString(), command.get("assistant").getAsInt());
 
                     case "move" -> {
                         switch (command.get("pawn").getAsString()) {

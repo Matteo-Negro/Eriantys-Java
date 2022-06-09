@@ -237,7 +237,6 @@ public class ClientCli extends Thread implements View {
             case LOST -> LosePage.print(terminal);
             case WON -> WinPage.print(terminal);
         }
-        // TODO: Check for it
         this.controller.manageEndGame(readLine(" ", terminal, List.of(node("exit")), false, null));
     }
 

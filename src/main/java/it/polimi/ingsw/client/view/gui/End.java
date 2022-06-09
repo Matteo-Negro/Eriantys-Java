@@ -75,13 +75,18 @@ public class End {
     private static void addEvents() {
         exit.setOnMouseClicked(event -> {
             event.consume();
-            client.changeScene(ClientStates.MAIN_MENU);
+            if(!client.getController().getClientState().equals(ClientStates.CONNECTION_LOST))
+                client.getController().setClientState(ClientStates.MAIN_MENU);
+            client.changeScene();
         });
 
         exit.setOnKeyPressed(event -> {
             event.consume();
-            if (event.getCode() == KeyCode.ENTER)
-                client.changeScene(ClientStates.MAIN_MENU);
+            if (event.getCode() == KeyCode.ENTER){
+                if(!client.getController().getClientState().equals(ClientStates.CONNECTION_LOST))
+                    client.getController().setClientState(ClientStates.MAIN_MENU);
+                client.changeScene();
+            }
         });
     }
 }

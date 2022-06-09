@@ -60,16 +60,7 @@ public class ClientGui extends Application implements View {
      * Changes the scene according to the state.
      */
     public void changeScene() {
-        changeScene(getController().getClientState());
-    }
-
-    /**
-     * Changes the scene according to the state.
-     *
-     * @param state State of the game.
-     */
-    public void changeScene(ClientStates state) {
-
+        ClientStates state = getController().getClientState();
         if (getController().getClientState().equals(ClientStates.CONNECTION_LOST))
             getController().manageConnectionLost();
 
@@ -136,5 +127,14 @@ public class ClientGui extends Application implements View {
      */
     public ClientController getController() {
         return controller;
+    }
+
+    /**
+     * Updates the view screen.
+     *
+     * @param def Used by cli.
+     */
+    public void updateScreen(boolean def) {
+        changeScene();
     }
 }
