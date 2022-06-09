@@ -661,6 +661,7 @@ public class ClientController {
      * Updates the view screen.
      */
     private void updateScreen() {
-        view.updateScreen(false);
+        if (cli)
+            ((ClientCli) view).updateScreen(false);
     }
 }

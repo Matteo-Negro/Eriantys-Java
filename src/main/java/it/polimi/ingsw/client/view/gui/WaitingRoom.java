@@ -2,7 +2,6 @@ package it.polimi.ingsw.client.view.gui;
 
 import it.polimi.ingsw.client.view.ClientGui;
 import it.polimi.ingsw.utilities.ClientStates;
-import it.polimi.ingsw.utilities.Log;
 import it.polimi.ingsw.utilities.MessageCreator;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -91,7 +90,7 @@ public class WaitingRoom {
     }
 
     private static void disconnect() {
-        if(!client.getController().getClientState().equals(ClientStates.CONNECTION_LOST)){
+        if (!client.getController().getClientState().equals(ClientStates.CONNECTION_LOST)) {
             client.getController().getGameServer().sendCommand(MessageCreator.logout());
             client.getController().resetGame();
             client.getController().setClientState(ClientStates.MAIN_MENU);
