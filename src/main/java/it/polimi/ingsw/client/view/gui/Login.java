@@ -116,6 +116,5 @@ public class Login {
     private static void manageLogin() {
         if (!client.getController().getClientState().equals(ClientStates.CONNECTION_LOST))
             client.getController().manageGameLogin(name.getText());
-        client.changeScene();
     }
 }

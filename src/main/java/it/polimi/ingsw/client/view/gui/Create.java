@@ -62,6 +62,9 @@ public class Create {
         create.requestFocus();
         players2.setSelected(true);
         normal.setSelected(true);
+        expert.setSelected(false);
+        players3.setSelected(false);
+        players4.setSelected(false);
         return scene;
     }
 
@@ -141,6 +144,5 @@ public class Create {
     private static void processButton(int player, boolean expertMode) {
         if (!client.getController().getClientState().equals(ClientStates.CONNECTION_LOST))
             client.getController().manageGameCreation(MessageCreator.gameCreation(player, expertMode));
-        client.changeScene();
     }
 }

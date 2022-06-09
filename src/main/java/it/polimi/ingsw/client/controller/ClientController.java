@@ -157,6 +157,8 @@ public class ClientController {
         } catch (IOException | NumberFormatException e) {
             this.errorOccurred("Wrong data provided or server unreachable.");
         }
+        updateScreen();
+
     }
 
     /**
@@ -174,10 +176,7 @@ public class ClientController {
                     this.setClientState(ClientStates.JOIN_GAME);
                 updateScreen();
             }
-            case "exit" -> {
-                this.setClientState(ClientStates.CONNECTION_LOST);
-                updateScreen();
-            }
+            case "exit" -> this.setClientState(ClientStates.CONNECTION_LOST);
             default -> this.errorOccurred("Wrong command.");
         }
     }
@@ -194,18 +193,18 @@ public class ClientController {
             Log.debug("manage game creation");
             this.setClientState(ClientStates.CONNECTION_LOST);
         }
+        updateScreen();
     }
 
     /**
      * Manages the join-game logic.
      */
     public void manageJoinGame(String gameCode) {
-        updateScreen();
-
         if ("EXIT".equals(gameCode)) {
             if(!getClientState().equals(ClientStates.CONNECTION_LOST))
                 this.setClientState(ClientStates.MAIN_MENU);
             this.resetGame();
+            updateScreen();
             return;
         }
         this.gameServer.sendCommand(MessageCreator.enterGame(gameCode));
@@ -215,22 +214,25 @@ public class ClientController {
 
         if (this.getClientState().equals(ClientStates.JOIN_GAME))
             this.errorOccurred("The desired game doesn't exist or is full.");
+        else{
+            updateScreen();
+        }
     }
 
     /**
      * Manages the login logic.
      */
     public void manageGameLogin(String username) {
-        updateScreen();
-
         if ("exit".equals(username)) {
             if(!getClientState().equals(ClientStates.CONNECTION_LOST))
                 this.setClientState(ClientStates.MAIN_MENU);
             this.resetGame();
+            updateScreen();
             return;
         }
 
         if (this.getGameModel().getWaitingRoom().containsKey(username) && this.getGameModel().getWaitingRoom().get(username).equals(true) || this.getGameModel().getWaitingRoom().keySet().size() == this.getGameModel().getPlayersNumber() && !this.getGameModel().getWaitingRoom().keySet().contains(username) || username.equals("")) {
+            updateScreen();
             this.errorOccurred("Invalid username.");
             return;
         }
@@ -238,31 +240,34 @@ public class ClientController {
         this.userName = username;
         this.gameServer.sendCommand(MessageCreator.login(username));
         this.tryConnection();
+        updateScreen();
     }
 
     /**
      * Manages the game logic.
      */
     public void manageGameRunning(String command) {
-        if(getClientState().equals(ClientStates.CONNECTION_LOST))
+        if(getClientState().equals(ClientStates.CONNECTION_LOST)){
+            updateScreen();
             return;
+        }
 
         try {
             if (!CommandParser.checker(command)) throw new Exception();
         } catch (Exception e) {
             Log.warning(e);
+            updateScreen();
             this.errorOccurred("Wrong command.");
             return;
         }
 
         List<JsonObject> messages;
 
-        updateScreen();
-
         // Logout command.
         if (command.equals("exit") || command.equals("logout")) {
             this.getGameServer().sendCommand(MessageCreator.logout());
             this.resetGame();
+            updateScreen();
             return;
         }
 
@@ -304,6 +309,7 @@ public class ClientController {
             }
         } catch (Exception e) {
             Log.warning(e);
+            updateScreen();
             this.errorOccurred("Wrong command.");
             return;
         }
@@ -318,12 +324,14 @@ public class ClientController {
                         try {
                             this.getLock().wait();
                         } catch (InterruptedException ie) {
+                            updateScreen();
                             errorOccurred("Command not allowed.");
                             return;
                         }
                     }
                     Log.debug("Command sent to game server.");
                 } else {
+                    updateScreen();
                     errorOccurred("Command not allowed.");
                     return;
                 }
@@ -333,6 +341,7 @@ public class ClientController {
             errorOccurred("Connection lost.");
             setClientState(ClientStates.CONNECTION_LOST);
         }
+        updateScreen();
     }
 
     /**
@@ -344,11 +353,9 @@ public class ClientController {
                 this.setClientState(ClientStates.MAIN_MENU);
             updateScreen();
             this.resetGame();
-            return;
         } else {
             this.errorOccurred("Wrong command.");
         }
-        updateScreen();
     }
 
     /**
@@ -580,8 +587,9 @@ public class ClientController {
         this.getGameServer().disconnected();
         this.gameServer = null;
         Log.debug("manageConnectionLost");
-        this.errorOccurred("Connection lost.");
         this.setClientState(ClientStates.START_SCREEN);
+        updateScreen();
+        this.errorOccurred("Connection lost.");
     }
 
     /**
@@ -637,7 +645,6 @@ public class ClientController {
      * @param message The message to print.
      */
     public void errorOccurred(String message) {
-        updateScreen();
         view.showError(message);
         Log.warning(message);
     }
@@ -652,7 +659,6 @@ public class ClientController {
             } catch (InterruptedException e) {
                 Log.debug("tryConnection.");
                 this.setClientState(ClientStates.CONNECTION_LOST);
-                updateScreen();
             }
         }
     }

@@ -75,27 +75,23 @@ public class Menu {
         create.setOnMouseClicked(event -> {
             event.consume();
             client.getController().manageMainMenu("1");
-            client.changeScene();
         });
 
         create.setOnKeyPressed(event -> {
             event.consume();
             if (event.getCode() == KeyCode.ENTER)
                 client.getController().manageMainMenu("1");
-            client.changeScene();
         });
 
         enter.setOnMouseClicked(event -> {
             event.consume();
             client.getController().manageMainMenu("2");
-            client.changeScene();
         });
 
         enter.setOnKeyPressed(event -> {
             event.consume();
             if (event.getCode() == KeyCode.ENTER)
                 client.getController().manageMainMenu("2");
-            client.changeScene();
 
         });
 
@@ -116,6 +112,5 @@ public class Menu {
      */
     private static void manageExit() {
         client.getController().manageConnectionLost();
-        client.changeScene();
     }
 }

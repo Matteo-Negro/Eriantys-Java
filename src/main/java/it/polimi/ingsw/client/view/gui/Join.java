@@ -131,6 +131,5 @@ public class Join {
     private static void processButton(String code) {
         if (!client.getController().getClientState().equals(ClientStates.CONNECTION_LOST))
             client.getController().manageJoinGame(code);
-        client.changeScene();
     }
 }

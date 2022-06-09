@@ -84,7 +84,6 @@ public class ClientCli extends Thread implements View {
      * Manages the start-screen's I/O.
      */
     public void runStartScreen() {
-
         SplashScreen.print(terminal);
 
         int hostTcpPort;
@@ -136,7 +135,7 @@ public class ClientCli extends Thread implements View {
         switch (playersNumber) {
             case "2", "3", "4" -> expectedPlayers = Integer.parseInt(playersNumber);
             case "exit" -> {
-                if(!controller.getClientState().equals(ClientStates.CONNECTION_LOST))
+                if (!controller.getClientState().equals(ClientStates.CONNECTION_LOST))
                     this.controller.setClientState(ClientStates.MAIN_MENU);
                 updateScreen(false);
                 this.controller.resetGame();
@@ -153,7 +152,7 @@ public class ClientCli extends Thread implements View {
             case "normal" -> expert = false;
             case "expert" -> expert = true;
             case "exit" -> {
-                if(!controller.getClientState().equals(ClientStates.CONNECTION_LOST))
+                if (!controller.getClientState().equals(ClientStates.CONNECTION_LOST))
                     this.controller.setClientState(ClientStates.MAIN_MENU);
                 updateScreen(false);
                 this.controller.resetGame();
@@ -190,19 +189,19 @@ public class ClientCli extends Thread implements View {
     static int waitingIteration = 0;
 
     public void runWaitingRoom() {
-        if (this.controller.getGameModel() != null) {
-            List<String> onlinePlayers = new ArrayList<>();
-            for (String name : this.controller.getGameModel().getWaitingRoom().keySet())
-                if (Boolean.TRUE.equals(this.controller.getGameModel().getWaitingRoom().get(name)))
-                    onlinePlayers.add(name);
-
-            WaitingRoom.print(terminal, onlinePlayers, this.controller.getGameCode(), this.controller.getGameModel().getPlayersNumber(), waitingIteration++);
-        }
         synchronized (this.controller.getLock()) {
-            try {
-                this.controller.getLock().wait();
-            } catch (InterruptedException ie) {
-                this.controller.resetGame();
+            if (this.controller.getGameModel() != null) {
+                List<String> onlinePlayers = new ArrayList<>();
+                for (String name : this.controller.getGameModel().getWaitingRoom().keySet())
+                    if (Boolean.TRUE.equals(this.controller.getGameModel().getWaitingRoom().get(name)))
+                        onlinePlayers.add(name);
+
+                WaitingRoom.print(terminal, onlinePlayers, this.controller.getGameCode(), this.controller.getGameModel().getPlayersNumber(), waitingIteration++);
+                try {
+                    this.controller.getLock().wait(1000);
+                } catch (InterruptedException ie) {
+                    this.controller.resetGame();
+                }
             }
         }
         updateScreen(false);
@@ -213,19 +212,24 @@ public class ClientCli extends Thread implements View {
      * Manages the game-screen's I/O.
      */
     public void runGameRunning() {
-        Game.print(terminal, this.controller.getGameModel(), this.controller.getGameCode(), this.controller.getGameModel().getRound(), this.controller.getGameModel().getPlayerByName(controller.getUserName()).isActive());
-        if (this.controller.hasCommunicationToken() && !this.controller.getClientState().equals(ClientStates.CONNECTION_LOST))
-            this.controller.manageGameRunning(readLine(getPrettyUserName(), terminal, Autocompletion.get(), true, history).toLowerCase(Locale.ROOT));
-        else {
-            synchronized (this.controller.getLock()) {
-                try {
-                    this.controller.getLock().wait(1500);
-                } catch (InterruptedException e) {
-                    this.controller.resetGame();
+        synchronized (this.controller.getLock()) {
+            if (this.controller.getGameServer() != null) {
+                Game.print(terminal, this.controller.getGameModel(), this.controller.getGameCode(), this.controller.getGameModel().getRound(), this.controller.getGameModel().getPlayerByName(controller.getUserName()).isActive());
+
+                if (this.controller.hasCommunicationToken() && !this.controller.getClientState().equals(ClientStates.CONNECTION_LOST))
+                    this.controller.manageGameRunning(readLine(getPrettyUserName(), terminal, Autocompletion.get(), true, history).toLowerCase(Locale.ROOT));
+                else{
+                    try {
+                        this.controller.getLock().wait(1000);
+                    } catch (InterruptedException e) {
+                        this.controller.resetGame();
+                    }
                 }
             }
-            updateScreen(false);
         }
+        updateScreen(false);
+        if(controller.getClientState().equals(ClientStates.GAME_WAITING_ROOM))
+            showError("One or more users disconnected.");
     }
 
     /**

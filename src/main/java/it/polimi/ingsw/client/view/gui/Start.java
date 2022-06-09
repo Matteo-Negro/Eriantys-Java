@@ -100,7 +100,5 @@ public class Start {
         } catch (Exception e) {
             client.showError("Wrong data provided or server unreachable.");
         }
-
-        client.changeScene();
     }
 }

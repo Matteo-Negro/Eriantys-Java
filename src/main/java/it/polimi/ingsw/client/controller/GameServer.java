@@ -223,9 +223,7 @@ public class GameServer extends Thread {
     private void manageError(JsonObject message) {
         if (this.client.getClientState().equals(ClientStates.GAME_RUNNING) && message.get("message").getAsString().equals("UserDisconnected")) {
             this.client.setClientState(ClientStates.GAME_WAITING_ROOM);
-            Log.debug("changed state Waiting room.");
             this.client.initializeGameModel(null);
-            this.client.errorOccurred("One or more users disconnected.");
         }
     }
 
