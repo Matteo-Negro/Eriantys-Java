@@ -12,9 +12,9 @@ import java.util.Objects;
 
 public class Menu {
 
+    private static final Object lock = new Object();
     private static Scene scene = null;
     private static ClientGui client = null;
-    private static final Object lock = new Object();
 
     @FXML
     private static Button create;

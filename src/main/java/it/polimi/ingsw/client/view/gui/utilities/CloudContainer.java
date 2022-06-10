@@ -1,6 +1,7 @@
 package it.polimi.ingsw.client.view.gui.utilities;
 
 import it.polimi.ingsw.utilities.HouseColor;
+import javafx.application.Platform;
 import javafx.scene.Group;
 import javafx.scene.image.ImageView;
 
@@ -26,15 +27,19 @@ public class CloudContainer {
     }
 
     public void setStudent(List<HouseColor> students) {
-        for (int index = 0; index < this.students.size(); index++) {
-            this.students.get(index).setImage(Images.getStudent3dByColor(students.get(index)));
-            this.students.get(index).setVisible(true);
-        }
+        Platform.runLater(() -> {
+            for (int index = 0; index < this.students.size(); index++) {
+                this.students.get(index).setImage(Images.getStudent3dByColor(students.get(index)));
+                this.students.get(index).setVisible(true);
+            }
+        });
     }
 
     public void refill() {
-        for (ImageView student : students)
-            student.setVisible(false);
+        Platform.runLater(() -> {
+            for (ImageView student : students)
+                student.setVisible(false);
+        });
     }
 
     void addStudent(ImageView student) {

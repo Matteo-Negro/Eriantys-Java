@@ -2,6 +2,7 @@ package it.polimi.ingsw.client.view.gui.utilities;
 
 import it.polimi.ingsw.utilities.HouseColor;
 import it.polimi.ingsw.utilities.TowerType;
+import javafx.application.Platform;
 import javafx.scene.Group;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
@@ -31,7 +32,9 @@ public class IslandContainer {
     }
 
     public void setMotherNatureVisibility(boolean visible) {
-        motherNature.setVisible(visible);
+        Platform.runLater(() -> {
+            motherNature.setVisible(visible);
+        });
     }
 
     public Group getPane() {
@@ -55,8 +58,10 @@ public class IslandContainer {
     }
 
     public void setStudentsNumber(HouseColor houseColor, int number) {
-        studentsBoxes.get(houseColor).setVisible(number != 0);
-        studentsLabels.get(houseColor).setText(String.format("x%1d", number));
+        Platform.runLater(() -> {
+            studentsBoxes.get(houseColor).setVisible(number != 0);
+            studentsLabels.get(houseColor).setText(String.format("x%1d", number));
+        });
     }
 
     void setTower(ImageView tower) {
@@ -64,9 +69,10 @@ public class IslandContainer {
     }
 
     public void setTower(TowerType towerType) {
-        if (towerType != null) {
-            tower.setImage(Images.getTowerByColor(towerType));
-            tower.setVisible(true);
-        }
+        if (towerType != null)
+            Platform.runLater(() -> {
+                tower.setImage(Images.getTowerByColor(towerType));
+                tower.setVisible(true);
+            });
     }
 }
