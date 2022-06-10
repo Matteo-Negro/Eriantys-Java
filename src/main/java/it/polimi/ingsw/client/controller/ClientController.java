@@ -564,7 +564,7 @@ public class ClientController {
      * @throws IllegalMoveException Thrown if the client model is not aligned with that of the game server.
      */
     private void checkCharacterPayment(JsonObject message) throws IllegalMoveException {
-        if (getGameModel().getSubphase().equals(MOVE_MOTHER_NATURE) || !getGameModel().isExpert())
+        if (!getGameModel().isExpert())
             throw new IllegalMoveException();
 
         int characterId = message.get("character").getAsInt();
