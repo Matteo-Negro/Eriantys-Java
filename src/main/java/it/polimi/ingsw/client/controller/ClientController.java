@@ -212,7 +212,7 @@ public class ClientController {
 
         if (this.getClientState().equals(ClientStates.JOIN_GAME))
             this.errorOccurred("The desired game doesn't exist or is full.");
-        else{
+        else {
             updateScreen();
         }
     }
@@ -244,7 +244,7 @@ public class ClientController {
      * Manages the game logic.
      */
     public void manageGameRunning(String command) {
-        if(getClientState().equals(ClientStates.CONNECTION_LOST)){
+        if (getClientState().equals(ClientStates.CONNECTION_LOST)) {
             updateScreen();
             return;
         }
@@ -402,7 +402,7 @@ public class ClientController {
      */
     public void manageEndGame(String command) {
         if (command.equals("") || command.equals("exit")) {
-            if(!getClientState().equals(ClientStates.CONNECTION_LOST))
+            if (!getClientState().equals(ClientStates.CONNECTION_LOST))
                 this.setClientState(ClientStates.MAIN_MENU);
             updateScreen();
             this.resetGame();
@@ -446,7 +446,7 @@ public class ClientController {
                     if (getGameModel().getPlayersNumber() != 3) throw new IllegalActionException();
                 }
                 default -> {
-                    if (getGameModel().getSubphase().equals(CHOOSE_CLOUD) || !getGameModel().isExpert() || getGameModel().isExpert() && !message.get("special").getAsBoolean()) {
+                    if (getGameModel().getSubphase().equals(CHOOSE_CLOUD) && !gameModel.isExpert() || gameModel.isExpert() && !message.get("special").getAsBoolean()) {
                         throw new IllegalMoveException();
                     }
                 }

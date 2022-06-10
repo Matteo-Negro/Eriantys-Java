@@ -558,6 +558,7 @@ public class GameController extends Thread {
                 for (SpecialCharacter c : this.gameModel.getGameBoard().getCharacters()) {
                     if (c.getId() == 1 && c.isActive()) {
                         ((MonkEffect) c.getEffect()).effect(HouseColor.valueOf(command.get("color").getAsString()), null);
+                        ((MonkEffect) c.getEffect()).effect(null, gameModel.getGameBoard().getBag().pop());
                         check = true;
                         break;
                     } else if (c.getId() == 7 && c.isActive()) {
@@ -566,6 +567,7 @@ public class GameController extends Thread {
                         break;
                     } else if (c.getId() == 11 && c.isActive()) {
                         ((PrincessEffect) c.getEffect()).effect(HouseColor.valueOf(command.get("color").getAsString()), null);
+                        ((PrincessEffect) c.getEffect()).effect(null, gameModel.getGameBoard().getBag().pop());
                         check = true;
                         break;
                     }
