@@ -12,7 +12,7 @@ public class Islands {
     private Islands() {
     }
 
-    public static List<IslandContainer> getIslands(GameBoard gameBoard) {
+    public static List<IslandContainer> get(GameBoard gameBoard) {
 
         IslandContainer islandContainer;
         List<IslandContainer> list = new ArrayList<>();
@@ -23,8 +23,8 @@ public class Islands {
             list.add(islandContainer);
 
             Group group = new Group();
-            group.getChildren().addAll(Images.island(), Grids.island(gameBoard.getIslandById(index), islandContainer));
             islandContainer.setPane(group);
+            group.getChildren().addAll(Images.island(), Grids.island(gameBoard.getIslandById(index), islandContainer));
         }
 
         return Collections.unmodifiableList(list);

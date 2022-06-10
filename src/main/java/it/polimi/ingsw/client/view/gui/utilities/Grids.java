@@ -1,5 +1,6 @@
 package it.polimi.ingsw.client.view.gui.utilities;
 
+import it.polimi.ingsw.client.model.Cloud;
 import it.polimi.ingsw.client.model.Island;
 import it.polimi.ingsw.utilities.HouseColor;
 import javafx.collections.ObservableList;
@@ -16,6 +17,76 @@ public class Grids {
     private Grids() {
     }
 
+    static GridPane cloud(Cloud cloud, int playersNumber, CloudContainer cloudContainer) {
+
+        GridPane gridPane = new GridPane();
+        ObservableList<RowConstraints> rows = gridPane.getRowConstraints();
+        ObservableList<ColumnConstraints> columns = gridPane.getColumnConstraints();
+
+        gridPane.setPrefWidth(131);
+        gridPane.setPrefHeight(128);
+
+        for (int index = 0; index < 3; index++) {
+            rows.add(new RowConstraints());
+            columns.add(new ColumnConstraints());
+        }
+        rows.add(new RowConstraints());
+        if (playersNumber != 3)
+            columns.add(new ColumnConstraints());
+
+        initialize(rows, columns);
+
+        for (RowConstraints row : rows)
+            row.setValignment(VPos.CENTER);
+
+        for (ColumnConstraints column : columns)
+            column.setHalignment(HPos.CENTER);
+
+        rows.get(0).setPrefHeight(20);
+        rows.get(1).setPrefHeight(40);
+        rows.get(2).setPrefHeight(40);
+        rows.get(3).setPrefHeight(20);
+        columns.get(0).setPrefWidth(20);
+        columns.get(1).setPrefWidth(playersNumber == 3 ? 40 : 80);
+        columns.get(2).setPrefWidth(playersNumber == 3 ? 40 : 20);
+        if (playersNumber == 3)
+            columns.get(3).setPrefWidth(20);
+
+        ImageView student;
+
+        if (playersNumber == 3) {
+
+            student = Images.student3d(cloud.getStudents(false) != null ? cloud.getStudents(false).get(0) : null);
+            cloudContainer.addStudent(student);
+            gridPane.add(student, 1, 1);
+
+            student = Images.student3d(cloud.getStudents(false) != null ? cloud.getStudents(false).get(1) : null);
+            cloudContainer.addStudent(student);
+            gridPane.add(student, 2, 1);
+
+            student = Images.student3d(cloud.getStudents(false) != null ? cloud.getStudents(false).get(2) : null);
+            cloudContainer.addStudent(student);
+            gridPane.add(student, 1, 2);
+
+            student = Images.student3d(cloud.getStudents(false) != null ? cloud.getStudents(false).get(3) : null);
+            cloudContainer.addStudent(student);
+            gridPane.add(student, 2, 2);
+
+        } else {
+
+            student = Images.student3d(cloud.getStudents(false) != null ? cloud.getStudents(false).get(0) : null);
+            cloudContainer.addStudent(student);
+            gridPane.add(student, 1, 1);
+
+            gridPane.add(cloudStudents(cloud, cloudContainer), 1, 2);
+        }
+
+        if (cloud.getStudents(false) == null)
+            cloudContainer.refill();
+
+        return gridPane;
+    }
+
     static GridPane island(Island island, IslandContainer islandContainer) {
 
         GridPane gridPane = new GridPane();
@@ -30,10 +101,7 @@ public class Grids {
             columns.add(new ColumnConstraints());
         }
 
-        for (int index = 0; index < 3; index++) {
-            rows.get(index).setVgrow(Priority.SOMETIMES);
-            columns.get(index).setHgrow(Priority.SOMETIMES);
-        }
+        initialize(rows, columns);
 
         rows.get(0).setPrefHeight(30);
         rows.get(1).setPrefHeight(30);
@@ -58,9 +126,7 @@ public class Grids {
         columns.add(new ColumnConstraints());
         columns.add(new ColumnConstraints());
 
-        rows.get(0).setVgrow(Priority.SOMETIMES);
-        columns.get(0).setHgrow(Priority.SOMETIMES);
-        columns.get(1).setHgrow(Priority.SOMETIMES);
+        initialize(rows, columns);
 
         rows.get(0).setValignment(VPos.BOTTOM);
         columns.get(0).setHalignment(HPos.CENTER);
@@ -87,6 +153,8 @@ public class Grids {
         rows.add(new RowConstraints());
         columns.add(new ColumnConstraints());
 
+        initialize(rows, columns);
+
         rows.get(0).setVgrow(Priority.SOMETIMES);
         rows.get(1).setVgrow(Priority.SOMETIMES);
         columns.get(0).setHgrow(Priority.SOMETIMES);
@@ -104,12 +172,11 @@ public class Grids {
         ObservableList<ColumnConstraints> columns = gridPane.getColumnConstraints();
 
         rows.add(new RowConstraints());
-        rows.get(0).setVgrow(Priority.SOMETIMES);
 
-        for (int index = 0; index < 3 - row; index++) {
+        for (int index = 0; index < 3 - row; index++)
             columns.add(new ColumnConstraints());
-            columns.get(index).setHgrow(Priority.SOMETIMES);
-        }
+
+        initialize(rows, columns);
 
         if (row == 0) {
             gridPane.add(Boxes.islandStudent(HouseColor.GREEN, island.getStudents().get(HouseColor.GREEN), islandContainer), 0, 0);
@@ -121,5 +188,47 @@ public class Grids {
         }
 
         return gridPane;
+    }
+
+    private static GridPane cloudStudents(Cloud cloud, CloudContainer cloudContainer) {
+
+        GridPane gridPane = new GridPane();
+        ObservableList<RowConstraints> rows = gridPane.getRowConstraints();
+        ObservableList<ColumnConstraints> columns = gridPane.getColumnConstraints();
+
+        rows.add(new RowConstraints());
+        columns.add(new ColumnConstraints());
+        columns.add(new ColumnConstraints());
+
+        initialize(rows, columns);
+
+        rows.get(0).setValignment(VPos.CENTER);
+        columns.get(0).setHalignment(HPos.CENTER);
+        columns.get(1).setHalignment(HPos.CENTER);
+
+        ImageView student;
+
+        student = Images.student3d(cloud.getStudents(false) != null ? cloud.getStudents(false).get(1) : null);
+        cloudContainer.addStudent(student);
+        gridPane.add(student, 0, 0);
+
+        student = Images.student3d(cloud.getStudents(false) != null ? cloud.getStudents(false).get(2) : null);
+        cloudContainer.addStudent(student);
+        gridPane.add(student, 1, 0);
+
+        return gridPane;
+    }
+
+    private static void initialize(ObservableList<RowConstraints> rows, ObservableList<ColumnConstraints> columns) {
+
+        for (RowConstraints row : rows) {
+            row.setVgrow(Priority.SOMETIMES);
+            row.setMinHeight(0);
+        }
+
+        for (ColumnConstraints column : columns) {
+            column.setHgrow(Priority.SOMETIMES);
+            column.setMinWidth(0);
+        }
     }
 }

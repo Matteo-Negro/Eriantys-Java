@@ -19,7 +19,7 @@ public class Boxes {
         Label label = Labels.studentsNumber(students);
         islandContainer.setStudentsLabels(houseColor, label);
 
-        hBox.getChildren().addAll(Images.student(houseColor), label);
+        hBox.getChildren().addAll(Images.student3d(houseColor), label);
         hBox.setVisible(students != 0);
 
         islandContainer.setStudentsBoxes(houseColor, hBox);

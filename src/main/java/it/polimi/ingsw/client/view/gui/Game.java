@@ -1,13 +1,10 @@
 package it.polimi.ingsw.client.view.gui;
 
 import it.polimi.ingsw.client.view.ClientGui;
-import it.polimi.ingsw.client.view.gui.utilities.ExitEvent;
-import it.polimi.ingsw.client.view.gui.utilities.IslandContainer;
-import it.polimi.ingsw.client.view.gui.utilities.Islands;
+import it.polimi.ingsw.client.view.gui.utilities.*;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -24,6 +21,9 @@ public class Game {
 
     private static Scene scene = null;
     private static ClientGui client = null;
+
+    private static List<CloudContainer> clouds = null;
+    private static List<IslandContainer> islands = null;
 
     @FXML
     private static VBox boardsLayout;
@@ -69,7 +69,7 @@ public class Game {
         round.setText(String.valueOf(client.getController().getGameModel().getRound()));
         phase.setText(client.getController().getClientState().name().toLowerCase(Locale.ROOT));
         new Thread(Game::addIslands).start();
-//        new Thread(Game::addClouds).start();
+        new Thread(Game::addClouds).start();
 //        new Thread(Game::addBoards).start();
         return scene;
     }
@@ -100,11 +100,16 @@ public class Game {
     }
 
     private static void addClouds() {
-        Platform.runLater(() -> cloudsLayout.getChildren().clear());
+        clouds = Clouds.get(client.getController().getGameModel().getGameBoard().getClouds(), client.getController().getGameModel().getPlayersNumber());
+        Platform.runLater(() -> {
+            cloudsLayout.getChildren().clear();
+            for (CloudContainer cloud : clouds)
+                cloudsLayout.getChildren().add(cloud.getPane());
+        });
     }
 
     private static void addIslands() {
-        List<IslandContainer> islands = Islands.getIslands(client.getController().getGameModel().getGameBoard());
+        islands = Islands.get(client.getController().getGameModel().getGameBoard());
         Platform.runLater(() -> {
             islandsLayout.getChildren().clear();
             islandsLayout.add(islands.get(0).getPane(), 0, 1);
