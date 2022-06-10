@@ -175,7 +175,11 @@ public class User extends Thread {
                             if (specialCharacter.getUsesNumber() > 0) throw new IllegalMoveException();
                             specialCharacter.increaseUsesNumber();
                         }
-                        case 7, 10 -> {
+                        case 10 -> {
+                            if (specialCharacter.getUsesNumber() > 4) throw new IllegalMoveException();
+                            specialCharacter.increaseUsesNumber();
+                        }
+                        case 7 -> {
                             if (specialCharacter.getUsesNumber() > 6) throw new IllegalMoveException();
                             specialCharacter.increaseUsesNumber();
                         }

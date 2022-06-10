@@ -19,7 +19,6 @@ public class SpecialCharacter {
     private final int effectCost;
     private final Effect assignedEffect;
     private boolean alreadyPaid;
-    private boolean firstTime;
     private boolean paidInRound;
     private boolean isActive;
     private int usesNumber;
@@ -36,7 +35,6 @@ public class SpecialCharacter {
         isActive = false;
         alreadyPaid = false;
         paidInRound = false;
-        firstTime = true;
         usesNumber = 0;
         assignedEffect = getEffectBy(id, students, 4);
         effectCost = assignedEffect.getCost();
@@ -59,7 +57,6 @@ public class SpecialCharacter {
         this.effectCost = statusEffectCost;
         this.assignedEffect = getEffectBy(statusId, statusStudents, bans);
         this.alreadyPaid = statusAlreadyPaid;
-        this.firstTime = !this.alreadyPaid;
         this.paidInRound = statusPaidInRound;
         this.isActive = statusIsActive;
         this.usesNumber = usesNumber;
@@ -106,8 +103,7 @@ public class SpecialCharacter {
      * @return effectCost or effectCost+1 attribute
      */
     public int getEffectCost() {
-        if (alreadyPaid && firstTime) {
-            firstTime = false;
+        if (alreadyPaid) {
             return effectCost + 1;
         } else return effectCost;
 

@@ -2,6 +2,7 @@ package it.polimi.ingsw.server.model;
 
 import it.polimi.ingsw.server.model.board.Bag;
 import it.polimi.ingsw.server.model.board.GameBoard;
+import it.polimi.ingsw.server.model.board.SpecialCharacter;
 import it.polimi.ingsw.server.model.player.Assistant;
 import it.polimi.ingsw.server.model.player.Player;
 import it.polimi.ingsw.utilities.*;
@@ -236,6 +237,9 @@ public class GamePlatform {
             }
             cloud.refill(map);
         });
+        if (expert) {
+            gameBoard.getCharacters().forEach(SpecialCharacter::changedRound);
+        }
         currentPlayer = roundWinner;
     }
 
