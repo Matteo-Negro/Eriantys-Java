@@ -16,13 +16,13 @@ import java.util.Map;
  */
 public class Island {
 
-    private int id;
+    private final int id;
     private final Map<HouseColor, Integer> students;
     private boolean ban;
     private boolean next;
     private boolean prev;
     private TowerType tower;
-    private boolean motherNature;
+    private final boolean motherNature;
 
     /**
      * Default constructor.
@@ -113,15 +113,6 @@ public class Island {
      */
     public boolean hasMotherNature() {
         return motherNature;
-    }
-
-    /**
-     * Sets if Mother Nature is on the island or not.
-     *
-     * @param motherNature true if Mother Nature is on the island.
-     */
-    public void hasMotherNature(boolean motherNature) {
-        this.motherNature = motherNature;
     }
 
     /**

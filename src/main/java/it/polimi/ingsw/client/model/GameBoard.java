@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import it.polimi.ingsw.utilities.HouseColor;
+import it.polimi.ingsw.utilities.Log;
 import it.polimi.ingsw.utilities.TowerType;
 import it.polimi.ingsw.utilities.parsers.JsonToObjects;
 
@@ -39,11 +40,11 @@ public class GameBoard {
     public GameBoard(int statusMotherNatureIsland, String statusInfluenceBonus, HouseColor statusIgnoreColor, JsonArray statusIslands, JsonArray statusClouds, JsonArray statusSpecialCharacters) {
         this.influenceBonus = statusInfluenceBonus;
         this.ignoreColor = statusIgnoreColor;
+        this.motherNatureIsland = statusMotherNatureIsland;
+        Log.debug("MotherNature is on island " + this.motherNatureIsland);
         this.parseClouds(statusClouds);
         this.parseSpecialCharacters(statusSpecialCharacters);
         this.parseIslands(statusIslands);
-        this.motherNatureIsland = islands.get(statusMotherNatureIsland).getId();
-        islands.get(statusMotherNatureIsland).hasMotherNature(true);
     }
 
     /**
@@ -87,10 +88,11 @@ public class GameBoard {
                 studentsNumber = studentsNumber + students.get(color);
 
             for (int i = 0; i < size; i++) {
+                boolean hasMotherNature = getMotherNatureIsland() == ((id + i) % 12);
 
-                if (i == 0) this.islands.add(new Island((id + i) % 12, false, false, tower, null, false, ban));
+                if (i == 0) this.islands.add(new Island((id + i) % 12, false, false, tower, null, hasMotherNature, ban));
                 else {
-                    this.islands.add(new Island((id + i) % 12, false, true, tower, null, false, ban));
+                    this.islands.add(new Island((id + i) % 12, false, true, tower, null, hasMotherNature, ban));
                     getIslandById((id + i - 1) % 12).setNext();
                 }
             }
@@ -195,7 +197,7 @@ public class GameBoard {
      * @return The island searched if present, null otherwise.
      */
     public Island getIslandById(int id) {
-        for (Island isl : this.islands) {
+        for (Island isl : getIslands()) {
             if (isl.getId() == id) return isl;
         }
         return null;

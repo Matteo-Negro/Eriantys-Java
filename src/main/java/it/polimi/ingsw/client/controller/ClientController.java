@@ -3,6 +3,7 @@ package it.polimi.ingsw.client.controller;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import it.polimi.ingsw.client.model.GameModel;
+import it.polimi.ingsw.client.model.Island;
 import it.polimi.ingsw.client.model.Player;
 import it.polimi.ingsw.client.model.SpecialCharacter;
 import it.polimi.ingsw.client.view.ClientCli;
@@ -250,7 +251,7 @@ public class ClientController {
         }
 
         try {
-            if (!CommandParser.checker(command)) throw new Exception();
+            if (!CommandParser.checker(command) || command.equals("")) throw new Exception();
         } catch (Exception e) {
             Log.warning(e);
             updateScreen();
@@ -516,9 +517,13 @@ public class ClientController {
             }
             case "island" -> {
                 int destinationIndex = message.get("toId").getAsInt();
+                Log.debug("Destination index " + destinationIndex);
                 if (destinationIndex < 0 || destinationIndex > 11) throw new IllegalMoveException();
                 while (getGameModel().getGameBoard().getIslandById(destinationIndex).hasPrev()) {
-                    destinationIndex = (destinationIndex - 1) % 12;
+                    //TODO Check this.
+                    destinationIndex = ((destinationIndex - 1) % 12);
+                    if(destinationIndex < 0) destinationIndex = destinationIndex + 12;
+                    Log.debug("Destination index " + destinationIndex);
                 }
                 message.remove("toId");
                 message.addProperty("toId", destinationIndex);

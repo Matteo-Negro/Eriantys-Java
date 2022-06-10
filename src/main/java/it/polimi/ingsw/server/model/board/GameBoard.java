@@ -106,7 +106,11 @@ public class GameBoard {
         this.influenceBonus = null;
         this.tieWinner = null;
         this.characters = isExp ? new ArrayList<>(statusCharacters) : List.of();
-        this.motherNatureIsland = this.islands.get(idMotherNatureIsland);
+        try{
+            this.motherNatureIsland = this.getIslandById(idMotherNatureIsland);
+        }catch(IslandNotFoundException infe) {
+            this.motherNatureIsland = this.islands.get(0);
+        }
 
         Log.info("*** Saved GameBoard successfully restored.");
     }
@@ -268,14 +272,17 @@ public class GameBoard {
         try {
             do {
                 List<Island> islands = getIslands();
-                int islandsSize = islands.size();
                 mergeDone = false;
-                for (int i = 0; i < islandsSize; i++) {
-                    Island currentIsland = islands.get(i);
-                    int nextId = (i + 1) % islandsSize;
-                    Island nextIsland = islands.get(nextId);
+                for (Island currentIsland : islands) {
+                    Island nextIsland = islands.get((islands.indexOf(currentIsland) + 1) % islands.size());
+                    Log.debug("Current island " + currentIsland.getId());
+
+                    Log.debug("Next id " + nextIsland.getId());
+
 
                     if (currentIsland.getId() != nextIsland.getId() && currentIsland.getTower() != null && nextIsland.getTower() != null && currentIsland.getTower().equals(nextIsland.getTower())) {
+                        Log.debug("Current island tower " + currentIsland.getTower().toString());
+                        Log.debug("Next island tower " + nextIsland.getTower().toString());
                         merge(currentIsland, nextIsland);
                         mergeDone = true;
                         break;
