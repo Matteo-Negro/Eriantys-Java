@@ -17,6 +17,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Locale;
+import java.util.Objects;
 
 /**
  * The entity containing the tcp connection socket of the client connected to the game server and its input and output streams.
@@ -170,18 +171,20 @@ public class User extends Thread {
                     }
                     if (specialCharacter == null) disconnected();
 
-                    switch (specialCharacter.getId()) {
-                        case 1, 3, 5, 11, 12 -> {
-                            if (specialCharacter.getUsesNumber() > 0) throw new IllegalMoveException();
-                            specialCharacter.increaseUsesNumber();
-                        }
-                        case 10 -> {
-                            if (specialCharacter.getUsesNumber() > 4) throw new IllegalMoveException();
-                            specialCharacter.increaseUsesNumber();
-                        }
-                        case 7 -> {
-                            if (specialCharacter.getUsesNumber() > 6) throw new IllegalMoveException();
-                            specialCharacter.increaseUsesNumber();
+                    else {
+                        switch (specialCharacter.getId()) {
+                            case 1, 3, 5, 11, 12 -> {
+                                if (specialCharacter.getUsesNumber() > 0) throw new IllegalMoveException();
+                                specialCharacter.increaseUsesNumber();
+                            }
+                            case 10 -> {
+                                if (specialCharacter.getUsesNumber() > 4) throw new IllegalMoveException();
+                                specialCharacter.increaseUsesNumber();
+                            }
+                            case 7 -> {
+                                if (specialCharacter.getUsesNumber() > 6) throw new IllegalMoveException();
+                                specialCharacter.increaseUsesNumber();
+                            }
                         }
                     }
                 }

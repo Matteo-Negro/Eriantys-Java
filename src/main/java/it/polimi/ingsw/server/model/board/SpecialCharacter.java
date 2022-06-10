@@ -106,7 +106,6 @@ public class SpecialCharacter {
         if (alreadyPaid) {
             return effectCost + 1;
         } else return effectCost;
-
     }
 
     /**

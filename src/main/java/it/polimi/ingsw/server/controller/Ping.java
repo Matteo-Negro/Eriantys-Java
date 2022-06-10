@@ -49,6 +49,7 @@ public class Ping extends Thread {
                     lock.wait(1000);
                 } catch (InterruptedException e) {
                     this.stopPing();
+                    Thread.currentThread().interrupt();
                 }
             }
         }
