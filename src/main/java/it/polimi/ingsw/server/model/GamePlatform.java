@@ -164,9 +164,12 @@ public class GamePlatform {
                 if (clockwiseOrder.stream().noneMatch(player -> player.getSchoolBoard().getTowerType().equals(tower)))
                     towers.add(tower);
         } else {
-            for (int index = playersNumber - (int) clockwiseOrder.stream().filter(player -> player.getSchoolBoard().getTowerType().equals(TowerType.WHITE)).count(); index > 1; index--)
+            int whiteCount = (int) clockwiseOrder.stream().filter(player -> player.getSchoolBoard().getTowerType().equals(TowerType.WHITE)).count();
+            int blackCount = (int) clockwiseOrder.stream().filter(player -> player.getSchoolBoard().getTowerType().equals(TowerType.BLACK)).count();
+
+            for (int index = playersNumber - whiteCount; index > 1 && whiteCount <= 2; index--)
                 towers.add(TowerType.WHITE);
-            for (int index = playersNumber - (int) clockwiseOrder.stream().filter(player -> player.getSchoolBoard().getTowerType().equals(TowerType.BLACK)).count(); index > 1; index--)
+            for (int index = playersNumber - blackCount; index > 1 && blackCount <= 2; index--)
                 towers.add(TowerType.BLACK);
         }
         return towers.get(ThreadLocalRandom.current().nextInt(towers.size()));

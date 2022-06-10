@@ -96,8 +96,7 @@ public class ClientController {
      * @return The active status associated with the username of this client, saved into the game model.
      */
     public boolean hasCommunicationToken() {
-        if (this.getGameModel() == null)
-            return false;
+        if (this.getGameModel() == null) return false;
         return this.getGameModel().getPlayerByName(getUserName()).isActive();
     }
 
@@ -323,7 +322,7 @@ public class ClientController {
      * This method is a helper for 'manageGameRunning', check occurrences in specialCharacter.
      *
      * @param messages The messages have to be checked.
-     * @throws IllegalMoveException hrown if the client model is not aligned with that of the game server.
+     * @throws IllegalMoveException Thrown if the client model is not aligned with that of the game server.
      */
     private void checkOccurrences(List<JsonObject> messages) throws IllegalMoveException {
         for (JsonObject m : messages) {
@@ -403,8 +402,7 @@ public class ClientController {
      */
     public void manageEndGame(String command) {
         if (command.equals("") || command.equals("exit")) {
-            if (!getClientState().equals(ClientStates.CONNECTION_LOST))
-                this.setClientState(ClientStates.MAIN_MENU);
+            if (!getClientState().equals(ClientStates.CONNECTION_LOST)) this.setClientState(ClientStates.MAIN_MENU);
             updateScreen();
             this.resetGame();
         } else {
@@ -508,7 +506,9 @@ public class ClientController {
 
         switch (to) {
             case "entrance" -> {
-                if ((this.gameModel.getGameBoard().getSpecialCharacterById(10) == null && this.gameModel.getGameBoard().getSpecialCharacterById(7) == null) || (!this.gameModel.getGameBoard().getSpecialCharacterById(10).isActive() && !this.gameModel.getGameBoard().getSpecialCharacterById(7).isActive()))
+                SpecialCharacter chr10 = this.gameModel.getGameBoard().getSpecialCharacterById(10);
+                SpecialCharacter chr7 = this.gameModel.getGameBoard().getSpecialCharacterById(7);
+                if ((chr10 != null && !chr10.isActive()) || (chr7 != null && !chr7.isActive()))
                     throw new IllegalMoveException();
             }
             case "card" -> {
@@ -569,8 +569,7 @@ public class ClientController {
      * @throws IllegalMoveException Thrown if the client model is not aligned with that of the game server.
      */
     private void checkCharacterPayment(JsonObject message) throws IllegalMoveException {
-        if (!getGameModel().isExpert())
-            throw new IllegalMoveException();
+        if (!getGameModel().isExpert()) throw new IllegalMoveException();
 
         int characterId = message.get("character").getAsInt();
         if (!getGameModel().isExpert()) throw new IllegalMoveException();
