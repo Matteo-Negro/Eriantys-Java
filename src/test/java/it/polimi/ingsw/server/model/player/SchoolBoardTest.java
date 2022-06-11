@@ -9,7 +9,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -22,18 +24,22 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class SchoolBoardTest {
 
     private final int towersNumber = 8;
-    private final TowerType towerType = TowerType.BLACK;
     private final Map<HouseColor, Integer> entrance = new EnumMap<>(HouseColor.class);
+    private final Map<HouseColor, Integer> diningRoom = new EnumMap<>(HouseColor.class);
 
-    private SchoolBoard schoolBoard;
+    private List<SchoolBoard> schoolBoards;
 
     /**
      * Generates a new SchoolBoard.
      */
     @BeforeEach
     void setUp() {
-        for (HouseColor color : HouseColor.values()) entrance.put(color, 0);
-        this.schoolBoard = new SchoolBoard(this.towersNumber, this.towerType, this.entrance);
+        schoolBoards = new ArrayList<>();
+
+        for (HouseColor color : HouseColor.values()) this.entrance.put(color, 1);
+        for (HouseColor color : HouseColor.values()) this.diningRoom.put(color, 1);
+        this.schoolBoards.add(new SchoolBoard(this.towersNumber, TowerType.BLACK, this.entrance));
+        this.schoolBoards.add(new SchoolBoard(this.towersNumber, TowerType.WHITE, this.diningRoom, this.entrance));
     }
 
     /**
@@ -41,7 +47,7 @@ class SchoolBoardTest {
      */
     @AfterEach
     void tearDown() {
-        this.schoolBoard = null;
+        this.schoolBoards = null;
     }
 
     /**
@@ -49,7 +55,8 @@ class SchoolBoardTest {
      */
     @Test
     void getTowersNumber() {
-        assertEquals(this.towersNumber, this.schoolBoard.getTowersNumber());
+        assertEquals(this.towersNumber, this.schoolBoards.get(0).getTowersNumber());
+        assertEquals(this.towersNumber, this.schoolBoards.get(1).getTowersNumber());
     }
 
     /**
@@ -57,7 +64,8 @@ class SchoolBoardTest {
      */
     @Test
     void getTowerType() {
-        assertEquals(this.towerType, this.schoolBoard.getTowerType());
+        assertEquals(TowerType.BLACK, this.schoolBoards.get(0).getTowerType());
+        assertEquals(TowerType.WHITE, this.schoolBoards.get(1).getTowerType());
     }
 
     /**
@@ -65,9 +73,9 @@ class SchoolBoardTest {
      */
     @Test
     void getEntrance() {
-        Map<HouseColor, Integer> tmp = this.schoolBoard.getEntrance();
+        Map<HouseColor, Integer> tmp = this.schoolBoards.get(0).getEntrance();
 
-        for (HouseColor color : HouseColor.values()) assertEquals(0, tmp.get(color));
+        for (HouseColor color : HouseColor.values()) assertEquals(1, tmp.get(color));
     }
 
     /**
@@ -75,9 +83,13 @@ class SchoolBoardTest {
      */
     @Test
     void getDiningRoom() {
-        Map<HouseColor, Integer> tmp = this.schoolBoard.getDiningRoom();
+        Map<HouseColor, Integer> tmp;
 
+        tmp = this.schoolBoards.get(0).getDiningRoom();
         for (HouseColor color : HouseColor.values()) assertEquals(0, tmp.get(color));
+
+        tmp = this.schoolBoards.get(1).getDiningRoom();
+        for (HouseColor color : HouseColor.values()) assertEquals(1, tmp.get(color));
     }
 
     /**
@@ -87,7 +99,8 @@ class SchoolBoardTest {
     void getStudentsNumberOf() {
         HouseColor color = HouseColor.BLUE;
 
-        assertEquals(0, this.schoolBoard.getStudentsNumberOf(color));
+        assertEquals(0, this.schoolBoards.get(0).getStudentsNumberOf(color));
+        assertEquals(1, this.schoolBoards.get(1).getStudentsNumberOf(color));
     }
 
     /**
@@ -98,8 +111,10 @@ class SchoolBoardTest {
         Map<HouseColor, Integer> tmp = new EnumMap<>(HouseColor.class);
 
         for (HouseColor color : HouseColor.values()) tmp.put(color, 1);
-        this.schoolBoard.addToEntrance(tmp);
-        for (HouseColor color : HouseColor.values()) assertEquals(1, tmp.get(color));
+        this.schoolBoards.get(0).addToEntrance(tmp);
+        for (HouseColor color : HouseColor.values()) assertEquals(2, this.schoolBoards.get(0).getEntrance().get(color));
+        this.schoolBoards.get(1).addToEntrance(tmp);
+        for (HouseColor color : HouseColor.values()) assertEquals(2, this.schoolBoards.get(1).getEntrance().get(color));
     }
 
     /**
@@ -110,12 +125,15 @@ class SchoolBoardTest {
     @Test
     void removeFromEntrance() throws NoStudentException {
         HouseColor color = HouseColor.BLUE;
-        Map<HouseColor, Integer> tmp = new EnumMap<>(HouseColor.class);
 
-        for (HouseColor c : HouseColor.values()) tmp.put(c, c.equals(color) ? 1 : 0);
-        this.schoolBoard.addToEntrance(tmp);
-        this.schoolBoard.removeFromEntrance(color);
-        assertEquals(0, this.schoolBoard.getStudentsNumberOf(color));
+        this.schoolBoards.get(0).removeFromEntrance(color);
+        assertEquals(0, this.schoolBoards.get(0).getStudentsNumberOf(color));
+        this.schoolBoards.get(1).removeFromEntrance(color);
+        assertEquals(0, this.schoolBoards.get(1).getEntrance().get(color));
+        try {
+            this.schoolBoards.get(1).removeFromEntrance(color);
+        } catch (NoStudentException e) {
+        }
     }
 
     /**
@@ -125,8 +143,10 @@ class SchoolBoardTest {
     void addToDiningRoom() {
         HouseColor color = HouseColor.BLUE;
 
-        this.schoolBoard.addToDiningRoom(color);
-        assertEquals(1, this.schoolBoard.getStudentsNumberOf(color));
+        this.schoolBoards.get(0).addToDiningRoom(color);
+        assertEquals(1, this.schoolBoards.get(0).getStudentsNumberOf(color));
+        this.schoolBoards.get(1).addToDiningRoom(color);
+        assertEquals(2, this.schoolBoards.get(1).getStudentsNumberOf(color));
     }
 
     /**
@@ -138,9 +158,16 @@ class SchoolBoardTest {
     void removeFromDiningRoom() throws NoStudentException {
         HouseColor color = HouseColor.BLUE;
 
-        this.schoolBoard.addToDiningRoom(color);
-        this.schoolBoard.removeFromDiningRoom(color);
-        assertEquals(0, this.schoolBoard.getStudentsNumberOf(color));
+        this.schoolBoards.get(0).addToDiningRoom(color);
+        this.schoolBoards.get(0).removeFromDiningRoom(color);
+        assertEquals(0, this.schoolBoards.get(0).getStudentsNumberOf(color));
+
+        this.schoolBoards.get(1).removeFromDiningRoom(color);
+        assertEquals(0, this.schoolBoards.get(1).getStudentsNumberOf(color));
+        try {
+            this.schoolBoards.get(1).removeFromDiningRoom(color);
+        } catch (NoStudentException e) {
+        }
     }
 
     /**
@@ -150,8 +177,14 @@ class SchoolBoardTest {
     void removeTowers() throws NotEnoughTowersException, NegativeException {
         int removeTowers = 1;
 
-        this.schoolBoard.removeTowers(removeTowers);
-        assertEquals(this.towersNumber - removeTowers, this.schoolBoard.getTowersNumber());
+        this.schoolBoards.get(0).removeTowers(removeTowers);
+        assertEquals(this.towersNumber - removeTowers, this.schoolBoards.get(0).getTowersNumber());
+        this.schoolBoards.get(1).removeTowers(removeTowers);
+        assertEquals(this.towersNumber - removeTowers, this.schoolBoards.get(1).getTowersNumber());
+        try {
+            for (int i = 1; i <= this.towersNumber; i++) this.schoolBoards.get(1).removeTowers(removeTowers);
+        } catch (NotEnoughTowersException e) {
+        }
     }
 
     /**
@@ -161,7 +194,9 @@ class SchoolBoardTest {
     void addTowers() throws NegativeException {
         int addTowers = 1;
 
-        this.schoolBoard.addTowers(addTowers);
-        assertEquals(this.towersNumber + addTowers, this.schoolBoard.getTowersNumber());
+        this.schoolBoards.get(0).addTowers(addTowers);
+        assertEquals(this.towersNumber + addTowers, this.schoolBoards.get(0).getTowersNumber());
+        this.schoolBoards.get(1).addTowers(addTowers);
+        assertEquals(this.towersNumber + addTowers, this.schoolBoards.get(1).getTowersNumber());
     }
 }

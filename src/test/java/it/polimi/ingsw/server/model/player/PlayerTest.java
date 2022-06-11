@@ -10,9 +10,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,21 +20,24 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author matteo Negro
  */
 class PlayerTest {
-
-    private final int towersNumber = 8;
-    private final String name = "Matteo";
-    private final TowerType towerType = TowerType.BLACK;
-    private final WizardType wizardType = WizardType.YELLOW;
     private final Map<HouseColor, Integer> entrance = new EnumMap<>(HouseColor.class);
 
-    private Player player;
+    private List<Player> players;
 
     /**
      * Generates a new Player.
      */
     @BeforeEach
     void setUp() {
-        this.player = new Player(this.name, this.wizardType, this.towersNumber, this.towerType, this.entrance);
+        List<Assistant> assistants = new ArrayList<>();
+        players = new ArrayList<>();
+
+        for (int i = 1; i <= 4; i++) assistants.add(new Assistant(i));
+        Arrays.stream(HouseColor.values()).forEach(color -> entrance.put(color, !color.equals(HouseColor.YELLOW) ? 2 : 1));
+
+        this.players.add(new Player("Matteo", WizardType.YELLOW, 6, TowerType.BLACK, this.entrance));
+        this.players.add(new Player("Motta", WizardType.WHITE, 6, TowerType.WHITE, this.entrance));
+        this.players.add(new Player("Milici", WizardType.GREEN, assistants, 0, new SchoolBoard(6, TowerType.GREY, this.entrance)));
     }
 
     /**
@@ -44,7 +45,7 @@ class PlayerTest {
      */
     @AfterEach
     void tearDown() {
-        this.player = null;
+        this.players = null;
     }
 
     /**
@@ -52,7 +53,9 @@ class PlayerTest {
      */
     @Test
     void getName() {
-        assertEquals(this.name, this.player.getName());
+        assertEquals("Matteo", this.players.get(0).getName());
+        assertEquals("Motta", this.players.get(1).getName());
+        assertEquals("Milici", this.players.get(2).getName());
     }
 
     /**
@@ -60,7 +63,9 @@ class PlayerTest {
      */
     @Test
     void getWizard() {
-        assertEquals(this.wizardType, this.player.getWizard());
+        assertEquals(WizardType.YELLOW, this.players.get(0).getWizard());
+        assertEquals(WizardType.WHITE, this.players.get(1).getWizard());
+        assertEquals(WizardType.GREEN, this.players.get(2).getWizard());
     }
 
     /**
@@ -68,7 +73,9 @@ class PlayerTest {
      */
     @Test
     void getCoins() {
-        assertEquals(1, this.player.getCoins());
+        assertEquals(1, this.players.get(0).getCoins());
+        assertEquals(1, this.players.get(1).getCoins());
+        assertEquals(0, this.players.get(2).getCoins());
     }
 
     /**
@@ -76,8 +83,10 @@ class PlayerTest {
      */
     @Test
     void addCoins() {
-        this.player.addCoins();
-        assertEquals(2, this.player.getCoins());
+        for (Player p : this.players) p.addCoins();
+        assertEquals(2, this.players.get(0).getCoins());
+        assertEquals(2, this.players.get(1).getCoins());
+        assertEquals(1, this.players.get(2).getCoins());
     }
 
     /**
@@ -85,10 +94,19 @@ class PlayerTest {
      */
     @Test
     void getAssistants() {
-        List<Assistant> tmp = this.player.getAssistants();
+        List<Assistant> tmp;
 
+        tmp = this.players.get(0).getAssistants();
         assertEquals(10, tmp.size());
         for (int index = 1; index <= 10; index++) assertEquals(index, tmp.get(index - 1).getId());
+
+        tmp = this.players.get(1).getAssistants();
+        assertEquals(10, tmp.size());
+        for (int index = 1; index <= 10; index++) assertEquals(index, tmp.get(index - 1).getId());
+
+        tmp = this.players.get(2).getAssistants();
+        assertEquals(4, tmp.size());
+        for (int index = 1; index <= 4; index++) assertEquals(index, tmp.get(index - 1).getId());
     }
 
     /**
@@ -99,10 +117,26 @@ class PlayerTest {
     @Test
     void playAssistant() throws AlreadyPlayedException {
         int playedAssistantID = 1;
-        Assistant tmp = this.player.playAssistant(playedAssistantID);
+        Assistant tmp;
 
+        tmp = this.players.get(0).playAssistant(playedAssistantID);
         assertEquals(playedAssistantID, tmp.getId());
-        assertFalse(this.player.getAssistants().contains(tmp));
+        assertFalse(this.players.get(0).getAssistants().contains(tmp));
+
+        tmp = this.players.get(1).playAssistant(playedAssistantID);
+        assertEquals(playedAssistantID, tmp.getId());
+        assertFalse(this.players.get(1).getAssistants().contains(tmp));
+
+        tmp = this.players.get(2).playAssistant(playedAssistantID);
+        assertEquals(playedAssistantID, tmp.getId());
+        assertFalse(this.players.get(2).getAssistants().contains(tmp));
+        try {
+            this.players.get(2).playAssistant(playedAssistantID);
+        } catch (AlreadyPlayedException e) {
+            tmp = this.players.get(2).playAssistant((playedAssistantID + 1) % 10);
+            assertEquals((playedAssistantID + 1) % 10, tmp.getId());
+            assertFalse(this.players.get(2).getAssistants().contains(tmp));
+        }
     }
 
     /**
@@ -117,12 +151,29 @@ class PlayerTest {
         Map<HouseColor, Integer> students = new EnumMap<>(HouseColor.class);
 
         for (HouseColor c : HouseColor.values()) students.put(c, 1);
-        SpecialCharacter tmp = new SpecialCharacter(selectedSpecialCharacterID, students);
+        SpecialCharacter tmp;
 
-        for (int coin = 1; coin <= cost; coin++) this.player.addCoins();
-        this.player.paySpecialCharacter(tmp);
-        assertEquals(1, this.player.getCoins());
+        tmp = new SpecialCharacter(selectedSpecialCharacterID, students);
+        for (int coin = 1; coin <= cost; coin++) this.players.get(0).addCoins();
+        this.players.get(0).paySpecialCharacter(tmp);
+        assertEquals(1, this.players.get(0).getCoins());
         assertTrue(tmp.isActive());
+
+        tmp = new SpecialCharacter(selectedSpecialCharacterID, students);
+        for (int coin = 1; coin <= cost; coin++) this.players.get(1).addCoins();
+        this.players.get(1).paySpecialCharacter(tmp);
+        assertEquals(1, this.players.get(1).getCoins());
+        assertTrue(tmp.isActive());
+
+        tmp = new SpecialCharacter(selectedSpecialCharacterID, students);
+        try {
+            this.players.get(2).paySpecialCharacter(tmp);
+        } catch (NotEnoughCoinsException e) {
+            for (int coin = 0; coin <= cost; coin++) this.players.get(2).addCoins();
+            this.players.get(2).paySpecialCharacter(tmp);
+            assertEquals(1, this.players.get(2).getCoins());
+            assertTrue(tmp.isActive());
+        }
     }
 
     /**
@@ -130,9 +181,32 @@ class PlayerTest {
      */
     @Test
     void getSchoolBoard() {
-        SchoolBoard tmp = this.player.getSchoolBoard();
+        SchoolBoard tmp;
 
-        assertEquals(this.towerType, tmp.getTowerType());
-        assertEquals(this.towersNumber, tmp.getTowersNumber());
+        tmp = this.players.get(0).getSchoolBoard();
+        assertEquals(TowerType.BLACK, tmp.getTowerType());
+        assertEquals(6, tmp.getTowersNumber());
+
+        tmp = this.players.get(1).getSchoolBoard();
+        assertEquals(TowerType.WHITE, tmp.getTowerType());
+        assertEquals(6, tmp.getTowersNumber());
+
+        tmp = this.players.get(2).getSchoolBoard();
+        assertEquals(TowerType.GREY, tmp.getTowerType());
+        assertEquals(6, tmp.getTowersNumber());
+    }
+
+    /**
+     * Tests whether 2 player are equals.
+     */
+    @Test
+    void testEquals() {
+        assertNotEquals(this.players.get(0), this.players.get(1));
+        assertNotEquals(this.players.get(1), this.players.get(2));
+        assertNotEquals(this.players.get(2), this.players.get(1));
+
+        this.players.add(new Player("Matteo", WizardType.YELLOW, 6, TowerType.BLACK, this.entrance));
+
+        assertEquals(this.players.get(0), this.players.get(3));
     }
 }

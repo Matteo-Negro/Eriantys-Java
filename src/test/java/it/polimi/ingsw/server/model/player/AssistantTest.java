@@ -24,7 +24,17 @@ class AssistantTest {
     @BeforeEach
     void setUp() {
         this.assistants = new ArrayList<>();
-        for (int i = 1; i <= 10; i++) this.assistants.add((i % 2 == 0) ? new Assistant(i) : new Assistant(i, true));
+        for (int i = 1; i <= 8; i++) this.assistants.add((i % 2 == 0) ? new Assistant(i) : new Assistant(i, true));
+        try {
+            this.assistants.add(new Assistant(11, true));
+        } catch (IndexOutOfBoundsException e) {
+            this.assistants.add(new Assistant(9, true));
+        }
+        try {
+            this.assistants.add(new Assistant(12));
+        } catch (IndexOutOfBoundsException e) {
+            this.assistants.add(new Assistant(10));
+        }
     }
 
     /**
