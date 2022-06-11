@@ -6,6 +6,7 @@ import it.polimi.ingsw.utilities.ClientStates;
 import it.polimi.ingsw.utilities.Log;
 import it.polimi.ingsw.utilities.Pair;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -21,7 +22,8 @@ public class ClientGui extends Application implements View {
     private Stage stage;
     private ClientController controller;
     private Map<ClientStates, Scene> scenes;
-    private static final Object lock = new Object();
+    private static final Object instanceLock = new Object();
+    private static final Object sceneLock = new Object();
     private static ClientGui instance = null;
     private static final String DEFAULT_TITLE = "Eriantys";
 
@@ -31,7 +33,7 @@ public class ClientGui extends Application implements View {
     @Override
     public void start(Stage primaryStage) {
 
-        synchronized (lock) {
+        synchronized (instanceLock) {
             instance = this;
         }
 
@@ -49,6 +51,10 @@ public class ClientGui extends Application implements View {
 
         changeScene();
 
+        primaryStage.setOnCloseRequest(event -> {
+            Platform.exit();
+            System.exit(0);
+        });
         primaryStage.show();
 
         new Thread(() -> {
@@ -86,7 +92,20 @@ public class ClientGui extends Application implements View {
      * Changes the scene according to the state.
      */
     public void changeScene() {
+
         ClientStates state = getController().getClientState();
+
+        if (state.equals(ClientStates.MAIN_MENU))
+            synchronized (sceneLock) {
+                while (scenes.get(state) == null) {
+                    try {
+                        sceneLock.wait(100);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+
         if (getController().getClientState().equals(ClientStates.CONNECTION_LOST))
             getController().manageConnectionLost();
 
@@ -124,7 +143,7 @@ public class ClientGui extends Application implements View {
      * @return The instance of the currently running ClientGUI
      */
     public static ClientGui getInstance() {
-        synchronized (lock) {
+        synchronized (instanceLock) {
             return instance;
         }
     }

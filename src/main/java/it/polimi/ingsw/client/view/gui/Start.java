@@ -1,8 +1,8 @@
 package it.polimi.ingsw.client.view.gui;
 
 import it.polimi.ingsw.client.view.ClientGui;
+import it.polimi.ingsw.client.view.gui.utilities.EventProcessing;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -23,17 +23,23 @@ public class Start {
     @FXML
     private Button connect;
 
+    /**
+     * Initializes the scene.
+     */
     public void initialize() {
         client = ClientGui.getInstance();
         Platform.runLater(() -> connect.requestFocus());
     }
 
+    /**
+     * Logs into the game.
+     *
+     * @param event The event that triggered the function.
+     */
     @FXML
-    private void processButton(Event event) {
+    private void connect(Event event) {
 
-        event.consume();
-
-        if (event instanceof KeyEvent keyEvent && keyEvent.getCode() != KeyCode.ENTER)
+        if (!EventProcessing.standard(event))
             return;
 
         String socketIp = ip.getText();

@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="467.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane prefHeight="467.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.client.view.gui.Menu">
    <children>
       <ImageView fitHeight="467.0" fitWidth="700.0" layoutX="163.0" layoutY="90.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
          <cursor>
@@ -48,10 +48,10 @@
                   <Image url="@../titles/menu.png" />
                </image>
             </ImageView>
-            <Button fx:id="create" mnemonicParsing="false" text="Create new game" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-            <Button fx:id="enter" mnemonicParsing="false" text="Enter game" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+            <Button mnemonicParsing="false" onKeyPressed="#create" onMouseClicked="#create" onTouchPressed="#create" text="Create new game" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <Button fx:id="enter" mnemonicParsing="false" onKeyPressed="#enter" onMouseClicked="#enter" onTouchPressed="#enter" text="Enter game" GridPane.columnIndex="3" GridPane.rowIndex="3" />
          </children>
       </GridPane>
-      <Button fx:id="exit" mnemonicParsing="false" text="Exit" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
+      <Button mnemonicParsing="false" onKeyPressed="#exit" onMouseClicked="#exit" onTouchPressed="#exit" text="Exit" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
    </children>
 </AnchorPane>
