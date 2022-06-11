@@ -517,13 +517,10 @@ public class ClientController {
             }
             case "island" -> {
                 int destinationIndex = message.get("toId").getAsInt();
-                Log.debug("Destination index " + destinationIndex);
                 if (destinationIndex < 0 || destinationIndex > 11) throw new IllegalMoveException();
                 while (getGameModel().getGameBoard().getIslandById(destinationIndex).hasPrev()) {
-                    //TODO Check this.
-                    destinationIndex = ((destinationIndex - 1) % 12);
+                    destinationIndex = (destinationIndex - 1) % 12;
                     if(destinationIndex < 0) destinationIndex = destinationIndex + 12;
-                    Log.debug("Destination index " + destinationIndex);
                 }
                 message.remove("toId");
                 message.addProperty("toId", destinationIndex);
@@ -550,7 +547,10 @@ public class ClientController {
 
             while (getGameModel().getGameBoard().getIslandById(finalIsland).hasPrev()) {
                 finalIsland = (finalIsland - 1) % 12;
+                if(finalIsland < 0) finalIsland = finalIsland + 12;
             }
+            message.remove("island");
+            message.addProperty("island", finalIsland);
 
             int distanceWanted = (getGameModel().getGameBoard().getIslandById(motherNatureIsland).hasNext()) ? -1 : 0;
             for (int i = ((motherNatureIsland + 1) % 12); i != finalIsland; i = ((i + 1) % 12)) {
