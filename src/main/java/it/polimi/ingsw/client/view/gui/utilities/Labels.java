@@ -15,4 +15,11 @@ public class Labels {
         label.setTextFill(Color.WHITE);
         return label;
     }
+
+    static Label playerName(String name) {
+        Label label = new Label(name);
+        label.setFont(Font.font(24));
+        label.setTextFill(Color.WHITE);
+        return label;
+    }
 }

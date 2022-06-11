@@ -13,15 +13,14 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
+import java.util.*;
 
 public class Game {
 
     private static Scene scene = null;
     private static ClientGui client = null;
 
+    private static Map<String, BoardContainer> boards = null;
     private static List<CloudContainer> clouds = null;
     private static List<IslandContainer> islands = null;
 
@@ -68,9 +67,9 @@ public class Game {
         id.setText(client.getController().getGameCode());
         round.setText(String.valueOf(client.getController().getGameModel().getRound()));
         phase.setText(client.getController().getClientState().name().toLowerCase(Locale.ROOT));
-        new Thread(Game::addIslands).start();
+        new Thread(Game::addBoards).start();
         new Thread(Game::addClouds).start();
-//        new Thread(Game::addBoards).start();
+        new Thread(Game::addIslands).start();
         return scene;
     }
 
@@ -96,7 +95,19 @@ public class Game {
     }
 
     private static void addBoards() {
-        Platform.runLater(() -> boardsLayout.getChildren().clear());
+        Game.boards = Boards.get(client.getController().getGameModel().getPlayers());
+        Platform.runLater(() -> {
+            boardsLayout.getChildren().clear();
+            for (BoardContainer board : reorder(client.getController().getUserName()))
+                boardsLayout.getChildren().add(board.getPane());
+        });
+    }
+
+    private static List<BoardContainer> reorder(String username) {
+        List<BoardContainer> list = new ArrayList<>();
+        list.add(boards.get(username));
+        list.addAll(boards.values().stream().filter(board -> board != list.get(0)).toList());
+        return list;
     }
 
     private static void addClouds() {

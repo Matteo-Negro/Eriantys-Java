@@ -2,7 +2,7 @@ package it.polimi.ingsw.client.view.gui.utilities;
 
 import it.polimi.ingsw.utilities.HouseColor;
 import javafx.application.Platform;
-import javafx.scene.Group;
+import javafx.scene.Parent;
 import javafx.scene.image.ImageView;
 
 import java.util.ArrayList;
@@ -10,7 +10,7 @@ import java.util.List;
 
 public class CloudContainer {
 
-    private Group pane;
+    private Parent pane;
     private List<ImageView> students;
 
     CloudContainer() {
@@ -18,11 +18,11 @@ public class CloudContainer {
         students = null;
     }
 
-    public Group getPane() {
+    public Parent getPane() {
         return pane;
     }
 
-    void setPane(Group pane) {
+    void setPane(Parent pane) {
         this.pane = pane;
     }
 

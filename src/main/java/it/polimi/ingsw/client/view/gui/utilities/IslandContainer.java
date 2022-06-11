@@ -3,7 +3,7 @@ package it.polimi.ingsw.client.view.gui.utilities;
 import it.polimi.ingsw.utilities.HouseColor;
 import it.polimi.ingsw.utilities.TowerType;
 import javafx.application.Platform;
-import javafx.scene.Group;
+import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -14,7 +14,7 @@ import java.util.Map;
 public class IslandContainer {
 
     private ImageView motherNature;
-    private Group pane;
+    private Parent pane;
     private Map<HouseColor, HBox> studentsBoxes;
     private Map<HouseColor, Label> studentsLabels;
     private ImageView tower;
@@ -37,11 +37,11 @@ public class IslandContainer {
         });
     }
 
-    public Group getPane() {
+    public Parent getPane() {
         return pane;
     }
 
-    void setPane(Group pane) {
+    void setPane(Parent pane) {
         this.pane = pane;
     }
 
