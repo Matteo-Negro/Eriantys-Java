@@ -1,135 +1,139 @@
 package it.polimi.ingsw.client.view.gui;
 
 import it.polimi.ingsw.client.view.ClientGui;
-import it.polimi.ingsw.client.view.gui.utilities.ExitEvent;
+import it.polimi.ingsw.client.view.gui.utilities.EventProcessing;
 import it.polimi.ingsw.utilities.ClientStates;
+import javafx.application.Platform;
+import javafx.event.Event;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 
 public class Join {
 
-    private static Scene scene = null;
-    private static ClientGui client = null;
+    private ClientGui client = null;
+    private List<TextField> code;
 
     @FXML
-    private static Button back;
+    private TextField code0;
     @FXML
-    private static List<TextField> code;
+    private TextField code1;
     @FXML
-    private static Button enter;
-
-    private Join() {
-    }
+    private TextField code2;
+    @FXML
+    private TextField code3;
+    @FXML
+    private TextField code4;
+    @FXML
+    private Button enter;
 
     /**
      * Initializes the scene.
-     *
-     * @param client The client to which change the state.
-     * @throws IOException Thrown if there is an error somewhere.
      */
-    public static void initialize(ClientGui client) throws IOException {
-        Join.client = client;
-        scene = new Scene(FXMLLoader.load(Objects.requireNonNull(Join.class.getResource("/fxml/join.fxml"))));
-        lookup();
-        addEvents();
-    }
-
-    /**
-     * Returns the scene.
-     *
-     * @return The scene.
-     */
-    public static Scene getScene() {
-        code.get(0).requestFocus();
-        for (TextField field : code)
-            field.setText("");
-        return scene;
-    }
-
-    /**
-     * Looks for every used element in the scene.
-     */
-    private static void lookup() {
-        back = (Button) scene.lookup("#back");
-        code = List.of(
-                (TextField) scene.lookup("#code_1"),
-                (TextField) scene.lookup("#code_2"),
-                (TextField) scene.lookup("#code_3"),
-                (TextField) scene.lookup("#code_4"),
-                (TextField) scene.lookup("#code_5")
-        );
-        enter = (Button) scene.lookup("#submit");
-    }
-
-    /**
-     * Adds all the events to the scene.
-     */
-    private static void addEvents() {
-
-        ExitEvent.addEvent(back, client);
-
+    public void initialize() {
+        client = ClientGui.getInstance();
+        code = new ArrayList<>();
+        code.add(code0);
+        code.add(code1);
+        code.add(code2);
+        code.add(code3);
+        code.add(code4);
         for (int index = 0; index < code.size(); index++)
-            processCodeField(index);
-
-        enter.setOnMouseClicked(event -> {
-            event.consume();
-            processButton(getCode());
-        });
-
-        enter.setOnKeyPressed(event -> {
-            event.consume();
-            if (event.getCode() == KeyCode.ENTER)
-                processButton(getCode());
-            else if (event.getCode() == KeyCode.BACK_SPACE) {
-                code.get(code.size() - 1).requestFocus();
-                code.get(code.size() - 1).deselect();
+            addEvent(index);
+        Platform.runLater(() -> {
+            code0.requestFocus();
+            for (TextField textField : code) {
+                textField.setEditable(false);
+                textField.setText("");
             }
         });
     }
 
-    private static void processCodeField(int index) {
-        code.get(index).setEditable(false);
+    /**
+     * Goes back to main menu.
+     *
+     * @param event The event that triggered the function.
+     */
+    @FXML
+    private void back(Event event) {
+        EventProcessing.exit(event, client);
+    }
+
+    /**
+     * Enters the game.
+     *
+     * @param event The event that triggered the function.
+     */
+    @FXML
+    private void enter(Event event) {
+        EventProcessing.standard(event);
+        if (event instanceof KeyEvent keyEvent) {
+            if (keyEvent.getCode().equals(KeyCode.ENTER))
+                processButton();
+            else if (keyEvent.getCode() == KeyCode.BACK_SPACE)
+                Platform.runLater(() -> {
+                    code.get(code.size() - 1).requestFocus();
+                    code.get(code.size() - 1).deselect();
+                });
+        } else
+            processButton();
+    }
+
+    /**
+     * Adds the events to every TextField.
+     *
+     * @param index The index of the TextField to process.
+     */
+    private void addEvent(int index) {
         code.get(index).setOnKeyPressed(event -> {
             event.consume();
             if (event.getCode() == KeyCode.ENTER)
-                processButton(getCode());
-            else if (event.getCode() == KeyCode.BACK_SPACE) {
-                code.get(index).setText("");
-                if (index != 0) {
-                    code.get(index - 1).requestFocus();
-                    code.get(index - 1).deselect();
-                }
-            } else if (event.getCode().isLetterKey() || event.getCode().isDigitKey()) {
-                code.get(index).setText(event.getText().toUpperCase(Locale.ROOT));
-                if (index != code.size() - 1) {
-                    code.get(index + 1).requestFocus();
-                    code.get(index + 1).deselect();
-                } else
-                    enter.requestFocus();
-            }
+                processButton();
+            else if (event.getCode() == KeyCode.BACK_SPACE)
+                Platform.runLater(() -> {
+                    code.get(index).setText("");
+                    if (index != 0) {
+                        code.get(index - 1).requestFocus();
+                        code.get(index - 1).deselect();
+                    }
+                });
+            else if (event.getCode().isLetterKey() || event.getCode().isDigitKey())
+                Platform.runLater(() -> {
+                    code.get(index).setText(event.getText().toUpperCase(Locale.ROOT));
+                    if (index != code.size() - 1) {
+                        code.get(index + 1).requestFocus();
+                        code.get(index + 1).deselect();
+                    } else
+                        enter.requestFocus();
+                });
         });
     }
 
-    private static String getCode() {
-        StringBuilder code = new StringBuilder();
-        for (TextField field : Join.code)
-            code.append(field.getText());
-        if (code.length() < Join.code.size())
+    /**
+     * Gets the game code from the fields.
+     *
+     * @return The game code.
+     */
+    private String getCode() {
+        StringBuilder string = new StringBuilder();
+        for (TextField field : code)
+            string.append(field.getText());
+        if (string.length() < code.size())
             return "";
-        return code.toString();
+        return string.toString();
     }
 
-    private static void processButton(String code) {
+    /**
+     * Processes the entrance in the game.
+     */
+    private void processButton() {
         if (!client.getController().getClientState().equals(ClientStates.CONNECTION_LOST))
-            client.getController().manageJoinGame(code);
+            client.getController().manageJoinGame(getCode());
     }
 }

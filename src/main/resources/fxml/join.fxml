@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="467.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane prefHeight="467.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.client.view.gui.Join">
    <children>
       <ImageView fitHeight="467.0" fitWidth="700.0" layoutX="163.0" layoutY="90.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
          <cursor>
@@ -54,34 +54,34 @@
                <children>
                   <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
                      <children>
-                        <TextField fx:id="code_1" alignment="CENTER" prefHeight="30.0" prefWidth="30.0">
+                        <TextField fx:id="code0" alignment="CENTER" prefHeight="30.0" prefWidth="30.0">
                            <HBox.margin>
                               <Insets right="10.0" />
                            </HBox.margin>
                         </TextField>
-                        <TextField fx:id="code_2" alignment="CENTER" prefHeight="30.0" prefWidth="30.0">
+                        <TextField fx:id="code1" alignment="CENTER" prefHeight="30.0" prefWidth="30.0">
                            <HBox.margin>
                               <Insets right="10.0" />
                            </HBox.margin>
                         </TextField>
-                        <TextField fx:id="code_3" alignment="CENTER" prefHeight="30.0" prefWidth="30.0">
+                        <TextField fx:id="code2" alignment="CENTER" prefHeight="30.0" prefWidth="30.0">
                            <HBox.margin>
                               <Insets right="10.0" />
                            </HBox.margin>
                         </TextField>
-                        <TextField fx:id="code_4" alignment="CENTER" prefHeight="30.0" prefWidth="30.0">
+                        <TextField fx:id="code3" alignment="CENTER" prefHeight="30.0" prefWidth="30.0">
                            <HBox.margin>
                               <Insets right="10.0" />
                            </HBox.margin>
                         </TextField>
-                        <TextField fx:id="code_5" alignment="CENTER" prefHeight="30.0" prefWidth="30.0" />
+                        <TextField fx:id="code4" alignment="CENTER" prefHeight="30.0" prefWidth="30.0" />
                      </children>
                   </HBox>
-                  <Button fx:id="submit" mnemonicParsing="false" text="Enter game" />
+                  <Button fx:id="enter" mnemonicParsing="false" onKeyPressed="#enter" onMouseClicked="#enter" onTouchPressed="#enter" text="Enter game" />
                </children>
             </VBox>
          </children>
       </GridPane>
-      <Button fx:id="back" mnemonicParsing="false" text="Back" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
+      <Button mnemonicParsing="false" onKeyPressed="#back" onMouseClicked="#back" onTouchPressed="#back" text="Back" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
    </children>
 </AnchorPane>
