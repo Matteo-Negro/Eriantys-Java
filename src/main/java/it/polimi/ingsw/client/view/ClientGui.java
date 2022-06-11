@@ -43,7 +43,7 @@ public class ClientGui extends Application implements View {
 
         Log.info("Initializing scenes...");
         try {
-            scenes.put(ClientStates.START_SCREEN, loadScene("splash_screen"));
+            scenes.put(ClientStates.START_SCREEN, loadScene("start"));
         } catch (IOException e) {
             Log.error("Cannot initialize scenes because of the following error: ", e);
             return;
@@ -59,13 +59,13 @@ public class ClientGui extends Application implements View {
 
         new Thread(() -> {
             try {
-                scenes.put(ClientStates.GAME_CREATION, loadScene("game_creation"));
+                scenes.put(ClientStates.GAME_CREATION, loadScene("create"));
                 scenes.put(ClientStates.END_GAME, loadScene("end"));
                 scenes.put(ClientStates.GAME_RUNNING, loadScene("game"));
                 scenes.put(ClientStates.JOIN_GAME, loadScene("join"));
                 scenes.put(ClientStates.GAME_LOGIN, loadScene("login"));
                 scenes.put(ClientStates.MAIN_MENU, loadScene("menu"));
-                scenes.put(ClientStates.GAME_WAITING_ROOM, loadScene("waiting_room"));
+                scenes.put(ClientStates.GAME_WAITING_ROOM, loadScene("wait"));
                 Log.info("Initialization completed.");
             } catch (IOException e) {
                 Log.error("Cannot initialize scenes because of the following error: ", e);

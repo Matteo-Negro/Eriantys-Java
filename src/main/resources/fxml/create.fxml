@@ -16,7 +16,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="467.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane prefHeight="467.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.client.view.gui.Create">
    <children>
       <ImageView fitHeight="467.0" fitWidth="700.0" layoutX="163.0" layoutY="90.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
          <cursor>
@@ -79,17 +79,17 @@
                               </Label>
                               <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                                  <children>
-                                    <RadioButton fx:id="players_2" mnemonicParsing="false" text="2" textFill="WHITE">
+                                    <RadioButton fx:id="players2" mnemonicParsing="false" onMouseClicked="#players2" onTouchPressed="#players2" text="2" textFill="WHITE">
                                        <HBox.margin>
                                           <Insets right="10.0" />
                                        </HBox.margin>
                                     </RadioButton>
-                                    <RadioButton fx:id="players_3" mnemonicParsing="false" text="3" textFill="WHITE">
+                                    <RadioButton fx:id="players3" mnemonicParsing="false" onKeyPressed="#players3" onMouseClicked="#players3" onTouchPressed="#players3" text="3" textFill="WHITE">
                                        <HBox.margin>
                                           <Insets left="10.0" right="10.0" />
                                        </HBox.margin>
                                     </RadioButton>
-                                    <RadioButton fx:id="players_4" mnemonicParsing="false" text="4" textFill="WHITE">
+                                    <RadioButton fx:id="players4" mnemonicParsing="false" onMouseClicked="#players4" onTouchPressed="#players4" text="4" textFill="WHITE">
                                        <HBox.margin>
                                           <Insets left="10.0" />
                                        </HBox.margin>
@@ -115,12 +115,12 @@
                               </Label>
                               <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                                  <children>
-                                    <RadioButton fx:id="normal" mnemonicParsing="false" text="Normal" textFill="WHITE">
+                                    <RadioButton fx:id="normal" mnemonicParsing="false" onMouseClicked="#normal" onTouchPressed="#normal" text="Normal" textFill="WHITE">
                                        <HBox.margin>
                                           <Insets right="10.0" />
                                        </HBox.margin>
                                     </RadioButton>
-                                    <RadioButton fx:id="expert" mnemonicParsing="false" text="Expert" textFill="WHITE">
+                                    <RadioButton fx:id="expert" mnemonicParsing="false" onMouseClicked="#expert" onTouchPressed="#expert" text="Expert" textFill="WHITE">
                                        <HBox.margin>
                                           <Insets left="10.0" />
                                        </HBox.margin>
@@ -131,7 +131,7 @@
                         </VBox>
                      </children>
                   </HBox>
-                  <Button fx:id="submit" mnemonicParsing="false" text="Create">
+                  <Button fx:id="create" mnemonicParsing="false" onKeyPressed="#create" onMouseClicked="#create" onTouchPressed="#create" text="Create">
                      <VBox.margin>
                         <Insets top="10.0" />
                      </VBox.margin>
@@ -143,6 +143,6 @@
             </VBox>
          </children>
       </GridPane>
-      <Button fx:id="back" mnemonicParsing="false" text="Back" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
+      <Button mnemonicParsing="false" onKeyPressed="#back" onMouseClicked="#back" onTouchPressed="#back" text="Back" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
    </children>
 </AnchorPane>

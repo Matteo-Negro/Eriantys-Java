@@ -1,148 +1,153 @@
 package it.polimi.ingsw.client.view.gui;
 
 import it.polimi.ingsw.client.view.ClientGui;
-import it.polimi.ingsw.client.view.gui.utilities.ExitEvent;
+import it.polimi.ingsw.client.view.gui.utilities.EventProcessing;
 import it.polimi.ingsw.utilities.ClientStates;
 import it.polimi.ingsw.utilities.MessageCreator;
+import javafx.application.Platform;
+import javafx.event.Event;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
-import javafx.scene.input.KeyCode;
 
-import java.io.IOException;
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Create {
 
-    private static Scene scene = null;
-    private static ClientGui client = null;
+    private ClientGui client = null;
+    private final AtomicInteger players;
+    private final AtomicBoolean expertMode;
 
     @FXML
-    private static Button back;
+    private Button create;
     @FXML
-    private static Button create;
+    private RadioButton expert;
     @FXML
-    private static RadioButton expert;
+    private RadioButton normal;
     @FXML
-    private static RadioButton normal;
+    private RadioButton players2;
     @FXML
-    private static RadioButton players2;
+    private RadioButton players3;
     @FXML
-    private static RadioButton players3;
-    @FXML
-    private static RadioButton players4;
+    private RadioButton players4;
 
-
-    private Create() {
+    public Create() {
+        players = new AtomicInteger(2);
+        expertMode = new AtomicBoolean(false);
     }
 
     /**
      * Initializes the scene.
-     *
-     * @param client The client to which change the state.
-     * @throws IOException Thrown if there is an error somewhere.
      */
-    public static void initialize(ClientGui client) throws IOException {
-        Create.client = client;
-        scene = new Scene(FXMLLoader.load(Objects.requireNonNull(Create.class.getResource("/fxml/game_creation.fxml"))));
-        lookup();
-        addEvents();
-    }
-
-    /**
-     * Returns the scene.
-     *
-     * @return The scene.
-     */
-    public static Scene getScene() {
-        create.requestFocus();
-        players2.setSelected(true);
-        normal.setSelected(true);
-        expert.setSelected(false);
-        players3.setSelected(false);
-        players4.setSelected(false);
-        return scene;
-    }
-
-    /**
-     * Looks for every used element in the scene.
-     */
-    private static void lookup() {
-        back = (Button) scene.lookup("#back");
-        create = (Button) scene.lookup("#submit");
-        expert = (RadioButton) scene.lookup("#expert");
-        normal = (RadioButton) scene.lookup("#normal");
-        players2 = (RadioButton) scene.lookup("#players_2");
-        players3 = (RadioButton) scene.lookup("#players_3");
-        players4 = (RadioButton) scene.lookup("#players_4");
-    }
-
-    /**
-     * Adds all the events to the scene.
-     */
-    private static void addEvents() {
-
-        AtomicInteger players = new AtomicInteger(2);
-        AtomicBoolean expertMode = new AtomicBoolean(false);
-
-        ExitEvent.addEvent(back, client);
-
-        create.setOnMouseClicked(event -> {
-            event.consume();
-            processButton(players.get(), expertMode.get());
+    public void initialize() {
+        client = ClientGui.getInstance();
+        Platform.runLater(() -> {
+            create.requestFocus();
+            players2.setSelected(true);
+            normal.setSelected(true);
+            expert.setSelected(false);
+            players3.setSelected(false);
+            players4.setSelected(false);
         });
+    }
 
-        create.setOnKeyPressed(event -> {
-            event.consume();
-            if (event.getCode() == KeyCode.ENTER)
-                processButton(players.get(), expertMode.get());
-        });
+    /**
+     * Goes back to main menu.
+     *
+     * @param event The event that triggered the function.
+     */
+    @FXML
+    private void back(Event event) {
+        EventProcessing.exit(event, client);
+    }
 
-        expert.setOnMouseClicked(event -> {
-            event.consume();
-            expertMode.set(true);
+    /**
+     * Creates a new game.
+     *
+     * @param event The event that triggered the function.
+     */
+    @FXML
+    private void create(Event event) {
+        if (EventProcessing.standard(event) && !client.getController().getClientState().equals(ClientStates.CONNECTION_LOST))
+            client.getController().manageGameCreation(MessageCreator.gameCreation(players.get(), expertMode.get()));
+    }
+
+    /**
+     * Sets the expert mode.
+     *
+     * @param event The event that triggered the function.
+     */
+    @FXML
+    private void expert(Event event) {
+        EventProcessing.standard(event);
+        expertMode.set(true);
+        Platform.runLater(() -> {
             expert.setSelected(true);
             normal.setSelected(false);
         });
+    }
 
-        normal.setOnMouseClicked(event -> {
-            event.consume();
-            expertMode.set(false);
+    /**
+     * Sets the normal mode.
+     *
+     * @param event The event that triggered the function.
+     */
+    @FXML
+    private void normal(Event event) {
+        EventProcessing.standard(event);
+        expertMode.set(false);
+        Platform.runLater(() -> {
             expert.setSelected(false);
             normal.setSelected(true);
         });
+    }
 
-        players2.setOnMouseClicked(event -> {
-            event.consume();
-            players.set(2);
+    /**
+     * Sets the number of players to 2.
+     *
+     * @param event The event that triggered the function.
+     */
+    @FXML
+    private void players2(Event event) {
+        EventProcessing.standard(event);
+        players.set(2);
+        Platform.runLater(() -> {
             players2.setSelected(true);
             players3.setSelected(false);
             players4.setSelected(false);
         });
+    }
 
-        players3.setOnMouseClicked(event -> {
-            event.consume();
-            players.set(3);
+    /**
+     * Sets the number of players to 3.
+     *
+     * @param event The event that triggered the function.
+     */
+    @FXML
+    private void players3(Event event) {
+        EventProcessing.standard(event);
+        players.set(3);
+        Platform.runLater(() -> {
             players2.setSelected(false);
             players3.setSelected(true);
             players4.setSelected(false);
         });
+    }
 
-        players4.setOnMouseClicked(event -> {
-            event.consume();
-            players.set(4);
+    /**
+     * Sets the number of players to 4.
+     *
+     * @param event The event that triggered the function.
+     */
+    @FXML
+    private void players4(Event event) {
+        EventProcessing.standard(event);
+        players.set(4);
+        Platform.runLater(() -> {
             players2.setSelected(false);
             players3.setSelected(false);
             players4.setSelected(true);
         });
-    }
-
-    private static void processButton(int player, boolean expertMode) {
-        if (!client.getController().getClientState().equals(ClientStates.CONNECTION_LOST))
-            client.getController().manageGameCreation(MessageCreator.gameCreation(player, expertMode));
     }
 }

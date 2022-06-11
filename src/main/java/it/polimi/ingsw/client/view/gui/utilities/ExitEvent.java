@@ -7,6 +7,8 @@ import javafx.scene.input.KeyCode;
 
 public class ExitEvent {
 
+    // TODO: delete
+
     private ExitEvent() {
     }
 
