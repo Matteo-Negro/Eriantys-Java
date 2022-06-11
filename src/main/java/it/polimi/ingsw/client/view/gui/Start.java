@@ -1,87 +1,40 @@
 package it.polimi.ingsw.client.view.gui;
 
 import it.polimi.ingsw.client.view.ClientGui;
+import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 
-import java.io.IOException;
 import java.net.Socket;
-import java.util.Objects;
 
 public class Start {
 
-    private static Scene scene = null;
-    private static ClientGui client = null;
+    private ClientGui client;
 
     @FXML
-    private static TextField ip;
+    private TextField ip;
     @FXML
-    private static TextField port;
+    private TextField port;
     @FXML
-    private static Button submit;
+    private Button connect;
 
-    private Start() {
+    public void initialize() {
+        client = ClientGui.getInstance();
+        Platform.runLater(() -> connect.requestFocus());
     }
 
-    /**
-     * Initializes the scene.
-     *
-     * @param client The client to which change the state.
-     * @throws IOException Thrown if there is an error somewhere.
-     */
-    public static void initialize(ClientGui client) throws IOException {
-        if (client == null)
+    @FXML
+    private void processButton(Event event) {
+
+        event.consume();
+
+        if (event instanceof KeyEvent keyEvent && keyEvent.getCode() != KeyCode.ENTER)
             return;
-        Start.client = client;
-        scene = new Scene(FXMLLoader.load(Objects.requireNonNull(Start.class.getResource("/fxml/splash_screen.fxml"))));
-        lookup();
-        addEvents();
-    }
-
-    /**
-     * Returns the scene.
-     *
-     * @return The scene.
-     */
-    public static Scene getScene() {
-        submit.requestFocus();
-        return scene;
-    }
-
-    /**
-     * Looks for every used element in the scene.
-     */
-    private static void lookup() {
-        ip = (TextField) scene.lookup("#ip");
-        port = (TextField) scene.lookup("#port");
-        submit = (Button) scene.lookup("#submit");
-    }
-
-    /**
-     * Adds all the events to the scene.
-     */
-    private static void addEvents() {
-
-        submit.setOnMouseClicked(event -> {
-            event.consume();
-            processButton();
-        });
-
-        submit.setOnKeyPressed(event -> {
-            event.consume();
-            if (event.getCode() == KeyCode.ENTER)
-                processButton();
-        });
-    }
-
-    /**
-     * Connects to the server.
-     */
-    private static void processButton() {
 
         String socketIp = ip.getText();
         int socketPort;
