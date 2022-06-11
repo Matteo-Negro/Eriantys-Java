@@ -90,7 +90,8 @@ public class GameBoard {
             for (int i = 0; i < size; i++) {
                 boolean hasMotherNature = getMotherNatureIsland() == ((id + i) % 12);
 
-                if (i == 0) this.islands.add(new Island((id + i) % 12, false, false, tower, null, hasMotherNature, ban));
+                if (i == 0)
+                    this.islands.add(new Island((id + i) % 12, false, false, tower, null, hasMotherNature, ban));
                 else {
                     this.islands.add(new Island((id + i) % 12, false, true, tower, null, hasMotherNature, ban));
                     getIslandById((id + i - 1) % 12).setNext();

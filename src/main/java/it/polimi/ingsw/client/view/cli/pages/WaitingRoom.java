@@ -8,7 +8,6 @@ import it.polimi.ingsw.client.view.cli.coordinates.WaitingOptions;
 import org.fusesource.jansi.Ansi;
 import org.jline.terminal.Terminal;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static it.polimi.ingsw.client.view.cli.Utilities.*;

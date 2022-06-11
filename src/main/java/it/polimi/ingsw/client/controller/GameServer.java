@@ -26,8 +26,8 @@ public class GameServer extends Thread {
     private final PrintWriter outputStream;
     private final ClientController client;
     private final Object connectedLock;
-    private boolean connected;
     private final Ping ping;
+    private boolean connected;
 
     /**
      * Default class constructor.
@@ -286,7 +286,7 @@ public class GameServer extends Thread {
      * @throws IOException Thrown if an error occurs during the message extraction from the input stream.
      */
     public JsonObject getMessage() throws IOException {
-        synchronized (this.inputStream){
+        synchronized (this.inputStream) {
             try {
                 return JsonParser.parseString(this.inputStream.readLine()).getAsJsonObject();
             } catch (Exception e) {
@@ -304,8 +304,8 @@ public class GameServer extends Thread {
         synchronized (this.outputStream) {
             switch (this.client.getClientState()) {
                 case GAME_CREATION, GAME_LOGIN, JOIN_GAME, GAME_RUNNING -> {
-                        this.outputStream.println(command.toString());
-                        outputStream.flush();
+                    this.outputStream.println(command.toString());
+                    outputStream.flush();
                 }
                 case GAME_WAITING_ROOM -> {
                     if (command.get("type").getAsString().equals("logout") || command.get("type").getAsString().equals("pong"))
@@ -315,8 +315,8 @@ public class GameServer extends Thread {
                 }
                 default -> {
                     if (command.get("type").getAsString().equals("pong")) {
-                            this.outputStream.println(command);
-                            outputStream.flush();
+                        this.outputStream.println(command);
+                        outputStream.flush();
                     }
                 }
             }

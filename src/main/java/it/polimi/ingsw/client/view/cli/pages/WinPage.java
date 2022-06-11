@@ -3,14 +3,10 @@ package it.polimi.ingsw.client.view.cli.pages;
 import it.polimi.ingsw.client.view.cli.Utilities;
 import it.polimi.ingsw.client.view.cli.colours.Grey;
 import it.polimi.ingsw.client.view.cli.colours.Title;
-import it.polimi.ingsw.client.view.cli.coordinates.WaitingNewLine;
-import it.polimi.ingsw.client.view.cli.coordinates.WaitingOptions;
 import it.polimi.ingsw.client.view.cli.coordinates.WinNewLine;
 import it.polimi.ingsw.client.view.cli.coordinates.WinOptions;
 import org.fusesource.jansi.Ansi;
 import org.jline.terminal.Terminal;
-
-import java.util.List;
 
 import static it.polimi.ingsw.client.view.cli.Utilities.*;
 import static org.fusesource.jansi.Ansi.ansi;

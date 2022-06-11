@@ -17,7 +17,6 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Locale;
-import java.util.Objects;
 
 /**
  * The entity containing the tcp connection socket of the client connected to the game server and its input and output streams.
@@ -95,10 +94,10 @@ public class User extends Thread {
 
             try {
                 incomingMessage = getCommand();
-                if (!incomingMessage.get("type").getAsString().equals("pong") && !incomingMessage.get("type").getAsString().equals("error")){
+                if (!incomingMessage.get("type").getAsString().equals("pong") && !incomingMessage.get("type").getAsString().equals("error")) {
                     manageCommand(incomingMessage);
                 }
-                if(this.ping.isInWaitingRoom() != (this.gameController != null && !this.gameController.isFull() && this.isLogged() && !this.gameController.isEnded()))
+                if (this.ping.isInWaitingRoom() != (this.gameController != null && !this.gameController.isFull() && this.isLogged() && !this.gameController.isEnded()))
                     this.ping.setInWaitingRoom(this.gameController != null && !this.gameController.isFull() && this.isLogged() && !this.gameController.isEnded());
             } catch (Exception e) {
                 // If socket time out expires.
@@ -114,7 +113,7 @@ public class User extends Thread {
      * @throws IOException Thrown if an error occurs during the socket input stream read.
      */
     private JsonObject getCommand() throws IOException {
-        synchronized (this.inputStream){
+        synchronized (this.inputStream) {
             return JsonParser.parseString(inputStream.readLine()).getAsJsonObject();
         }
     }
@@ -189,7 +188,8 @@ public class User extends Thread {
                     }
                 }
                 switch (command.get("subtype").getAsString()) {
-                    case "playAssistant" -> this.gameController.playAssistantCard(command.get("player").getAsString(), command.get("assistant").getAsInt());
+                    case "playAssistant" ->
+                            this.gameController.playAssistantCard(command.get("player").getAsString(), command.get("assistant").getAsInt());
 
                     case "move" -> {
                         switch (command.get("pawn").getAsString()) {

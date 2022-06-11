@@ -22,8 +22,8 @@ import java.util.List;
 public class Player {
     private final String name;
     private final WizardType wizard;
-    private SchoolBoard schoolBoard;
     private final List<Assistant> hand;
+    private SchoolBoard schoolBoard;
     private int coins;
     private boolean active;
     private Assistant currentPlayedAssistant;

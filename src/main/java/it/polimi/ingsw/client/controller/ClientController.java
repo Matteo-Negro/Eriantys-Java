@@ -3,7 +3,6 @@ package it.polimi.ingsw.client.controller;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import it.polimi.ingsw.client.model.GameModel;
-import it.polimi.ingsw.client.model.Island;
 import it.polimi.ingsw.client.model.Player;
 import it.polimi.ingsw.client.model.SpecialCharacter;
 import it.polimi.ingsw.client.view.ClientCli;
@@ -31,13 +30,13 @@ import static it.polimi.ingsw.utilities.GameControllerStates.MOVE_MOTHER_NATURE;
 public class ClientController {
     private final View view;
     private final Object lock;
+    private final boolean cli;
     private String userName;
     private String gameCode;
     private GameServer gameServer;
     private GameModel gameModel;
     private EndType endState;
     private ClientStates state;
-    private final boolean cli;
 
     /**
      * Default class constructor.
@@ -61,6 +60,15 @@ public class ClientController {
      */
     public GameServer getGameServer() {
         return this.gameServer;
+    }
+
+    /**
+     * Sets the game server.
+     *
+     * @param server The GameServer instance to set.
+     */
+    public void setGameServer(GameServer server) {
+        this.gameServer = server;
     }
 
     /**
@@ -134,15 +142,6 @@ public class ClientController {
      */
     public void setGameCode(String gameCode) {
         this.gameCode = gameCode;
-    }
-
-    /**
-     * Sets the game server.
-     *
-     * @param server The GameServer instance to set.
-     */
-    public void setGameServer(GameServer server) {
-        this.gameServer = server;
     }
 
     /**
@@ -520,7 +519,7 @@ public class ClientController {
                 if (destinationIndex < 0 || destinationIndex > 11) throw new IllegalMoveException();
                 while (getGameModel().getGameBoard().getIslandById(destinationIndex).hasPrev()) {
                     destinationIndex = (destinationIndex - 1) % 12;
-                    if(destinationIndex < 0) destinationIndex = destinationIndex + 12;
+                    if (destinationIndex < 0) destinationIndex = destinationIndex + 12;
                 }
                 message.remove("toId");
                 message.addProperty("toId", destinationIndex);
@@ -547,7 +546,7 @@ public class ClientController {
 
             while (getGameModel().getGameBoard().getIslandById(finalIsland).hasPrev()) {
                 finalIsland = (finalIsland - 1) % 12;
-                if(finalIsland < 0) finalIsland = finalIsland + 12;
+                if (finalIsland < 0) finalIsland = finalIsland + 12;
             }
             message.remove("island");
             message.addProperty("island", finalIsland);

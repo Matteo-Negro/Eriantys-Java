@@ -101,10 +101,10 @@ public class Cloud {
      * @param o Object to compare.
      * @return true if the two objects are the same.
      */
-    public boolean equals(Object o){
-        if(this == o) return true;
+    public boolean equals(Object o) {
+        if (this == o) return true;
 
-        if(o == null || o.getClass()!=this.getClass()) return false;
+        if (o == null || o.getClass() != this.getClass()) return false;
 
         Cloud that = (Cloud) o;
         return this.id == that.id && this.students.equals(that.students);

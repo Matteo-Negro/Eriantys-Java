@@ -37,6 +37,7 @@ public class GameController extends Thread {
     private final String id;
     private final Object isFullLock;
     private final Object actionNeededLock;
+    private final Server server;
     private int connectedPlayers;
     private int round;
     private Phase phase;
@@ -44,7 +45,6 @@ public class GameController extends Thread {
     private String activeUser;
     private boolean initialized;
     private boolean ended;
-    private final Server server;
 
     /**
      * The game controller constructor.

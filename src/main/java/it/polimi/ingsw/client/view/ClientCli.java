@@ -32,6 +32,10 @@ import static org.jline.builtins.Completers.TreeCompleter.node;
  * @author Matteo Negro
  */
 public class ClientCli extends Thread implements View {
+    /**
+     * Manages the waiting-room-screen's output.
+     */
+    static int waitingIteration = 0;
     private final ClientController controller;
     private final Terminal terminal;
     private final History history;
@@ -183,11 +187,6 @@ public class ClientCli extends Thread implements View {
         this.controller.manageGameLogin(readLine(" ", terminal, playersToNodes(), false, null));
     }
 
-    /**
-     * Manages the waiting-room-screen's output.
-     */
-    static int waitingIteration = 0;
-
     public void runWaitingRoom() {
         synchronized (this.controller.getLock()) {
             if (this.controller.getGameModel() != null) {
@@ -218,7 +217,7 @@ public class ClientCli extends Thread implements View {
 
                 if (this.controller.hasCommunicationToken() && !this.controller.getClientState().equals(ClientStates.CONNECTION_LOST))
                     this.controller.manageGameRunning(readLine(getPrettyUserName(), terminal, Autocompletion.get(), true, history).toLowerCase(Locale.ROOT));
-                else{
+                else {
                     try {
                         this.controller.getLock().wait(1000);
                     } catch (InterruptedException e) {
@@ -228,7 +227,7 @@ public class ClientCli extends Thread implements View {
                 }
             }
         }
-        if(controller.getClientState().equals(ClientStates.GAME_WAITING_ROOM))
+        if (controller.getClientState().equals(ClientStates.GAME_WAITING_ROOM))
             showError("One or more users disconnected.");
     }
 

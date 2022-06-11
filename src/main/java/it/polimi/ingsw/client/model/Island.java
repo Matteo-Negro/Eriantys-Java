@@ -18,11 +18,11 @@ public class Island {
 
     private final int id;
     private final Map<HouseColor, Integer> students;
+    private final boolean motherNature;
     private boolean ban;
     private boolean next;
     private boolean prev;
     private TowerType tower;
-    private final boolean motherNature;
 
     /**
      * Default constructor.
@@ -41,11 +41,11 @@ public class Island {
         this.tower = tower;
         this.motherNature = motherNature;
         this.ban = ban;
-        if(students != null)
+        if (students != null)
             this.students = JsonToObjects.parseStudents(students);
-        else{
+        else {
             this.students = new EnumMap<>(HouseColor.class);
-            for(HouseColor color : HouseColor.values()) this.students.put(color, 0);
+            for (HouseColor color : HouseColor.values()) this.students.put(color, 0);
         }
     }
 

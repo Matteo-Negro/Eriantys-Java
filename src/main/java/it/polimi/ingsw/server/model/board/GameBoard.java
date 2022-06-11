@@ -21,9 +21,9 @@ public class GameBoard {
     private final List<Island> islands;
     private final Map<HouseColor, Player> professors;
     private final Map<Player, Assistant> playedAssistants;
+    private final List<SpecialCharacter> characters;
     private Player influenceBonus;
     private Player tieWinner;
-    private final List<SpecialCharacter> characters;
     private Island motherNatureIsland;
     private HouseColor ignoreColor;
 
@@ -106,9 +106,9 @@ public class GameBoard {
         this.influenceBonus = null;
         this.tieWinner = null;
         this.characters = isExp ? new ArrayList<>(statusCharacters) : List.of();
-        try{
+        try {
             this.motherNatureIsland = this.getIslandById(idMotherNatureIsland);
-        }catch(IslandNotFoundException infe) {
+        } catch (IslandNotFoundException infe) {
             this.motherNatureIsland = this.islands.get(0);
         }
 

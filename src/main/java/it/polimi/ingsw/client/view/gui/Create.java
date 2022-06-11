@@ -15,10 +15,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class Create {
 
-    private ClientGui client = null;
     private final AtomicInteger players;
     private final AtomicBoolean expertMode;
-
+    private ClientGui client = null;
     @FXML
     private Button create;
     @FXML

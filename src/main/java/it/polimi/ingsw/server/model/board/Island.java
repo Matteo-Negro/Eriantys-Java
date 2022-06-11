@@ -155,10 +155,10 @@ public class Island {
      * @param o Object to compare.
      * @return true if the two objects are the same.
      */
-    public boolean equals(Object o){
-        if(this == o) return true;
+    public boolean equals(Object o) {
+        if (this == o) return true;
 
-        if(o == null || o.getClass()!=this.getClass()) return false;
+        if (o == null || o.getClass() != this.getClass()) return false;
 
         Island that = (Island) o;
         return id == that.getId() && this.students.equals(that.students) && this.size == that.size && this.ban == that.ban && this.tower.equals(that.tower);

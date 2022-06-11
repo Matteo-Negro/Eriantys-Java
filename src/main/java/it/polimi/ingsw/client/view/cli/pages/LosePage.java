@@ -5,8 +5,6 @@ import it.polimi.ingsw.client.view.cli.colours.Grey;
 import it.polimi.ingsw.client.view.cli.colours.Title;
 import it.polimi.ingsw.client.view.cli.coordinates.LoseNewLine;
 import it.polimi.ingsw.client.view.cli.coordinates.LoseOptions;
-import it.polimi.ingsw.client.view.cli.coordinates.WinNewLine;
-import it.polimi.ingsw.client.view.cli.coordinates.WinOptions;
 import org.fusesource.jansi.Ansi;
 import org.jline.terminal.Terminal;
 

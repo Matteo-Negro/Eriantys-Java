@@ -40,7 +40,7 @@ public class Ping extends Thread {
             synchronized (lock) {
                 user.sendMessage(MessageCreator.ping());
                 //Log.debug("Ping");
-                if(inWaitingRoom){
+                if (inWaitingRoom) {
                     user.sendMessage(MessageCreator.waitingRoomUpdate(user.getGameController()));
                     //Log.debug("Waiting-room update sent.");
                 }
@@ -64,20 +64,20 @@ public class Ping extends Thread {
     }
 
     /**
-     * Sets the inWaitingRoom attribute to true when the user is in a waiting-room.
-     *
-     * @param status The boolean value to set.
-     */
-    public void setInWaitingRoom(boolean status) {
-        this.inWaitingRoom = status;
-    }
-
-    /**
      * Returns true if the user is in a waiting-room.
      *
      * @return The inWaitingRoom attribute.
      */
     public boolean isInWaitingRoom() {
         return this.inWaitingRoom;
+    }
+
+    /**
+     * Sets the inWaitingRoom attribute to true when the user is in a waiting-room.
+     *
+     * @param status The boolean value to set.
+     */
+    public void setInWaitingRoom(boolean status) {
+        this.inWaitingRoom = status;
     }
 }

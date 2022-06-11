@@ -19,13 +19,39 @@ import java.util.Objects;
 
 public class ClientGui extends Application implements View {
 
+    private static final Object instanceLock = new Object();
+    private static final Object sceneLock = new Object();
+    private static final String DEFAULT_TITLE = "Eriantys";
+    private static ClientGui instance = null;
     private Stage stage;
     private ClientController controller;
     private Map<ClientStates, Scene> scenes;
-    private static final Object instanceLock = new Object();
-    private static final Object sceneLock = new Object();
-    private static ClientGui instance = null;
-    private static final String DEFAULT_TITLE = "Eriantys";
+
+    /**
+     * Gets the scene from the name of the FXML file to load.
+     *
+     * @param scene Name of the FXML file.
+     * @return The generated scene.
+     * @throws IOException If an error occurs during loading.
+     */
+    public static Scene loadScene(String scene) throws IOException {
+        return new Scene(
+                FXMLLoader.load(
+                        Objects.requireNonNull(
+                                Start.class.getResource(
+                                        String.format("/fxml/%s.fxml", scene)))));
+    }
+
+    /**
+     * Gets the instance of the currently running ClientGUI for interaction between GUI and backend.
+     *
+     * @return The instance of the currently running ClientGUI
+     */
+    public static ClientGui getInstance() {
+        synchronized (instanceLock) {
+            return instance;
+        }
+    }
 
     /**
      * @param primaryStage the primary stage for the application.
@@ -71,21 +97,6 @@ public class ClientGui extends Application implements View {
                 Log.error("Cannot initialize scenes because of the following error: ", e);
             }
         }).start();
-    }
-
-    /**
-     * Gets the scene from the name of the FXML file to load.
-     *
-     * @param scene Name of the FXML file.
-     * @return The generated scene.
-     * @throws IOException If an error occurs during loading.
-     */
-    public static Scene loadScene(String scene) throws IOException {
-        return new Scene(
-                FXMLLoader.load(
-                        Objects.requireNonNull(
-                                Start.class.getResource(
-                                        String.format("/fxml/%s.fxml", scene)))));
     }
 
     /**
@@ -135,17 +146,6 @@ public class ClientGui extends Application implements View {
      */
     public ClientController getController() {
         return controller;
-    }
-
-    /**
-     * Gets the instance of the currently running ClientGUI for interaction between GUI and backend.
-     *
-     * @return The instance of the currently running ClientGUI
-     */
-    public static ClientGui getInstance() {
-        synchronized (instanceLock) {
-            return instance;
-        }
     }
 
     /**

@@ -16,8 +16,8 @@ import java.util.Map;
  */
 public class SpecialCharacter {
     private final int id;
-    private Map<HouseColor, Integer> students;
     private final int cost;
+    private Map<HouseColor, Integer> students;
     private boolean active;
     private boolean alreadyPaid;
     private boolean paidInRound;
