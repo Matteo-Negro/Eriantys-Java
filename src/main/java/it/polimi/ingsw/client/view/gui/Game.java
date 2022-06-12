@@ -2,115 +2,104 @@ package it.polimi.ingsw.client.view.gui;
 
 import it.polimi.ingsw.client.view.ClientGui;
 import it.polimi.ingsw.client.view.gui.utilities.*;
+import it.polimi.ingsw.utilities.ClientState;
 import javafx.application.Platform;
+import javafx.event.Event;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
-import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
-public class Game {
+public class Game implements Update {
 
-    private static Scene scene = null;
-    private static ClientGui client = null;
+    private ClientGui client;
 
-    private static Map<String, BoardContainer> boards = null;
-    private static List<CloudContainer> clouds = null;
-    private static List<IslandContainer> islands = null;
+    private Map<String, BoardContainer> boards;
+    private List<CloudContainer> clouds;
+    private List<IslandContainer> islands;
 
     @FXML
-    private static VBox boardsLayout;
+    private VBox boardsLayout;
     @FXML
-    private static HBox cloudsLayout;
+    private HBox cloudsLayout;
     @FXML
-    private static Label id;
+    private Label id;
     @FXML
-    private static GridPane islandsLayout;
+    private GridPane islandsLayout;
     @FXML
-    private static Button exit;
+    private Label phase;
     @FXML
-    private static Label phase;
-    @FXML
-    private static Label round;
-
-    private Game() {
-    }
+    private Label round;
 
     /**
      * Initializes the scene.
+     */
+    public void initialize() {
+        client = ClientGui.getInstance();
+        ClientGui.link(ClientState.GAME_RUNNING, this);
+    }
+
+    /**
+     * Prepares the scene for displaying.
+     */
+    @Override
+    public void prepare() {
+        Platform.runLater(() -> {
+            id.requestFocus();
+            id.setText(client.getController().getGameCode());
+            round.setText(String.valueOf(client.getController().getGameModel().getRound()));
+            phase.setText(client.getController().getClientState().name().toLowerCase(Locale.ROOT));
+        });
+        new Thread(this::addBoards).start();
+        new Thread(this::addClouds).start();
+        new Thread(this::addIslands).start();
+    }
+
+    /**
+     * Goes back to main menu.
      *
-     * @param client The client to which change the state.
-     * @throws IOException Thrown if there is an error somewhere.
+     * @param event The event that triggered the function.
      */
-    public static void initialize(ClientGui client) throws IOException {
-        if (client == null)
-            return;
-        Game.client = client;
-        scene = new Scene(FXMLLoader.load(Objects.requireNonNull(Game.class.getResource("/fxml/game.fxml"))));
-        lookup();
-        addEvents();
+    @FXML
+    private void exit(Event event) {
+        EventProcessing.exit(event, client);
     }
 
     /**
-     * Returns the scene.
-     *
-     * @return The scene.
+     * Adds all the boards to the GUI.
      */
-    public static Scene getScene() {
-        id.requestFocus();
-        id.setText(client.getController().getGameCode());
-        round.setText(String.valueOf(client.getController().getGameModel().getRound()));
-        phase.setText(client.getController().getClientState().name().toLowerCase(Locale.ROOT));
-        new Thread(Game::addBoards).start();
-        new Thread(Game::addClouds).start();
-        new Thread(Game::addIslands).start();
-        return scene;
-    }
-
-    /**
-     * Looks for every used element in the scene.
-     */
-    private static void lookup() {
-        boardsLayout = (VBox) scene.lookup("#boards");
-        cloudsLayout = (HBox) scene.lookup("#clouds");
-        id = (Label) scene.lookup("#id");
-        islandsLayout = (GridPane) scene.lookup("#islands");
-        exit = (Button) scene.lookup("#exit");
-        phase = (Label) scene.lookup("#phase");
-        round = (Label) scene.lookup("#round");
-    }
-
-    /**
-     * Adds all the events to the scene.
-     */
-    private static void addEvents() {
-
-        ExitEvent.addEvent(exit, client);
-    }
-
-    private static void addBoards() {
-        Game.boards = Boards.get(client.getController().getGameModel().getPlayers());
+    private void addBoards() {
+        boards = Boards.get(client.getController().getGameModel().getPlayers());
+        List<BoardContainer> list = reorder();
         Platform.runLater(() -> {
             boardsLayout.getChildren().clear();
-            for (BoardContainer board : reorder(client.getController().getUserName()))
+            for (BoardContainer board : list)
                 boardsLayout.getChildren().add(board.getPane());
         });
     }
 
-    private static List<BoardContainer> reorder(String username) {
+    /**
+     * Reorders the boards in order to put in first position the current player's one.
+     *
+     * @return The sorted list.
+     */
+    private List<BoardContainer> reorder() {
         List<BoardContainer> list = new ArrayList<>();
-        list.add(boards.get(username));
+        list.add(boards.get(client.getController().getUserName()));
         list.addAll(boards.values().stream().filter(board -> board != list.get(0)).toList());
         return list;
     }
 
-    private static void addClouds() {
+    /**
+     * Adds all the clouds to the GUI.
+     */
+    private void addClouds() {
         clouds = Clouds.get(client.getController().getGameModel().getGameBoard().getClouds(), client.getController().getGameModel().getPlayersNumber());
         Platform.runLater(() -> {
             cloudsLayout.getChildren().clear();
@@ -119,7 +108,10 @@ public class Game {
         });
     }
 
-    private static void addIslands() {
+    /**
+     * Adds all the islands to the GUI.
+     */
+    private void addIslands() {
         islands = Islands.get(client.getController().getGameModel().getGameBoard());
         Platform.runLater(() -> {
             islandsLayout.getChildren().clear();

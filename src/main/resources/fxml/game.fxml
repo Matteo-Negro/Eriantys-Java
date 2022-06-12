@@ -17,7 +17,7 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="727.0" prefWidth="1255.0" side="BOTTOM" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1">
+<TabPane prefHeight="727.0" prefWidth="1255.0" side="BOTTOM" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.client.view.gui.Game">
   <tabs>
     <Tab text="Realm">
          <content>
@@ -66,7 +66,7 @@
                         </Label>
                      </children>
                   </GridPane>
-                  <GridPane fx:id="islands" layoutX="528.0" layoutY="303.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="50.0">
+                  <GridPane fx:id="islandsLayout" layoutX="528.0" layoutY="303.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="50.0">
                     <columnConstraints>
                       <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                       <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -82,15 +82,15 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
                     </rowConstraints>
                   </GridPane>
-                  <HBox fx:id="clouds" alignment="CENTER" layoutX="1112.0" layoutY="625.0" AnchorPane.bottomAnchor="250.0" AnchorPane.leftAnchor="300.0" AnchorPane.rightAnchor="300.0" AnchorPane.topAnchor="250.0" />
-                  <Button fx:id="exit" layoutX="1178.0" layoutY="16.0" mnemonicParsing="false" text="Exit" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
+                  <HBox fx:id="cloudsLayout" alignment="CENTER" layoutX="1112.0" layoutY="625.0" AnchorPane.bottomAnchor="250.0" AnchorPane.leftAnchor="300.0" AnchorPane.rightAnchor="300.0" AnchorPane.topAnchor="250.0" />
+                  <Button layoutX="1178.0" layoutY="16.0" mnemonicParsing="false" onKeyPressed="#exit" onMouseClicked="#exit" onTouchPressed="#exit" text="Exit" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
                </children></AnchorPane>
          </content></Tab>
     <Tab text="Boards">
          <content>
             <ScrollPane fitToHeight="true" fitToWidth="true">
                <content>
-                  <VBox fx:id="boards" alignment="TOP_CENTER" style="-fx-background-color: #74c4ed;">
+                  <VBox fx:id="boardsLayout" alignment="TOP_CENTER" style="-fx-background-color: #74c4ed;">
                      <children>
                         <VBox alignment="CENTER">
                            <children>
