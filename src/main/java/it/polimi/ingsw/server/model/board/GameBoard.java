@@ -34,7 +34,6 @@ public class GameBoard {
      */
     public GameBoard(int numPlayer, boolean isExp) {
         List<HouseColor> temp;
-        List<Integer> randomVector = new Vector<>();
 
         this.bag = new Bag();
         this.ignoreColor = null;
@@ -44,9 +43,9 @@ public class GameBoard {
         this.characters = new ArrayList<>();
         this.professors = new EnumMap<>(HouseColor.class);
         for (HouseColor color : HouseColor.values()) professors.put(color, null);
-
         this.influenceBonus = null;
         this.tieWinner = null;
+
         temp = this.bag.boardSetUp();
         for (int i = 0; i < 12; i++) {
             if (i == 0 || i == 6) {
@@ -54,29 +53,7 @@ public class GameBoard {
             } else this.islands.add(new Island(temp.get(i < 6 ? i - 1 : i - 2), i));
         }
 
-        if (isExp) {
-            for (int i = 1; i <= 12; i++) randomVector.add(i);
-            Collections.shuffle(randomVector);
-
-            for (int i = 0; i < 3; i++) {
-
-                Map<HouseColor, Integer> students = new EnumMap<>(HouseColor.class);
-                for (HouseColor color : HouseColor.values()) students.put(color, 0);
-                int studentsNumber;
-
-                studentsNumber = switch (randomVector.get(i)) {
-                    case 1, 11 -> 4;
-                    case 7 -> 6;
-                    default -> 0;
-                };
-
-                for (int c = 0; c < studentsNumber; c++) {
-                    HouseColor color = this.getBag().pop();
-                    students.replace(color, students.get(color) + 1);
-                }
-                this.characters.add(new SpecialCharacter(randomVector.get(i), students));
-            }
-        }
+        if (isExp) initializeChracters();
         Arrays.stream(HouseColor.values()).forEach(color -> this.professors.put(color, null));
         this.initializeClouds(numPlayer);
         this.motherNatureIsland = this.islands.get(0);
@@ -113,6 +90,35 @@ public class GameBoard {
         }
 
         Log.info("*** Saved GameBoard successfully restored.");
+    }
+
+    /**
+     * Initializes the special characters.
+     */
+    private void initializeChracters() {
+        List<Integer> randomVector = new Vector<>();
+
+        for (int i = 1; i <= 12; i++) randomVector.add(i);
+        Collections.shuffle(randomVector);
+
+        for (int i = 0; i < 3; i++) {
+
+            Map<HouseColor, Integer> students = new EnumMap<>(HouseColor.class);
+            for (HouseColor color : HouseColor.values()) students.put(color, 0);
+            int studentsNumber;
+
+            studentsNumber = switch (randomVector.get(i)) {
+                case 1, 11 -> 4;
+                case 7 -> 6;
+                default -> 0;
+            };
+
+            for (int c = 0; c < studentsNumber; c++) {
+                HouseColor color = this.getBag().pop();
+                students.replace(color, students.get(color) + 1);
+            }
+            this.characters.add(new SpecialCharacter(randomVector.get(i), students));
+        }
     }
 
     /**
@@ -229,8 +235,8 @@ public class GameBoard {
      * @return The HashMap where the key is the player and the value the influence on the island.
      */
     public Map<Player, Integer> getInfluence(Island targetIsland) {
-        Map<Player, Integer> result = new HashMap<>();
         // Student contribution
+        Map<Player, Integer> result = new HashMap<>();
         this.professors.keySet().forEach(professorColor -> {
             if (!professorColor.equals(ignoreColor)) {
                 if (!result.containsKey(this.professors.get(professorColor)) && this.professors.get(professorColor) != null)
@@ -241,6 +247,18 @@ public class GameBoard {
         });
 
         // Tower contribution
+        getInfluenceByTowers(result, targetIsland);
+
+        return result;
+    }
+
+    /**
+     * Gets the influence points given by towers' contribution.
+     *
+     * @param partialResult The current influence.
+     * @param targetIsland The island on which the influence is being calculated.
+     */
+    private void getInfluenceByTowers(Map<Player, Integer> partialResult, Island targetIsland) {
         boolean towersAreIgnored = false;
         for (SpecialCharacter c : this.getCharacters()) {
             if (c.getId() == 6 && c.isActive()) {
@@ -249,13 +267,11 @@ public class GameBoard {
             }
         }
         if (targetIsland.getTower() != null && !towersAreIgnored) {
-            result.keySet().forEach(player -> {
+            partialResult.keySet().forEach(player -> {
                 if (player.getSchoolBoard().getTowerType().equals(targetIsland.getTower()))
-                    result.put(player, result.get(player) + targetIsland.getSize());
+                    partialResult.put(player, partialResult.get(player) + targetIsland.getSize());
             });
         }
-
-        return result;
     }
 
     /**
@@ -271,10 +287,10 @@ public class GameBoard {
         boolean mergeDone;
         try {
             do {
-                List<Island> islands = getIslands();
+                List<Island> islandsList = getIslands();
                 mergeDone = false;
-                for (Island currentIsland : islands) {
-                    Island nextIsland = islands.get((islands.indexOf(currentIsland) + 1) % islands.size());
+                for (Island currentIsland : islandsList) {
+                    Island nextIsland = islandsList.get((islandsList.indexOf(currentIsland) + 1) % islandsList.size());
                     Log.debug("Current island " + currentIsland.getId());
 
                     Log.debug("Next id " + nextIsland.getId());
