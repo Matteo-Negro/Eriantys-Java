@@ -2,7 +2,7 @@ package it.polimi.ingsw.client.view.gui;
 
 import it.polimi.ingsw.client.view.ClientGui;
 import it.polimi.ingsw.client.view.gui.utilities.EventProcessing;
-import it.polimi.ingsw.utilities.ClientStates;
+import it.polimi.ingsw.utilities.ClientState;
 import it.polimi.ingsw.utilities.MessageCreator;
 import javafx.application.Platform;
 import javafx.event.Event;
@@ -28,7 +28,7 @@ public class WaitingRoom implements Update {
      */
     public void initialize() {
         client = ClientGui.getInstance();
-        ClientGui.link(ClientStates.GAME_WAITING_ROOM, this);
+        ClientGui.link(ClientState.GAME_WAITING_ROOM, this);
     }
 
     /**
@@ -50,10 +50,10 @@ public class WaitingRoom implements Update {
      */
     @FXML
     private void back(Event event) {
-        if (EventProcessing.standard(event) && !client.getController().getClientState().equals(ClientStates.CONNECTION_LOST)) {
+        if (EventProcessing.standard(event) && !client.getController().getClientState().equals(ClientState.CONNECTION_LOST)) {
             client.getController().getGameServer().sendCommand(MessageCreator.logout());
             client.getController().resetGame();
-            client.getController().setClientState(ClientStates.MAIN_MENU);
+            client.getController().setClientState(ClientState.MAIN_MENU);
         }
     }
 

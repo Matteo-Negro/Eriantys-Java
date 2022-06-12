@@ -69,7 +69,7 @@ public class GameServer extends Thread {
             }
         }
 
-        this.client.setClientState(ClientStates.CONNECTION_LOST);
+        this.client.setClientState(ClientState.CONNECTION_LOST);
     }
 
     /**
@@ -102,7 +102,7 @@ public class GameServer extends Thread {
             }
             case "gameStart" -> {
                 Log.debug("gameStart message arrived");
-                this.client.setClientState(ClientStates.GAME_RUNNING);
+                this.client.setClientState(ClientState.GAME_RUNNING);
             }
             case "turnEnable" -> {
                 Log.debug("turnEnable message arrived");
@@ -131,7 +131,7 @@ public class GameServer extends Thread {
                 if (message.get("found").getAsBoolean()) {
                     Log.debug("enterGame reply");
                     parseEnterGame(message);
-                    this.client.setClientState(ClientStates.GAME_LOGIN);
+                    this.client.setClientState(ClientState.GAME_LOGIN);
                     Log.debug("changed state Game login.");
                 }
                 synchronized (this.client.getLock()) {
@@ -171,7 +171,7 @@ public class GameServer extends Thread {
      * @param message The message.
      */
     private void manageWaitingRoomUpdate(JsonObject message) {
-        if (this.client.getClientState().equals(ClientStates.GAME_WAITING_ROOM)) parseEnterGame(message);
+        if (this.client.getClientState().equals(ClientState.GAME_WAITING_ROOM)) parseEnterGame(message);
     }
 
     /**
@@ -180,16 +180,16 @@ public class GameServer extends Thread {
      * @param message The message.
      */
     private void manageLogin(JsonObject message) {
-        if (this.client.getClientState().equals(ClientStates.GAME_LOGIN)) {
+        if (this.client.getClientState().equals(ClientState.GAME_LOGIN)) {
             if (message.get("success").getAsBoolean()) {
-                this.client.setClientState(ClientStates.GAME_WAITING_ROOM);
+                this.client.setClientState(ClientState.GAME_WAITING_ROOM);
                 Log.debug("changed state Waiting room.");
             } else {
                 this.client.errorOccurred("Invalid username");
             }
         } else {
             Log.debug("changed state Connection lost.");
-            this.client.setClientState(ClientStates.CONNECTION_LOST);
+            this.client.setClientState(ClientState.CONNECTION_LOST);
         }
 
         synchronized (this.client.getLock()) {
@@ -221,8 +221,8 @@ public class GameServer extends Thread {
      * @param message The message.
      */
     private void manageError(JsonObject message) {
-        if (this.client.getClientState().equals(ClientStates.GAME_RUNNING) && message.get("message").getAsString().equals("UserDisconnected")) {
-            this.client.setClientState(ClientStates.GAME_WAITING_ROOM);
+        if (this.client.getClientState().equals(ClientState.GAME_RUNNING) && message.get("message").getAsString().equals("UserDisconnected")) {
+            this.client.setClientState(ClientState.GAME_WAITING_ROOM);
             this.client.initializeGameModel(null);
         }
     }
@@ -250,15 +250,15 @@ public class GameServer extends Thread {
                 winners = message.get("winners").getAsJsonArray();
                 for (JsonElement player : winners) {
                     if (player.getAsString().equals(this.client.getUserName())) {
-                        this.client.setEndState(EndType.WON);
+                        this.client.setEndState(EndType.WIN);
                         break;
                     }
                 }
-                if (this.client.getEndState() == null) this.client.setEndState(EndType.LOST);
+                if (this.client.getEndState() == null) this.client.setEndState(EndType.LOSE);
             }
             this.client.getLock().notify();
         }
-        this.client.setClientState(ClientStates.END_GAME);
+        this.client.setClientState(ClientState.END_GAME);
     }
 
     /**

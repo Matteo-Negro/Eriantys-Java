@@ -3,7 +3,7 @@ package it.polimi.ingsw.client.view;
 import it.polimi.ingsw.client.controller.ClientController;
 import it.polimi.ingsw.client.view.gui.Start;
 import it.polimi.ingsw.client.view.gui.Update;
-import it.polimi.ingsw.utilities.ClientStates;
+import it.polimi.ingsw.utilities.ClientState;
 import it.polimi.ingsw.utilities.Log;
 import it.polimi.ingsw.utilities.Pair;
 import javafx.application.Application;
@@ -23,11 +23,11 @@ public class ClientGui extends Application implements View {
     private static final Object instanceLock = new Object();
     private static final Object sceneLock = new Object();
     private static final String DEFAULT_TITLE = "Eriantys";
-    private static final Map<ClientStates, Update> instances = new EnumMap<>(ClientStates.class);
+    private static final Map<ClientState, Update> instances = new EnumMap<>(ClientState.class);
     private static ClientGui instance = null;
     private Stage stage;
     private ClientController controller;
-    private Map<ClientStates, Scene> scenes;
+    private Map<ClientState, Scene> scenes;
 
     /**
      * Gets the scene from the name of the FXML file to load.
@@ -61,7 +61,7 @@ public class ClientGui extends Application implements View {
      * @param clientState The state to which bound the controller.
      * @param controller  The controller of the scene.
      */
-    public static void link(ClientStates clientState, Update controller) {
+    public static void link(ClientState clientState, Update controller) {
         synchronized (instances) {
             instances.put(clientState, controller);
         }
@@ -79,11 +79,11 @@ public class ClientGui extends Application implements View {
 
         stage = primaryStage;
         controller = new ClientController(this);
-        scenes = new EnumMap<>(ClientStates.class);
+        scenes = new EnumMap<>(ClientState.class);
 
         Log.info("Initializing scenes...");
         try {
-            scenes.put(ClientStates.START_SCREEN, loadScene("start"));
+            scenes.put(ClientState.START_SCREEN, loadScene("start"));
         } catch (IOException e) {
             Log.error("Cannot initialize scenes because of the following error: ", e);
             return;
@@ -99,13 +99,13 @@ public class ClientGui extends Application implements View {
 
         new Thread(() -> {
             try {
-                scenes.put(ClientStates.GAME_CREATION, loadScene("create"));
-                scenes.put(ClientStates.END_GAME, loadScene("end"));
-                scenes.put(ClientStates.GAME_RUNNING, loadScene("game"));
-                scenes.put(ClientStates.JOIN_GAME, loadScene("join"));
-                scenes.put(ClientStates.GAME_LOGIN, loadScene("login"));
-                scenes.put(ClientStates.MAIN_MENU, loadScene("menu"));
-                scenes.put(ClientStates.GAME_WAITING_ROOM, loadScene("wait"));
+                scenes.put(ClientState.GAME_CREATION, loadScene("create"));
+                scenes.put(ClientState.END_GAME, loadScene("end"));
+                scenes.put(ClientState.GAME_RUNNING, loadScene("game"));
+                scenes.put(ClientState.JOIN_GAME, loadScene("join"));
+                scenes.put(ClientState.GAME_LOGIN, loadScene("login"));
+                scenes.put(ClientState.MAIN_MENU, loadScene("menu"));
+                scenes.put(ClientState.GAME_WAITING_ROOM, loadScene("wait"));
                 Log.info("Initialization completed.");
             } catch (IOException e) {
                 Log.error("Cannot initialize scenes because of the following error: ", e);
@@ -118,9 +118,9 @@ public class ClientGui extends Application implements View {
      */
     public void changeScene() {
 
-        ClientStates state = getController().getClientState();
+        ClientState state = getController().getClientState();
 
-        if (state.equals(ClientStates.MAIN_MENU))
+        if (state.equals(ClientState.MAIN_MENU))
             synchronized (sceneLock) {
                 while (scenes.get(state) == null) {
                     try {
@@ -131,7 +131,7 @@ public class ClientGui extends Application implements View {
                 }
             }
 
-        if (getController().getClientState().equals(ClientStates.CONNECTION_LOST))
+        if (getController().getClientState().equals(ClientState.CONNECTION_LOST))
             getController().manageConnectionLost();
 
         synchronized (instances) {
@@ -143,7 +143,7 @@ public class ClientGui extends Application implements View {
         stage.setScene(scenes.get(state));
 
         stage.sizeToScene();
-        stage.setResizable(state.equals(ClientStates.GAME_RUNNING));
+        stage.setResizable(state.equals(ClientState.GAME_RUNNING));
 
         stage.setTitle(switch (state) {
             case CONNECTION_LOST, START_SCREEN -> "Connect to a game server";

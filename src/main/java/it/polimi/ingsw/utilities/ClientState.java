@@ -1,6 +1,6 @@
 package it.polimi.ingsw.utilities;
 
-public enum ClientStates {
+public enum ClientState {
     CONNECTION_LOST,
     END_GAME,
     EXIT,

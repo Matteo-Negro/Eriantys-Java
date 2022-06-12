@@ -1,5 +1,6 @@
 package it.polimi.ingsw.client.view.gui.utilities;
 
+import it.polimi.ingsw.utilities.EndType;
 import it.polimi.ingsw.utilities.HouseColor;
 import it.polimi.ingsw.utilities.TowerType;
 import javafx.scene.image.Image;
@@ -11,6 +12,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class Images {
 
     private static List<Image> clouds = null;
+    private static Map<EndType, Image> endTitles = null;
     private static List<Image> islands = null;
     private static Image motherNature = null;
     private static Map<HouseColor, Image> studentsRealm = null;
@@ -96,6 +98,12 @@ public class Images {
         return studentsBoard.get(houseColor);
     }
 
+    public static Image getEndTitleByState(EndType endType) {
+        if (endTitles == null)
+            initializeEndTitles();
+        return endTitles.get(endType);
+    }
+
     static Image getTowerByColor(TowerType towerType) {
         if (towers == null)
             initializeTowers();
@@ -107,6 +115,13 @@ public class Images {
         for (int index = 1; index <= 4; index++)
             images.add(new Image(String.format("/realm/clouds/%d.png", index)));
         clouds = Collections.unmodifiableList(images);
+    }
+
+    private static void initializeEndTitles() {
+        Map<EndType, Image> images = new EnumMap<>(EndType.class);
+        for (EndType type : EndType.values())
+            images.put(type, new Image(String.format("/titles/%s.png", type.name().toLowerCase(Locale.ROOT))));
+        endTitles = Collections.unmodifiableMap(images);
     }
 
     private static void initializeIslands() {

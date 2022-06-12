@@ -36,13 +36,13 @@ public class ClientController {
     private GameServer gameServer;
     private GameModel gameModel;
     private EndType endState;
-    private ClientStates state;
+    private ClientState state;
 
     /**
      * Default class constructor.
      */
     public ClientController(View view) {
-        this.state = ClientStates.START_SCREEN;
+        this.state = ClientState.START_SCREEN;
         this.gameServer = null;
         this.gameModel = null;
         this.userName = null;
@@ -152,7 +152,7 @@ public class ClientController {
             hostSocket.setSoTimeout(10000);
             setGameServer(new GameServer(hostSocket, this));
             new Thread(this.gameServer).start();
-            setClientState(ClientStates.MAIN_MENU);
+            setClientState(ClientState.MAIN_MENU);
             updateScreen();
         } catch (IOException | NumberFormatException e) {
             this.errorOccurred("Wrong data provided or server unreachable.");
@@ -166,15 +166,15 @@ public class ClientController {
     public void manageMainMenu(String option) {
         switch (option) {
             case "1" -> {
-                if (!getClientState().equals(ClientStates.CONNECTION_LOST))
-                    this.setClientState(ClientStates.GAME_CREATION);
+                if (!getClientState().equals(ClientState.CONNECTION_LOST))
+                    this.setClientState(ClientState.GAME_CREATION);
                 updateScreen();
             }
             case "2" -> {
-                if (!getClientState().equals(ClientStates.CONNECTION_LOST)) this.setClientState(ClientStates.JOIN_GAME);
+                if (!getClientState().equals(ClientState.CONNECTION_LOST)) this.setClientState(ClientState.JOIN_GAME);
                 updateScreen();
             }
-            case "exit" -> this.setClientState(ClientStates.CONNECTION_LOST);
+            case "exit" -> this.setClientState(ClientState.CONNECTION_LOST);
             default -> this.errorOccurred("Wrong command.");
         }
     }
@@ -187,9 +187,9 @@ public class ClientController {
 
         this.tryConnection();
 
-        if (this.getClientState().equals(ClientStates.GAME_CREATION)) {
+        if (this.getClientState().equals(ClientState.GAME_CREATION)) {
             Log.debug("manage game creation");
-            this.setClientState(ClientStates.CONNECTION_LOST);
+            this.setClientState(ClientState.CONNECTION_LOST);
         }
         updateScreen();
     }
@@ -199,7 +199,7 @@ public class ClientController {
      */
     public void manageJoinGame(String gameCode) {
         if ("EXIT".equals(gameCode)) {
-            if (!getClientState().equals(ClientStates.CONNECTION_LOST)) this.setClientState(ClientStates.MAIN_MENU);
+            if (!getClientState().equals(ClientState.CONNECTION_LOST)) this.setClientState(ClientState.MAIN_MENU);
             this.resetGame();
             updateScreen();
             return;
@@ -209,7 +209,7 @@ public class ClientController {
 
         this.tryConnection();
 
-        if (this.getClientState().equals(ClientStates.JOIN_GAME))
+        if (this.getClientState().equals(ClientState.JOIN_GAME))
             this.errorOccurred("The desired game doesn't exist or is full.");
         else {
             updateScreen();
@@ -221,7 +221,7 @@ public class ClientController {
      */
     public void manageGameLogin(String username) {
         if ("exit".equals(username)) {
-            if (!getClientState().equals(ClientStates.CONNECTION_LOST)) this.setClientState(ClientStates.MAIN_MENU);
+            if (!getClientState().equals(ClientState.CONNECTION_LOST)) this.setClientState(ClientState.MAIN_MENU);
             this.resetGame();
             updateScreen();
             return;
@@ -243,7 +243,7 @@ public class ClientController {
      * Manages the game logic.
      */
     public void manageGameRunning(String command) {
-        if (getClientState().equals(ClientStates.CONNECTION_LOST)) {
+        if (getClientState().equals(ClientState.CONNECTION_LOST)) {
             updateScreen();
             return;
         }
@@ -312,7 +312,7 @@ public class ClientController {
         } catch (IllegalActionException iae) {
             Log.warning(iae);
             errorOccurred("Connection lost.");
-            setClientState(ClientStates.CONNECTION_LOST);
+            setClientState(ClientState.CONNECTION_LOST);
         }
         updateScreen();
     }
@@ -401,7 +401,7 @@ public class ClientController {
      */
     public void manageEndGame(String command) {
         if (command.equals("") || command.equals("exit")) {
-            if (!getClientState().equals(ClientStates.CONNECTION_LOST)) this.setClientState(ClientStates.MAIN_MENU);
+            if (!getClientState().equals(ClientState.CONNECTION_LOST)) this.setClientState(ClientState.MAIN_MENU);
             updateScreen();
             this.resetGame();
         } else {
@@ -644,7 +644,7 @@ public class ClientController {
         this.getGameServer().disconnected();
         this.gameServer = null;
         Log.debug("manageConnectionLost");
-        this.setClientState(ClientStates.START_SCREEN);
+        this.setClientState(ClientState.START_SCREEN);
         updateScreen();
         this.errorOccurred("Connection lost.");
     }
@@ -668,7 +668,7 @@ public class ClientController {
      *
      * @return The state attribute.
      */
-    public ClientStates getClientState() {
+    public ClientState getClientState() {
         return this.state;
     }
 
@@ -677,7 +677,7 @@ public class ClientController {
      *
      * @param newState The next state to set.
      */
-    public void setClientState(ClientStates newState) {
+    public void setClientState(ClientState newState) {
         synchronized (this.lock) {
             this.state = newState;
             this.lock.notifyAll();
@@ -689,7 +689,7 @@ public class ClientController {
      * Flushes the current game model and sets the current state to MAIN_MENU.
      */
     public void resetGame() {
-        this.setClientState(ClientStates.MAIN_MENU);
+        this.setClientState(ClientState.MAIN_MENU);
         this.gameModel = null;
         this.userName = null;
         this.gameCode = null;
@@ -715,7 +715,7 @@ public class ClientController {
                 this.lock.wait(10000);
             } catch (InterruptedException e) {
                 Log.debug("tryConnection.");
-                this.setClientState(ClientStates.CONNECTION_LOST);
+                this.setClientState(ClientState.CONNECTION_LOST);
             }
         }
     }

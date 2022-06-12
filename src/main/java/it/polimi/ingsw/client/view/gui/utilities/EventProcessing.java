@@ -1,7 +1,7 @@
 package it.polimi.ingsw.client.view.gui.utilities;
 
 import it.polimi.ingsw.client.view.ClientGui;
-import it.polimi.ingsw.utilities.ClientStates;
+import it.polimi.ingsw.utilities.ClientState;
 import javafx.event.Event;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -20,8 +20,8 @@ public class EventProcessing {
     public static void exit(Event event, ClientGui client) {
         if (!standard(event))
             return;
-        if (!client.getController().getClientState().equals(ClientStates.CONNECTION_LOST))
-            client.getController().setClientState(ClientStates.MAIN_MENU);
+        if (!client.getController().getClientState().equals(ClientState.CONNECTION_LOST))
+            client.getController().setClientState(ClientState.MAIN_MENU);
         client.changeScene();
     }
 

@@ -2,7 +2,7 @@ package it.polimi.ingsw.client.view.gui;
 
 import it.polimi.ingsw.client.view.ClientGui;
 import it.polimi.ingsw.client.view.gui.utilities.EventProcessing;
-import it.polimi.ingsw.utilities.ClientStates;
+import it.polimi.ingsw.utilities.ClientState;
 import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -38,7 +38,7 @@ public class Join implements Update {
      */
     public void initialize() {
         client = ClientGui.getInstance();
-        ClientGui.link(ClientStates.JOIN_GAME, this);
+        ClientGui.link(ClientState.JOIN_GAME, this);
         code = new ArrayList<>();
         code.add(code0);
         code.add(code1);
@@ -141,7 +141,7 @@ public class Join implements Update {
      * Processes the entrance in the game.
      */
     private void processButton() {
-        if (!client.getController().getClientState().equals(ClientStates.CONNECTION_LOST))
+        if (!client.getController().getClientState().equals(ClientState.CONNECTION_LOST))
             client.getController().manageJoinGame(getCode());
     }
 }

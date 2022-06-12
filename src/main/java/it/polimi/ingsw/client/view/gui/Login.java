@@ -2,7 +2,7 @@ package it.polimi.ingsw.client.view.gui;
 
 import it.polimi.ingsw.client.view.ClientGui;
 import it.polimi.ingsw.client.view.gui.utilities.EventProcessing;
-import it.polimi.ingsw.utilities.ClientStates;
+import it.polimi.ingsw.utilities.ClientState;
 import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -30,7 +30,7 @@ public class Login implements Update {
      */
     public void initialize() {
         client = ClientGui.getInstance();
-        ClientGui.link(ClientStates.GAME_LOGIN, this);
+        ClientGui.link(ClientState.GAME_LOGIN, this);
     }
 
     /**
@@ -106,7 +106,7 @@ public class Login implements Update {
      * Manages the login to the game.
      */
     private void manageLogin() {
-        if (!client.getController().getClientState().equals(ClientStates.CONNECTION_LOST))
+        if (!client.getController().getClientState().equals(ClientState.CONNECTION_LOST))
             client.getController().manageGameLogin(name.getText());
     }
 }

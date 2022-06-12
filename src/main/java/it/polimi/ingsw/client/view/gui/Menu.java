@@ -2,7 +2,7 @@ package it.polimi.ingsw.client.view.gui;
 
 import it.polimi.ingsw.client.view.ClientGui;
 import it.polimi.ingsw.client.view.gui.utilities.EventProcessing;
-import it.polimi.ingsw.utilities.ClientStates;
+import it.polimi.ingsw.utilities.ClientState;
 import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -20,7 +20,7 @@ public class Menu implements Update {
      */
     public void initialize() {
         client = ClientGui.getInstance();
-        ClientGui.link(ClientStates.MAIN_MENU, this);
+        ClientGui.link(ClientState.MAIN_MENU, this);
     }
 
     /**

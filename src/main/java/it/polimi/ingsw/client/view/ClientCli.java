@@ -5,7 +5,7 @@ import it.polimi.ingsw.client.view.cli.Autocompletion;
 import it.polimi.ingsw.client.view.cli.Utilities;
 import it.polimi.ingsw.client.view.cli.colours.*;
 import it.polimi.ingsw.client.view.cli.pages.*;
-import it.polimi.ingsw.utilities.ClientStates;
+import it.polimi.ingsw.utilities.ClientState;
 import it.polimi.ingsw.utilities.Log;
 import it.polimi.ingsw.utilities.MessageCreator;
 import it.polimi.ingsw.utilities.Pair;
@@ -139,8 +139,8 @@ public class ClientCli extends Thread implements View {
         switch (playersNumber) {
             case "2", "3", "4" -> expectedPlayers = Integer.parseInt(playersNumber);
             case "exit" -> {
-                if (!controller.getClientState().equals(ClientStates.CONNECTION_LOST))
-                    this.controller.setClientState(ClientStates.MAIN_MENU);
+                if (!controller.getClientState().equals(ClientState.CONNECTION_LOST))
+                    this.controller.setClientState(ClientState.MAIN_MENU);
                 updateScreen(false);
                 this.controller.resetGame();
                 return;
@@ -156,8 +156,8 @@ public class ClientCli extends Thread implements View {
             case "normal" -> expert = false;
             case "expert" -> expert = true;
             case "exit" -> {
-                if (!controller.getClientState().equals(ClientStates.CONNECTION_LOST))
-                    this.controller.setClientState(ClientStates.MAIN_MENU);
+                if (!controller.getClientState().equals(ClientState.CONNECTION_LOST))
+                    this.controller.setClientState(ClientState.MAIN_MENU);
                 updateScreen(false);
                 this.controller.resetGame();
                 return;
@@ -215,7 +215,7 @@ public class ClientCli extends Thread implements View {
             if (this.controller.getGameServer() != null) {
                 Game.print(terminal, this.controller.getGameModel(), this.controller.getGameCode(), this.controller.getGameModel().getRound(), this.controller.getGameModel().getPlayerByName(controller.getUserName()).isActive());
 
-                if (this.controller.hasCommunicationToken() && !this.controller.getClientState().equals(ClientStates.CONNECTION_LOST))
+                if (this.controller.hasCommunicationToken() && !this.controller.getClientState().equals(ClientState.CONNECTION_LOST))
                     this.controller.manageGameRunning(readLine(getPrettyUserName(), terminal, Autocompletion.get(), true, history).toLowerCase(Locale.ROOT));
                 else {
                     try {
@@ -227,7 +227,7 @@ public class ClientCli extends Thread implements View {
                 }
             }
         }
-        if (controller.getClientState().equals(ClientStates.GAME_WAITING_ROOM))
+        if (controller.getClientState().equals(ClientState.GAME_WAITING_ROOM))
             showError("One or more users disconnected.");
     }
 
@@ -237,8 +237,8 @@ public class ClientCli extends Thread implements View {
     public void runEndGame() {
         switch (this.controller.getEndState()) {
             case DRAW -> DrawPage.print(terminal);
-            case LOST -> LosePage.print(terminal);
-            case WON -> WinPage.print(terminal);
+            case LOSE -> LosePage.print(terminal);
+            case WIN -> WinPage.print(terminal);
         }
         this.controller.manageEndGame(readLine(" ", terminal, List.of(node("exit")), false, null));
     }

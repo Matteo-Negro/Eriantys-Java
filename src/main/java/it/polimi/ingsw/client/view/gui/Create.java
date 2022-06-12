@@ -2,7 +2,7 @@ package it.polimi.ingsw.client.view.gui;
 
 import it.polimi.ingsw.client.view.ClientGui;
 import it.polimi.ingsw.client.view.gui.utilities.EventProcessing;
-import it.polimi.ingsw.utilities.ClientStates;
+import it.polimi.ingsw.utilities.ClientState;
 import it.polimi.ingsw.utilities.MessageCreator;
 import javafx.application.Platform;
 import javafx.event.Event;
@@ -41,7 +41,7 @@ public class Create implements Update {
      */
     public void initialize() {
         client = ClientGui.getInstance();
-        ClientGui.link(ClientStates.GAME_CREATION, this);
+        ClientGui.link(ClientState.GAME_CREATION, this);
     }
 
     /**
@@ -76,7 +76,7 @@ public class Create implements Update {
      */
     @FXML
     private void create(Event event) {
-        if (EventProcessing.standard(event) && !client.getController().getClientState().equals(ClientStates.CONNECTION_LOST))
+        if (EventProcessing.standard(event) && !client.getController().getClientState().equals(ClientState.CONNECTION_LOST))
             client.getController().manageGameCreation(MessageCreator.gameCreation(players.get(), expertMode.get()));
     }
 

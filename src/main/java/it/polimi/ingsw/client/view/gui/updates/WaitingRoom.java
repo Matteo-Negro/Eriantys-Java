@@ -1,7 +1,7 @@
 package it.polimi.ingsw.client.view.gui.updates;
 
 import it.polimi.ingsw.client.view.ClientGui;
-import it.polimi.ingsw.utilities.ClientStates;
+import it.polimi.ingsw.utilities.ClientState;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
@@ -25,7 +25,7 @@ public class WaitingRoom implements Runnable {
 
     @Override
     public void run() {
-        while (client.getController().getClientState().equals(ClientStates.GAME_WAITING_ROOM)) {
+        while (client.getController().getClientState().equals(ClientState.GAME_WAITING_ROOM)) {
             synchronized (lock) {
                 this.waitingRoomGUI.update(getPlayers());
                 try {
