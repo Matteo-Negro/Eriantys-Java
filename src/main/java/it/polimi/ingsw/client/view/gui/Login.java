@@ -1,119 +1,111 @@
 package it.polimi.ingsw.client.view.gui;
 
 import it.polimi.ingsw.client.view.ClientGui;
-import it.polimi.ingsw.client.view.gui.utilities.ExitEvent;
+import it.polimi.ingsw.client.view.gui.utilities.EventProcessing;
 import it.polimi.ingsw.utilities.ClientStates;
 import javafx.application.Platform;
+import javafx.event.Event;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
-public class Login {
+public class Login implements Update {
 
-    private static Scene scene = null;
-    private static ClientGui client = null;
+    private ClientGui client;
 
     @FXML
-    private static Button back;
+    private TextField name;
     @FXML
-    private static Button login;
-    @FXML
-    private static TextField name;
-    @FXML
-    private static VBox names;
-
-    private Login() {
-    }
+    private VBox players;
 
     /**
      * Initializes the scene.
-     *
-     * @param client The client to which change the state.
-     * @throws IOException Thrown if there is an error somewhere.
      */
-    public static void initialize(ClientGui client) throws IOException {
-        Login.client = client;
-        scene = new Scene(FXMLLoader.load(Objects.requireNonNull(Login.class.getResource("/fxml/login.fxml"))));
-        lookup();
-        addEvents();
+    public void initialize() {
+        client = ClientGui.getInstance();
+        ClientGui.link(ClientStates.GAME_LOGIN, this);
     }
 
     /**
-     * Returns the scene.
-     *
-     * @return The scene.
+     * Prepares the scene for displaying.
      */
-    public static Scene getScene() {
-        name.setText("");
-        name.requestFocus();
-        names.getChildren().clear();
+    @Override
+    public void prepare() {
+        List<Label> labels = getPlayers();
         Platform.runLater(() -> {
-            int index = client.getController().getGameModel().getWaitingRoom().size();
-            for (Map.Entry<String, Boolean> entry : client.getController().getGameModel().getWaitingRoom().entrySet()) {
-                Label label = new Label(entry.getKey());
-                if (index != 1)
-                    label.setOpaqueInsets(new Insets(0, 0, 10, 0));
-                if (Boolean.TRUE.equals(entry.getValue()))
-                    label.setTextFill(Color.rgb(181, 255, 181));
-                else
-                    label.setTextFill(Color.rgb(255, 181, 181));
-                index--;
-                names.getChildren().add(label);
-            }
+            name.setText("");
+            name.requestFocus();
+            players.getChildren().clear();
+            for (Label label : labels)
+                players.getChildren().add(label);
         });
-        return scene;
     }
 
     /**
-     * Looks for every used element in the scene.
+     * Gets the players' list of the game.
+     *
+     * @return The players' list.
      */
-    private static void lookup() {
-        back = (Button) scene.lookup("#back");
-        login = (Button) scene.lookup("#submit");
-        name = (TextField) scene.lookup("#name");
-        names = (VBox) scene.lookup("#names");
+    private List<Label> getPlayers() {
+        List<Label> labels = new ArrayList<>();
+        int index = client.getController().getGameModel().getWaitingRoom().size();
+        for (Map.Entry<String, Boolean> entry : client.getController().getGameModel().getWaitingRoom().entrySet()) {
+            Label label = new Label(entry.getKey());
+            if (index != 1)
+                label.setOpaqueInsets(new Insets(0, 0, 10, 0));
+            if (Boolean.TRUE.equals(entry.getValue()))
+                label.setTextFill(Color.rgb(181, 255, 181));
+            else
+                label.setTextFill(Color.rgb(255, 181, 181));
+            index--;
+            labels.add(label);
+        }
+        return labels;
     }
 
     /**
-     * Adds all the events to the scene.
+     * Goes back to main menu.
+     *
+     * @param event The event that triggered the function.
      */
-    private static void addEvents() {
+    @FXML
+    private void back(Event event) {
+        EventProcessing.exit(event, client);
+    }
 
-        ExitEvent.addEvent(back, client);
-
-        login.setOnMouseClicked(event -> {
-            event.consume();
+    /**
+     * Logs into the game.
+     *
+     * @param event The event that triggered the function.
+     */
+    @FXML
+    private void login(Event event) {
+        if (EventProcessing.standard(event))
             manageLogin();
-        });
+    }
 
-        login.setOnKeyPressed(event -> {
-            event.consume();
-            if (event.getCode() == KeyCode.ENTER)
-                manageLogin();
-        });
-
-        name.setOnKeyPressed(event -> {
-            event.consume();
-            if (event.getCode() == KeyCode.ENTER)
-                manageLogin();
-        });
+    /**
+     * Logs into the game.
+     *
+     * @param event The event that triggered the function.
+     */
+    @FXML
+    private void name(Event event) {
+        if (EventProcessing.text(event))
+            manageLogin();
     }
 
     /**
      * Manages the login to the game.
      */
-    private static void manageLogin() {
+    private void manageLogin() {
         if (!client.getController().getClientState().equals(ClientStates.CONNECTION_LOST))
             client.getController().manageGameLogin(name.getText());
     }

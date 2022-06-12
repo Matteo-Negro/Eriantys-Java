@@ -2,14 +2,15 @@ package it.polimi.ingsw.client.view.gui;
 
 import it.polimi.ingsw.client.view.ClientGui;
 import it.polimi.ingsw.client.view.gui.utilities.EventProcessing;
+import it.polimi.ingsw.utilities.ClientStates;
 import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 
-public class Menu {
+public class Menu implements Update {
 
-    private ClientGui client = null;
+    private ClientGui client;
 
     @FXML
     private Button enter;
@@ -19,6 +20,14 @@ public class Menu {
      */
     public void initialize() {
         client = ClientGui.getInstance();
+        ClientGui.link(ClientStates.MAIN_MENU, this);
+    }
+
+    /**
+     * Prepares the scene for displaying.
+     */
+    @Override
+    public void prepare() {
         Platform.runLater(() -> enter.requestFocus());
     }
 

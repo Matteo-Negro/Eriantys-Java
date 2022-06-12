@@ -2,6 +2,7 @@ package it.polimi.ingsw.client.view;
 
 import it.polimi.ingsw.client.controller.ClientController;
 import it.polimi.ingsw.client.view.gui.Start;
+import it.polimi.ingsw.client.view.gui.Update;
 import it.polimi.ingsw.utilities.ClientStates;
 import it.polimi.ingsw.utilities.Log;
 import it.polimi.ingsw.utilities.Pair;
@@ -22,6 +23,7 @@ public class ClientGui extends Application implements View {
     private static final Object instanceLock = new Object();
     private static final Object sceneLock = new Object();
     private static final String DEFAULT_TITLE = "Eriantys";
+    private static final Map<ClientStates, Update> instances = new EnumMap<>(ClientStates.class);
     private static ClientGui instance = null;
     private Stage stage;
     private ClientController controller;
@@ -50,6 +52,18 @@ public class ClientGui extends Application implements View {
     public static ClientGui getInstance() {
         synchronized (instanceLock) {
             return instance;
+        }
+    }
+
+    /**
+     * Links a state with the specific GUI controller.
+     *
+     * @param clientState The state to which bound the controller.
+     * @param controller  The controller of the scene.
+     */
+    public static void link(ClientStates clientState, Update controller) {
+        synchronized (instances) {
+            instances.put(clientState, controller);
         }
     }
 
@@ -122,6 +136,11 @@ public class ClientGui extends Application implements View {
 
         Log.info("Displaying " + state);
         stage.setScene(scenes.get(state));
+
+        synchronized (instances) {
+            if (instances.get(state) != null)
+                instances.get(state).prepare();
+        }
 
         stage.sizeToScene();
         stage.setResizable(state.equals(ClientStates.GAME_RUNNING));

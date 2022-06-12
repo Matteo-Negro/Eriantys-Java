@@ -15,9 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class Join {
+public class Join implements Update {
 
-    private ClientGui client = null;
+    private ClientGui client;
     private List<TextField> code;
 
     @FXML
@@ -38,6 +38,7 @@ public class Join {
      */
     public void initialize() {
         client = ClientGui.getInstance();
+        ClientGui.link(ClientStates.JOIN_GAME, this);
         code = new ArrayList<>();
         code.add(code0);
         code.add(code1);
@@ -46,6 +47,13 @@ public class Join {
         code.add(code4);
         for (int index = 0; index < code.size(); index++)
             addEvent(index);
+    }
+
+    /**
+     * Prepares the scene for displaying.
+     */
+    @Override
+    public void prepare() {
         Platform.runLater(() -> {
             code0.requestFocus();
             for (TextField textField : code) {

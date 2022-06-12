@@ -2,6 +2,7 @@ package it.polimi.ingsw.client.view.gui;
 
 import it.polimi.ingsw.client.view.ClientGui;
 import it.polimi.ingsw.client.view.gui.utilities.EventProcessing;
+import it.polimi.ingsw.utilities.ClientStates;
 import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -10,7 +11,7 @@ import javafx.scene.control.TextField;
 
 import java.net.Socket;
 
-public class Start {
+public class Start implements Update {
 
     private ClientGui client;
 
@@ -26,7 +27,19 @@ public class Start {
      */
     public void initialize() {
         client = ClientGui.getInstance();
-        Platform.runLater(() -> connect.requestFocus());
+        ClientGui.link(ClientStates.START_SCREEN, this);
+    }
+
+    /**
+     * Prepares the scene for displaying.
+     */
+    @Override
+    public void prepare() {
+        Platform.runLater(() -> {
+            connect.requestFocus();
+            ip.setText("");
+            port.setText("");
+        });
     }
 
     /**

@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="467.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane prefHeight="467.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.client.view.gui.Login">
    <children>
       <ImageView fitHeight="467.0" fitWidth="700.0" layoutX="163.0" layoutY="90.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
          <cursor>
@@ -52,21 +52,21 @@
             </ImageView>
             <VBox alignment="CENTER" prefHeight="200.0" prefWidth="271.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER">
                <children>
-                  <VBox fx:id="names" alignment="CENTER" prefHeight="200.0" prefWidth="198.0" />
+                  <VBox fx:id="players" alignment="CENTER" prefHeight="200.0" prefWidth="198.0" />
                   <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                      <children>
-                        <TextField fx:id="name" alignment="CENTER" promptText="Enter your name">
+                        <TextField fx:id="name" alignment="CENTER" onKeyPressed="#name" promptText="Enter your name">
                            <HBox.margin>
                               <Insets right="20.0" />
                            </HBox.margin>
                         </TextField>
-                        <Button fx:id="submit" mnemonicParsing="false" text="Login" />
+                        <Button mnemonicParsing="false" onKeyPressed="#login" onMouseClicked="#login" onTouchPressed="#login" text="Login" />
                      </children>
                   </HBox>
                </children>
             </VBox>
          </children>
       </GridPane>
-      <Button fx:id="back" mnemonicParsing="false" text="Back" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
+      <Button mnemonicParsing="false" onKeyPressed="#back" onMouseClicked="#back" onTouchPressed="#back" text="Back" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
    </children>
 </AnchorPane>

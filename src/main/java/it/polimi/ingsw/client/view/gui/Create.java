@@ -13,11 +13,11 @@ import javafx.scene.control.RadioButton;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class Create {
+public class Create implements Update {
 
     private final AtomicInteger players;
     private final AtomicBoolean expertMode;
-    private ClientGui client = null;
+    private ClientGui client;
     @FXML
     private Button create;
     @FXML
@@ -41,6 +41,14 @@ public class Create {
      */
     public void initialize() {
         client = ClientGui.getInstance();
+        ClientGui.link(ClientStates.GAME_CREATION, this);
+    }
+
+    /**
+     * Prepares the scene for displaying.
+     */
+    @Override
+    public void prepare() {
         Platform.runLater(() -> {
             create.requestFocus();
             players2.setSelected(true);
