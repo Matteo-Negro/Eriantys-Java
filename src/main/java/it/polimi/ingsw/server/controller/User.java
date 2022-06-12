@@ -140,75 +140,99 @@ public class User extends Thread {
         Log.debug(command.toString());
         switch (command.get("type").getAsString()) {
             case "gameCreation" -> sendMessage(MessageCreator.gameCreation(Matchmaking.gameCreation(command, server)));
-            case "enterGame" -> {
-                try {
-                    gameController = Matchmaking.enterGame(command.get("code").getAsString(), server);
-                } catch (FullGameException | GameNotFoundException e) {
-                    gameController = null;
-                }
-                sendMessage(MessageCreator.enterGame(gameController));
-                Log.debug(MessageCreator.enterGame(gameController).toString());
-            }
-            case "login" -> {
-                setLogged(Matchmaking.login(gameController, command.get("name").getAsString(), this));
-                sendMessage(MessageCreator.login(this.isLogged()));
-                if (this.isLogged()) {
-                    this.username = command.get("name").getAsString();
-                    Log.debug("login reply sent: logged ");
-                    this.gameController.checkStartCondition();
-                }
-            }
+            case "enterGame" -> manageEnterGame(command);
+            case "login" -> manageLogin(command);
             case "logout" -> removeFromGame();
-            case "command" -> {
-                if (gameController.getGameModel().isExpert() && ((command.get("subtype").getAsString().equals("ban")) || (command.get("special") != null && command.get("special").getAsBoolean()) || (command.get("move") != null && !command.get("move").getAsBoolean()))) {
-                    SpecialCharacter specialCharacter = null;
-                    for (SpecialCharacter sc : gameController.getGameModel().getGameBoard().getCharacters()) {
-                        if (sc.isActive()) {
-                            specialCharacter = sc;
-                            break;
-                        }
-                    }
-                    if (specialCharacter == null) disconnected();
+            case "command" -> manageGameCommand(command);
+            default -> disconnected();
+        }
+    }
 
-                    else {
-                        switch (specialCharacter.getId()) {
-                            case 1, 3, 5, 11, 12 -> {
-                                if (specialCharacter.getUsesNumber() > 0) throw new IllegalMoveException();
-                                specialCharacter.increaseUsesNumber();
-                            }
-                            case 10 -> {
-                                if (specialCharacter.getUsesNumber() > 4) throw new IllegalMoveException();
-                                specialCharacter.increaseUsesNumber();
-                            }
-                            case 7 -> {
-                                if (specialCharacter.getUsesNumber() > 6) throw new IllegalMoveException();
-                                specialCharacter.increaseUsesNumber();
-                            }
-                        }
-                    }
-                }
-                switch (command.get("subtype").getAsString()) {
-                    case "playAssistant" ->
-                            this.gameController.playAssistantCard(command.get("player").getAsString(), command.get("assistant").getAsInt());
+    /**
+     * Manages the "enterGame" command.
+     *
+     * @param command The command to manage.
+     */
+    private void manageEnterGame(JsonObject command) {
+        try {
+            gameController = Matchmaking.enterGame(command.get("code").getAsString(), server);
+        } catch (FullGameException | GameNotFoundException e) {
+            gameController = null;
+        }
+        sendMessage(MessageCreator.enterGame(gameController));
+        Log.debug(MessageCreator.enterGame(gameController).toString());
+    }
 
-                    case "move" -> {
-                        switch (command.get("pawn").getAsString()) {
-                            case "student" -> this.gameController.moveStudent(command);
-                            case "motherNature" ->
-                                    this.gameController.moveMotherNature(command.get("island").getAsInt(), command.get("move").getAsBoolean());
+    /**
+     * Manages the "login" command.
+     *
+     * @param command The command to manage.
+     */
+    private void manageLogin(JsonObject command) {
+        setLogged(Matchmaking.login(gameController, command.get("name").getAsString(), this));
+        sendMessage(MessageCreator.login(this.isLogged()));
+        if (this.isLogged()) {
+            this.username = command.get("name").getAsString();
+            Log.debug("login reply sent: logged ");
+            this.gameController.checkStartCondition();
+        }
+    }
 
-                        }
-                    }
-                    case "ban" -> this.gameController.setBan(command.get("island").getAsInt());
-                    case "pay" -> this.gameController.paySpecialCharacter(command);
-                    case "refill" -> this.gameController.chooseCloud(command);
-                    case "ignore" ->
-                            this.gameController.setIgnoredColor(HouseColor.valueOf(command.get("color").getAsString().toUpperCase(Locale.ROOT)));
-                    case "return" ->
-                            this.gameController.returnStudents(HouseColor.valueOf(command.get("color").getAsString().toUpperCase(Locale.ROOT)));
+    /**
+     * Manages the "command" command.
+     *
+     * @param command The command to manage.
+     * @throws IllegalMoveException Thrown if the command cannot be executed.
+     */
+    private void manageGameCommand(JsonObject command) throws IllegalMoveException{
+        if (gameController.getGameModel().isExpert() && ((command.get("subtype").getAsString().equals("ban")) || (command.get("special") != null && command.get("special").getAsBoolean()) || (command.get("move") != null && !command.get("move").getAsBoolean()))) {
+            SpecialCharacter specialCharacter = null;
+            for (SpecialCharacter sc : gameController.getGameModel().getGameBoard().getCharacters()) {
+                if (sc.isActive()) {
+                    specialCharacter = sc;
+                    break;
                 }
             }
-            default -> disconnected();
+            if (specialCharacter == null) disconnected();
+
+            else {
+                switch (specialCharacter.getId()) {
+                    case 1, 3, 5, 11, 12 -> {
+                        if (specialCharacter.getUsesNumber() > 0) throw new IllegalMoveException();
+                        specialCharacter.increaseUsesNumber();
+                    }
+                    case 10 -> {
+                        if (specialCharacter.getUsesNumber() > 4) throw new IllegalMoveException();
+                        specialCharacter.increaseUsesNumber();
+                    }
+                    case 7 -> {
+                        if (specialCharacter.getUsesNumber() > 6) throw new IllegalMoveException();
+                        specialCharacter.increaseUsesNumber();
+                    }
+                    default -> throw new IllegalMoveException();
+                }
+            }
+        }
+        switch (command.get("subtype").getAsString()) {
+            case "playAssistant" ->
+                    this.gameController.playAssistantCard(command.get("player").getAsString(), command.get("assistant").getAsInt());
+
+            case "move" -> {
+                switch (command.get("pawn").getAsString()) {
+                    case "student" -> this.gameController.moveStudent(command);
+                    case "motherNature" ->
+                            this.gameController.moveMotherNature(command.get("island").getAsInt(), command.get("move").getAsBoolean());
+                    default -> throw new IllegalMoveException();
+                }
+            }
+            case "ban" -> this.gameController.setBan(command.get("island").getAsInt());
+            case "pay" -> this.gameController.paySpecialCharacter(command);
+            case "refill" -> this.gameController.chooseCloud(command);
+            case "ignore" ->
+                    this.gameController.setIgnoredColor(HouseColor.valueOf(command.get("color").getAsString().toUpperCase(Locale.ROOT)));
+            case "return" ->
+                    this.gameController.returnStudents(HouseColor.valueOf(command.get("color").getAsString().toUpperCase(Locale.ROOT)));
+            default -> throw new IllegalMoveException();
         }
     }
 

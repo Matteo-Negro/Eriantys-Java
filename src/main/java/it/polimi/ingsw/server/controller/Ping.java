@@ -39,10 +39,8 @@ public class Ping extends Thread {
         while (!stop) {
             synchronized (lock) {
                 user.sendMessage(MessageCreator.ping());
-                //Log.debug("Ping");
                 if (inWaitingRoom) {
                     user.sendMessage(MessageCreator.waitingRoomUpdate(user.getGameController()));
-                    //Log.debug("Waiting-room update sent.");
                 }
 
                 try {

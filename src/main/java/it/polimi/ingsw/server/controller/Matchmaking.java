@@ -65,7 +65,6 @@ class Matchmaking {
             gameController.addUser(name, user);
             return true;
         } catch (FullGameException | AlreadyExistingPlayerException e) {
-            //System.out.println("Game full!");
             return false;
         }
     }
