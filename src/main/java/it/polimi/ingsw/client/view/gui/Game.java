@@ -6,6 +6,7 @@ import it.polimi.ingsw.utilities.ClientState;
 import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -75,12 +76,16 @@ public class Game implements Update {
      * Adds all the boards to the GUI.
      */
     private void addBoards() {
-        boards = Boards.get(client.getController().getGameModel().getPlayers());
+        boards = Boards.get(client.getController().getGameModel());
         List<BoardContainer> list = reorder();
         Platform.runLater(() -> {
             boardsLayout.getChildren().clear();
-            for (BoardContainer board : list)
+            for (BoardContainer board : list) {
                 boardsLayout.getChildren().add(board.getPane());
+                VBox.setMargin(board.getPane(), new Insets(10, 0, 20, 0));
+                if (list.get(list.size() - 1) != board)
+                    boardsLayout.getChildren().add(Various.rectangle());
+            }
         });
     }
 

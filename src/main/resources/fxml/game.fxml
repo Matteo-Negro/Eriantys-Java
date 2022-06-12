@@ -104,7 +104,7 @@
                               </Label>
                               <HBox alignment="CENTER" prefHeight="100.0" prefWidth="904.0">
                                  <children>
-                                    <AnchorPane fx:id="school_board" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="305.0" prefWidth="703.0">
+                                    <AnchorPane fx:id="school_board" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity">
                                        <children>
                                           <ImageView fitHeight="305.0" fitWidth="715.0" layoutX="-18.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <image>

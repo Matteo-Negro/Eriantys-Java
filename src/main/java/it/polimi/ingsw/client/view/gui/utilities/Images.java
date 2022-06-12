@@ -3,6 +3,7 @@ package it.polimi.ingsw.client.view.gui.utilities;
 import it.polimi.ingsw.utilities.EndType;
 import it.polimi.ingsw.utilities.HouseColor;
 import it.polimi.ingsw.utilities.TowerType;
+import it.polimi.ingsw.utilities.WizardType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
@@ -11,6 +12,9 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class Images {
 
+    private static List<Image> assistants = null;
+    private static Image board = null;
+    private static Image boardCoins = null;
     private static List<Image> clouds = null;
     private static Map<EndType, Image> endTitles = null;
     private static List<Image> islands = null;
@@ -18,8 +22,37 @@ public class Images {
     private static Map<HouseColor, Image> studentsRealm = null;
     private static Map<HouseColor, Image> studentsBoard = null;
     private static Map<TowerType, Image> towers = null;
+    private static Map<WizardType, Image> wizards = null;
 
     private Images() {
+    }
+
+    static ImageView assistant(int id) {
+        ImageView imageView = new ImageView();
+        imageView.setFitWidth(135);
+        imageView.setFitHeight(200);
+        imageView.setImage(getAssistantById(id));
+        return imageView;
+    }
+
+    static ImageView board() {
+        if (board == null)
+            board = new Image("/realm/schoolboard.png");
+        ImageView imageView = new ImageView();
+        imageView.setFitWidth(715);
+        imageView.setFitHeight(305);
+        imageView.setImage(board);
+        return imageView;
+    }
+
+    static ImageView boardCoins() {
+        if (boardCoins == null)
+            boardCoins = new Image("/realm/schoolboard_coins.png");
+        ImageView imageView = new ImageView();
+        imageView.setFitWidth(715);
+        imageView.setFitHeight(305);
+        imageView.setImage(board);
+        return imageView;
     }
 
     static ImageView cloud() {
@@ -74,6 +107,20 @@ public class Images {
         return imageView;
     }
 
+    static ImageView wizard(WizardType wizardType) {
+        ImageView imageView = new ImageView();
+        imageView.setFitWidth(135);
+        imageView.setFitHeight(200);
+        imageView.setImage(getWizardByType(wizardType));
+        return imageView;
+    }
+
+    static Image getAssistantById(int id) {
+        if (assistants == null)
+            initializeAssistants();
+        return assistants.get(id - 1);
+    }
+
     static Image getCloudById(int id) {
         if (clouds == null)
             initializeClouds();
@@ -108,6 +155,19 @@ public class Images {
         if (towers == null)
             initializeTowers();
         return towers.get(towerType);
+    }
+
+    static Image getWizardByType(WizardType wizardType) {
+        if (wizards == null)
+            initializeWizards();
+        return wizards.get(wizardType);
+    }
+
+    private static void initializeAssistants() {
+        List<Image> images = new ArrayList<>();
+        for (int index = 1; index <= 10; index++)
+            images.add(new Image(String.format("/cards/assistants/%d.png", index)));
+        assistants = Collections.unmodifiableList(images);
     }
 
     private static void initializeClouds() {
@@ -150,5 +210,12 @@ public class Images {
         for (TowerType tower : TowerType.values())
             images.put(tower, new Image(String.format("/pawns/towers/realm/%s.png", tower.name().toLowerCase(Locale.ROOT))));
         towers = Collections.unmodifiableMap(images);
+    }
+
+    private static void initializeWizards() {
+        Map<WizardType, Image> images = new EnumMap<>(WizardType.class);
+        for (WizardType wizard : WizardType.values())
+            images.put(wizard, new Image(String.format("/cards/wizards/%s.png", wizard.name().toLowerCase(Locale.ROOT))));
+        wizards = Collections.unmodifiableMap(images);
     }
 }
