@@ -134,13 +134,13 @@ public class ClientGui extends Application implements View {
         if (getController().getClientState().equals(ClientStates.CONNECTION_LOST))
             getController().manageConnectionLost();
 
-        Log.info("Displaying " + state);
-        stage.setScene(scenes.get(state));
-
         synchronized (instances) {
             if (instances.get(state) != null)
                 instances.get(state).prepare();
         }
+
+        Log.info("Displaying " + state);
+        stage.setScene(scenes.get(state));
 
         stage.sizeToScene();
         stage.setResizable(state.equals(ClientStates.GAME_RUNNING));

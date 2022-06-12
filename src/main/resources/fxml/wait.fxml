@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="467.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane prefHeight="467.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.client.view.gui.WaitingRoom">
    <children>
       <ImageView fitHeight="467.0" fitWidth="700.0" layoutX="163.0" layoutY="90.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
          <cursor>
@@ -54,18 +54,18 @@
                   <VBox fx:id="names" alignment="CENTER" prefHeight="200.0" prefWidth="198.0" />
                </children>
             </VBox>
-            <Label fx:id="code" text="ABC01" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+            <Label fx:id="code" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
                <font>
                   <Font name="System Bold" size="18.0" />
                </font>
             </Label>
-            <Label fx:id="online" text="1 / 3" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4">
+            <Label fx:id="online" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4">
                <font>
                   <Font size="18.0" />
                </font>
             </Label>
          </children>
       </GridPane>
-      <Button fx:id="back" mnemonicParsing="false" text="Back" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
+      <Button mnemonicParsing="false" onKeyPressed="#back" onMouseClicked="#back" onTouchPressed="#back" text="Back" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
    </children>
 </AnchorPane>
