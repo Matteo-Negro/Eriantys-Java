@@ -10,7 +10,10 @@ import javafx.geometry.VPos;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
 
 public class Grids {
 
@@ -32,6 +35,11 @@ public class Grids {
         AnchorPane.setTopAnchor(diningRoom, 29.0);
         AnchorPane.setLeftAnchor(diningRoom, 130.0);
         anchorPane.getChildren().add(diningRoom);
+
+        GridPane professors = professors(schoolBoard.getProfessors(), boardContainer);
+        AnchorPane.setTopAnchor(professors, 29.0);
+        AnchorPane.setLeftAnchor(professors, 503.0);
+        anchorPane.getChildren().add(professors);
 
         return anchorPane;
     }
@@ -202,7 +210,7 @@ public class Grids {
         ObservableList<ColumnConstraints> columns = gridPane.getColumnConstraints();
 
         RowConstraints rowConstraints;
-        for (int index = 0; index < 5; index++) {
+        for (int index = 0; index < (number == 7 ? 4 : 5); index++) {
             rowConstraints = new RowConstraints();
             rowConstraints.setValignment(VPos.CENTER);
             rows.add(rowConstraints);
@@ -218,6 +226,35 @@ public class Grids {
 
         boardContainer.setEntrance(entrance);
         boardContainer.setEntranceImages(initializeEntrance(gridPane, number));
+
+        return gridPane;
+    }
+
+    private static GridPane professors(Map<HouseColor, Boolean> professors, BoardContainer boardContainer) {
+
+        GridPane gridPane = new GridPane();
+        gridPane.setPrefWidth(37);
+        gridPane.setPrefHeight(247);
+        ObservableList<RowConstraints> rows = gridPane.getRowConstraints();
+        ObservableList<ColumnConstraints> columns = gridPane.getColumnConstraints();
+
+        RowConstraints rowConstraints;
+        for (int index = 0; index < 5; index++) {
+            rowConstraints = new RowConstraints();
+            rowConstraints.setValignment(VPos.CENTER);
+            rows.add(rowConstraints);
+        }
+        ColumnConstraints columnConstraints = new ColumnConstraints();
+        columnConstraints.setHalignment(HPos.CENTER);
+        columns.add(columnConstraints);
+
+        initialize(rows, columns);
+
+        Map<HouseColor, ImageView> professorsImages = initializeProfessors(gridPane);
+        for (Map.Entry<HouseColor, Boolean> professor : professors.entrySet())
+            professorsImages.get(professor.getKey()).setVisible(professor.getValue());
+
+        boardContainer.setProfessors(professorsImages);
 
         return gridPane;
     }
@@ -309,7 +346,7 @@ public class Grids {
         }
     }
 
-    private static Map<HouseColor, List<ImageView>> initializeDiningRoom(GridPane diningRoom) {
+    private static Map<HouseColor, List<ImageView>> initializeDiningRoom(GridPane gridPane) {
         Map<HouseColor, List<ImageView>> students = new EnumMap<>(HouseColor.class);
         List<ImageView> colorStudents;
         ImageView imageView;
@@ -319,7 +356,7 @@ public class Grids {
                 imageView = Images.student2d(color);
                 imageView.setVisible(false);
                 colorStudents.add(imageView);
-                diningRoom.add(imageView, index, switch (color) {
+                gridPane.add(imageView, index, switch (color) {
                     case BLUE -> 4;
                     case FUCHSIA -> 3;
                     case GREEN -> 0;
@@ -332,15 +369,34 @@ public class Grids {
         return students;
     }
 
-    private static List<ImageView> initializeEntrance(GridPane entrance, int number) {
+    private static List<ImageView> initializeEntrance(GridPane gridPane, int number) {
         List<ImageView> students = new ArrayList<>();
         ImageView imageView;
         for (int index = 0; index < number; index++) {
             imageView = Images.student2d(null);
             imageView.setVisible(false);
             students.add(imageView);
-            entrance.add(imageView, 1 - index % 2, 4 - index / 2);
+            gridPane.add(imageView, 1 - index % 2, (number == 7 ? 3 : 4) - index / 2);
         }
         return students;
+    }
+
+    private static Map<HouseColor, ImageView> initializeProfessors(GridPane gridPane) {
+        Map<HouseColor, ImageView> professors = new EnumMap<>(HouseColor.class);
+        List<HouseColor> colors = List.of(
+                HouseColor.GREEN,
+                HouseColor.RED,
+                HouseColor.YELLOW,
+                HouseColor.FUCHSIA,
+                HouseColor.BLUE
+        );
+        ImageView imageView;
+        for (int index = 0; index < 5; index++) {
+            imageView = Images.professor(colors.get(index));
+            imageView.setVisible(false);
+            professors.put(colors.get(index), imageView);
+            gridPane.add(imageView, 0, index);
+        }
+        return professors;
     }
 }

@@ -21,6 +21,7 @@ public class BoardContainer {
     private Map<HouseColor, Integer> entrance;
     private List<ImageView> entranceImages;
     private Parent pane;
+    private Map<HouseColor, ImageView> professors;
     private final Supplier<Void> updateDiningRoom;
     private final Consumer<List<HouseColor>> updateEntrance;
     private WizardType wizard;
@@ -33,6 +34,7 @@ public class BoardContainer {
         entrance = null;
         entranceImages = null;
         pane = null;
+        professors = null;
         updateDiningRoom = () -> {
             for (HouseColor houseColor : HouseColor.values())
                 for (int index = 0; index < 10; index++)
@@ -135,6 +137,18 @@ public class BoardContainer {
             throw new IllegalActionException("No more students of color " + houseColor.name().toLowerCase(Locale.ROOT));
         entrance.replace(houseColor, entrance.get(houseColor) - 1);
         updateEntrance(true);
+    }
+
+    void setProfessors(Map<HouseColor, ImageView> professors) {
+        this.professors = Collections.unmodifiableMap(professors);
+    }
+
+    public void addProfessor(HouseColor houseColor) {
+        Platform.runLater(() -> professors.get(houseColor).setVisible(true));
+    }
+
+    public void removeProfessor(HouseColor houseColor) {
+        Platform.runLater(() -> professors.get(houseColor).setVisible(false));
     }
 
     void setWizard(WizardType wizard) {

@@ -20,6 +20,7 @@ public class Images {
     private static Map<EndType, Image> endTitles = null;
     private static List<Image> islands = null;
     private static Image motherNature = null;
+    private static Map<HouseColor, Image> professors = null;
     private static Map<HouseColor, Image> studentsRealm = null;
     private static Map<HouseColor, Image> studentsBoard = null;
     private static Map<TowerType, Image> towers = null;
@@ -93,6 +94,14 @@ public class Images {
         return imageView;
     }
 
+    static ImageView professor(HouseColor color) {
+        ImageView imageView = new ImageView();
+        imageView.setFitWidth(45);
+        imageView.setFitHeight(39);
+        imageView.setImage(getProfessorByColor(color));
+        return imageView;
+    }
+
     static ImageView tower(TowerType tower) {
         ImageView imageView = new ImageView();
         imageView.setFitWidth(32);
@@ -142,6 +151,12 @@ public class Images {
         if (islands == null)
             initializeIslands();
         return islands.get(id % islands.size());
+    }
+
+    static Image getProfessorByColor(HouseColor houseColor) {
+        if (professors == null)
+            initializeProfessors();
+        return professors.get(houseColor);
     }
 
     static Image getStudent3dByColor(HouseColor houseColor) {
@@ -200,6 +215,13 @@ public class Images {
         for (int index = 1; index <= 3; index++)
             images.add(new Image(String.format("/realm/islands/%d.png", index)));
         islands = Collections.unmodifiableList(images);
+    }
+
+    private static void initializeProfessors() {
+        Map<HouseColor, Image> images = new EnumMap<>(HouseColor.class);
+        for (HouseColor houseColor : HouseColor.values())
+            images.put(houseColor, new Image(String.format("/pawns/professors/%s.png", houseColor.name().toLowerCase(Locale.ROOT))));
+        professors = Collections.unmodifiableMap(images);
     }
 
     private static void initializeStudentsRealm() {
