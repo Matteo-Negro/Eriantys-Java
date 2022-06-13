@@ -11,7 +11,7 @@ import it.polimi.ingsw.utilities.MessageCreator;
  * @author Riccardo Motta
  * @author Matteo Negro
  */
-public class Ping extends Thread {
+public class Ping implements Runnable {
 
     private final GameServer host;
     private final Object lock;

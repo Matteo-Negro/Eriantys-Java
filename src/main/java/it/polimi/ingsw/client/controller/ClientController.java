@@ -5,7 +5,6 @@ import com.google.gson.JsonObject;
 import it.polimi.ingsw.client.model.GameModel;
 import it.polimi.ingsw.client.model.Player;
 import it.polimi.ingsw.client.model.SpecialCharacter;
-import it.polimi.ingsw.client.view.ClientCli;
 import it.polimi.ingsw.client.view.View;
 import it.polimi.ingsw.utilities.*;
 import it.polimi.ingsw.utilities.exceptions.IllegalActionException;
@@ -30,13 +29,13 @@ import static it.polimi.ingsw.utilities.GameControllerStates.MOVE_MOTHER_NATURE;
 public class ClientController {
     private final View view;
     private final Object lock;
-    private final boolean cli;
     private String userName;
     private String gameCode;
     private GameServer gameServer;
     private GameModel gameModel;
     private EndType endState;
     private ClientState state;
+    private boolean replyArrived;
 
     /**
      * Default class constructor.
@@ -50,7 +49,7 @@ public class ClientController {
         this.endState = null;
         this.lock = new Object();
         this.view = view;
-        cli = view instanceof ClientCli;
+        this.replyArrived = false;
     }
 
     /**
@@ -87,6 +86,13 @@ public class ClientController {
      */
     public Object getLock() {
         return lock;
+    }
+
+    /**
+     * Sets the replyArrived attribute to true when the server gives a response.
+     */
+    public void setReplyArrived() {
+        this.replyArrived = true;
     }
 
     /**
@@ -249,9 +255,9 @@ public class ClientController {
         }
 
         try {
-            if (!CommandParser.checker(command) || command.equals("")) throw new Exception();
-        } catch (Exception e) {
-            Log.warning(e);
+            if (!CommandParser.checker(command) || command.equals("")) throw new IllegalActionException();
+        } catch (IllegalActionException iae) {
+            Log.warning(iae);
             updateScreen();
             this.errorOccurred("Wrong command.");
             return;
@@ -279,42 +285,56 @@ public class ClientController {
         List<JsonObject> messages;
         try {
             messages = new ArrayList<>(CommandParser.commandManager(command, this.gameModel.getPlayers()));
-
             if (messages.isEmpty()) return;
             if (this.gameModel.isExpert()) checkOccurrences(messages);
         } catch (IllegalMoveException e) {
             Log.warning(e);
             updateScreen();
-            this.errorOccurred("Wrong command.");
+            this.errorOccurred("This is an illegal move.");
             return;
         }
 
+        //Sending messages to the server.
         try {
-            for (JsonObject message : messages) {
-                if (checkMessage(message)) {
-                    getGameServer().sendCommand(message);
-                    synchronized (this.lock) {
-                        try {
-                            this.getLock().wait();
-                        } catch (InterruptedException ie) {
-                            updateScreen();
-                            errorOccurred("Command not allowed.");
-                            return;
-                        }
-                    }
-                    Log.debug("Command sent to game server.");
-                } else {
-                    updateScreen();
-                    errorOccurred("Command not allowed.");
-                    return;
-                }
-            }
+            sendCommandsToServer(messages);
         } catch (IllegalActionException iae) {
             Log.warning(iae);
             errorOccurred("Connection lost.");
             setClientState(ClientState.CONNECTION_LOST);
         }
+        catch (IllegalMoveException ime) {
+            updateScreen();
+            errorOccurred("Command not allowed.");
+            return;
+        }
+        catch (InterruptedException ie) {
+            updateScreen();
+            Thread.currentThread().interrupt();
+            errorOccurred("Command not allowed.");
+            return;
+        }
         updateScreen();
+    }
+
+    /**
+     * Checks the messages and sends them to the server.
+     *
+     * @param messages The messages to send.
+     * @throws IllegalActionException Thrown if a message doesn't pass the check.
+     * @throws InterruptedException Thrown if a thread interruption occurs.
+     */
+    private void sendCommandsToServer(List<JsonObject> messages) throws IllegalActionException, InterruptedException, IllegalMoveException{
+        for (JsonObject message : messages) {
+            if (checkMessage(message)) {
+                synchronized (this.lock) {
+                    this.replyArrived = false;
+                    getGameServer().sendCommand(message);
+                    while(!this.replyArrived)
+                        this.getLock().wait();
+                }
+                Log.debug("Command sent to game server.");
+            } else throw new IllegalMoveException();
+        }
     }
 
     /**
@@ -351,8 +371,7 @@ public class ClientController {
                             throw new IllegalMoveException();
                         gameModel.getGameBoard().getSpecialCharacterById(idSpecialCharacter).increaseUsesNumber();
                     }
-                    default -> {
-                    }
+                    default -> throw new IllegalMoveException();
                 }
             }
         }
@@ -378,6 +397,7 @@ public class ClientController {
                         switch (message.get("pawn").getAsString()) {
                             case "student" -> checkStudentMove(message);
                             case "motherNature" -> checkMotherNatureMove(message);
+                            default -> throw new IllegalMoveException();
                         }
                     }
                     case "pay" -> checkCharacterPayment(message);
@@ -385,9 +405,7 @@ public class ClientController {
                     case "ban" -> checkBan(message);
                     case "ignore" -> checkIgnoreColor();
                     case "return" -> checkReturn();
-                    default -> {
-                        return false;
-                    }
+                    default -> throw new IllegalMoveException();
                 }
             } catch (IllegalMoveException ime) {
                 return false;
@@ -438,8 +456,7 @@ public class ClientController {
     private void checkStudentMove(JsonObject message) throws IllegalMoveException, IllegalActionException {
         synchronized (this.getGameModel()) {
             switch (getGameModel().getSubphase()) {
-                case MOVE_STUDENT_1, MOVE_STUDENT_2, MOVE_STUDENT_3 -> {
-                }
+                case MOVE_STUDENT_1, MOVE_STUDENT_2, MOVE_STUDENT_3 -> {}
                 case MOVE_STUDENT_4 -> {
                     if (getGameModel().getPlayersNumber() != 3) throw new IllegalActionException();
                 }
@@ -524,6 +541,8 @@ public class ClientController {
                 message.remove("toId");
                 message.addProperty("toId", destinationIndex);
             }
+            case "dining-room" -> {}
+            default -> throw new IllegalMoveException();
         }
     }
 
@@ -657,6 +676,7 @@ public class ClientController {
     public void initializeGameModel(GameModel newGameModel) {
         synchronized (this.lock) {
             this.gameModel = newGameModel;
+            this.replyArrived = true;
             if (newGameModel != null) {
                 this.lock.notifyAll();
             }
@@ -712,8 +732,11 @@ public class ClientController {
     private void tryConnection() {
         synchronized (this.lock) {
             try {
-                this.lock.wait(10000);
+                this.replyArrived = false;
+                while (!this.replyArrived)
+                    this.lock.wait(10000);
             } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
                 Log.debug("tryConnection.");
                 this.setClientState(ClientState.CONNECTION_LOST);
             }

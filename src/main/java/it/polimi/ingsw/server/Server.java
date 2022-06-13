@@ -259,18 +259,16 @@ public class Server {
         synchronized (this.games) {
             this.debugIO.close();
             this.processRunning = false;
-
-            try {
-                Socket endSocket = new Socket();
-                endSocket.connect(serverSocket.getLocalSocketAddress());
-                endSocket.close();
-            }catch(IOException ioe) {
-                Log.debug("An error occurred while closing server socket, the server didn't shut-down.");
-            }
             for (GameController game : this.games.values()) {
                 if (game.isFull()) game.saveGame();
             }
             Log.debug("Games saved.");
+
+            try (Socket endSocket = new Socket()){
+                endSocket.connect(serverSocket.getLocalSocketAddress());
+            }catch(IOException ioe) {
+                Log.debug("An error occurred while closing server socket, the server didn't shut-down.");
+            }
         }
     }
 }

@@ -20,7 +20,7 @@ import java.util.Map;
  * @author Riccardo Motta
  * @author Matteo Negro
  */
-public class GameServer extends Thread {
+public class GameServer implements Runnable {
 
     private final BufferedReader inputStream;
     private final PrintWriter outputStream;
@@ -49,6 +49,7 @@ public class GameServer extends Thread {
     /**
      * The main GameServer method, gets the messages from the server through the network.
      */
+    @Override
     public void run() {
         new Thread(ping).start();
         JsonObject incomingMessage;
@@ -88,10 +89,7 @@ public class GameServer extends Thread {
                 this.client.setGameCode(incomingMessage.get("code").getAsString());
             }
             case "enterGame" -> manageEnterGame(incomingMessage);
-            case "waitingRoomUpdate" -> {
-                //Log.debug("WaitingRoomUpdate reply");
-                manageWaitingRoomUpdate(incomingMessage);
-            }
+            case "waitingRoomUpdate" -> manageWaitingRoomUpdate(incomingMessage);
             case "login" -> {
                 Log.debug("login reply");
                 manageLogin(incomingMessage);
@@ -135,6 +133,7 @@ public class GameServer extends Thread {
                     Log.debug("changed state Game login.");
                 }
                 synchronized (this.client.getLock()) {
+                    this.client.setReplyArrived();
                     this.client.getLock().notifyAll();
                 }
             }
@@ -193,6 +192,7 @@ public class GameServer extends Thread {
         }
 
         synchronized (this.client.getLock()) {
+            this.client.setReplyArrived();
             this.client.getLock().notifyAll();
         }
     }
@@ -256,7 +256,8 @@ public class GameServer extends Thread {
                 }
                 if (this.client.getEndState() == null) this.client.setEndState(EndType.LOSE);
             }
-            this.client.getLock().notify();
+            this.client.setReplyArrived();
+            this.client.getLock().notifyAll();
         }
         this.client.setClientState(ClientState.END_GAME);
     }
