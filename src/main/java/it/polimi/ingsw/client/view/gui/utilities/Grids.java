@@ -2,19 +2,37 @@ package it.polimi.ingsw.client.view.gui.utilities;
 
 import it.polimi.ingsw.client.model.Cloud;
 import it.polimi.ingsw.client.model.Island;
+import it.polimi.ingsw.client.model.SchoolBoard;
 import it.polimi.ingsw.utilities.HouseColor;
 import javafx.collections.ObservableList;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class Grids {
 
     private Grids() {
+    }
+
+    static AnchorPane board(SchoolBoard schoolBoard, int number, BoardContainer boardContainer) {
+
+        AnchorPane anchorPane = new AnchorPane();
+        anchorPane.setPrefWidth(703);
+        anchorPane.setPrefHeight(305);
+
+        GridPane entrance = entrance(schoolBoard.getEntrance(), number, boardContainer);
+
+        AnchorPane.setTopAnchor(entrance, 29.0);
+        AnchorPane.setLeftAnchor(entrance, 5.0);
+
+        anchorPane.getChildren().add(entrance);
+
+        return anchorPane;
     }
 
     static GridPane cloud(Cloud cloud, int playersNumber, CloudContainer cloudContainer) {
@@ -116,6 +134,64 @@ public class Grids {
         return gridPane;
     }
 
+    private static GridPane cloudStudents(Cloud cloud, CloudContainer cloudContainer) {
+
+        GridPane gridPane = new GridPane();
+        ObservableList<RowConstraints> rows = gridPane.getRowConstraints();
+        ObservableList<ColumnConstraints> columns = gridPane.getColumnConstraints();
+
+        rows.add(new RowConstraints());
+        columns.add(new ColumnConstraints());
+        columns.add(new ColumnConstraints());
+
+        initialize(rows, columns);
+
+        rows.get(0).setValignment(VPos.CENTER);
+        columns.get(0).setHalignment(HPos.CENTER);
+        columns.get(1).setHalignment(HPos.CENTER);
+
+        ImageView student;
+
+        student = Images.student3d(cloud.getStudents(false) != null ? cloud.getStudents(false).get(1) : null);
+        cloudContainer.addStudent(student);
+        gridPane.add(student, 0, 0);
+
+        student = Images.student3d(cloud.getStudents(false) != null ? cloud.getStudents(false).get(2) : null);
+        cloudContainer.addStudent(student);
+        gridPane.add(student, 1, 0);
+
+        return gridPane;
+    }
+
+    private static GridPane entrance(Map<HouseColor, Integer> entrance, int number, BoardContainer boardContainer) {
+
+        GridPane gridPane = new GridPane();
+        gridPane.setPrefWidth(81);
+        gridPane.setPrefHeight(247);
+        ObservableList<RowConstraints> rows = gridPane.getRowConstraints();
+        ObservableList<ColumnConstraints> columns = gridPane.getColumnConstraints();
+
+        RowConstraints rowConstraints;
+        for (int index = 0; index < 5; index++) {
+            rowConstraints = new RowConstraints();
+            rowConstraints.setValignment(VPos.CENTER);
+            rows.add(rowConstraints);
+        }
+        ColumnConstraints columnConstraints;
+        for (int index = 0; index < 2; index++) {
+            columnConstraints = new ColumnConstraints();
+            columnConstraints.setHalignment(HPos.CENTER);
+            columns.add(columnConstraints);
+        }
+
+        initialize(rows, columns);
+
+        boardContainer.setEntrance(entrance);
+        boardContainer.setEntrance(initializeEntrance(gridPane, number));
+
+        return gridPane;
+    }
+
     private static GridPane islandTowerMotherNature(Island island, IslandContainer islandContainer) {
 
         GridPane gridPane = new GridPane();
@@ -190,35 +266,6 @@ public class Grids {
         return gridPane;
     }
 
-    private static GridPane cloudStudents(Cloud cloud, CloudContainer cloudContainer) {
-
-        GridPane gridPane = new GridPane();
-        ObservableList<RowConstraints> rows = gridPane.getRowConstraints();
-        ObservableList<ColumnConstraints> columns = gridPane.getColumnConstraints();
-
-        rows.add(new RowConstraints());
-        columns.add(new ColumnConstraints());
-        columns.add(new ColumnConstraints());
-
-        initialize(rows, columns);
-
-        rows.get(0).setValignment(VPos.CENTER);
-        columns.get(0).setHalignment(HPos.CENTER);
-        columns.get(1).setHalignment(HPos.CENTER);
-
-        ImageView student;
-
-        student = Images.student3d(cloud.getStudents(false) != null ? cloud.getStudents(false).get(1) : null);
-        cloudContainer.addStudent(student);
-        gridPane.add(student, 0, 0);
-
-        student = Images.student3d(cloud.getStudents(false) != null ? cloud.getStudents(false).get(2) : null);
-        cloudContainer.addStudent(student);
-        gridPane.add(student, 1, 0);
-
-        return gridPane;
-    }
-
     private static void initialize(ObservableList<RowConstraints> rows, ObservableList<ColumnConstraints> columns) {
 
         for (RowConstraints row : rows) {
@@ -230,5 +277,17 @@ public class Grids {
             column.setHgrow(Priority.SOMETIMES);
             column.setMinWidth(0);
         }
+    }
+
+    private static List<ImageView> initializeEntrance(GridPane entrance, int number) {
+        List<ImageView> students = new ArrayList<>();
+        ImageView imageView;
+        for (int index = 0; index < number; index++) {
+            imageView = Images.student2d(null);
+            imageView.setVisible(false);
+            students.add(imageView);
+            entrance.add(imageView, 1 - index % 2, 4 - index / 2);
+        }
+        return students;
     }
 }

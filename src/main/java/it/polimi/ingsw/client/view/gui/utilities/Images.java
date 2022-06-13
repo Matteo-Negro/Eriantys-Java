@@ -104,8 +104,8 @@ public class Images {
 
     static ImageView student2d(HouseColor houseColor) {
         ImageView imageView = new ImageView();
-        imageView.setFitWidth(20);
-        imageView.setFitHeight(20);
+        imageView.setFitWidth(30);
+        imageView.setFitHeight(30);
         imageView.setImage(getStudent2dByColor(houseColor));
         return imageView;
     }
