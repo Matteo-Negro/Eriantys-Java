@@ -1,21 +1,29 @@
 package it.polimi.ingsw.client.view.gui.utilities;
 
+import it.polimi.ingsw.utilities.HouseColor;
 import it.polimi.ingsw.utilities.WizardType;
+import it.polimi.ingsw.utilities.exceptions.IllegalActionException;
 import javafx.application.Platform;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 
+import java.util.*;
+
 public class BoardContainer {
 
     private ImageView assistant;
     private Label coins;
+    private Map<HouseColor, Integer> entranceColors;
+    private List<ImageView> entranceImages;
     private Parent pane;
     private WizardType wizard;
 
     BoardContainer() {
         assistant = null;
         coins = null;
+        entranceColors = null;
+        entranceImages = null;
         pane = null;
         wizard = null;
     }
@@ -59,7 +67,53 @@ public class BoardContainer {
             this.coins.setText(String.format("x%d", coins));
     }
 
+    void setEntrance(List<ImageView> entranceImages) {
+        this.entranceImages = Collections.unmodifiableList(entranceImages);
+        if (entranceColors != null)
+            updateEntrance(entranceToList());
+    }
+
+    void setEntrance(Map<HouseColor, Integer> entranceColors) {
+        this.entranceColors = new EnumMap<>(entranceColors);
+        if (entranceImages != null)
+            updateEntrance(entranceToList());
+    }
+
+    public void addToEntrance(HouseColor houseColor) {
+        entranceColors.replace(houseColor, entranceColors.get(houseColor) + 1);
+        updateEntrance();
+    }
+
+    public void removeFromEntrance(HouseColor houseColor) throws IllegalActionException {
+        if (entranceColors.get(houseColor) == 0)
+            throw new IllegalActionException("No more students of color " + houseColor.name().toLowerCase());
+        entranceColors.replace(houseColor, entranceColors.get(houseColor) - 1);
+        updateEntrance();
+    }
+
     void setWizard(WizardType wizard) {
         this.wizard = wizard;
+    }
+
+    private List<HouseColor> entranceToList() {
+        List<HouseColor> list = new ArrayList<>();
+        for (Map.Entry<HouseColor, Integer> entry : entranceColors.entrySet())
+            for (int index = 0; index < entry.getValue(); index++)
+                list.add(entry.getKey());
+        for (int index = 0; index < entranceImages.size() - list.size(); index++)
+            list.add(null);
+        return list;
+    }
+
+    private void updateEntrance() {
+        List<HouseColor> entrance = entranceToList();
+        Platform.runLater(() -> updateEntrance(entrance));
+    }
+
+    private void updateEntrance(List<HouseColor> students) {
+        for (int index = 0; index < entranceImages.size(); index++) {
+            entranceImages.get(index).setImage(Images.getStudent2dByColor(students.get(index)));
+            entranceImages.get(index).setVisible(students.get(index) != null);
+        }
     }
 }

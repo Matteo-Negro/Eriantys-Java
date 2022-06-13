@@ -26,6 +26,11 @@ public class Boxes {
         group.getChildren().add(Images.board());
         if (gameModel.isExpert())
             group.getChildren().add(Images.boardCoins());
+        group.getChildren().add(Grids.board(
+                gameModel.getPlayerByName(player).getSchoolBoard(),
+                gameModel.getPlayersNumber() == 3 ? 9 : 7,
+                boardContainer)
+        );
         hBox.getChildren().add(group);
 
         Node node;
