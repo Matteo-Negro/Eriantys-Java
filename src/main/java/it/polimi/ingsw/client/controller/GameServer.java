@@ -63,7 +63,7 @@ public class GameServer implements Runnable {
 
             try {
                 incomingMessage = getMessage();
-                if (!incomingMessage.get("type").getAsString().equals("pong")) manageMessage(incomingMessage);
+                if (!incomingMessage.get("type").getAsString().equals("ping")) manageMessage(incomingMessage);
             } catch (Exception e) {
                 Log.error(e);
                 loop = false;
@@ -80,9 +80,6 @@ public class GameServer implements Runnable {
      */
     public void manageMessage(JsonObject incomingMessage) {
         switch (incomingMessage.get("type").getAsString()) {
-            case "ping" -> {
-                //Log.debug(incomingMessage.get("type").getAsString());
-            }
             case "gameCreation" -> {
                 Log.debug("gameCreation reply");
                 sendCommand(MessageCreator.enterGame(incomingMessage.get("code").getAsString()));
@@ -114,6 +111,7 @@ public class GameServer implements Runnable {
                 Log.debug("Error message arrived: " + incomingMessage.get("message").getAsString());
                 this.manageError(incomingMessage);
             }
+            default -> this.client.setClientState(ClientState.CONNECTION_LOST);
         }
     }
 
@@ -123,21 +121,16 @@ public class GameServer implements Runnable {
      * @param message The message.
      */
     private void manageEnterGame(JsonObject message) {
-
-        switch (this.client.getClientState()) {
-            case GAME_CREATION, JOIN_GAME -> {
-                if (message.get("found").getAsBoolean()) {
-                    Log.debug("enterGame reply");
-                    parseEnterGame(message);
-                    this.client.setClientState(ClientState.GAME_LOGIN);
-                    Log.debug("changed state Game login.");
-                }
-                synchronized (this.client.getLock()) {
-                    this.client.setReplyArrived();
-                    this.client.getLock().notifyAll();
-                }
+        if (this.client.getClientState().equals(ClientState.GAME_CREATION) || this.client.getClientState().equals(ClientState.JOIN_GAME)) {
+            if (message.get("found").getAsBoolean()) {
+                Log.debug("enterGame reply");
+                parseEnterGame(message);
+                this.client.setClientState(ClientState.GAME_LOGIN);
+                Log.debug("changed state Game login.");
             }
-            default -> {
+            synchronized (this.client.getLock()) {
+                this.client.setReplyArrived();
+                this.client.getLock().notifyAll();
             }
         }
     }
@@ -312,7 +305,6 @@ public class GameServer implements Runnable {
                     if (command.get("type").getAsString().equals("logout") || command.get("type").getAsString().equals("pong"))
                         this.outputStream.println(command);
                     outputStream.flush();
-                    //Log.debug("sent " + command);
                 }
                 default -> {
                     if (command.get("type").getAsString().equals("pong")) {

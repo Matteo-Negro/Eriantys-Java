@@ -35,14 +35,13 @@ public class Ping implements Runnable {
      */
     @Override
     public void run() {
-        //Log.info("Pong running");
         while (!stop && this.host.isConnected()) {
             synchronized (lock) {
-                //Log.debug("Pong sent");
                 this.host.sendCommand(MessageCreator.pong());
                 try {
                     lock.wait(1000);
                 } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                     this.stopPing();
                 }
             }
