@@ -99,6 +99,20 @@ public class BoardContainer {
             updateDiningRoom(false);
     }
 
+    public void addToDiningRoom(HouseColor houseColor) throws IllegalActionException {
+        if (diningRoom.get(houseColor) == 10)
+            throw new IllegalActionException("Already enough students of color " + houseColor.name().toLowerCase(Locale.ROOT));
+        diningRoom.replace(houseColor, diningRoom.get(houseColor) + 1);
+        updateDiningRoom(true);
+    }
+
+    public void removeFromDiningRoom(HouseColor houseColor) throws IllegalActionException {
+        if (diningRoom.get(houseColor) == 0)
+            throw new IllegalActionException("No more students of color " + houseColor.name().toLowerCase(Locale.ROOT));
+        diningRoom.replace(houseColor, diningRoom.get(houseColor) - 1);
+        updateDiningRoom(true);
+    }
+
     void setEntrance(Map<HouseColor, Integer> entranceColors) {
         this.entrance = new EnumMap<>(entranceColors);
         if (entranceImages != null)
@@ -113,14 +127,14 @@ public class BoardContainer {
 
     public void addToEntrance(HouseColor houseColor) {
         entrance.replace(houseColor, entrance.get(houseColor) + 1);
-        updateEntrance(false);
+        updateEntrance(true);
     }
 
     public void removeFromEntrance(HouseColor houseColor) throws IllegalActionException {
         if (entrance.get(houseColor) == 0)
-            throw new IllegalActionException("No more students of color " + houseColor.name().toLowerCase());
+            throw new IllegalActionException("No more students of color " + houseColor.name().toLowerCase(Locale.ROOT));
         entrance.replace(houseColor, entrance.get(houseColor) - 1);
-        updateEntrance(false);
+        updateEntrance(true);
     }
 
     void setWizard(WizardType wizard) {
