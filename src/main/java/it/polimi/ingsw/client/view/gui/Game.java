@@ -11,6 +11,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Rectangle;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,13 +79,18 @@ public class Game implements Update {
     private void addBoards() {
         boards = Boards.get(client.getController().getGameModel());
         List<BoardContainer> list = reorder();
+        list.get(0).enable(true);
         Platform.runLater(() -> {
+            Rectangle rectangle;
             boardsLayout.getChildren().clear();
             for (BoardContainer board : list) {
                 boardsLayout.getChildren().add(board.getPane());
-                VBox.setMargin(board.getPane(), new Insets(10, 0, 20, 0));
-                if (list.get(list.size() - 1) != board)
-                    boardsLayout.getChildren().add(Various.rectangle());
+                VBox.setMargin(board.getPane(), new Insets(10));
+                if (list.get(list.size() - 1) != board) {
+                    rectangle = Various.rectangle();
+                    boardsLayout.getChildren().add(rectangle);
+                    VBox.setMargin(rectangle, new Insets(10, 0, 0, 0));
+                }
             }
         });
     }

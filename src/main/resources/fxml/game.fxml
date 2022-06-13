@@ -99,7 +99,7 @@
                                     <Font name="System Bold" size="24.0" />
                                  </font>
                                  <VBox.margin>
-                                    <Insets bottom="10.0" />
+                                    <Insets bottom="10.0" top="10.0" />
                                  </VBox.margin>
                               </Label>
                               <HBox alignment="CENTER" prefHeight="100.0" prefWidth="904.0">
@@ -551,7 +551,7 @@
                                        <children>
                                           <ImageView fitHeight="200.0" fitWidth="135.0">
                                              <image>
-                                                <Image url="@../cards/wizards/1.png" />
+                                                <Image url="@../cards/wizards/green.png" />
                                              </image>
                                              <VBox.margin>
                                                 <Insets bottom="30.0" />
@@ -577,15 +577,18 @@
                                        </children>
                                     </VBox>
                                  </children>
+                                 <VBox.margin>
+                                    <Insets bottom="10.0" />
+                                 </VBox.margin>
                               </HBox>
                            </children>
                            <VBox.margin>
-                              <Insets bottom="20.0" top="10.0" />
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                            </VBox.margin>
                         </VBox>
                         <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="5.0" stroke="BLACK" strokeLineCap="ROUND" strokeLineJoin="ROUND" strokeType="INSIDE" strokeWidth="0.0" width="900.0">
                            <VBox.margin>
-                              <Insets />
+                              <Insets top="10.0" />
                            </VBox.margin>
                         </Rectangle>
                         <VBox alignment="CENTER">
@@ -595,7 +598,7 @@
                                     <Font name="System Bold" size="24.0" />
                                  </font>
                                  <VBox.margin>
-                                    <Insets bottom="10.0" />
+                                    <Insets bottom="10.0" top="10.0" />
                                  </VBox.margin>
                               </Label>
                               <HBox alignment="CENTER" prefHeight="100.0" prefWidth="904.0">
@@ -1042,7 +1045,7 @@
                                     </AnchorPane>
                                     <ImageView fitHeight="200.0" fitWidth="135.0">
                                        <image>
-                                          <Image url="@../cards/wizards/1.png" />
+                                          <Image url="@../cards/wizards/green.png" />
                                        </image>
                                        <HBox.margin>
                                           <Insets left="30.0" />
@@ -1052,7 +1055,7 @@
                               </HBox>
                            </children>
                            <VBox.margin>
-                              <Insets bottom="10.0" top="10.0" />
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                            </VBox.margin>
                         </VBox>
                      </children>

@@ -1,19 +1,15 @@
 package it.polimi.ingsw.client.view.gui.utilities;
 
-import it.polimi.ingsw.client.controller.ClientController;
 import it.polimi.ingsw.client.model.GameModel;
 import it.polimi.ingsw.client.model.Player;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
-import javafx.scene.layout.Background;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class Boards {
@@ -36,8 +32,10 @@ public class Boards {
             vBox.setAlignment(Pos.CENTER);
 
             Label name = Labels.playerName(player.getName());
-            vBox.getChildren().addAll(name, Boxes.board(gameModel));
-            VBox.setMargin(name, new Insets(0, 0, 10, 0));
+            HBox board = Boxes.board(gameModel, player.getName(), boardContainer);
+            vBox.getChildren().addAll(name, board);
+            VBox.setMargin(name, new Insets(10, 0, 10, 0));
+            VBox.setMargin(board, new Insets(0, 0, 10, 0));
         }
 
         return Collections.unmodifiableMap(map);

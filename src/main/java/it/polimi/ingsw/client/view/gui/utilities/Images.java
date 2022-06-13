@@ -16,6 +16,7 @@ public class Images {
     private static Image board = null;
     private static Image boardCoins = null;
     private static List<Image> clouds = null;
+    private static Image coin = null;
     private static Map<EndType, Image> endTitles = null;
     private static List<Image> islands = null;
     private static Image motherNature = null;
@@ -60,6 +61,16 @@ public class Images {
         imageView.setFitWidth(131);
         imageView.setFitHeight(128);
         imageView.setImage(getCloudById(ThreadLocalRandom.current().nextInt(4)));
+        return imageView;
+    }
+
+    static ImageView coin() {
+        if (coin == null)
+            coin = new Image("/coin.png");
+        ImageView imageView = new ImageView();
+        imageView.setFitWidth(50);
+        imageView.setFitHeight(50);
+        imageView.setImage(coin);
         return imageView;
     }
 
