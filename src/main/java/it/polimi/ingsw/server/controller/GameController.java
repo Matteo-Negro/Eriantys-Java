@@ -796,7 +796,6 @@ public class GameController implements Runnable {
                 }
             }
         } catch (Exception nfe) {
-            // TODO Before -> IslandNotFoundException | NoMoreBansLeftException (is it necessary>?)
             throw new IllegalMoveException();
         }
         synchronized (this.actionNeededLock) {

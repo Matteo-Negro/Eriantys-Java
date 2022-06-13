@@ -126,7 +126,8 @@ public class ClientGui extends Application implements View {
                     try {
                         sceneLock.wait(100);
                     } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
+                        Log.debug("ClientGui process has been interrupted.");
+                        Thread.currentThread().interrupt();
                     }
                 }
             }

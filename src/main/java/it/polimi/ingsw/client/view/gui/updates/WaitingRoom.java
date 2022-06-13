@@ -32,6 +32,7 @@ public class WaitingRoom implements Runnable {
                     lock.wait(1000);
                 } catch (InterruptedException e) {
                     client.getController().resetGame();
+                    Thread.currentThread().interrupt();
                 }
             }
         }

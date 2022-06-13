@@ -39,6 +39,7 @@ public class ClientCli extends Thread implements View {
     private final ClientController controller;
     private final Terminal terminal;
     private final History history;
+    private boolean process;
 
     /**
      * Default constructor.
@@ -51,6 +52,14 @@ public class ClientCli extends Thread implements View {
         Autocompletion.initialize(this.controller);
         this.history = new DefaultHistory();
         updateScreen(false);
+        this.process = true;
+    }
+
+    /**
+     * Ends this thread's process setting the "process" attribute to false.
+     */
+    private void endProcess() {
+        this.process = false;
     }
 
     /**
@@ -58,10 +67,8 @@ public class ClientCli extends Thread implements View {
      */
     @Override
     public void run() {
-        boolean process = true;
         try {
-            while (process) {
-                //Log.debug(this.getClientState().toString());
+            while (this.process) {
                 switch (this.controller.getClientState()) {
                     case START_SCREEN -> runStartScreen();
                     case MAIN_MENU -> runMainMenu();
@@ -72,7 +79,7 @@ public class ClientCli extends Thread implements View {
                     case GAME_RUNNING -> runGameRunning();
                     case END_GAME -> runEndGame();
                     case CONNECTION_LOST -> this.controller.manageConnectionLost();
-                    case EXIT -> process = false;
+                    case EXIT -> endProcess();
                 }
             }
         } catch (Exception e) {
@@ -200,6 +207,7 @@ public class ClientCli extends Thread implements View {
                     this.controller.getLock().wait(1000);
                 } catch (InterruptedException ie) {
                     this.controller.resetGame();
+                    Thread.currentThread().interrupt();
                 }
             }
         }
@@ -222,6 +230,7 @@ public class ClientCli extends Thread implements View {
                         this.controller.getLock().wait(1000);
                     } catch (InterruptedException e) {
                         this.controller.resetGame();
+                        Thread.currentThread().interrupt();
                     }
                     updateScreen(false);
                 }
