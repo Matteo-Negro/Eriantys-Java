@@ -30,6 +30,7 @@ public class ServerLauncher {
         } catch (IOException e) {
             Log.error("Shutdown server.");
         }
+        System.exit(0);
     }
 
     /**

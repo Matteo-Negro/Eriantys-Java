@@ -271,6 +271,7 @@ public class GameController extends Thread {
                 return;
             }
             this.users.replace(user.getUsername(), null);
+            user.interrupt();
             this.connectedPlayers--;
         }
         this.notifyUsers(MessageCreator.error("UserDisconnected"));
@@ -294,7 +295,7 @@ public class GameController extends Thread {
     /**
      * Saves the current state of the game into a file.
      */
-    private void saveGame() {
+    public void saveGame() {
 
         JsonObject json = new JsonObject();
         json.addProperty("id", this.id);

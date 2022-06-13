@@ -41,6 +41,9 @@ public class Server {
     private final Map<String, GameController> games;
     private final String savePath;
     private final int port;
+    boolean processRunning;
+    ServerSocket serverSocket;
+    ServerIO debugIO;
 
     private final ExecutorService gameExecutor;
 
@@ -51,7 +54,11 @@ public class Server {
      * @throws IOException Thrown if there is an error while processing files.
      */
     public Server(String savePath, int port) throws IOException {
+        this.processRunning = true;
+        this.debugIO = new ServerIO(this);
         this.port = port;
+        this.serverSocket = new ServerSocket(port);
+
         this.savePath = savePath != null
                 ? savePath
                 : Paths.get(
@@ -75,20 +82,27 @@ public class Server {
      *
      * @throws IOException Thrown if an error occurs during the server or client socket creation.
      */
-    public void start() throws IOException {
-
+    public void start() {
+        new Thread(debugIO).start();
         ExecutorService userExecutor = Executors.newCachedThreadPool();
-        try (ServerSocket serverSocket = new ServerSocket(port)) {
+        try {
             Log.info("Server up and listening on port " + port);
+
             while (true) {
+                synchronized (this.games) {
+                    if (!isRunning()) break;
+                }
                 Socket socket = serverSocket.accept();
                 Log.info("Received client connection from " + socket.getRemoteSocketAddress().toString().substring(1));
                 userExecutor.submit(new User(socket, this));
             }
-        } catch (NoSuchElementException e) {
+
+        } catch (NoSuchElementException | IOException e) {
             Log.error(e);
         } finally {
             userExecutor.shutdown();
+            this.debugIO.close();
+            this.debugIO = null;
             Log.info("Socket closed.");
         }
     }
@@ -222,6 +236,37 @@ public class Server {
     public GameController findGame(String id) {
         synchronized (games) {
             return games.get(id);
+        }
+    }
+
+    /**
+     * Returns true if the server process is currently running.
+     *
+     * @return The processRunning attribute.
+     */
+    public boolean isRunning() {
+        return this.processRunning;
+    }
+
+    /**
+     * Closes the server process and saves the games.
+     */
+    public void shutdown() {
+        synchronized (this.games) {
+            this.debugIO.close();
+            this.processRunning = false;
+
+            try {
+                Socket endSocket = new Socket();
+                endSocket.connect(serverSocket.getLocalSocketAddress());
+                endSocket.close();
+            }catch(IOException ioe) {
+                Log.debug("An error occurred while closing server socket, the server didn't shut-down.");
+            }
+            for (GameController game : this.games.values()) {
+                if (game.isFull()) game.saveGame();
+            }
+            Log.debug("Games saved.");
         }
     }
 }
