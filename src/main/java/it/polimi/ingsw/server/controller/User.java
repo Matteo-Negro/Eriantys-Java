@@ -25,7 +25,7 @@ import java.util.Locale;
  * @author Riccardo Motta
  * @author Matteo Negro
  */
-public class User extends Thread {
+public class User implements Runnable {
 
     private final Object connectedLock;
     private final BufferedReader inputStream;

@@ -29,7 +29,7 @@ import java.util.*;
  * @author Riccardo Motta
  * @author Riccardo Milici
  */
-public class GameController extends Thread {
+public class GameController implements Runnable {
     private final int expectedPlayers;
     private final GamePlatform gameModel;
     private final String savePath;
@@ -271,7 +271,6 @@ public class GameController extends Thread {
                 return;
             }
             this.users.replace(user.getUsername(), null);
-            user.interrupt();
             this.connectedPlayers--;
         }
         this.notifyUsers(MessageCreator.error("UserDisconnected"));

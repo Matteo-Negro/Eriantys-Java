@@ -68,9 +68,14 @@ public class Server {
         games = new HashMap<>();
         gameExecutor = Executors.newCachedThreadPool();
         File directory = new File(this.savePath);
-        if (!directory.exists())
-            directory.mkdir();
 
+        boolean directoryCreated = true;
+        if (!directory.exists()) {
+            directoryCreated = directory.mkdir();
+        }
+        if(!directoryCreated) {
+            throw new IOException("An error occurred while creating the database directory.");
+        }
         Log.info("Loading games...");
         loadGames();
         Log.info("Load completed.");
@@ -80,7 +85,6 @@ public class Server {
      * The main server method, it runs the Server instance as a parallel thread,
      * managing the new connection requests from the clients.
      *
-     * @throws IOException Thrown if an error occurs during the server or client socket creation.
      */
     public void start() {
         new Thread(debugIO).start();
