@@ -9,22 +9,42 @@ import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 
 import java.util.*;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class BoardContainer {
 
     private ImageView assistant;
     private Label coins;
-    private Map<HouseColor, Integer> entranceColors;
+    private Map<HouseColor, Integer> diningRoom;
+    private Map<HouseColor, List<ImageView>> diningRoomImages;
+    private Map<HouseColor, Integer> entrance;
     private List<ImageView> entranceImages;
     private Parent pane;
+    private final Supplier<Void> updateDiningRoom;
+    private final Consumer<List<HouseColor>> updateEntrance;
     private WizardType wizard;
 
     BoardContainer() {
         assistant = null;
         coins = null;
-        entranceColors = null;
+        diningRoom = null;
+        diningRoomImages = null;
+        entrance = null;
         entranceImages = null;
         pane = null;
+        updateDiningRoom = () -> {
+            for (HouseColor houseColor : HouseColor.values())
+                for (int index = 0; index < 10; index++)
+                    diningRoomImages.get(houseColor).get(index).setVisible(index < diningRoom.get(houseColor));
+            return null;
+        };
+        updateEntrance = students -> {
+            for (int index = 0; index < entranceImages.size(); index++) {
+                entranceImages.get(index).setImage(Images.getStudent2dByColor(students.get(index)));
+                entranceImages.get(index).setVisible(students.get(index) != null);
+            }
+        };
         wizard = null;
     }
 
@@ -67,28 +87,40 @@ public class BoardContainer {
             this.coins.setText(String.format("x%d", coins));
     }
 
-    void setEntrance(List<ImageView> entranceImages) {
-        this.entranceImages = Collections.unmodifiableList(entranceImages);
-        if (entranceColors != null)
-            updateEntrance(entranceToList());
+    void setDiningRoom(Map<HouseColor, Integer> diningRoom) {
+        this.diningRoom = new EnumMap<>(diningRoom);
+        if (diningRoomImages != null)
+            updateDiningRoom(false);
+    }
+
+    void setDiningRoomImages(Map<HouseColor, List<ImageView>> diningRoom) {
+        this.diningRoomImages = Collections.unmodifiableMap(diningRoom);
+        if (this.diningRoom != null)
+            updateDiningRoom(false);
     }
 
     void setEntrance(Map<HouseColor, Integer> entranceColors) {
-        this.entranceColors = new EnumMap<>(entranceColors);
+        this.entrance = new EnumMap<>(entranceColors);
         if (entranceImages != null)
-            updateEntrance(entranceToList());
+            updateEntrance(false);
+    }
+
+    void setEntranceImages(List<ImageView> entranceImages) {
+        this.entranceImages = Collections.unmodifiableList(entranceImages);
+        if (entrance != null)
+            updateEntrance(false);
     }
 
     public void addToEntrance(HouseColor houseColor) {
-        entranceColors.replace(houseColor, entranceColors.get(houseColor) + 1);
-        updateEntrance();
+        entrance.replace(houseColor, entrance.get(houseColor) + 1);
+        updateEntrance(false);
     }
 
     public void removeFromEntrance(HouseColor houseColor) throws IllegalActionException {
-        if (entranceColors.get(houseColor) == 0)
+        if (entrance.get(houseColor) == 0)
             throw new IllegalActionException("No more students of color " + houseColor.name().toLowerCase());
-        entranceColors.replace(houseColor, entranceColors.get(houseColor) - 1);
-        updateEntrance();
+        entrance.replace(houseColor, entrance.get(houseColor) - 1);
+        updateEntrance(false);
     }
 
     void setWizard(WizardType wizard) {
@@ -97,7 +129,7 @@ public class BoardContainer {
 
     private List<HouseColor> entranceToList() {
         List<HouseColor> list = new ArrayList<>();
-        for (Map.Entry<HouseColor, Integer> entry : entranceColors.entrySet())
+        for (Map.Entry<HouseColor, Integer> entry : entrance.entrySet())
             for (int index = 0; index < entry.getValue(); index++)
                 list.add(entry.getKey());
         for (int index = 0; index < entranceImages.size() - list.size(); index++)
@@ -105,15 +137,18 @@ public class BoardContainer {
         return list;
     }
 
-    private void updateEntrance() {
-        List<HouseColor> entrance = entranceToList();
-        Platform.runLater(() -> updateEntrance(entrance));
+    private void updateDiningRoom(boolean safe) {
+        if (safe)
+            Platform.runLater(updateDiningRoom::get);
+        else
+            updateDiningRoom.get();
     }
 
-    private void updateEntrance(List<HouseColor> students) {
-        for (int index = 0; index < entranceImages.size(); index++) {
-            entranceImages.get(index).setImage(Images.getStudent2dByColor(students.get(index)));
-            entranceImages.get(index).setVisible(students.get(index) != null);
-        }
+    private void updateEntrance(boolean safe) {
+        List<HouseColor> entranceStudents = entranceToList();
+        if (safe)
+            Platform.runLater(() -> updateEntrance.accept(entranceStudents));
+        else
+            updateEntrance.accept(entranceStudents);
     }
 }
