@@ -111,41 +111,34 @@ class PlayerTest {
 
     /**
      * Tests whether returns the assistant that the player played.
-     *
-     * @throws AlreadyPlayedException Whether the Assistant had already been played.
      */
     @Test
-    void playAssistant() throws AlreadyPlayedException {
+    void playAssistant() {
         int playedAssistantID = 1;
         Assistant tmp;
 
-        tmp = this.players.get(0).playAssistant(playedAssistantID);
-        assertEquals(playedAssistantID, tmp.getId());
-        assertFalse(this.players.get(0).getAssistants().contains(tmp));
-
-        tmp = this.players.get(1).playAssistant(playedAssistantID);
-        assertEquals(playedAssistantID, tmp.getId());
-        assertFalse(this.players.get(1).getAssistants().contains(tmp));
-
-        tmp = this.players.get(2).playAssistant(playedAssistantID);
-        assertEquals(playedAssistantID, tmp.getId());
-        assertFalse(this.players.get(2).getAssistants().contains(tmp));
         try {
-            this.players.get(2).playAssistant(playedAssistantID);
-        } catch (AlreadyPlayedException e) {
-            tmp = this.players.get(2).playAssistant((playedAssistantID + 1) % 10);
-            assertEquals((playedAssistantID + 1) % 10, tmp.getId());
+            tmp = this.players.get(0).playAssistant(playedAssistantID);
+            assertEquals(playedAssistantID, tmp.getId());
+            assertFalse(this.players.get(0).getAssistants().contains(tmp));
+
+            tmp = this.players.get(1).playAssistant(playedAssistantID);
+            assertEquals(playedAssistantID, tmp.getId());
+            assertFalse(this.players.get(1).getAssistants().contains(tmp));
+
+            tmp = this.players.get(2).playAssistant(playedAssistantID);
+            assertEquals(playedAssistantID, tmp.getId());
             assertFalse(this.players.get(2).getAssistants().contains(tmp));
+        } catch (AlreadyPlayedException e) {
+            assert false;
         }
     }
 
     /**
      * Tests whether the player pays for the special character and whether it will be active.
-     *
-     * @throws NotEnoughCoinsException Whether the number of available coins is less than the required one.
      */
     @Test
-    void paySpecialCharacter() throws NotEnoughCoinsException {
+    void paySpecialCharacter() {
         int cost = 1;
         int selectedSpecialCharacterID = 1;
         Map<HouseColor, Integer> students = new EnumMap<>(HouseColor.class);
@@ -153,26 +146,26 @@ class PlayerTest {
         for (HouseColor c : HouseColor.values()) students.put(c, 1);
         SpecialCharacter tmp;
 
-        tmp = new SpecialCharacter(selectedSpecialCharacterID, students);
-        for (int coin = 1; coin <= cost; coin++) this.players.get(0).addCoins();
-        this.players.get(0).paySpecialCharacter(tmp);
-        assertEquals(1, this.players.get(0).getCoins());
-        assertTrue(tmp.isActive());
+        try {
+            tmp = new SpecialCharacter(selectedSpecialCharacterID, students);
+            for (int coin = 1; coin <= cost; coin++) this.players.get(0).addCoins();
+            this.players.get(0).paySpecialCharacter(tmp);
+            assertEquals(1, this.players.get(0).getCoins());
+            assertTrue(tmp.isActive());
 
-        tmp = new SpecialCharacter(selectedSpecialCharacterID, students);
-        for (int coin = 1; coin <= cost; coin++) this.players.get(1).addCoins();
-        this.players.get(1).paySpecialCharacter(tmp);
-        assertEquals(1, this.players.get(1).getCoins());
-        assertTrue(tmp.isActive());
-
+            tmp = new SpecialCharacter(selectedSpecialCharacterID, students);
+            for (int coin = 1; coin <= cost; coin++) this.players.get(1).addCoins();
+            this.players.get(1).paySpecialCharacter(tmp);
+            assertEquals(1, this.players.get(1).getCoins());
+            assertTrue(tmp.isActive());
+        } catch (NotEnoughCoinsException e) {
+            assert false;
+        }
         tmp = new SpecialCharacter(selectedSpecialCharacterID, students);
         try {
             this.players.get(2).paySpecialCharacter(tmp);
         } catch (NotEnoughCoinsException e) {
-            for (int coin = 0; coin <= cost; coin++) this.players.get(2).addCoins();
-            this.players.get(2).paySpecialCharacter(tmp);
-            assertEquals(1, this.players.get(2).getCoins());
-            assertTrue(tmp.isActive());
+            assert true;
         }
     }
 
