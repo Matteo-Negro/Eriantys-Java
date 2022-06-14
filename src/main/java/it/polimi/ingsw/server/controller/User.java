@@ -197,7 +197,7 @@ public class User implements Runnable {
 
             else {
                 switch (specialCharacter.getId()) {
-                    case 1, 3, 5, 11, 12 -> {
+                    case 1, 3, 5, 9, 11, 12 -> {
                         if (specialCharacter.getUsesNumber() > 0) throw new IllegalMoveException();
                         specialCharacter.increaseUsesNumber();
                     }

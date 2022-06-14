@@ -376,7 +376,7 @@ public class ClientController {
                 }
                 if (idSpecialCharacter == 0) throw new IllegalMoveException();
                 switch (idSpecialCharacter) {
-                    case 1, 3, 5, 11, 12 -> {
+                    case 1, 3, 5, 9, 11, 12 -> {
                         if (gameModel.getGameBoard().getSpecialCharacterById(idSpecialCharacter).getUsesNumber() > 0)
                             throw new IllegalMoveException();
                         gameModel.getGameBoard().getSpecialCharacterById(idSpecialCharacter).increaseUsesNumber();
