@@ -23,7 +23,8 @@ public class Images {
     private static Map<HouseColor, Image> professors = null;
     private static Map<HouseColor, Image> studentsRealm = null;
     private static Map<HouseColor, Image> studentsBoard = null;
-    private static Map<TowerType, Image> towers = null;
+    private static Map<TowerType, Image> towersBoard = null;
+    private static Map<TowerType, Image> towersRealm = null;
     private static Map<WizardType, Image> wizards = null;
 
     private Images() {
@@ -102,11 +103,20 @@ public class Images {
         return imageView;
     }
 
-    static ImageView tower(TowerType tower) {
+    static ImageView towerBoard(TowerType tower) {
+        ImageView imageView = new ImageView();
+        imageView.setFitWidth(37);
+        imageView.setFitHeight(58);
+        imageView.setImage(getTowerBoardByColor(tower));
+        imageView.setVisible(tower != null);
+        return imageView;
+    }
+
+    static ImageView towerRealm(TowerType tower) {
         ImageView imageView = new ImageView();
         imageView.setFitWidth(32);
         imageView.setFitHeight(52);
-        imageView.setImage(getTowerByColor(tower));
+        imageView.setImage(getTowerRealmByColor(tower));
         imageView.setVisible(tower != null);
         return imageView;
     }
@@ -177,10 +187,16 @@ public class Images {
         return endTitles.get(endType);
     }
 
-    static Image getTowerByColor(TowerType towerType) {
-        if (towers == null)
-            initializeTowers();
-        return towers.get(towerType);
+    static Image getTowerBoardByColor(TowerType towerType) {
+        if (towersBoard == null)
+            initializeTowersBoard();
+        return towersBoard.get(towerType);
+    }
+
+    static Image getTowerRealmByColor(TowerType towerType) {
+        if (towersRealm == null)
+            initializeTowersRealm();
+        return towersRealm.get(towerType);
     }
 
     static Image getWizardByType(WizardType wizardType) {
@@ -238,11 +254,18 @@ public class Images {
         studentsBoard = Collections.unmodifiableMap(images);
     }
 
-    private static void initializeTowers() {
+    private static void initializeTowersBoard() {
+        Map<TowerType, Image> images = new EnumMap<>(TowerType.class);
+        for (TowerType tower : TowerType.values())
+            images.put(tower, new Image(String.format("/pawns/towers/board/%s.png", tower.name().toLowerCase(Locale.ROOT))));
+        towersBoard = Collections.unmodifiableMap(images);
+    }
+
+    private static void initializeTowersRealm() {
         Map<TowerType, Image> images = new EnumMap<>(TowerType.class);
         for (TowerType tower : TowerType.values())
             images.put(tower, new Image(String.format("/pawns/towers/realm/%s.png", tower.name().toLowerCase(Locale.ROOT))));
-        towers = Collections.unmodifiableMap(images);
+        towersRealm = Collections.unmodifiableMap(images);
     }
 
     private static void initializeWizards() {

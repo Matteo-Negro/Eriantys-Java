@@ -71,7 +71,7 @@ public class IslandContainer {
     public void setTower(TowerType towerType) {
         if (towerType != null)
             Platform.runLater(() -> {
-                tower.setImage(Images.getTowerByColor(towerType));
+                tower.setImage(Images.getTowerRealmByColor(towerType));
                 tower.setVisible(true);
             });
     }

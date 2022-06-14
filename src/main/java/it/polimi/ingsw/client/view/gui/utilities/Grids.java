@@ -4,16 +4,14 @@ import it.polimi.ingsw.client.model.Cloud;
 import it.polimi.ingsw.client.model.Island;
 import it.polimi.ingsw.client.model.SchoolBoard;
 import it.polimi.ingsw.utilities.HouseColor;
+import it.polimi.ingsw.utilities.TowerType;
 import javafx.collections.ObservableList;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Grids {
 
@@ -40,6 +38,11 @@ public class Grids {
         AnchorPane.setTopAnchor(professors, 29.0);
         AnchorPane.setLeftAnchor(professors, 503.0);
         anchorPane.getChildren().add(professors);
+
+        GridPane towers = towers(schoolBoard.getTowerType(), schoolBoard.getTowersNumber(), number == 9 ? 6 : 8, boardContainer);
+        AnchorPane.setTopAnchor(towers, 61.0);
+        AnchorPane.setLeftAnchor(towers, 569.0);
+        anchorPane.getChildren().add(towers);
 
         return anchorPane;
     }
@@ -259,6 +262,35 @@ public class Grids {
         return gridPane;
     }
 
+    private static GridPane towers(TowerType towerType, int towersToShow, int towersNumber, BoardContainer boardContainer) {
+
+        GridPane gridPane = new GridPane();
+        gridPane.setPrefWidth(111);
+        gridPane.setPrefHeight(168);
+        ObservableList<RowConstraints> rows = gridPane.getRowConstraints();
+        ObservableList<ColumnConstraints> columns = gridPane.getColumnConstraints();
+
+        RowConstraints rowConstraints;
+        for (int index = 0; index < towersNumber / 2; index++) {
+            rowConstraints = new RowConstraints();
+            rowConstraints.setValignment(VPos.BOTTOM);
+            rows.add(rowConstraints);
+        }
+        ColumnConstraints columnConstraints;
+        for (int index = 0; index < 2; index++) {
+            columnConstraints = new ColumnConstraints();
+            columnConstraints.setHalignment(HPos.CENTER);
+            columns.add(columnConstraints);
+        }
+
+        initialize(rows, columns);
+
+        List<ImageView> towers = initializeTowers(gridPane, towerType, towersNumber, towersToShow);
+        boardContainer.setTowers(towers);
+
+        return gridPane;
+    }
+
     private static GridPane islandTowerMotherNature(Island island, IslandContainer islandContainer) {
 
         GridPane gridPane = new GridPane();
@@ -275,7 +307,7 @@ public class Grids {
         columns.get(0).setHalignment(HPos.CENTER);
         columns.get(1).setHalignment(HPos.CENTER);
 
-        ImageView tower = Images.tower(island.getTower());
+        ImageView tower = Images.towerRealm(island.getTower());
         islandContainer.setTower(tower);
         gridPane.add(tower, 0, 0);
 
@@ -297,10 +329,6 @@ public class Grids {
         columns.add(new ColumnConstraints());
 
         initialize(rows, columns);
-
-        rows.get(0).setVgrow(Priority.SOMETIMES);
-        rows.get(1).setVgrow(Priority.SOMETIMES);
-        columns.get(0).setHgrow(Priority.SOMETIMES);
 
         gridPane.add(islandStudents(0, island, islandContainer), 0, 0);
         gridPane.add(islandStudents(1, island, islandContainer), 0, 1);
@@ -398,5 +426,20 @@ public class Grids {
             gridPane.add(imageView, 0, index);
         }
         return professors;
+    }
+
+    private static List<ImageView> initializeTowers(GridPane gridPane, TowerType towerType, int towersNumber, int towersToShow) {
+        List<ImageView> towers = new ArrayList<>();
+        ImageView imageView;
+        for (int index = 0; index < towersNumber; index++) {
+            imageView = Images.towerBoard(towerType);
+            imageView.setVisible(index < towersToShow);
+            towers.add(imageView);
+        }
+        List<ImageView> reverseTowers = new ArrayList<>(towers);
+        Collections.reverse(reverseTowers);
+        for (int index = 0; index < towersNumber; index++)
+            gridPane.add(reverseTowers.get(index), 1 - index % 2, index / 2);
+        return towers;
     }
 }

@@ -14,6 +14,8 @@ import java.util.function.Supplier;
 
 public class BoardContainer {
 
+    private final Supplier<Void> updateDiningRoom;
+    private final Consumer<List<HouseColor>> updateEntrance;
     private ImageView assistant;
     private Label coins;
     private Map<HouseColor, Integer> diningRoom;
@@ -22,8 +24,7 @@ public class BoardContainer {
     private List<ImageView> entranceImages;
     private Parent pane;
     private Map<HouseColor, ImageView> professors;
-    private final Supplier<Void> updateDiningRoom;
-    private final Consumer<List<HouseColor>> updateEntrance;
+    private List<ImageView> towers;
     private WizardType wizard;
 
     BoardContainer() {
@@ -35,6 +36,7 @@ public class BoardContainer {
         entranceImages = null;
         pane = null;
         professors = null;
+        towers = null;
         updateDiningRoom = () -> {
             for (HouseColor houseColor : HouseColor.values())
                 for (int index = 0; index < 10; index++)
@@ -149,6 +151,28 @@ public class BoardContainer {
 
     public void removeProfessor(HouseColor houseColor) {
         Platform.runLater(() -> professors.get(houseColor).setVisible(false));
+    }
+
+    void setTowers(List<ImageView> towers) {
+        this.towers = Collections.unmodifiableList(towers);
+    }
+
+    public void addTower() throws IllegalActionException {
+        Optional<ImageView> tower = towers.stream().filter(imageView -> !imageView.isVisible()).findFirst();
+        if (tower.isEmpty())
+            throw new IllegalActionException("All the towers are already here.");
+        else
+            Platform.runLater(() -> tower.get().setVisible(true));
+    }
+
+    public void removeTower() throws IllegalActionException {
+        List<ImageView> reverse = new ArrayList<>(towers);
+        Collections.reverse(reverse);
+        Optional<ImageView> tower = reverse.stream().filter(ImageView::isVisible).findFirst();
+        if (tower.isEmpty())
+            throw new IllegalActionException("There is no tower left.");
+        else
+            Platform.runLater(() -> tower.get().setVisible(false));
     }
 
     void setWizard(WizardType wizard) {
