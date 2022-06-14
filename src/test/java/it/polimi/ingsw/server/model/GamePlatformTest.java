@@ -15,9 +15,17 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Test of class GamePlatform.
+ *
+ * @author Matteo Negro
+ */
 class GamePlatformTest {
     private List<GamePlatform> gamePlatforms;
 
+    /**
+     * Generates a new GamePlatform.
+     */
     @BeforeEach
     void setUp() {
         this.gamePlatforms = new ArrayList<>();
@@ -53,17 +61,26 @@ class GamePlatformTest {
         }
     }
 
+    /**
+     * Allows the garbage collector to delete the created GamePlatform.
+     */
     @AfterEach
     void tearDown() {
         this.gamePlatforms = null;
     }
 
+    /**
+     * Tests whether returns the number of players.
+     */
     @Test
     void getPlayersNumber() {
         assertEquals(2, this.gamePlatforms.get(0).getPlayersNumber());
         assertEquals(3, this.gamePlatforms.get(1).getPlayersNumber());
     }
 
+    /**
+     * Tests whether returns the list of players.
+     */
     @Test
     void getPlayers() {
         List<Player> tmp;
@@ -81,6 +98,9 @@ class GamePlatformTest {
         });
     }
 
+    /**
+     * Tests whether returns the list of players sorted by the right game order.
+     */
     @Test
     void getTurnOrder() {
         List<Player> tmp;
@@ -96,6 +116,10 @@ class GamePlatformTest {
     }
 
     // TODO: think about it
+
+    /**
+     * Tests whether the player is added.
+     */
     @Test
     void addPlayer() {
         try {
@@ -105,6 +129,9 @@ class GamePlatformTest {
         }
     }
 
+    /**
+     * Tests whether returns the right player given him/her name.
+     */
     @Test
     void getPlayerByName() {
         assertEquals("Matteo", this.gamePlatforms.get(0).getPlayerByName("Matteo").getName());
@@ -115,6 +142,9 @@ class GamePlatformTest {
         assertEquals("Milici", this.gamePlatforms.get(1).getPlayerByName("Milici").getName());
     }
 
+    /**
+     * Tests whether returns the game is expert.
+     */
     @Test
     void isExpert() {
         assertFalse(this.gamePlatforms.get(0).isExpert());
@@ -122,6 +152,9 @@ class GamePlatformTest {
         assertTrue(this.gamePlatforms.get(1).isExpert());
     }
 
+    /**
+     * Tests whether returns the current player.
+     */
     @Test
     void getCurrentPlayer() {
         assertEquals("Matteo", this.gamePlatforms.get(0).getCurrentPlayer().getName());
@@ -141,6 +174,9 @@ class GamePlatformTest {
         assertEquals("Motta", this.gamePlatforms.get(1).getCurrentPlayer().getName());
     }
 
+    /**
+     * Tests whether returns the round winner of the planning phase.
+     */
     @Test
     void getRoundWinner() {
         try {
@@ -178,6 +214,9 @@ class GamePlatformTest {
         assertEquals("Milici", this.gamePlatforms.get(1).getRoundWinner().getName());
     }
 
+    /**
+     * Tests whether returns game board.
+     */
     @Test
     void getGameBoard() {
         try {
@@ -227,6 +266,9 @@ class GamePlatformTest {
         assertEquals(3, this.gamePlatforms.get(1).getGameBoard().getCharacters().size());
     }
 
+    /**
+     * Tests whether the round incrementation & co work.
+     */
     @Test
     void nextRound() {
         try {
@@ -300,6 +342,9 @@ class GamePlatformTest {
         assertEquals("Matteo", this.gamePlatforms.get(0).getRoundWinner().getName());
     }
 
+    /**
+     * Tests whether the update of the current player, after the planning phase, works.
+     */
     @Test
     void updateTurnOrder() {
         try {
@@ -337,6 +382,9 @@ class GamePlatformTest {
         assertEquals("Matteo", this.gamePlatforms.get(1).getRoundWinner().getName());
     }
 
+    /**
+     * Tests whether the turn incrementation & co work.
+     */
     @Test
     void nextTurn() {
         try {
