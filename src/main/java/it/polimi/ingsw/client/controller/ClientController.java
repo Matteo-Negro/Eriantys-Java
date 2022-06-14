@@ -701,7 +701,8 @@ public class ClientController {
             if (newGameModel != null) {
                 this.lock.notifyAll();
             }
-            this.modelObserver.notifyUpdate();
+            if(this.modelObserver != null)
+                this.modelObserver.notifyUpdate();
         }
     }
 
