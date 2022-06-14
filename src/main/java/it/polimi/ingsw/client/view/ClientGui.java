@@ -28,6 +28,7 @@ public class ClientGui extends Application implements View {
     private Stage stage;
     private ClientController controller;
     private Map<ClientState, Scene> scenes;
+    private GameModelObserver modelObserver;
 
     /**
      * Gets the scene from the name of the FXML file to load.
@@ -80,6 +81,7 @@ public class ClientGui extends Application implements View {
         stage = primaryStage;
         controller = new ClientController(this);
         scenes = new EnumMap<>(ClientState.class);
+        modelObserver = new GameModelObserver(controller);
 
         Log.info("Initializing scenes...");
         try {
@@ -132,8 +134,10 @@ public class ClientGui extends Application implements View {
                 }
             }
 
-        if (getController().getClientState().equals(ClientState.CONNECTION_LOST))
+        if (getController().getClientState().equals(ClientState.CONNECTION_LOST)) {
             getController().manageConnectionLost();
+            return;
+        }
 
         synchronized (instances) {
             if (instances.get(state) != null)
@@ -166,6 +170,10 @@ public class ClientGui extends Application implements View {
      */
     public ClientController getController() {
         return controller;
+    }
+
+    public  GameModelObserver getModelObserver() {
+        return modelObserver;
     }
 
     /**

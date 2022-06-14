@@ -20,9 +20,14 @@ public class EventProcessing {
     public static void exit(Event event, ClientGui client) {
         if (!standard(event))
             return;
-        if (!client.getController().getClientState().equals(ClientState.CONNECTION_LOST))
-            client.getController().setClientState(ClientState.MAIN_MENU);
-        client.changeScene();
+        if (!client.getController().getClientState().equals(ClientState.CONNECTION_LOST)) {
+            if(client.getController().getClientState().equals(ClientState.GAME_RUNNING))
+                client.getController().manageGameRunning("logout");
+            else{
+                client.getController().setClientState(ClientState.MAIN_MENU);
+                client.changeScene();
+            }
+        }
     }
 
     /**

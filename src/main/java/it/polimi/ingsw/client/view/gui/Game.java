@@ -3,6 +3,7 @@ package it.polimi.ingsw.client.view.gui;
 import it.polimi.ingsw.client.view.ClientGui;
 import it.polimi.ingsw.client.view.gui.utilities.*;
 import it.polimi.ingsw.utilities.ClientState;
+import it.polimi.ingsw.utilities.Log;
 import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -61,6 +62,7 @@ public class Game implements Update {
         new Thread(this::addBoards).start();
         new Thread(this::addClouds).start();
         new Thread(this::addIslands).start();
+        new Thread(new it.polimi.ingsw.client.view.gui.updates.Game(client)).start();
     }
 
     /**

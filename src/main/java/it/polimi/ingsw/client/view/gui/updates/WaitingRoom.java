@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class WaitingRoom implements Runnable {
+public class WaitingRoom implements Runnable, Observer {
 
     private final ClientGui client;
     private final Object lock;
@@ -27,7 +27,8 @@ public class WaitingRoom implements Runnable {
     public void run() {
         while (client.getController().getClientState().equals(ClientState.GAME_WAITING_ROOM)) {
             synchronized (lock) {
-                this.waitingRoomGUI.update(getPlayers());
+                if(client.getController().getGameModel()!=null)
+                    this.waitingRoomGUI.update(getPlayers());
                 try {
                     lock.wait(1000);
                 } catch (InterruptedException e) {
@@ -57,5 +58,12 @@ public class WaitingRoom implements Runnable {
             }
 
         return players;
+    }
+
+    @Override
+    public void notifyUpdate() {
+        synchronized (this.lock) {
+            this.lock.notifyAll();
+        }
     }
 }
