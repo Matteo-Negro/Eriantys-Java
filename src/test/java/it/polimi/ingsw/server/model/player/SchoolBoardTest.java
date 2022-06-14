@@ -119,20 +119,23 @@ class SchoolBoardTest {
 
     /**
      * Tests whether removes a student from the entrance.
-     *
-     * @throws NoStudentException Whether there is no student of that color.
      */
     @Test
-    void removeFromEntrance() throws NoStudentException {
+    void removeFromEntrance() {
         HouseColor color = HouseColor.BLUE;
 
-        this.schoolBoards.get(0).removeFromEntrance(color);
-        assertEquals(0, this.schoolBoards.get(0).getStudentsNumberOf(color));
-        this.schoolBoards.get(1).removeFromEntrance(color);
-        assertEquals(0, this.schoolBoards.get(1).getEntrance().get(color));
+        try {
+            this.schoolBoards.get(0).removeFromEntrance(color);
+            assertEquals(0, this.schoolBoards.get(0).getStudentsNumberOf(color));
+            this.schoolBoards.get(1).removeFromEntrance(color);
+            assertEquals(0, this.schoolBoards.get(1).getEntrance().get(color));
+        } catch (NoStudentException e) {
+            assert false;
+        }
         try {
             this.schoolBoards.get(1).removeFromEntrance(color);
         } catch (NoStudentException e) {
+            assert true;
         }
     }
 
@@ -151,22 +154,24 @@ class SchoolBoardTest {
 
     /**
      * Tests whether removes a student from the entrance.
-     *
-     * @throws NoStudentException Whether there is no student of that color.
      */
     @Test
-    void removeFromDiningRoom() throws NoStudentException {
+    void removeFromDiningRoom() {
         HouseColor color = HouseColor.BLUE;
+        try {
+            this.schoolBoards.get(0).addToDiningRoom(color);
+            this.schoolBoards.get(0).removeFromDiningRoom(color);
+            assertEquals(0, this.schoolBoards.get(0).getStudentsNumberOf(color));
 
-        this.schoolBoards.get(0).addToDiningRoom(color);
-        this.schoolBoards.get(0).removeFromDiningRoom(color);
-        assertEquals(0, this.schoolBoards.get(0).getStudentsNumberOf(color));
-
-        this.schoolBoards.get(1).removeFromDiningRoom(color);
-        assertEquals(0, this.schoolBoards.get(1).getStudentsNumberOf(color));
+            this.schoolBoards.get(1).removeFromDiningRoom(color);
+            assertEquals(0, this.schoolBoards.get(1).getStudentsNumberOf(color));
+        } catch (NoStudentException e) {
+            assert false;
+        }
         try {
             this.schoolBoards.get(1).removeFromDiningRoom(color);
         } catch (NoStudentException e) {
+            assert true;
         }
     }
 
@@ -184,6 +189,7 @@ class SchoolBoardTest {
         try {
             for (int i = 1; i <= this.towersNumber; i++) this.schoolBoards.get(1).removeTowers(removeTowers);
         } catch (NotEnoughTowersException e) {
+            assert true;
         }
     }
 

@@ -197,7 +197,8 @@ class GamePlatformTest {
         assertEquals(2, this.gamePlatforms.get(0).getGameBoard().getPlayedAssistants().size());
         assertEquals(12, this.gamePlatforms.get(0).getGameBoard().getIslands().size());
         for (Island i : this.gamePlatforms.get(0).getGameBoard().getIslands())
-            if (i.getId() != 0 && i.getId() != 6) assertEquals(1, i.getStudents().values().stream().mapToInt(j -> j).sum());
+            if (i.getId() != 0 && i.getId() != 6)
+                assertEquals(1, i.getStudents().values().stream().mapToInt(j -> j).sum());
         assertFalse(this.gamePlatforms.get(0).getGameBoard().getBag().isEmpty());
 
         try {
@@ -220,7 +221,8 @@ class GamePlatformTest {
         assertEquals(3, this.gamePlatforms.get(1).getGameBoard().getPlayedAssistants().size());
         assertEquals(12, this.gamePlatforms.get(1).getGameBoard().getIslands().size());
         for (Island i : this.gamePlatforms.get(0).getGameBoard().getIslands())
-            if (i.getId() != 0 && i.getId() != 6) assertEquals(1, i.getStudents().values().stream().mapToInt(j -> j).sum());
+            if (i.getId() != 0 && i.getId() != 6)
+                assertEquals(1, i.getStudents().values().stream().mapToInt(j -> j).sum());
         assertFalse(this.gamePlatforms.get(1).getGameBoard().getBag().isEmpty());
         assertEquals(3, this.gamePlatforms.get(1).getGameBoard().getCharacters().size());
     }
