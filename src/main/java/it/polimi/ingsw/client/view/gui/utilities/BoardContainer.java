@@ -45,8 +45,8 @@ public class BoardContainer {
         };
         updateEntrance = students -> {
             for (int index = 0; index < entranceImages.size(); index++) {
-                entranceImages.get(index).setImage(Images.getStudent2dByColor(students.get(index)));
-                entranceImages.get(index).setVisible(students.get(index) != null);
+                entranceImages.get(index).setImage(Images.getStudent2dByColor(index < students.size() ? students.get(index) : null));
+                entranceImages.get(index).setVisible(index < students.size() && students.get(index) != null);
             }
         };
         wizard = null;
@@ -184,8 +184,6 @@ public class BoardContainer {
         for (Map.Entry<HouseColor, Integer> entry : entrance.entrySet())
             for (int index = 0; index < entry.getValue(); index++)
                 list.add(entry.getKey());
-        for (int index = 0; index < entranceImages.size() - list.size(); index++)
-            list.add(null);
         return list;
     }
 

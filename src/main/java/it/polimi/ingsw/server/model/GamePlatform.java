@@ -240,9 +240,8 @@ public class GamePlatform {
             }
             cloud.refill(map);
         });
-        if (expert) {
+        if (expert)
             gameBoard.getCharacters().forEach(SpecialCharacter::changedRound);
-        }
         currentPlayer = roundWinner;
     }
 
