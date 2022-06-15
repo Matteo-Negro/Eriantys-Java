@@ -216,7 +216,14 @@ public class BoardContainer {
     public void enableEntranceButtons() {
         for(Button entranceButton : this.entranceImages) {
             entranceButton.setMouseTransparent(false);
-            entranceButton.setStyle("-fx-background-radius: 50em;" + "-fx-border-radius: 50em;" + "-fx-border-width: 1px;" + "-fx-max-width: 10px;" + "-fx-max-height: 10px;" + "-fx-padding: 0px;" + "-fx-border-color: #FCFFAD;");
+            entranceButton.setStyle("-fx-background-radius: 50em;" +
+                    "-fx-border-radius: 50em;" +
+                    "-fx-border-width: 2px;" +
+                    "-fx-min-width: 25px;" +
+                    "-fx-min-height: 25px;" +
+                    "-fx-padding: 0px;" +
+                    "-fx-border-color: #FCFFAD;" +
+                    "-fx-background-color: radial-gradient(focus-distance 0% ,center 50% 50%, radius 99%, transparent, #FCFFAD);");
             entranceButton.setFocusTraversable(true);
         }
     }

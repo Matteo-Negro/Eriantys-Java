@@ -2,6 +2,7 @@ package it.polimi.ingsw.client.view.gui.utilities;
 
 import it.polimi.ingsw.client.model.GameBoard;
 import javafx.scene.Group;
+import javafx.scene.control.Button;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,7 +25,17 @@ public class Islands {
 
             Group group = new Group();
             islandContainer.setPane(group);
-            group.getChildren().addAll(Images.island(), Grids.island(gameBoard.getIslandById(index), islandContainer));
+
+            Button islandButton = new Button("");
+            islandButton.setStyle("-fx-border-color: #FCFFAD;" +
+                    "-fx-border-width: 1px;" +
+                    "-fx-border-radius: 50em;" +
+                    "-fx-background-radius: 50em;" +
+                    "-fx-background-color: radial-gradient(focus-distance 0% ,center 50% 50%, radius 90%, transparent, #FCFFAD);" +
+                    "-fx-min-width: 155px;" +
+                    "-fx-min-height: 155px;");
+            islandButton.setVisible(true);
+            group.getChildren().addAll(Images.island(), Grids.island(gameBoard.getIslandById(index), islandContainer), islandButton);
         }
 
         return Collections.unmodifiableList(list);

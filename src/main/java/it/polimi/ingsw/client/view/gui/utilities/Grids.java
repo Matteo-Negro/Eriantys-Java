@@ -8,6 +8,7 @@ import it.polimi.ingsw.utilities.TowerType;
 import javafx.collections.ObservableList;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
+import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
@@ -201,7 +202,6 @@ public class Grids {
 
         boardContainer.setDiningRoom(diningRoom);
         boardContainer.setDiningRoomImages(initializeDiningRoom(gridPane));
-
         return gridPane;
     }
 
@@ -229,7 +229,6 @@ public class Grids {
         initialize(rows, columns);
 
         boardContainer.setEntrance(entrance);
-        //boardContainer.setEntranceImages(initializeEntrance(gridPane, number));
         boardContainer.setEntranceImages(initializeEntranceButtons(gridPane, number));
 
         return gridPane;
