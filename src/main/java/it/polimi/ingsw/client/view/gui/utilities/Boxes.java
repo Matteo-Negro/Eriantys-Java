@@ -18,7 +18,6 @@ public class Boxes {
     }
 
     static HBox board(GameModel gameModel, String player, BoardContainer boardContainer) {
-
         HBox hBox = new HBox();
         hBox.setAlignment(Pos.CENTER);
 

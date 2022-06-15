@@ -4,7 +4,9 @@ import it.polimi.ingsw.utilities.HouseColor;
 import it.polimi.ingsw.utilities.WizardType;
 import it.polimi.ingsw.utilities.exceptions.IllegalActionException;
 import javafx.application.Platform;
+import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 
@@ -21,7 +23,7 @@ public class BoardContainer {
     private Map<HouseColor, Integer> diningRoom;
     private Map<HouseColor, List<ImageView>> diningRoomImages;
     private Map<HouseColor, Integer> entrance;
-    private List<ImageView> entranceImages;
+    private List<Button> entranceImages;
     private Parent pane;
     private Map<HouseColor, ImageView> professors;
     private List<ImageView> towers;
@@ -45,8 +47,9 @@ public class BoardContainer {
         };
         updateEntrance = students -> {
             for (int index = 0; index < entranceImages.size(); index++) {
-                entranceImages.get(index).setImage(Images.getStudent2dByColor(index < students.size() ? students.get(index) : null));
+                entranceImages.get(index).setGraphic(Images.student2d(index < students.size() ? students.get(index) : null));
                 entranceImages.get(index).setVisible(index < students.size() && students.get(index) != null);
+                entranceImages.get(index).setMouseTransparent(true);
             }
         };
         wizard = null;
@@ -62,8 +65,10 @@ public class BoardContainer {
 
     public void enable(boolean value) {
         Platform.runLater(() -> {
-            if (value)
+            if (value) {
                 pane.setStyle("-fx-background-color: #38a2ed");
+                enableEntranceButtons();
+            }
             else
                 pane.setStyle("-fx-background-color: rgba(255, 255, 255, 0%)");
         });
@@ -123,8 +128,14 @@ public class BoardContainer {
             updateEntrance(false);
     }
 
-    void setEntranceImages(List<ImageView> entranceImages) {
+    /*void setEntranceImages(List<ImageView> entranceImages) {
         this.entranceImages = Collections.unmodifiableList(entranceImages);
+        if (entrance != null)
+            updateEntrance(false);
+    }*/
+
+    void setEntranceImages(List<Button> entranceButtons) {
+        this.entranceImages = Collections.unmodifiableList(entranceButtons);
         if (entrance != null)
             updateEntrance(false);
     }
@@ -200,5 +211,13 @@ public class BoardContainer {
             Platform.runLater(() -> updateEntrance.accept(entranceStudents));
         else
             updateEntrance.accept(entranceStudents);
+    }
+
+    public void enableEntranceButtons() {
+        for(Button entranceButton : this.entranceImages) {
+            entranceButton.setMouseTransparent(false);
+            entranceButton.setStyle("-fx-background-radius: 50em;" + "-fx-border-radius: 50em;" + "-fx-border-width: 1px;" + "-fx-max-width: 10px;" + "-fx-max-height: 10px;" + "-fx-padding: 0px;" + "-fx-border-color: #FCFFAD;");
+            entranceButton.setFocusTraversable(true);
+        }
     }
 }

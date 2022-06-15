@@ -8,6 +8,7 @@ import it.polimi.ingsw.utilities.TowerType;
 import javafx.collections.ObservableList;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
+import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 
@@ -228,7 +229,8 @@ public class Grids {
         initialize(rows, columns);
 
         boardContainer.setEntrance(entrance);
-        boardContainer.setEntranceImages(initializeEntrance(gridPane, number));
+        //boardContainer.setEntranceImages(initializeEntrance(gridPane, number));
+        boardContainer.setEntranceImages(initializeEntranceButtons(gridPane, number));
 
         return gridPane;
     }
@@ -397,17 +399,21 @@ public class Grids {
         return students;
     }
 
-    private static List<ImageView> initializeEntrance(GridPane gridPane, int number) {
-        List<ImageView> students = new ArrayList<>();
+    private static List<Button> initializeEntranceButtons(GridPane gridPane, int number) {
+        List<Button> students = new ArrayList<>();
         ImageView imageView;
         for (int index = 0; index < number; index++) {
             imageView = Images.student2d(null);
             imageView.setVisible(false);
-            students.add(imageView);
-            gridPane.add(imageView, 1 - index % 2, (number == 7 ? 3 : 4) - index / 2);
+            Button studentButton = new Button("", imageView);
+            studentButton.setStyle("-fx-background-radius: 50em;" + "-fx-max-width: 10px;" + "-fx-max-height: 10px;" + "-fx-padding: 0px;");
+            students.add(studentButton);
+            gridPane.add(studentButton, 1 - index % 2, (number == 7 ? 3 : 4) - index / 2);
         }
         return students;
     }
+
+
 
     private static Map<HouseColor, ImageView> initializeProfessors(GridPane gridPane) {
         Map<HouseColor, ImageView> professors = new EnumMap<>(HouseColor.class);
