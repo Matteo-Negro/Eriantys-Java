@@ -322,13 +322,11 @@ public class ClientController {
             Log.warning(iae);
             errorOccurred("Connection lost.");
             setClientState(ClientState.CONNECTION_LOST);
-        }
-        catch (IllegalMoveException ime) {
+        } catch (IllegalMoveException ime) {
             updateScreen();
             errorOccurred("Command not allowed.");
             return;
-        }
-        catch (InterruptedException ie) {
+        } catch (InterruptedException ie) {
             updateScreen();
             Thread.currentThread().interrupt();
             errorOccurred("Command not allowed.");
@@ -342,15 +340,15 @@ public class ClientController {
      *
      * @param messages The messages to send.
      * @throws IllegalActionException Thrown if a message doesn't pass the check.
-     * @throws InterruptedException Thrown if a thread interruption occurs.
+     * @throws InterruptedException   Thrown if a thread interruption occurs.
      */
-    private void sendCommandsToServer(List<JsonObject> messages) throws IllegalActionException, InterruptedException, IllegalMoveException{
+    private void sendCommandsToServer(List<JsonObject> messages) throws IllegalActionException, InterruptedException, IllegalMoveException {
         for (JsonObject message : messages) {
             if (checkMessage(message)) {
                 synchronized (this.lock) {
                     this.replyArrived = false;
                     getGameServer().sendCommand(message);
-                    while(!this.replyArrived)
+                    while (!this.replyArrived)
                         this.getLock().wait();
                 }
                 Log.debug("Command sent to game server.");
@@ -375,24 +373,10 @@ public class ClientController {
                     }
                 }
                 if (idSpecialCharacter == 0) throw new IllegalMoveException();
-                switch (idSpecialCharacter) {
-                    case 1, 3, 5, 9, 11, 12 -> {
-                        if (gameModel.getGameBoard().getSpecialCharacterById(idSpecialCharacter).getUsesNumber() > 0)
-                            throw new IllegalMoveException();
-                        gameModel.getGameBoard().getSpecialCharacterById(idSpecialCharacter).increaseUsesNumber();
-                    }
-                    case 10 -> {
-                        if (gameModel.getGameBoard().getSpecialCharacterById(idSpecialCharacter).getUsesNumber() > 4)
-                            throw new IllegalMoveException();
-                        gameModel.getGameBoard().getSpecialCharacterById(idSpecialCharacter).increaseUsesNumber();
-
-                    }
-                    case 7 -> {
-                        if (gameModel.getGameBoard().getSpecialCharacterById(idSpecialCharacter).getUsesNumber() > 6)
-                            throw new IllegalMoveException();
-                        gameModel.getGameBoard().getSpecialCharacterById(idSpecialCharacter).increaseUsesNumber();
-                    }
-                    default -> throw new IllegalMoveException();
+                else {
+                    if (gameModel.getGameBoard().getSpecialCharacterById(idSpecialCharacter).getUsesNumber() == 0)
+                        throw new IllegalMoveException();
+                    gameModel.getGameBoard().getSpecialCharacterById(idSpecialCharacter).decreaseUsesNumber();
                 }
             }
         }
@@ -477,7 +461,8 @@ public class ClientController {
     private void checkStudentMove(JsonObject message) throws IllegalMoveException, IllegalActionException {
         synchronized (this.getGameModel()) {
             switch (getGameModel().getSubphase()) {
-                case MOVE_STUDENT_1, MOVE_STUDENT_2, MOVE_STUDENT_3 -> {}
+                case MOVE_STUDENT_1, MOVE_STUDENT_2, MOVE_STUDENT_3 -> {
+                }
                 case MOVE_STUDENT_4 -> {
                     if (getGameModel().getPlayersNumber() != 3) throw new IllegalActionException();
                 }
@@ -562,7 +547,8 @@ public class ClientController {
                 message.remove("toId");
                 message.addProperty("toId", destinationIndex);
             }
-            case "dining-room" -> {}
+            case "dining-room" -> {
+            }
             default -> throw new IllegalMoveException();
         }
     }
@@ -701,7 +687,7 @@ public class ClientController {
             if (newGameModel != null) {
                 this.lock.notifyAll();
             }
-            if(this.modelObserver != null)
+            if (this.modelObserver != null)
                 this.modelObserver.notifyUpdate();
         }
     }

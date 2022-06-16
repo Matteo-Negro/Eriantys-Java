@@ -38,6 +38,11 @@ public class SpecialCharacter {
         usesNumber = 0;
         assignedEffect = getEffectBy(id, students, 4);
         effectCost = assignedEffect.getCost();
+        switch (this.id) {
+            case 1, 3, 5, 9, 11, 12 -> usesNumber = 1;
+            case 10 -> usesNumber = 4;
+            case 7 -> usesNumber = 6;
+        }
 
         Log.info("*** New SpecialCharacter successfully created with id: " + id);
     }
@@ -180,8 +185,8 @@ public class SpecialCharacter {
     /**
      * Increase the counter of uses of the card.
      */
-    public void increaseUsesNumber() {
-        usesNumber += 1;
+    public void decreaseUsesNumber() {
+        usesNumber -= 1;
     }
 
     /**

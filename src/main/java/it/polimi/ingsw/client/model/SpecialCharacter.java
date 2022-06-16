@@ -50,8 +50,8 @@ public class SpecialCharacter {
     /**
      * Increase the counter of uses of the card.
      */
-    public void increaseUsesNumber() {
-        this.usesNumber += 1;
+    public void decreaseUsesNumber() {
+        this.usesNumber -= 1;
     }
 
     /**
