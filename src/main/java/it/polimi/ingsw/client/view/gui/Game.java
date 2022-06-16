@@ -6,16 +6,19 @@ import it.polimi.ingsw.utilities.ClientState;
 import it.polimi.ingsw.utilities.Log;
 import javafx.application.Platform;
 import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 
+import javax.xml.catalog.CatalogFeatures;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -41,6 +44,11 @@ public class Game implements Update {
     private Label phase;
     @FXML
     private Label round;
+
+    private List<Button> islandButtons;
+    private List<Button> cloudButtons;
+    private Button diningRoomButton;
+    private List<Button> entranceButtons;
 
     /**
      * Initializes the scene.
@@ -84,6 +92,7 @@ public class Game implements Update {
         boards = Boards.get(client.getController().getGameModel());
         List<BoardContainer> list = reorder();
         list.get(0).enable(true);
+        this.diningRoomButton = (Button) list.get(0).getPane().getChildrenUnmodifiable().get(1);
         Platform.runLater(() -> {
             Rectangle rectangle;
             boardsLayout.getChildren().clear();
@@ -117,9 +126,12 @@ public class Game implements Update {
     private void addClouds() {
         clouds = Clouds.get(client.getController().getGameModel().getGameBoard().getClouds(), client.getController().getGameModel().getPlayersNumber());
         Platform.runLater(() -> {
+            this.cloudButtons = new ArrayList<>();
             cloudsLayout.getChildren().clear();
-            for (CloudContainer cloud : clouds)
+            for (CloudContainer cloud : clouds) {
                 cloudsLayout.getChildren().add(cloud.getPane());
+                cloudButtons.add((Button) cloud.getPane().getChildrenUnmodifiable().get(2));
+            }
         });
     }
 
@@ -129,15 +141,27 @@ public class Game implements Update {
     private void addIslands() {
         islands = Islands.get(client.getController().getGameModel().getGameBoard());
         Platform.runLater(() -> {
+            this.islandButtons = new ArrayList<>();
             islandsLayout.getChildren().clear();
             islandsLayout.add(islands.get(0).getPane(), 0, 1);
-            for (int index = 1; index < 5; index++)
+            islandButtons.add((Button) islands.get(0).getPane().getChildrenUnmodifiable().get(2));
+            for (int index = 1; index < 5; index++) {
                 islandsLayout.add(islands.get(index).getPane(), index, 0);
+                islandButtons.add((Button) islands.get(index).getPane().getChildrenUnmodifiable().get(2));
+            }
             islandsLayout.add(islands.get(5).getPane(), 5, 1);
+            islandButtons.add((Button) islands.get(5).getPane().getChildrenUnmodifiable().get(2));
+
             islandsLayout.add(islands.get(6).getPane(), 5, 2);
-            for (int index = 7; index < 11; index++)
+            islandButtons.add((Button) islands.get(6).getPane().getChildrenUnmodifiable().get(2));
+
+            for (int index = 7; index < 11; index++){
                 islandsLayout.add(islands.get(index).getPane(), 11 - index, 3);
+                islandButtons.add((Button) islands.get(index).getPane().getChildrenUnmodifiable().get(2));
+
+            }
             islandsLayout.add(islands.get(11).getPane(), 0, 2);
+            islandButtons.add((Button) islands.get(11).getPane().getChildrenUnmodifiable().get(2));
         });
     }
 }

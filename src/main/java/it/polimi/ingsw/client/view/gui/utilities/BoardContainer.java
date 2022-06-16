@@ -14,6 +14,8 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import static it.polimi.ingsw.client.view.gui.utilities.CommandAssembler.manageEntranceSelection;
+
 public class BoardContainer {
 
     private final Supplier<Void> updateDiningRoom;
@@ -47,9 +49,11 @@ public class BoardContainer {
         };
         updateEntrance = students -> {
             for (int index = 0; index < entranceImages.size(); index++) {
+                final int studentNumber = index;
                 entranceImages.get(index).setGraphic(Images.student2d(index < students.size() ? students.get(index) : null));
                 entranceImages.get(index).setVisible(index < students.size() && students.get(index) != null);
                 entranceImages.get(index).setMouseTransparent(true);
+                entranceImages.get(index).setOnAction(mouseEvent -> manageEntranceSelection(students.get(studentNumber)));
             }
         };
         wizard = null;
@@ -224,7 +228,6 @@ public class BoardContainer {
                     "-fx-padding: 0px;" +
                     "-fx-border-color: #FCFFAD;" +
                     "-fx-background-color: radial-gradient(focus-distance 0% ,center 50% 50%, radius 99%, transparent, #FCFFAD);");
-            entranceButton.setFocusTraversable(true);
         }
     }
 }

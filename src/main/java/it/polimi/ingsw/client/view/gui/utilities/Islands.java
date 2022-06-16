@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static it.polimi.ingsw.client.view.gui.utilities.CommandAssembler.manageIslandSelection;
+
 public class Islands {
 
     private Islands() {
@@ -19,7 +21,7 @@ public class Islands {
         List<IslandContainer> list = new ArrayList<>();
 
         for (int index = 0; index < 12; index++) {
-
+            final int islandId = index;
             islandContainer = new IslandContainer();
             list.add(islandContainer);
 
@@ -35,6 +37,7 @@ public class Islands {
                     "-fx-min-width: 155px;" +
                     "-fx-min-height: 155px;");
             islandButton.setVisible(true);
+            islandButton.setOnAction(mouseEvent -> manageIslandSelection(islandId));
             group.getChildren().addAll(Images.island(), Grids.island(gameBoard.getIslandById(index), islandContainer), islandButton);
         }
 

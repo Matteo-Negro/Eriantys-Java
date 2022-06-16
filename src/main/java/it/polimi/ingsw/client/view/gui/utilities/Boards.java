@@ -14,6 +14,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import static it.polimi.ingsw.client.view.gui.utilities.CommandAssembler.manageDiningRoomSelection;
+
 public class Boards {
 
     private Boards() {
@@ -43,6 +45,7 @@ public class Boards {
             diningRoomButton.setTranslateX(112);
             diningRoomButton.setTranslateY(70);
             diningRoomButton.setVisible(true);
+            diningRoomButton.setOnAction(mouseEvent -> manageDiningRoomSelection());
 
             vBox.setAlignment(Pos.CENTER);
             Label name = Labels.playerName(player.getName());

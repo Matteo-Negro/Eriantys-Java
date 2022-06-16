@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static it.polimi.ingsw.client.view.gui.utilities.CommandAssembler.manageCloudSelection;
+
 public class Clouds {
 
     private Clouds() {
@@ -19,7 +21,7 @@ public class Clouds {
         List<CloudContainer> list = new ArrayList<>();
 
         for (Cloud cloud : clouds) {
-
+            final int cloudId = clouds.indexOf(cloud);
             cloudContainer = new CloudContainer();
             list.add(cloudContainer);
 
@@ -35,6 +37,7 @@ public class Clouds {
                     "-fx-min-width: 130px;" +
                     "-fx-min-height: 130px;");
             cloudButton.setVisible(true);
+            cloudButton.setOnAction(mouseEvent -> manageCloudSelection(cloudId));
             group.getChildren().addAll(Images.cloud(), Grids.cloud(cloud, playersNumber, cloudContainer), cloudButton);
         }
 
