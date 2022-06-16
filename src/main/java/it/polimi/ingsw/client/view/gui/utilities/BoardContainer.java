@@ -9,6 +9,8 @@ import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -132,11 +134,9 @@ public class BoardContainer {
             updateEntrance(false);
     }
 
-    /*void setEntranceImages(List<ImageView> entranceImages) {
-        this.entranceImages = Collections.unmodifiableList(entranceImages);
-        if (entrance != null)
-            updateEntrance(false);
-    }*/
+    public List<Button> getEntranceImages() {
+        return this.entranceImages;
+    }
 
     void setEntranceImages(List<Button> entranceButtons) {
         this.entranceImages = Collections.unmodifiableList(entranceButtons);
@@ -222,12 +222,23 @@ public class BoardContainer {
             entranceButton.setMouseTransparent(false);
             entranceButton.setStyle("-fx-background-radius: 50em;" +
                     "-fx-border-radius: 50em;" +
-                    "-fx-border-width: 2px;" +
+                    "-fx-border-width: 1px;" +
                     "-fx-min-width: 25px;" +
                     "-fx-min-height: 25px;" +
-                    "-fx-padding: 0px;" +
+                    "-fx-padding: 2px;" +
                     "-fx-border-color: #FCFFAD;" +
                     "-fx-background-color: radial-gradient(focus-distance 0% ,center 50% 50%, radius 99%, transparent, #FCFFAD);");
         }
+    }
+
+    public void enableDiningRoomButton() {
+        Button diningRoomButton = (Button) getPane().getChildrenUnmodifiable().get(1);
+        diningRoomButton.setVisible(true);
+    }
+
+    public void enableAssistantButtons() {
+        VBox vBox = (VBox) getPane().getChildrenUnmodifiable().get(0);
+        GridPane gPane = (GridPane) vBox.getChildren().get(2);
+        gPane.setVisible(true);
     }
 }

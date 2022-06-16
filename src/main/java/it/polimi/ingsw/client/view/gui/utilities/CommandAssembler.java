@@ -18,6 +18,10 @@ public class CommandAssembler {
     }
 
     public static void manageEntranceSelection(HouseColor color) {
-        Log.debug(("Selected student from entrance of color " + color.toString()));
+        Log.debug("Selected student from entrance of color " + color.toString());
+    }
+
+    public static void manageAssistantSelection(int assistantId) {
+        Log.debug("Selected assistant with id " + assistantId);
     }
 }

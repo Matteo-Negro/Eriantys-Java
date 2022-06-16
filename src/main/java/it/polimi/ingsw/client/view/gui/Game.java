@@ -47,8 +47,9 @@ public class Game implements Update {
 
     private List<Button> islandButtons;
     private List<Button> cloudButtons;
-    private Button diningRoomButton;
+    /*private Button diningRoomButton;
     private List<Button> entranceButtons;
+    private List<Button> assistantButtons;*/
 
     /**
      * Initializes the scene.
@@ -91,8 +92,9 @@ public class Game implements Update {
     private void addBoards() {
         boards = Boards.get(client.getController().getGameModel());
         List<BoardContainer> list = reorder();
-        list.get(0).enable(true);
-        this.diningRoomButton = (Button) list.get(0).getPane().getChildrenUnmodifiable().get(1);
+        list.get(0).enableEntranceButtons();
+        list.get(0).enableAssistantButtons();
+        list.get(0).enableDiningRoomButton();
         Platform.runLater(() -> {
             Rectangle rectangle;
             boardsLayout.getChildren().clear();
@@ -106,6 +108,7 @@ public class Game implements Update {
                 }
             }
         });
+
     }
 
     /**
