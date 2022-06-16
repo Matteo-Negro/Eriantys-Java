@@ -35,13 +35,13 @@ public class SpecialCharacter {
         isActive = false;
         alreadyPaid = false;
         paidInRound = false;
-        usesNumber = 0;
         assignedEffect = getEffectBy(id, students, 4);
         effectCost = assignedEffect.getCost();
         switch (this.id) {
             case 1, 3, 5, 9, 11, 12 -> usesNumber = 1;
             case 10 -> usesNumber = 4;
             case 7 -> usesNumber = 6;
+            default -> usesNumber = 0;
         }
 
         Log.info("*** New SpecialCharacter successfully created with id: " + id);
