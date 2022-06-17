@@ -15,6 +15,12 @@ import javafx.scene.layout.VBox;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+import static it.polimi.ingsw.client.view.gui.utilities.CommandAssembler.manageAssistantSelection;
+import static it.polimi.ingsw.client.view.gui.utilities.CommandAssembler.manageDiningRoomSelection;
 
 public class Boards {
 
@@ -25,7 +31,6 @@ public class Boards {
 
         BoardContainer boardContainer;
         Map<String, BoardContainer> map = new HashMap<>();
-
 
         for (Player player : gameModel.getPlayers()) {
             GridPane gPane = new GridPane();

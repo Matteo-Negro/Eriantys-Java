@@ -10,6 +10,8 @@ import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -31,6 +33,8 @@ public class Game implements Update {
 
     @FXML
     private VBox boardsLayout;
+    @FXML
+    private AnchorPane boardsTab;
     @FXML
     private HBox cloudsLayout;
     @FXML
@@ -64,6 +68,8 @@ public class Game implements Update {
     @FXML
     private Label phase;
     @FXML
+    private ScrollPane realmTab;
+    @FXML
     private Label round;
 
     private CommandAssembler commandAssembler;
@@ -89,7 +95,7 @@ public class Game implements Update {
             id.requestFocus();
             id.setText(client.getController().getGameCode());
             round.setText(String.valueOf(client.getController().getGameModel().getRound()));
-            phase.setText(client.getController().getClientState().name().toLowerCase(Locale.ROOT));
+            phase.setText(client.getController().getGameModel().getPhase().name().toLowerCase(Locale.ROOT));
         });
         new Thread(this::prepareGraphicElements).start();
         new Thread(new it.polimi.ingsw.client.view.gui.updates.Game(client)).start();
@@ -102,6 +108,10 @@ public class Game implements Update {
      */
     @FXML
     private void exit(Event event) {
+        if (EventProcessing.boardsToggle(event)) {
+            toggleView(event);
+            return;
+        }
         EventProcessing.exit(event, client);
     }
 
@@ -109,10 +119,38 @@ public class Game implements Update {
      * Calls the methods that prepare the graphic elements and the buttons.
      */
     private void prepareGraphicElements() {
-        addBoards();
-        addClouds();
-        addIslands();
+        Thread boardsThread = new Thread(this::addBoards);
+        boardsThread.start();
+        Thread cloudsThread = new Thread(this::addClouds);
+        cloudsThread.start();
+        Thread islandsThread = new Thread(this::addIslands);
+        islandsThread.start();
+        synchronized (this) {
+            while (boardsThread.isAlive() || cloudsThread.isAlive() || islandsThread.isAlive()) {
+                try {
+                    this.wait(100);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
         activateButtons();
+    }
+
+    /**
+     * Toggles the views.
+     *
+     * @param event The event that triggered the function.
+     */
+    @FXML
+    public void toggleView(Event event) {
+        if (EventProcessing.boardsToggle(event))
+            Platform.runLater(() -> {
+                boardsTab.setVisible(!boardsTab.isVisible());
+                realmTab.setVisible(!realmTab.isVisible());
+                if (boardsTab.isVisible()) {
+                }
+            });
     }
 
     /**
@@ -209,20 +247,18 @@ public class Game implements Update {
         this.cloudButtons = new ArrayList<>();
         for (CloudContainer cloud : this.clouds)
             cloudButtons.add((Button) cloud.getPane().getChildrenUnmodifiable().get(2));
-        enableCloudButtons(false);
 
         this.islandButtons = new ArrayList<>();
         for (int islandId = 0; islandId < 12; islandId++)
             islandButtons.add((Button) this.islands.get(islandId).getPane().getChildrenUnmodifiable().get(2));
-        enableIslandButtons(false);
     }
 
     /**
      * Activates the due buttons for the current phase.
      */
     private void activateButtons() {
+        BoardContainer firstBoard = this.boardsList.get(0);
         Platform.runLater(() -> {
-            BoardContainer firstBoard = this.boardsList.get(0);
             initializeButtons();
             if (!this.client.getController().hasCommunicationToken()) {
                 firstBoard.enableDiningRoomButton(false);
@@ -272,7 +308,8 @@ public class Game implements Update {
      * @param enable The value to set.
      */
     private void enableIslandButtons(boolean enable) {
-        for (Button islandButton : this.islandButtons) islandButton.setVisible(enable);
+        for (Button islandButton : this.islandButtons)
+            islandButton.setVisible(enable);
     }
 
     /**
@@ -281,6 +318,7 @@ public class Game implements Update {
      * @param enable The value to set.
      */
     private void enableCloudButtons(boolean enable) {
-        for (Button cloudButton : this.cloudButtons) cloudButton.setVisible(enable);
+        for (Button cloudButton : this.cloudButtons)
+            cloudButton.setVisible(enable);
     }
 }

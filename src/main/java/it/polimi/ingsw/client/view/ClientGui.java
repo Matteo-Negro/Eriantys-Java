@@ -172,7 +172,7 @@ public class ClientGui extends Application implements View {
         return controller;
     }
 
-    public  GameModelObserver getModelObserver() {
+    public GameModelObserver getModelObserver() {
         return modelObserver;
     }
 

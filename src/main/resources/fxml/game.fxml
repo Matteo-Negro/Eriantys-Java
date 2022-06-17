@@ -3,8 +3,6 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.Tab?>
-<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -14,125 +12,120 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<TabPane prefHeight="727.0" prefWidth="1255.0" side="BOTTOM" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.client.view.gui.Game">
-  <tabs>
-    <Tab text="Realm">
-         <content>
-            <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #74c4ed;">
+<AnchorPane onKeyPressed="#toggleView" prefHeight="720.0" prefWidth="1280.0" style="-fx-background-color: #74c4ed;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.client.view.gui.Game">
+   <children>
+      <AnchorPane fx:id="boardsTab" style="-fx-background-color: #74c4ed;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <GridPane layoutX="253.0" layoutY="-31.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="50.0">
+               <columnConstraints>
+                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="10.0" />
+                  <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="10.0" />
+                  <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="10.0" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="200.0" valignment="CENTER" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
+               </rowConstraints>
                <children>
-                  <GridPane layoutX="253.0" layoutY="-31.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="50.0">
-                    <columnConstraints>
-                      <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="10.0" />
-                        <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="10.0" />
-                        <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                      <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="10.0" />
-                    </columnConstraints>
-                    <rowConstraints>
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="200.0" valignment="CENTER" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
-                    </rowConstraints>
-                     <children>
-                        <Line fx:id="next2" endX="180.0" stroke="#396175" strokeLineCap="ROUND" strokeWidth="30.0" visible="false" GridPane.columnIndex="1" />
-                        <Line fx:id="next3" endX="180.0" stroke="#396175" strokeLineCap="ROUND" strokeWidth="30.0" visible="false" GridPane.columnIndex="2" />
-                        <Line fx:id="next4" endX="180.0" stroke="#396175" strokeLineCap="ROUND" strokeWidth="30.0" visible="false" GridPane.columnIndex="3" />
-                        <Line fx:id="next6" endY="180.0" stroke="#396175" strokeLineCap="ROUND" strokeWidth="30.0" visible="false" GridPane.columnIndex="4" GridPane.rowIndex="1" />
-                        <Line fx:id="next8" endX="180.0" stroke="#396175" strokeLineCap="ROUND" strokeWidth="30.0" visible="false" GridPane.columnIndex="3" GridPane.rowIndex="2" />
-                        <Line fx:id="next9" endX="180.0" stroke="#396175" strokeLineCap="ROUND" strokeWidth="30.0" visible="false" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-                        <Line fx:id="next10" endX="180.0" stroke="#396175" strokeLineCap="ROUND" strokeWidth="30.0" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                        <Line fx:id="next12" endY="180.0" stroke="#396175" strokeLineCap="ROUND" strokeWidth="30.0" visible="false" GridPane.rowIndex="1" />
-                     </children>
-                  </GridPane>
-                  <GridPane layoutX="538.0" layoutY="313.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="50.0">
-                     <columnConstraints>
-                        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                        <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                     </columnConstraints>
-                     <rowConstraints>
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="0.0" prefHeight="50.0" valignment="BOTTOM" vgrow="NEVER" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
-                     </rowConstraints>
-                     <children>
-                        <Line fx:id="next1" endX="-180.0" endY="130.0" stroke="#396175" strokeLineCap="ROUND" strokeWidth="30.0" visible="false" />
-                        <Line fx:id="next5" endX="180.0" endY="130.0" stroke="#396175" strokeLineCap="ROUND" strokeWidth="30.0" visible="false" GridPane.columnIndex="2" />
-                        <Line fx:id="next7" endX="-180.0" endY="130.0" stroke="#396175" strokeLineCap="ROUND" strokeWidth="30.0" visible="false" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-                        <Line fx:id="next11" endX="180.0" endY="130.0" stroke="#396175" strokeLineCap="ROUND" strokeWidth="30.0" visible="false" GridPane.rowIndex="2" />
-                     </children>
-                  </GridPane>
-                  <GridPane fx:id="islandsLayout" layoutX="528.0" layoutY="303.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="50.0">
-                    <columnConstraints>
-                      <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                      <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                        <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                    </columnConstraints>
-                    <rowConstraints>
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="BOTTOM" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="0.0" prefHeight="50.0" valignment="BOTTOM" vgrow="NEVER" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="BASELINE" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
-                    </rowConstraints>
-                  </GridPane>
-                  <HBox fx:id="cloudsLayout" alignment="CENTER" layoutX="1112.0" layoutY="625.0" AnchorPane.bottomAnchor="250.0" AnchorPane.leftAnchor="300.0" AnchorPane.rightAnchor="300.0" AnchorPane.topAnchor="250.0" />
-                  <GridPane alignment="CENTER_LEFT" layoutX="91.0" layoutY="74.0" prefHeight="68.0" prefWidth="183.0" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0">
-                    <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="47.553348541259766" />
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="203.02315521240234" minWidth="10.0" prefWidth="135.44665145874023" />
-                    </columnConstraints>
-                    <rowConstraints>
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                    </rowConstraints>
-                     <children>
-                        <Label text="ID:" textFill="WHITE">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <Label text="Round:" textFill="WHITE" GridPane.rowIndex="1">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <Label text="Phase:" textFill="WHITE" GridPane.rowIndex="2">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <Label fx:id="id" textFill="WHITE" GridPane.columnIndex="1">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <Label fx:id="round" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <Label fx:id="phase" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                     </children>
-                  </GridPane>
-                  <Button layoutX="1178.0" layoutY="16.0" mnemonicParsing="false" onKeyPressed="#exit" onMouseClicked="#exit" onTouchPressed="#exit" text="Exit" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
-               </children></AnchorPane>
-         </content></Tab>
-    <Tab text="Boards">
+                  <Line fx:id="next2" endX="180.0" stroke="#396175" strokeLineCap="ROUND" strokeWidth="30.0" visible="false" GridPane.columnIndex="1" />
+                  <Line fx:id="next3" endX="180.0" stroke="#396175" strokeLineCap="ROUND" strokeWidth="30.0" visible="false" GridPane.columnIndex="2" />
+                  <Line fx:id="next4" endX="180.0" stroke="#396175" strokeLineCap="ROUND" strokeWidth="30.0" visible="false" GridPane.columnIndex="3" />
+                  <Line fx:id="next6" endY="180.0" stroke="#396175" strokeLineCap="ROUND" strokeWidth="30.0" visible="false" GridPane.columnIndex="4" GridPane.rowIndex="1" />
+                  <Line fx:id="next8" endX="180.0" stroke="#396175" strokeLineCap="ROUND" strokeWidth="30.0" visible="false" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                  <Line fx:id="next9" endX="180.0" stroke="#396175" strokeLineCap="ROUND" strokeWidth="30.0" visible="false" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                  <Line fx:id="next10" endX="180.0" stroke="#396175" strokeLineCap="ROUND" strokeWidth="30.0" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <Line fx:id="next12" endY="180.0" stroke="#396175" strokeLineCap="ROUND" strokeWidth="30.0" visible="false" GridPane.rowIndex="1" />
+               </children>
+            </GridPane>
+            <GridPane layoutX="538.0" layoutY="313.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="50.0">
+               <columnConstraints>
+                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="0.0" prefHeight="50.0" valignment="BOTTOM" vgrow="NEVER" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
+               </rowConstraints>
+               <children>
+                  <Line fx:id="next1" endX="-180.0" endY="130.0" stroke="#396175" strokeLineCap="ROUND" strokeWidth="30.0" visible="false" />
+                  <Line fx:id="next5" endX="180.0" endY="130.0" stroke="#396175" strokeLineCap="ROUND" strokeWidth="30.0" visible="false" GridPane.columnIndex="2" />
+                  <Line fx:id="next7" endX="-180.0" endY="130.0" stroke="#396175" strokeLineCap="ROUND" strokeWidth="30.0" visible="false" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                  <Line fx:id="next11" endX="180.0" endY="130.0" stroke="#396175" strokeLineCap="ROUND" strokeWidth="30.0" visible="false" GridPane.rowIndex="2" />
+               </children>
+            </GridPane>
+            <GridPane fx:id="islandsLayout" layoutX="528.0" layoutY="303.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="50.0">
+               <columnConstraints>
+                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="BOTTOM" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="0.0" prefHeight="50.0" valignment="BOTTOM" vgrow="NEVER" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="BASELINE" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
+               </rowConstraints>
+            </GridPane>
+            <HBox fx:id="cloudsLayout" alignment="CENTER" layoutX="1112.0" layoutY="625.0" AnchorPane.bottomAnchor="250.0" AnchorPane.leftAnchor="300.0" AnchorPane.rightAnchor="300.0" AnchorPane.topAnchor="250.0" />
+         </children>
+      </AnchorPane>
+      <ScrollPane fx:id="realmTab" fitToHeight="true" fitToWidth="true" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <content>
-            <ScrollPane fitToHeight="true" fitToWidth="true">
-               <content>
-                  <VBox fx:id="boardsLayout" alignment="TOP_CENTER" style="-fx-background-color: #74c4ed;" />
-               </content>
-            </ScrollPane>
-         </content></Tab>
-  </tabs>
-</TabPane>
+            <VBox fx:id="boardsLayout" alignment="TOP_CENTER" style="-fx-background-color: #74c4ed;" />
+         </content>
+      </ScrollPane>
+      <GridPane alignment="CENTER_LEFT" prefHeight="68.0" prefWidth="183.0" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0">
+         <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="47.553348541259766" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="203.02315521240234" minWidth="10.0" prefWidth="135.44665145874023" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+         </rowConstraints>
+         <children>
+            <Label text="ID:" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <Label text="Round:" textFill="WHITE" GridPane.rowIndex="1">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <Label text="Phase:" textFill="WHITE" GridPane.rowIndex="2">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <Label fx:id="id" textFill="WHITE" GridPane.columnIndex="1">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <Label fx:id="round" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <Label fx:id="phase" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+         </children>
+      </GridPane>
+      <Button mnemonicParsing="false" onKeyPressed="#exit" onMouseClicked="#exit" onTouchPressed="#exit" text="Exit" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="10.0" />
+   </children>
+</AnchorPane>
