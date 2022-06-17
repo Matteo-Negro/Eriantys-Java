@@ -9,6 +9,7 @@ import it.polimi.ingsw.utilities.ClientState;
 import it.polimi.ingsw.utilities.Log;
 import it.polimi.ingsw.utilities.MessageCreator;
 import it.polimi.ingsw.utilities.Pair;
+import javafx.scene.layout.AnchorPane;
 import org.fusesource.jansi.Ansi;
 import org.jline.builtins.Completers;
 import org.jline.reader.History;
@@ -223,19 +224,26 @@ public class ClientCli extends Thread implements View {
             if (this.controller.getGameServer() != null) {
                 Game.print(terminal, this.controller.getGameModel(), this.controller.getGameCode(), this.controller.getGameModel().getRound(), this.controller.getGameModel().getPlayerByName(controller.getUserName()).isActive());
 
-                if (this.controller.hasCommunicationToken() && !this.controller.getClientState().equals(ClientState.CONNECTION_LOST))
-                    this.controller.manageGameRunning(readLine(getPrettyUserName(), terminal, Autocompletion.get(), true, history).toLowerCase(Locale.ROOT));
-                else {
+                if (this.controller.hasCommunicationToken() && !this.controller.getClientState().equals(ClientState.CONNECTION_LOST)) {
+                    String command = readLine(getPrettyUserName(), terminal, Autocompletion.get(), true, history).toLowerCase(Locale.ROOT);
+                    terminal.writer().print(foreground(White.getInstance()));
+                    terminal.writer().print(background(Black.getInstance()));
+                    terminal.flush();
+                    if (!command.equals(""))
+                        this.controller.manageGameRunning(command);
+                } else {
                     try {
                         this.controller.getLock().wait(1000);
                     } catch (InterruptedException e) {
                         this.controller.resetGame();
                         Thread.currentThread().interrupt();
                     }
-                    updateScreen(false);
                 }
             }
         }
+
+        updateScreen(false);
+
         if (controller.getClientState().equals(ClientState.GAME_WAITING_ROOM))
             showError("One or more users disconnected.");
     }

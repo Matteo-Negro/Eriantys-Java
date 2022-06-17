@@ -8,6 +8,7 @@ import it.polimi.ingsw.client.view.cli.coordinates.WaitingOptions;
 import org.fusesource.jansi.Ansi;
 import org.jline.terminal.Terminal;
 
+import java.util.Collections;
 import java.util.List;
 
 import static it.polimi.ingsw.client.view.cli.Utilities.*;
@@ -105,6 +106,9 @@ public class WaitingRoom {
      * @return The generated Ansi stream.
      */
     private static Ansi printOptions(List<String> players, String gameCode, int expectedPlayers, int iteration) {
+
+        Collections.sort(players);
+
         Ansi ansi = new Ansi();
         ansi.a(foreground(Grey.getInstance()));
 
@@ -116,15 +120,13 @@ public class WaitingRoom {
         // Line #2
 
         int size = 37;
-        String name;
         String shortName;
         StringBuilder adaptiveString;
 
         for (String player : players) {
-            name = player;
 
-            shortName = name;
-            if (name.length() > 33) shortName = name.substring(0, 33);
+            shortName = player;
+            if (player.length() > 33) shortName = player.substring(0, 33);
 
             adaptiveString = new StringBuilder();
             adaptiveString.append(" ".repeat(Math.max(0, (size - 2 - shortName.length() - 2))));

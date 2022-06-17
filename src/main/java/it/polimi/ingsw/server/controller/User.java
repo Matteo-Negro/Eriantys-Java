@@ -184,7 +184,7 @@ public class User implements Runnable {
      * @param command The command to manage.
      * @throws IllegalMoveException Thrown if the command cannot be executed.
      */
-    private void manageGameCommand(JsonObject command) throws IllegalMoveException{
+    private void manageGameCommand(JsonObject command) throws IllegalMoveException {
         if (gameController.getGameModel().isExpert() && ((command.get("subtype").getAsString().equals("ban")) || (command.get("special") != null && command.get("special").getAsBoolean()) || (command.get("move") != null && !command.get("move").getAsBoolean()))) {
             SpecialCharacter specialCharacter = null;
             for (SpecialCharacter sc : gameController.getGameModel().getGameBoard().getCharacters()) {
@@ -194,23 +194,9 @@ public class User implements Runnable {
                 }
             }
             if (specialCharacter == null) disconnected();
-
             else {
-                switch (specialCharacter.getId()) {
-                    case 1, 3, 5, 9, 11, 12 -> {
-                        if (specialCharacter.getUsesNumber() > 0) throw new IllegalMoveException();
-                        specialCharacter.increaseUsesNumber();
-                    }
-                    case 10 -> {
-                        if (specialCharacter.getUsesNumber() > 4) throw new IllegalMoveException();
-                        specialCharacter.increaseUsesNumber();
-                    }
-                    case 7 -> {
-                        if (specialCharacter.getUsesNumber() > 6) throw new IllegalMoveException();
-                        specialCharacter.increaseUsesNumber();
-                    }
-                    default -> throw new IllegalMoveException();
-                }
+                if (specialCharacter.getUsesNumber() == 0) throw new IllegalMoveException();
+                specialCharacter.decreaseUsesNumber();
             }
         }
         switch (command.get("subtype").getAsString()) {

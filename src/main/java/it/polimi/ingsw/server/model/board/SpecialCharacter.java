@@ -35,9 +35,13 @@ public class SpecialCharacter {
         isActive = false;
         alreadyPaid = false;
         paidInRound = false;
-        usesNumber = 0;
         assignedEffect = getEffectBy(id, students, 4);
         effectCost = assignedEffect.getCost();
+        switch (this.id) {
+            case 10 -> usesNumber = 4;
+            case 7 -> usesNumber = 6;
+            default -> usesNumber = 1;
+        }
 
         Log.info("*** New SpecialCharacter successfully created with id: " + id);
     }
@@ -131,7 +135,7 @@ public class SpecialCharacter {
      */
     public void cleanEffect() {
         isActive = false;
-        usesNumber = 0;
+        usesNumber = 1;
     }
 
     /**
@@ -180,8 +184,8 @@ public class SpecialCharacter {
     /**
      * Increase the counter of uses of the card.
      */
-    public void increaseUsesNumber() {
-        usesNumber += 1;
+    public void decreaseUsesNumber() {
+        usesNumber -= 1;
     }
 
     /**

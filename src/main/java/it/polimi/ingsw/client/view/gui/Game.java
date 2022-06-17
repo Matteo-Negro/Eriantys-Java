@@ -3,6 +3,7 @@ package it.polimi.ingsw.client.view.gui;
 import it.polimi.ingsw.client.view.ClientGui;
 import it.polimi.ingsw.client.view.gui.utilities.*;
 import it.polimi.ingsw.utilities.ClientState;
+import it.polimi.ingsw.utilities.Pair;
 import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -12,6 +13,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 
 import java.util.ArrayList;
@@ -35,6 +37,30 @@ public class Game implements Update {
     private Label id;
     @FXML
     private GridPane islandsLayout;
+    @FXML
+    private Line next1;
+    @FXML
+    private Line next2;
+    @FXML
+    private Line next3;
+    @FXML
+    private Line next4;
+    @FXML
+    private Line next5;
+    @FXML
+    private Line next6;
+    @FXML
+    private Line next7;
+    @FXML
+    private Line next8;
+    @FXML
+    private Line next9;
+    @FXML
+    private Line next10;
+    @FXML
+    private Line next11;
+    @FXML
+    private Line next12;
     @FXML
     private Label phase;
     @FXML
@@ -128,6 +154,7 @@ public class Game implements Update {
         Platform.runLater(() -> {
             cloudsLayout.getChildren().clear();
             for (CloudContainer cloud : clouds) {
+                HBox.setMargin(cloud.getPane(), new Insets(5));
                 cloudsLayout.getChildren().add(cloud.getPane());
             }
 
@@ -138,22 +165,30 @@ public class Game implements Update {
      * Adds all the islands to the GUI.
      */
     private void addIslands() {
-        islands = Islands.get(client.getController().getGameModel().getGameBoard());
+        Pair<List<IslandContainer>, List<Boolean>> tmp = Islands.get(client.getController().getGameModel().getGameBoard(), List.of(
+                next1, next2, next3, next4, next5, next6,
+                next7, next8, next9, next10, next11, next12
+        ));
+        this.islands = tmp.key();
         Platform.runLater(() -> {
             islandsLayout.getChildren().clear();
-            islandsLayout.add(islands.get(0).getPane(), 0, 1);
+            islandsLayout.add(this.islands.get(0).getPane(), 0, 1);
             for (int index = 1; index < 5; index++) {
-                islandsLayout.add(islands.get(index).getPane(), index, 0);
+                islandsLayout.add(this.islands.get(index).getPane(), index, 0);
             }
-            islandsLayout.add(islands.get(5).getPane(), 5, 1);
+            islandsLayout.add(this.islands.get(5).getPane(), 5, 1);
 
-            islandsLayout.add(islands.get(6).getPane(), 5, 2);
+            islandsLayout.add(this.islands.get(6).getPane(), 5, 3);
 
             for (int index = 7; index < 11; index++) {
-                islandsLayout.add(islands.get(index).getPane(), 11 - index, 3);
+                islandsLayout.add(this.islands.get(index).getPane(), 11 - index, 4);
 
             }
-            islandsLayout.add(islands.get(11).getPane(), 0, 2);
+            islandsLayout.add(this.islands.get(11).getPane(), 0, 3);
+
+            for (int index = 0; index < 11; index++)
+                if (client.getController().getGameModel().getGameBoard().getIslandById(index).hasNext())
+                    this.islands.get(index).connect();
         });
     }
 

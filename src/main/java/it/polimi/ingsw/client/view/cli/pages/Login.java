@@ -5,11 +5,13 @@ import it.polimi.ingsw.client.view.cli.colours.*;
 import it.polimi.ingsw.client.view.cli.coordinates.LoginNewLine;
 import it.polimi.ingsw.client.view.cli.coordinates.LoginOptions;
 import it.polimi.ingsw.client.view.cli.coordinates.LoginOptionsInput;
+import it.polimi.ingsw.utilities.Pair;
 import org.fusesource.jansi.Ansi;
 import org.jline.terminal.Terminal;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import static it.polimi.ingsw.client.view.cli.Utilities.*;
@@ -97,6 +99,10 @@ public class Login {
      * @return The generated Ansi stream.
      */
     private static Ansi printOptions(Map<String, Boolean> players, int expectedPlayers) {
+
+        List<Pair<String, Boolean>> sortedPlayers = players.keySet().stream().sorted()
+                .map(name -> new Pair<>(name, players.get(name))).toList();
+
         Ansi ansi = new Ansi();
         ansi.a(foreground(Grey.getInstance()));
 
@@ -109,23 +115,20 @@ public class Login {
 
         if (players.size() != 0) {
             int size = 35;
-            String name;
             String shortName;
             StringBuilder adaptiveString;
-            Iterator<String> itr = players.keySet().iterator();
 
-            for (int i = 0; i < players.keySet().size(); i++) {
-                name = itr.next();
+            for (Pair<String, Boolean> player : sortedPlayers) {
+                shortName = player.key();
 
-                shortName = name;
-                if (name.length() > 22) shortName = name.substring(0, 22);
+                if (player.key().length() > 22) shortName = player.key().substring(0, 22);
 
                 adaptiveString = new StringBuilder();
-                adaptiveString.append(" ".repeat(Math.max(0, (size - 2 - shortName.length() - 1 - (Boolean.TRUE.equals(players.get(name)) ? 9 : 10)))));
+                adaptiveString.append(" ".repeat(Math.max(0, (size - 2 - shortName.length() - 1 - (Boolean.TRUE.equals(player.value()) ? 9 : 10)))));
 
                 ansi.a("  " + shortName + ":" + adaptiveString);
-                ansi.a(Boolean.TRUE.equals(players.get(name)) ? foreground(Green.getInstance()) : foreground(Red.getInstance()));
-                ansi.a(Boolean.TRUE.equals(players.get(name)) ? " ONLINE  " : " OFFLINE  ");
+                ansi.a(Boolean.TRUE.equals(player.value()) ? foreground(Green.getInstance()) : foreground(Red.getInstance()));
+                ansi.a(Boolean.TRUE.equals(player.value()) ? " ONLINE  " : " OFFLINE  ");
 
                 ansi.a(foreground(Grey.getInstance()));
                 ansi.a(newLine());

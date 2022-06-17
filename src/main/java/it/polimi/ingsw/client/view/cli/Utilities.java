@@ -4,11 +4,10 @@ import it.polimi.ingsw.client.view.cli.colours.*;
 import it.polimi.ingsw.utilities.HouseColor;
 import org.fusesource.jansi.Ansi;
 import org.jline.builtins.Completers.TreeCompleter;
-import org.jline.reader.History;
-import org.jline.reader.LineReader;
-import org.jline.reader.LineReaderBuilder;
+import org.jline.reader.*;
 import org.jline.terminal.Terminal;
 
+import java.io.IOError;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -178,14 +177,20 @@ public class Utilities {
      * @return String to write.
      */
     public static String readLine(String prefix, Terminal terminal, List<TreeCompleter.Node> completers, boolean suggestions, History history) {
-        return fixString(LineReaderBuilder.builder()
-                .terminal(terminal)
-                .completer(completers != null ? new TreeCompleter(completers) : null)
-                .option(LineReader.Option.CASE_INSENSITIVE, true)
-                .option(LineReader.Option.AUTO_MENU, suggestions)
-                .option(LineReader.Option.AUTO_LIST, suggestions)
-                .history(history)
-                .build().readLine(prefix));
+        try {
+            return fixString(LineReaderBuilder.builder()
+                    .terminal(terminal)
+                    .completer(completers != null ? new TreeCompleter(completers) : null)
+                    .option(LineReader.Option.CASE_INSENSITIVE, true)
+                    .option(LineReader.Option.AUTO_MENU, suggestions)
+                    .option(LineReader.Option.AUTO_LIST, suggestions)
+                    .history(history)
+                    .build().readLine(prefix));
+        } catch (EndOfFileException e) {
+            throw new UserInterruptException(e.getMessage());
+        } catch (IOError e) {
+            return "";
+        }
     }
 
     /**

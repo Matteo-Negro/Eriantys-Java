@@ -7,12 +7,14 @@ import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.shape.Line;
 
 import java.util.EnumMap;
 import java.util.Map;
 
 public class IslandContainer {
 
+    private Line connection;
     private ImageView motherNature;
     private Parent pane;
     private Map<HouseColor, HBox> studentsBoxes;
@@ -20,11 +22,20 @@ public class IslandContainer {
     private ImageView tower;
 
     IslandContainer() {
+        connection = null;
         motherNature = null;
         pane = null;
         studentsBoxes = null;
         studentsLabels = null;
         tower = null;
+    }
+
+    void setConnection(Line connection) {
+        this.connection = connection;
+    }
+
+    public void connect() {
+        Platform.runLater(() -> connection.setVisible(true));
     }
 
     void setMotherNature(ImageView motherNature) {

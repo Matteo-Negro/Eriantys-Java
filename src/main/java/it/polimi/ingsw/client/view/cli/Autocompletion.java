@@ -109,7 +109,8 @@ public class Autocompletion {
                         nodes.addAll(studentsMoves(controller.getGameModel().getPlayerByName(controller.getUserName()).getSchoolBoard().getEntrance()));
             }
             if (controller.getGameModel().isExpert()) {
-                if (controller.getGameModel().getGameBoard().getSpecialCharacters().stream().anyMatch(SpecialCharacter::isActive))
+                if (controller.getGameModel().getGameBoard().getSpecialCharacters().stream().anyMatch(
+                        specialCharacter -> specialCharacter.isActive() && specialCharacter.getUsesNumber() != 0))
                     nodes.addAll(specialCharactersActions());
                 else
                     nodes.addAll(payableSpecialCharacters());
