@@ -27,7 +27,7 @@ public class WaitingRoom implements Runnable, Observer {
     public void run() {
         while (client.getController().getClientState().equals(ClientState.GAME_WAITING_ROOM)) {
             synchronized (lock) {
-                if(client.getController().getGameModel()!=null)
+                if (client.getController().getGameModel() != null)
                     this.waitingRoomGUI.update(getPlayers());
                 try {
                     lock.wait(1000);
@@ -43,19 +43,21 @@ public class WaitingRoom implements Runnable, Observer {
     private List<Label> getPlayers() {
 
         List<Label> players = new ArrayList<>();
-        Map<String, Boolean> waitingRoomPlayers = client.getController().getGameModel().getWaitingRoom();
-        int index = (int) waitingRoomPlayers.entrySet().stream().filter(Map.Entry::getValue).count();
+        List<String> sortedPlayers = client.getController().getGameModel().getWaitingRoom().entrySet().stream()
+                .filter(Map.Entry::getValue)
+                .map(Map.Entry::getKey)
+                .sorted()
+                .toList();
+        int index = sortedPlayers.size();
 
-        for (Map.Entry<String, Boolean> entry : waitingRoomPlayers.entrySet())
-            if (Boolean.TRUE.equals(entry.getValue())) {
-                Label label = new Label(entry.getKey());
-                if (index != 1)
-                    label.setOpaqueInsets(new Insets(0, 0, 10, 0));
-                if (Boolean.TRUE.equals(entry.getValue()))
-                    label.setTextFill(Color.rgb(255, 255, 255));
-                index--;
-                players.add(label);
-            }
+        for (String player : sortedPlayers) {
+            Label label = new Label(player);
+            if (index != 1)
+                label.setOpaqueInsets(new Insets(0, 0, 10, 0));
+            label.setTextFill(Color.rgb(255, 255, 255));
+            index--;
+            players.add(label);
+        }
 
         return players;
     }

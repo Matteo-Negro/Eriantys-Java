@@ -3,6 +3,7 @@ package it.polimi.ingsw.client.view.gui;
 import it.polimi.ingsw.client.view.ClientGui;
 import it.polimi.ingsw.client.view.gui.utilities.EventProcessing;
 import it.polimi.ingsw.utilities.ClientState;
+import it.polimi.ingsw.utilities.Pair;
 import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -55,12 +56,15 @@ public class Login implements Update {
      */
     private List<Label> getPlayers() {
         List<Label> labels = new ArrayList<>();
+        Map<String, Boolean> playersMap =  client.getController().getGameModel().getWaitingRoom();
+        List<Pair<String, Boolean>> sortedPlayers = playersMap.keySet().stream().sorted()
+                .map(name -> new Pair<>(name, playersMap.get(name))).toList();
         int index = client.getController().getGameModel().getWaitingRoom().size();
-        for (Map.Entry<String, Boolean> entry : client.getController().getGameModel().getWaitingRoom().entrySet()) {
-            Label label = new Label(entry.getKey());
+        for (Pair<String, Boolean> entry : sortedPlayers) {
+            Label label = new Label(entry.key());
             if (index != 1)
                 label.setOpaqueInsets(new Insets(0, 0, 10, 0));
-            if (Boolean.TRUE.equals(entry.getValue()))
+            if (Boolean.TRUE.equals(entry.value()))
                 label.setTextFill(Color.rgb(181, 255, 181));
             else
                 label.setTextFill(Color.rgb(255, 181, 181));
