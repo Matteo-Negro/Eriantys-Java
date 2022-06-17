@@ -270,15 +270,14 @@ public class ClientController {
      * Manages the game logic.
      */
     public void manageGameRunning(String command) {
+
         if (getClientState().equals(ClientState.CONNECTION_LOST)) {
             updateScreen();
             return;
         }
 
-        try {
-            if (!CommandParser.checker(command) || command.equals("")) throw new IllegalActionException();
-        } catch (IllegalActionException iae) {
-            Log.warning(iae);
+        if (!CommandParser.checker(command) || command.equals("")) {
+            Log.warning("Wrong command.");
             updateScreen();
             this.errorOccurred("Wrong command.");
             return;
