@@ -48,11 +48,9 @@ public class Boards {
                         "-fx-max-width: 90px;" +
                         "-fx-background-color: transparent;" +
                         "-fx-background-color: radial-gradient(focus-distance 0%, center 50% 50%, radius 100% ,transparent, #FCFFAD);");
-                assistantButton.setVisible(true);
                 assistantButton.setOnAction(mouseEvent -> manageAssistantSelection(assistantId));
                 gPane.add(assistantButton, assistantId, 0);
             }
-            gPane.setVisible(false);
 
             boardContainer = new BoardContainer();
             map.put(player.getName(), boardContainer);
@@ -70,7 +68,6 @@ public class Boards {
                     "-fx-background-color: radial-gradient(focus-distance 0%, center 50% 50%, radius 100% ,transparent, #FCFFAD);");
             diningRoomButton.setTranslateX(174);
             diningRoomButton.setTranslateY(70);
-            diningRoomButton.setVisible(false);
             diningRoomButton.setOnAction(mouseEvent -> manageDiningRoomSelection());
 
             vBox.setAlignment(Pos.CENTER);

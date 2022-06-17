@@ -36,7 +36,6 @@ public class Islands {
                     "-fx-background-color: radial-gradient(focus-distance 0% ,center 50% 50%, radius 90%, transparent, #FCFFAD);" +
                     "-fx-min-width: 155px;" +
                     "-fx-min-height: 155px;");
-            islandButton.setVisible(true);
             islandButton.setOnAction(mouseEvent -> manageIslandSelection(islandId));
             group.getChildren().addAll(Images.island(), Grids.island(gameBoard.getIslandById(index), islandContainer), islandButton);
         }

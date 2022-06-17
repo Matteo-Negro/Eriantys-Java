@@ -36,7 +36,6 @@ public class Clouds {
                     "-fx-background-color: radial-gradient(focus-distance 0%, center 50% 50%, radius 90%, transparent, #FCFFAD);" +
                     "-fx-min-width: 130px;" +
                     "-fx-min-height: 130px;");
-            cloudButton.setVisible(true);
             cloudButton.setOnAction(mouseEvent -> manageCloudSelection(cloudId));
             group.getChildren().addAll(Images.cloud(), Grids.cloud(cloud, playersNumber, cloudContainer), cloudButton);
         }

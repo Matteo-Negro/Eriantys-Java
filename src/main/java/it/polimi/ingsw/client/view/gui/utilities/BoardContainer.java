@@ -1,6 +1,7 @@
 package it.polimi.ingsw.client.view.gui.utilities;
 
 import it.polimi.ingsw.utilities.HouseColor;
+import it.polimi.ingsw.utilities.Log;
 import it.polimi.ingsw.utilities.WizardType;
 import it.polimi.ingsw.utilities.exceptions.IllegalActionException;
 import javafx.application.Platform;
@@ -73,7 +74,6 @@ public class BoardContainer {
         Platform.runLater(() -> {
             if (value) {
                 pane.setStyle("-fx-background-color: #38a2ed");
-                enableEntranceButtons();
             }
             else
                 pane.setStyle("-fx-background-color: rgba(255, 255, 255, 0%)");
@@ -217,28 +217,52 @@ public class BoardContainer {
             updateEntrance.accept(entranceStudents);
     }
 
-    public void enableEntranceButtons() {
+    public void enableEntranceButtons(boolean enable) {
+
         for(Button entranceButton : this.entranceImages) {
-            entranceButton.setMouseTransparent(false);
-            entranceButton.setStyle("-fx-background-radius: 50em;" +
-                    "-fx-border-radius: 50em;" +
-                    "-fx-border-width: 1px;" +
-                    "-fx-min-width: 25px;" +
-                    "-fx-min-height: 25px;" +
-                    "-fx-padding: 2px;" +
-                    "-fx-border-color: #FCFFAD;" +
-                    "-fx-background-color: radial-gradient(focus-distance 0% ,center 50% 50%, radius 99%, transparent, #FCFFAD);");
+            if(enable) {
+                entranceButton.setStyle("-fx-background-radius: 50em;" +
+                        "-fx-border-radius: 50em;" +
+                        "-fx-border-width: 1px;" +
+                        "-fx-min-width: 25px;" +
+                        "-fx-min-height: 25px;" +
+                        "-fx-padding: 2px;" +
+                        "-fx-border-color: #FCFFAD;" +
+                        "-fx-background-color: radial-gradient(focus-distance 0% ,center 50% 50%, radius 99%, transparent, #FCFFAD);");
+            }
+            else {
+                entranceButton.setStyle("-fx-background-radius: 50em;" +
+                        "-fx-max-width: 10px;" +
+                        "-fx-max-height: 10px;" +
+                        "-fx-padding: 0px;");
+            }
         }
     }
 
-    public void enableDiningRoomButton() {
-        Button diningRoomButton = (Button) getPane().getChildrenUnmodifiable().get(1);
-        diningRoomButton.setVisible(true);
+    public void enableDiningRoomButton(boolean enable) {
+        try{
+            Button diningRoomButton = (Button) pane.getChildrenUnmodifiable().get(1);
+            diningRoomButton.setVisible(enable);
+            Log.debug("diningRoom set to " + enable);
+        }catch(Exception e) {
+            Log.warning(e);
+        }
+
     }
 
-    public void enableAssistantButtons() {
-        VBox vBox = (VBox) getPane().getChildrenUnmodifiable().get(0);
-        GridPane gPane = (GridPane) vBox.getChildren().get(2);
-        gPane.setVisible(true);
+    public void enableAssistantButtons(boolean enable) {
+        try{
+            VBox vBox = (VBox) pane.getChildrenUnmodifiable().get(0);
+            GridPane gPane = (GridPane) vBox.getChildren().get(2);
+            gPane.setVisible(enable);
+            Log.debug("Assistants set to " + enable);
+        }catch(Exception e){
+            Log.warning(e);
+        }
+
+    }
+
+    public List<Button> getEntranceButtons() {
+        return this.entranceImages;
     }
 }
