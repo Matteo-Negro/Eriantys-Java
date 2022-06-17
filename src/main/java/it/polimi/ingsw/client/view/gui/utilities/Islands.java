@@ -1,8 +1,10 @@
 package it.polimi.ingsw.client.view.gui.utilities;
 
 import it.polimi.ingsw.client.model.GameBoard;
+import it.polimi.ingsw.utilities.Pair;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
+import javafx.scene.shape.Line;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,10 +17,11 @@ public class Islands {
     private Islands() {
     }
 
-    public static List<IslandContainer> get(GameBoard gameBoard) {
+    public static Pair<List<IslandContainer>, List<Boolean>> get(GameBoard gameBoard, List<Line> connections) {
 
         IslandContainer islandContainer;
         List<IslandContainer> list = new ArrayList<>();
+        List<Boolean> nextList = new ArrayList<>();
 
         for (int index = 0; index < 12; index++) {
             final int islandId = index;
@@ -27,6 +30,8 @@ public class Islands {
 
             Group group = new Group();
             islandContainer.setPane(group);
+
+            islandContainer.setConnection(connections.get(index));
 
             Button islandButton = new Button("");
             islandButton.setStyle("-fx-border-color: #FCFFAD;" +
@@ -41,6 +46,6 @@ public class Islands {
             group.getChildren().addAll(Images.island(), Grids.island(gameBoard.getIslandById(index), islandContainer), islandButton);
         }
 
-        return Collections.unmodifiableList(list);
+        return new Pair<>(Collections.unmodifiableList(list), nextList);
     }
 }
