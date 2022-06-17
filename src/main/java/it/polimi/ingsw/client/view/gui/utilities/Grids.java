@@ -54,15 +54,15 @@ public class Grids {
         ObservableList<RowConstraints> rows = gridPane.getRowConstraints();
         ObservableList<ColumnConstraints> columns = gridPane.getColumnConstraints();
 
-        gridPane.setPrefWidth(131);
-        gridPane.setPrefHeight(128);
+        gridPane.setPrefWidth(130);
+        gridPane.setPrefHeight(130);
 
         for (int index = 0; index < 3; index++) {
             rows.add(new RowConstraints());
             columns.add(new ColumnConstraints());
         }
         rows.add(new RowConstraints());
-        if (playersNumber != 3)
+        if (playersNumber == 3)
             columns.add(new ColumnConstraints());
 
         initialize(rows, columns);
