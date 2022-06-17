@@ -9,7 +9,6 @@ import it.polimi.ingsw.utilities.ClientState;
 import it.polimi.ingsw.utilities.Log;
 import it.polimi.ingsw.utilities.MessageCreator;
 import it.polimi.ingsw.utilities.Pair;
-import javafx.scene.layout.AnchorPane;
 import org.fusesource.jansi.Ansi;
 import org.jline.builtins.Completers;
 import org.jline.reader.History;

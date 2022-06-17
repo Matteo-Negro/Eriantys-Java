@@ -12,7 +12,9 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import static it.polimi.ingsw.client.view.gui.utilities.CommandAssembler.manageAssistantSelection;
 import static it.polimi.ingsw.client.view.gui.utilities.CommandAssembler.manageDiningRoomSelection;
@@ -27,8 +29,6 @@ public class Boards {
         BoardContainer boardContainer;
         Map<String, BoardContainer> map = new HashMap<>();
 
-
-
         for (Player player : gameModel.getPlayers()) {
             GridPane gPane = new GridPane();
             gPane.setMinSize(900, 160);
@@ -38,7 +38,7 @@ public class Boards {
             gPane.setVgap(5);
             gPane.setAlignment(Pos.TOP_CENTER);
 
-            for(Assistant availableAssistant : gameModel.getPlayerByName(player.getName()).getHand()) {
+            for (Assistant availableAssistant : gameModel.getPlayerByName(player.getName()).getHand()) {
                 final int assistantId = availableAssistant.getId();
                 Button assistantButton = new Button("", Images.assistant(assistantId));
                 assistantButton.setStyle("-fx-border-width: 2px;" +
@@ -66,6 +66,7 @@ public class Boards {
                     "-fx-border-color: #FCFFAD;" +
                     "-fx-padding: 0px;" +
                     "-fx-background-color: radial-gradient(focus-distance 0%, center 50% 50%, radius 100% ,transparent, #FCFFAD);");
+            diningRoomButton.setVisible(false);
             diningRoomButton.setTranslateX(174);
             diningRoomButton.setTranslateY(70);
             diningRoomButton.setOnAction(mouseEvent -> manageDiningRoomSelection());

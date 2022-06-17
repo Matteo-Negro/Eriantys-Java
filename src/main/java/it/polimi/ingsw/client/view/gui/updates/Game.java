@@ -10,7 +10,7 @@ import javafx.application.Platform;
  *
  * @author Riccardo Milici.
  */
-public class Game implements Runnable, Observer{
+public class Game implements Runnable, Observer {
     private final ClientGui client;
     private final Object lock;
 
@@ -30,11 +30,11 @@ public class Game implements Runnable, Observer{
      */
     @Override
     public void run() {
-        while(client.getController().getClientState().equals(ClientState.GAME_RUNNING)) {
+        while (client.getController().getClientState().equals(ClientState.GAME_RUNNING)) {
             synchronized (this.lock) {
                 try {
                     this.lock.wait();
-                } catch(InterruptedException ie) {
+                } catch (InterruptedException ie) {
                     Log.debug("Game update thread has been interrupted.");
                     Thread.currentThread().interrupt();
                 }
@@ -48,8 +48,8 @@ public class Game implements Runnable, Observer{
      */
     @Override
     public void notifyUpdate() {
-        synchronized(this.lock) {
+        synchronized (this.lock) {
             this.lock.notifyAll();
         }
     }
- }
+}

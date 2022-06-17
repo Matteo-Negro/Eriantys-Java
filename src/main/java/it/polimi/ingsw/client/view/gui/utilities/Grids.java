@@ -411,8 +411,6 @@ public class Grids {
         return students;
     }
 
-
-
     private static Map<HouseColor, ImageView> initializeProfessors(GridPane gridPane) {
         Map<HouseColor, ImageView> professors = new EnumMap<>(HouseColor.class);
         List<HouseColor> colors = List.of(

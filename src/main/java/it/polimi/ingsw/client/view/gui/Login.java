@@ -56,7 +56,7 @@ public class Login implements Update {
      */
     private List<Label> getPlayers() {
         List<Label> labels = new ArrayList<>();
-        Map<String, Boolean> playersMap =  client.getController().getGameModel().getWaitingRoom();
+        Map<String, Boolean> playersMap = client.getController().getGameModel().getWaitingRoom();
         List<Pair<String, Boolean>> sortedPlayers = playersMap.keySet().stream().sorted()
                 .map(name -> new Pair<>(name, playersMap.get(name))).toList();
         int index = client.getController().getGameModel().getWaitingRoom().size();

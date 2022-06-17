@@ -21,13 +21,24 @@ public class EventProcessing {
         if (!standard(event))
             return;
         if (!client.getController().getClientState().equals(ClientState.CONNECTION_LOST)) {
-            if(client.getController().getClientState().equals(ClientState.GAME_RUNNING))
+            if (client.getController().getClientState().equals(ClientState.GAME_RUNNING))
                 client.getController().manageGameRunning("logout");
-            else{
+            else {
                 client.getController().setClientState(ClientState.MAIN_MENU);
                 client.changeScene();
             }
         }
+    }
+
+    /**
+     * Toggles the board pane visibility.
+     *
+     * @param event The event that triggered the function.
+     * @return true if it's the desired event, false otherwise.
+     */
+    public static boolean boardsToggle(Event event) {
+        event.consume();
+        return !(event instanceof KeyEvent keyEvent) || keyEvent.getCode().equals(KeyCode.B);
     }
 
     /**
