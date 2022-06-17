@@ -10,14 +10,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static it.polimi.ingsw.client.view.gui.utilities.CommandAssembler.manageIslandSelection;
-
 public class Islands {
 
     private Islands() {
     }
 
-    public static Pair<List<IslandContainer>, List<Boolean>> get(GameBoard gameBoard, List<Line> connections) {
+    public static Pair<List<IslandContainer>, List<Boolean>> get(GameBoard gameBoard, List<Line> connections, CommandAssembler assembler) {
 
         IslandContainer islandContainer;
         List<IslandContainer> list = new ArrayList<>();
@@ -41,7 +39,7 @@ public class Islands {
                     "-fx-background-color: radial-gradient(focus-distance 0% ,center 50% 50%, radius 90%, transparent, #FCFFAD);" +
                     "-fx-min-width: 155px;" +
                     "-fx-min-height: 155px;");
-            islandButton.setOnAction(mouseEvent -> manageIslandSelection(islandId));
+            islandButton.setOnAction(mouseEvent -> assembler.manageIslandSelection(islandId));
             group.getChildren().addAll(Images.island(), Grids.island(gameBoard.getIslandById(index), islandContainer), islandButton);
         }
 

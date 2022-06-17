@@ -8,14 +8,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static it.polimi.ingsw.client.view.gui.utilities.CommandAssembler.manageCloudSelection;
-
 public class Clouds {
 
     private Clouds() {
     }
 
-    public static List<CloudContainer> get(List<Cloud> clouds, int playersNumber) {
+    public static List<CloudContainer> get(List<Cloud> clouds, int playersNumber, CommandAssembler assembler) {
 
         CloudContainer cloudContainer;
         List<CloudContainer> list = new ArrayList<>();
@@ -36,7 +34,7 @@ public class Clouds {
                     "-fx-background-color: radial-gradient(focus-distance 0%, center 50% 50%, radius 90%, transparent, #FCFFAD);" +
                     "-fx-min-width: 130px;" +
                     "-fx-min-height: 130px;");
-            cloudButton.setOnAction(mouseEvent -> manageCloudSelection(cloudId));
+            cloudButton.setOnAction(mouseEvent -> assembler.manageCloudSelection(cloudId));
             group.getChildren().addAll(Images.cloud(), Grids.cloud(cloud, playersNumber, cloudContainer), cloudButton);
         }
 

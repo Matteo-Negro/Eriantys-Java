@@ -66,6 +66,7 @@ public class Game implements Update {
     @FXML
     private Label round;
 
+    private CommandAssembler commandAssembler;
     private List<Button> islandButtons;
     private List<Button> cloudButtons;
     private List<BoardContainer> boardsList;
@@ -76,6 +77,7 @@ public class Game implements Update {
     public void initialize() {
         client = ClientGui.getInstance();
         ClientGui.link(ClientState.GAME_RUNNING, this);
+        this.commandAssembler = new CommandAssembler(this.client.getController());
     }
 
     /**
@@ -117,7 +119,7 @@ public class Game implements Update {
      * Adds all the boards to the GUI.
      */
     private void addBoards() {
-        boards = Boards.get(client.getController().getGameModel());
+        boards = Boards.get(client.getController().getGameModel(), commandAssembler);
         this.boardsList = reorder();
         Platform.runLater(() -> {
             Rectangle rectangle;
@@ -150,7 +152,7 @@ public class Game implements Update {
      * Adds all the clouds to the GUI.
      */
     private void addClouds() {
-        clouds = Clouds.get(client.getController().getGameModel().getGameBoard().getClouds(), client.getController().getGameModel().getPlayersNumber());
+        clouds = Clouds.get(client.getController().getGameModel().getGameBoard().getClouds(), client.getController().getGameModel().getPlayersNumber(), commandAssembler);
         Platform.runLater(() -> {
             cloudsLayout.getChildren().clear();
             for (CloudContainer cloud : clouds) {
@@ -168,7 +170,7 @@ public class Game implements Update {
         Pair<List<IslandContainer>, List<Boolean>> tmp = Islands.get(client.getController().getGameModel().getGameBoard(), List.of(
                 next1, next2, next3, next4, next5, next6,
                 next7, next8, next9, next10, next11, next12
-        ));
+        ), commandAssembler);
         this.islands = tmp.key();
         Platform.runLater(() -> {
             islandsLayout.getChildren().clear();
@@ -197,6 +199,8 @@ public class Game implements Update {
      */
     private void initializeButtons() {
         for (BoardContainer board : this.boardsList) {
+            List<Button> entranceButtons = board.getEntranceButtons();
+
             board.enableEntranceButtons(false);
             board.enableAssistantButtons(false);
             board.enableDiningRoomButton(false);

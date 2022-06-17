@@ -5,7 +5,6 @@ import it.polimi.ingsw.utilities.Log;
 import it.polimi.ingsw.utilities.WizardType;
 import it.polimi.ingsw.utilities.exceptions.IllegalActionException;
 import javafx.application.Platform;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -16,8 +15,6 @@ import javafx.scene.layout.VBox;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-
-import static it.polimi.ingsw.client.view.gui.utilities.CommandAssembler.manageEntranceSelection;
 
 public class BoardContainer {
 
@@ -34,7 +31,7 @@ public class BoardContainer {
     private List<ImageView> towers;
     private WizardType wizard;
 
-    BoardContainer() {
+    BoardContainer(CommandAssembler commandAssembler) {
         assistant = null;
         coins = null;
         diningRoom = null;
@@ -55,8 +52,7 @@ public class BoardContainer {
                 final int studentNumber = index;
                 entranceImages.get(index).setGraphic(Images.student2d(index < students.size() ? students.get(index) : null));
                 entranceImages.get(index).setVisible(index < students.size() && students.get(index) != null);
-                entranceImages.get(index).setMouseTransparent(true);
-                entranceImages.get(index).setOnAction(mouseEvent -> manageEntranceSelection(students.get(studentNumber)));
+                entranceImages.get(index).setOnMouseClicked(mouseEvent -> commandAssembler.manageEntranceSelection(students.get(studentNumber)));
             }
         };
         wizard = null;
@@ -74,8 +70,7 @@ public class BoardContainer {
         Platform.runLater(() -> {
             if (value) {
                 pane.setStyle("-fx-background-color: #38a2ed");
-            }
-            else
+            } else
                 pane.setStyle("-fx-background-color: rgba(255, 255, 255, 0%)");
         });
     }
@@ -219,8 +214,8 @@ public class BoardContainer {
 
     public void enableEntranceButtons(boolean enable) {
 
-        for(Button entranceButton : this.entranceImages) {
-            if(enable) {
+        for (Button entranceButton : this.entranceImages) {
+            if (enable) {
                 entranceButton.setStyle("-fx-background-radius: 50em;" +
                         "-fx-border-radius: 50em;" +
                         "-fx-border-width: 1px;" +
@@ -229,8 +224,7 @@ public class BoardContainer {
                         "-fx-padding: 2px;" +
                         "-fx-border-color: #FCFFAD;" +
                         "-fx-background-color: radial-gradient(focus-distance 0% ,center 50% 50%, radius 99%, transparent, #FCFFAD);");
-            }
-            else {
+            } else {
                 entranceButton.setStyle("-fx-background-radius: 50em;" +
                         "-fx-max-width: 10px;" +
                         "-fx-max-height: 10px;" +
@@ -240,23 +234,23 @@ public class BoardContainer {
     }
 
     public void enableDiningRoomButton(boolean enable) {
-        try{
+        try {
             Button diningRoomButton = (Button) pane.getChildrenUnmodifiable().get(1);
             diningRoomButton.setVisible(enable);
             Log.debug("diningRoom set to " + enable);
-        }catch(Exception e) {
+        } catch (Exception e) {
             Log.warning(e);
         }
 
     }
 
     public void enableAssistantButtons(boolean enable) {
-        try{
+        try {
             VBox vBox = (VBox) pane.getChildrenUnmodifiable().get(0);
             GridPane gPane = (GridPane) vBox.getChildren().get(2);
             gPane.setVisible(enable);
             Log.debug("Assistants set to " + enable);
-        }catch(Exception e){
+        } catch (Exception e) {
             Log.warning(e);
         }
 

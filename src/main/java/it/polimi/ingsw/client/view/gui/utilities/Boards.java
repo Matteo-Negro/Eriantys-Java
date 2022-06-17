@@ -12,21 +12,19 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
-import java.util.*;
-
-import static it.polimi.ingsw.client.view.gui.utilities.CommandAssembler.manageAssistantSelection;
-import static it.polimi.ingsw.client.view.gui.utilities.CommandAssembler.manageDiningRoomSelection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Boards {
 
     private Boards() {
     }
 
-    public static Map<String, BoardContainer> get(GameModel gameModel) {
+    public static Map<String, BoardContainer> get(GameModel gameModel, CommandAssembler assembler) {
 
         BoardContainer boardContainer;
         Map<String, BoardContainer> map = new HashMap<>();
-
 
 
         for (Player player : gameModel.getPlayers()) {
@@ -38,7 +36,7 @@ public class Boards {
             gPane.setVgap(5);
             gPane.setAlignment(Pos.TOP_CENTER);
 
-            for(Assistant availableAssistant : gameModel.getPlayerByName(player.getName()).getHand()) {
+            for (Assistant availableAssistant : gameModel.getPlayerByName(player.getName()).getHand()) {
                 final int assistantId = availableAssistant.getId();
                 Button assistantButton = new Button("", Images.assistant(assistantId));
                 assistantButton.setStyle("-fx-border-width: 2px;" +
@@ -48,11 +46,11 @@ public class Boards {
                         "-fx-max-width: 90px;" +
                         "-fx-background-color: transparent;" +
                         "-fx-background-color: radial-gradient(focus-distance 0%, center 50% 50%, radius 100% ,transparent, #FCFFAD);");
-                assistantButton.setOnAction(mouseEvent -> manageAssistantSelection(assistantId));
+                assistantButton.setOnMouseClicked(mouseEvent -> assembler.manageAssistantSelection(assistantId));
                 gPane.add(assistantButton, assistantId, 0);
             }
 
-            boardContainer = new BoardContainer();
+            boardContainer = new BoardContainer(assembler);
             map.put(player.getName(), boardContainer);
 
             VBox vBox = new VBox();
@@ -68,7 +66,7 @@ public class Boards {
                     "-fx-background-color: radial-gradient(focus-distance 0%, center 50% 50%, radius 100% ,transparent, #FCFFAD);");
             diningRoomButton.setTranslateX(174);
             diningRoomButton.setTranslateY(70);
-            diningRoomButton.setOnAction(mouseEvent -> manageDiningRoomSelection());
+            diningRoomButton.setOnMouseClicked(mouseEvent -> assembler.manageDiningRoomSelection());
 
             vBox.setAlignment(Pos.CENTER);
             Label name = Labels.playerName(player.getName());
