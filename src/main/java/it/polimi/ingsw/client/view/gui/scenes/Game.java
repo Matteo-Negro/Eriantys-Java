@@ -1,12 +1,10 @@
 package it.polimi.ingsw.client.view.gui.scenes;
 
-import it.polimi.ingsw.client.controller.ClientController;
 import it.polimi.ingsw.client.model.*;
 import it.polimi.ingsw.client.view.ClientGui;
 import it.polimi.ingsw.client.view.gui.CommandAssembler;
 import it.polimi.ingsw.client.view.gui.utilities.*;
 import it.polimi.ingsw.utilities.ClientState;
-import it.polimi.ingsw.utilities.GameControllerState;
 import it.polimi.ingsw.utilities.Log;
 import it.polimi.ingsw.utilities.Pair;
 import javafx.application.Platform;
@@ -28,7 +26,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class Game implements Update {
+public class Game implements Prepare {
 
     private ClientGui client;
 
@@ -100,6 +98,8 @@ public class Game implements Update {
     public void prepare() {
         Platform.runLater(() -> {
             id.requestFocus();
+            realmTab.setVisible(false);
+            boardsTab.setVisible(true);
             id.setText(client.getController().getGameCode());
             round.setText(String.valueOf(client.getController().getGameModel().getRound()));
             phase.setText(client.getController().getGameModel().getSubphase().name().toLowerCase(Locale.ROOT));
@@ -113,28 +113,28 @@ public class Game implements Update {
      */
     public void update() {
 
-        ClientController controller = client.getController();
-        GameModel gameModel = controller.getGameModel();
+        GameModel gameModel = client.getController().getGameModel();
+        if (gameModel == null)
+            return;
         GameBoard gameBoard = gameModel.getGameBoard();
 
-        Thread infoThread = new Thread(() -> updateInfo(controller));
+        Thread infoThread = new Thread(() -> updateInfo(gameModel));
         Thread boardsThread = new Thread(() -> updateBoards(gameModel));
         Thread cloudsThread = new Thread(() -> updateClouds(gameBoard));
         Thread islandsThread = new Thread(() -> updateIslands(gameBoard));
 
-        //infoThread.start();
+        infoThread.start();
         boardsThread.start();
         cloudsThread.start();
         islandsThread.start();
 
-        synchronized (this) {
-            while (infoThread.isAlive() || boardsThread.isAlive() || cloudsThread.isAlive() || islandsThread.isAlive()) {
-                try {
-                    this.wait(100);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-            }
+        try {
+            infoThread.join();
+            boardsThread.join();
+            cloudsThread.join();
+            islandsThread.join();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
 
         activateButtons(false);
@@ -147,11 +147,10 @@ public class Game implements Update {
      */
     @FXML
     private void exit(Event event) {
-        if (EventProcessing.boardsToggle(event)) {
+        if (EventProcessing.boardsToggle(event))
             toggleView(event);
-            return;
-        }
-        EventProcessing.exit(event, client);
+        else
+            EventProcessing.exit(event, client);
     }
 
     /**
@@ -172,21 +171,23 @@ public class Game implements Update {
      * Calls the methods that prepare the graphic elements and the buttons.
      */
     private void prepareGraphicElements() {
+
         Thread boardsThread = new Thread(this::addBoards);
-        boardsThread.start();
         Thread cloudsThread = new Thread(this::addClouds);
-        cloudsThread.start();
         Thread islandsThread = new Thread(this::addIslands);
+
+        boardsThread.start();
+        cloudsThread.start();
         islandsThread.start();
-        synchronized (this) {
-            while (boardsThread.isAlive() || cloudsThread.isAlive() || islandsThread.isAlive()) {
-                try {
-                    this.wait(100);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-            }
+
+        try {
+            boardsThread.join();
+            cloudsThread.join();
+            islandsThread.join();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
+
         activateButtons(true);
     }
 
@@ -273,11 +274,6 @@ public class Game implements Update {
      * Initializes the buttons.
      */
     private void initializeButtons() {
-        for (BoardContainer board : this.boardsList) {
-            board.enableEntranceButtons(false);
-            board.enableAssistantButtons(false);
-            board.enableDiningRoomButton(false);
-        }
 
         this.cloudButtons = new ArrayList<>();
         for (CloudContainer cloud : this.clouds)
@@ -297,16 +293,16 @@ public class Game implements Update {
             if (initialize)
                 initializeButtons();
             if (!this.client.getController().hasCommunicationToken()) {
-                firstBoard.enableDiningRoomButton(false);
                 firstBoard.enableAssistantButtons(false);
+                firstBoard.enableDiningRoomButton(false);
                 firstBoard.enableEntranceButtons(false);
                 enableIslandButtons(false);
                 enableCloudButtons(false);
             } else {
                 switch (this.client.getController().getGameModel().getSubphase()) {
                     case PLAY_ASSISTANT -> {
-                        firstBoard.enableDiningRoomButton(false);
                         firstBoard.enableAssistantButtons(true);
+                        firstBoard.enableDiningRoomButton(false);
                         firstBoard.enableEntranceButtons(false);
                         enableIslandButtons(false);
                         enableCloudButtons(false);
@@ -337,18 +333,7 @@ public class Game implements Update {
         });
     }
 
-    private void updateInfo(ClientController controller) {
-        synchronized (this) {
-            while (controller.getGameModel().getSubphase().equals(GameControllerState.ASSISTANT_PLAYED) ||
-                    controller.getGameModel().getSubphase().equals(GameControllerState.END_TURN)) {
-                try {
-                    this.wait(100);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }
-        GameModel gameModel = controller.getGameModel();
+    private void updateInfo(GameModel gameModel) {
         Platform.runLater(() -> {
             round.setText(String.valueOf(gameModel.getRound()));
             phase.setText(gameModel.getSubphase().name().toLowerCase(Locale.ROOT));
@@ -386,8 +371,8 @@ public class Game implements Update {
      */
     private void updateClouds(GameBoard gameBoard) {
 
-            for (int index = 0; index < gameBoard.getClouds().size(); index++)
-                clouds.get(index).updateStudents(gameBoard.getClouds().get(index).getStudents(false));
+        for (int index = 0; index < gameBoard.getClouds().size(); index++)
+            clouds.get(index).updateStudents(gameBoard.getClouds().get(index).getStudents(false));
         Log.debug("clouds updated");
     }
 

@@ -1,10 +1,10 @@
 package it.polimi.ingsw.client.view;
 
 import it.polimi.ingsw.client.controller.ClientController;
+import it.polimi.ingsw.client.view.gui.scenes.Start;
+import it.polimi.ingsw.client.view.gui.scenes.Prepare;
 import it.polimi.ingsw.client.view.gui.updates.Game;
 import it.polimi.ingsw.client.view.gui.updates.WaitingRoom;
-import it.polimi.ingsw.client.view.gui.scenes.Start;
-import it.polimi.ingsw.client.view.gui.scenes.Update;
 import it.polimi.ingsw.utilities.ClientState;
 import it.polimi.ingsw.utilities.Log;
 import it.polimi.ingsw.utilities.Pair;
@@ -25,7 +25,7 @@ public class ClientGui extends Application implements View {
     private static final Object instanceLock = new Object();
     private static final Object sceneLock = new Object();
     private static final String DEFAULT_TITLE = "Eriantys";
-    private static final Map<ClientState, Update> instances = new EnumMap<>(ClientState.class);
+    private static final Map<ClientState, Prepare> instances = new EnumMap<>(ClientState.class);
     private static ClientGui instance = null;
     private Stage stage;
     private ClientController controller;
@@ -65,7 +65,7 @@ public class ClientGui extends Application implements View {
      * @param clientState The state to which bound the controller.
      * @param controller  The controller of the scene.
      */
-    public static void link(ClientState clientState, Update controller) {
+    public static void link(ClientState clientState, Prepare controller) {
         synchronized (instances) {
             instances.put(clientState, controller);
         }
@@ -146,32 +146,29 @@ public class ClientGui extends Application implements View {
         synchronized (instances) {
             if (instances.get(state) != null) {
                 instances.get(state).prepare();
-                if(state.equals(ClientState.GAME_RUNNING)) {
-                    if(this.gameUpdater == null) {
+                if (state.equals(ClientState.GAME_RUNNING)) {
+                    if (this.gameUpdater == null) {
                         this.gameUpdater = new Game(this, (it.polimi.ingsw.client.view.gui.scenes.Game) instances.get(state));
                         new Thread(this.gameUpdater).start();
                     }
-                }
-                else {
-                    if(this.gameUpdater != null) {
+                } else {
+                    if (this.gameUpdater != null) {
                         this.gameUpdater.stop();
                         this.gameUpdater = null;
                     }
                 }
-                if(state.equals(ClientState.GAME_WAITING_ROOM)) {
-                    if(this.waitingRoomUpdater == null) {
+                if (state.equals(ClientState.GAME_WAITING_ROOM)) {
+                    if (this.waitingRoomUpdater == null) {
                         this.waitingRoomUpdater = new WaitingRoom(this, (it.polimi.ingsw.client.view.gui.scenes.WaitingRoom) instances.get(state));
                         new Thread(this.gameUpdater).start();
                     }
-                }
-                else {
-                    if(this.waitingRoomUpdater != null) {
+                } else {
+                    if (this.waitingRoomUpdater != null) {
                         this.waitingRoomUpdater.stop();
                         this.waitingRoomUpdater = null;
                     }
                 }
             }
-
         }
 
         Log.info("Displaying " + state);

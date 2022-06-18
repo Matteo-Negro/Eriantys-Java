@@ -10,7 +10,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 
-public class End implements Update {
+public class End implements Prepare {
 
     private ClientGui client;
 

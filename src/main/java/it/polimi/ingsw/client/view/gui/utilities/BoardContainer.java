@@ -20,6 +20,7 @@ public class BoardContainer {
 
     private final Supplier<Void> updateDiningRoom;
     private final Consumer<List<HouseColor>> updateEntrance;
+
     private ImageView assistant;
     private Label coins;
     private Map<HouseColor, Integer> diningRoom;
@@ -190,7 +191,7 @@ public class BoardContainer {
     public void enableEntranceButtons(boolean enable) {
 
         for (Button entranceButton : this.entranceImages) {
-            if (enable) {
+            if (enable)
                 entranceButton.setStyle("-fx-background-radius: 50em;" +
                         "-fx-border-radius: 50em;" +
                         "-fx-border-width: 1px;" +
@@ -199,14 +200,12 @@ public class BoardContainer {
                         "-fx-padding: 2px;" +
                         "-fx-border-color: #FCFFAD;" +
                         "-fx-background-color: radial-gradient(focus-distance 0% ,center 50% 50%, radius 99%, transparent, #FCFFAD);");
-                entranceButton.setMouseTransparent(false);
-            } else {
+            else
                 entranceButton.setStyle("-fx-background-radius: 50em;" +
                         "-fx-max-width: 10px;" +
                         "-fx-max-height: 10px;" +
                         "-fx-padding: 0px;");
-                entranceButton.setMouseTransparent(true);
-            }
+            entranceButton.setMouseTransparent(!enable);
         }
     }
 
@@ -225,6 +224,7 @@ public class BoardContainer {
             VBox vBox = (VBox) pane.getChildrenUnmodifiable().get(0);
             GridPane gPane = (GridPane) vBox.getChildren().get(2);
             gPane.setVisible(enable);
+            gPane.setManaged(enable);
         } catch (Exception e) {
             Log.warning(e);
         }

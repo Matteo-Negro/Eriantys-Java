@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class Join implements Update {
+public class Join implements Prepare {
 
     private ClientGui client;
     private List<TextField> code;

@@ -12,7 +12,7 @@ import javafx.scene.layout.VBox;
 
 import java.util.List;
 
-public class WaitingRoom implements Update {
+public class WaitingRoom implements Prepare {
 
     private ClientGui client;
 

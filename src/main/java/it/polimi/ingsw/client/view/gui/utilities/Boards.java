@@ -50,6 +50,7 @@ public class Boards {
                 gPane.add(assistantButton, assistantId, 0);
             }
             gPane.setVisible(false);
+            gPane.setManaged(false);
 
             boardContainer = new BoardContainer(assembler);
             map.put(player.getName(), boardContainer);

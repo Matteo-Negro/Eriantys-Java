@@ -11,7 +11,7 @@ import javafx.scene.control.TextField;
 
 import java.net.Socket;
 
-public class Start implements Update {
+public class Start implements Prepare {
 
     private ClientGui client;
 

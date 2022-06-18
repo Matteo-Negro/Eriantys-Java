@@ -28,7 +28,7 @@ public class CommandAssembler {
                 command = String.format("move mother-nature to %s", island);
             }
             case MOVE_STUDENT_1, MOVE_STUDENT_2, MOVE_STUDENT_3, MOVE_STUDENT_4 ->
-                command = String.format("%s%s", command, island);
+                    command = String.format("%s%s", command, island);
         }
         sendCommand();
         flushCommand();

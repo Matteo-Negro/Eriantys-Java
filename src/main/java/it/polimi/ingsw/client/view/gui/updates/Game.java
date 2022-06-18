@@ -12,7 +12,7 @@ import javafx.application.Platform;
  */
 public class Game implements Runnable {
     private final ClientGui client;
-    private it.polimi.ingsw.client.view.gui.scenes.Game gameGui;
+    private final it.polimi.ingsw.client.view.gui.scenes.Game gameGui;
 
     /**
      * Default class constructor.

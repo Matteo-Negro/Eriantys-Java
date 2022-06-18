@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class Login implements Update {
+public class Login implements Prepare {
 
     private ClientGui client;
 

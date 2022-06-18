@@ -13,7 +13,7 @@ import javafx.scene.control.RadioButton;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class Create implements Update {
+public class Create implements Prepare {
 
     private final AtomicInteger players;
     private final AtomicBoolean expertMode;

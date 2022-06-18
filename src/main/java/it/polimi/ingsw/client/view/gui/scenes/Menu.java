@@ -8,7 +8,7 @@ import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 
-public class Menu implements Update {
+public class Menu implements Prepare {
 
     private ClientGui client;
 
