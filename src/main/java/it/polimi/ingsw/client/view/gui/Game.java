@@ -3,6 +3,7 @@ package it.polimi.ingsw.client.view.gui;
 import it.polimi.ingsw.client.view.ClientGui;
 import it.polimi.ingsw.client.view.gui.utilities.*;
 import it.polimi.ingsw.utilities.ClientState;
+import it.polimi.ingsw.utilities.Log;
 import it.polimi.ingsw.utilities.Pair;
 import javafx.application.Platform;
 import javafx.event.Event;
@@ -91,14 +92,24 @@ public class Game implements Update {
      */
     @Override
     public void prepare() {
-        Platform.runLater(() -> {
-            id.requestFocus();
-            id.setText(client.getController().getGameCode());
-            round.setText(String.valueOf(client.getController().getGameModel().getRound()));
-            phase.setText(client.getController().getGameModel().getPhase().name().toLowerCase(Locale.ROOT));
-        });
-        new Thread(this::prepareGraphicElements).start();
-        new Thread(new it.polimi.ingsw.client.view.gui.updates.Game(client)).start();
+        synchronized (client.getController().getLock()) {
+
+            Platform.runLater(() -> {
+                while (client.getController().getGameModel() == null) {
+                    try {
+                        client.getController().getLock().wait(100);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+                id.requestFocus();
+                id.setText(client.getController().getGameCode());
+                round.setText(String.valueOf(client.getController().getGameModel().getRound()));
+                phase.setText(client.getController().getGameModel().getPhase().name().toLowerCase(Locale.ROOT));
+
+            });
+            new Thread(this::prepareGraphicElements).start();
+        }
     }
 
     /**
@@ -126,7 +137,7 @@ public class Game implements Update {
         Thread islandsThread = new Thread(this::addIslands);
         islandsThread.start();
         synchronized (this) {
-            while (boardsThread.isAlive() || cloudsThread.isAlive() || islandsThread.isAlive()) {
+            while (boardsThread.isAlive() || cloudsThread.isAlive() || islandsThread.isAlive() || this.boardsList.contains(null)) {
                 try {
                     this.wait(100);
                 } catch (InterruptedException e) {
@@ -237,8 +248,6 @@ public class Game implements Update {
      */
     private void initializeButtons() {
         for (BoardContainer board : this.boardsList) {
-            List<Button> entranceButtons = board.getEntranceButtons();
-
             board.enableEntranceButtons(false);
             board.enableAssistantButtons(false);
             board.enableDiningRoomButton(false);

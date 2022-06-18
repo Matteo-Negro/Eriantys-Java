@@ -11,26 +11,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class WaitingRoom implements Runnable, Observer {
+public class WaitingRoom implements Runnable {
 
     private final ClientGui client;
-    private final Object lock;
     private final it.polimi.ingsw.client.view.gui.WaitingRoom waitingRoomGUI;
 
     public WaitingRoom(ClientGui client, it.polimi.ingsw.client.view.gui.WaitingRoom waitingRoomGUI) {
         this.client = client;
-        lock = new Object();
         this.waitingRoomGUI = waitingRoomGUI;
     }
 
     @Override
     public void run() {
         while (client.getController().getClientState().equals(ClientState.GAME_WAITING_ROOM)) {
-            synchronized (lock) {
+            synchronized (this.client.getController().getLock()) {
                 if (client.getController().getGameModel() != null)
                     this.waitingRoomGUI.update(getPlayers());
                 try {
-                    lock.wait(1000);
+                    this.client.getController().getLock().wait(1000);
                 } catch (InterruptedException e) {
                     client.getController().resetGame();
                     Thread.currentThread().interrupt();
@@ -60,12 +58,5 @@ public class WaitingRoom implements Runnable, Observer {
         }
 
         return players;
-    }
-
-    @Override
-    public void notifyUpdate() {
-        synchronized (this.lock) {
-            this.lock.notifyAll();
-        }
     }
 }

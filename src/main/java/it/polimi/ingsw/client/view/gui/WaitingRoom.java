@@ -69,4 +69,8 @@ public class WaitingRoom implements Update {
             names.getChildren().addAll(players);
         });
     }
+
+    public void stop() {
+        Thread.currentThread().interrupt();
+    }
 }

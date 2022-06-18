@@ -35,6 +35,7 @@ public class Clouds {
                     "-fx-min-width: 130px;" +
                     "-fx-min-height: 130px;");
             cloudButton.setOnAction(mouseEvent -> assembler.manageCloudSelection(cloudId));
+            cloudButton.setVisible(false);
             group.getChildren().addAll(Images.cloud(), Grids.cloud(cloud, playersNumber, cloudContainer), cloudButton);
         }
 

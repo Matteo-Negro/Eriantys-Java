@@ -15,12 +15,7 @@ import javafx.scene.layout.VBox;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
-import static it.polimi.ingsw.client.view.gui.utilities.CommandAssembler.manageAssistantSelection;
-import static it.polimi.ingsw.client.view.gui.utilities.CommandAssembler.manageDiningRoomSelection;
 
 public class Boards {
 
@@ -54,6 +49,7 @@ public class Boards {
                 assistantButton.setOnMouseClicked(mouseEvent -> assembler.manageAssistantSelection(assistantId));
                 gPane.add(assistantButton, assistantId, 0);
             }
+            gPane.setVisible(false);
 
             boardContainer = new BoardContainer(assembler);
             map.put(player.getName(), boardContainer);
@@ -72,6 +68,7 @@ public class Boards {
             diningRoomButton.setTranslateX(174);
             diningRoomButton.setTranslateY(70);
             diningRoomButton.setOnMouseClicked(mouseEvent -> assembler.manageDiningRoomSelection());
+            diningRoomButton.setVisible(false);
 
             vBox.setAlignment(Pos.CENTER);
             Label name = Labels.playerName(player.getName());

@@ -40,6 +40,7 @@ public class Islands {
                     "-fx-min-width: 155px;" +
                     "-fx-min-height: 155px;");
             islandButton.setOnAction(mouseEvent -> assembler.manageIslandSelection(islandId));
+            islandButton.setVisible(false);
             group.getChildren().addAll(Images.island(), Grids.island(gameBoard.getIslandById(index), islandContainer), islandButton);
         }
 

@@ -10,9 +10,8 @@ import javafx.application.Platform;
  *
  * @author Riccardo Milici.
  */
-public class Game implements Runnable, Observer {
+public class Game implements Runnable {
     private final ClientGui client;
-    private final Object lock;
 
     /**
      * Default class constructor.
@@ -21,8 +20,6 @@ public class Game implements Runnable, Observer {
      */
     public Game(ClientGui client) {
         this.client = client;
-        this.lock = new Object();
-        this.client.getModelObserver().attachObserver(this);
     }
 
     /**
@@ -30,26 +27,22 @@ public class Game implements Runnable, Observer {
      */
     @Override
     public void run() {
-        while (client.getController().getClientState().equals(ClientState.GAME_RUNNING)) {
-            synchronized (this.lock) {
+        synchronized (this.client.getController().getLock()) {
+            while (client.getController().getClientState().equals(ClientState.GAME_RUNNING)) {
                 try {
-                    this.lock.wait();
+                    this.client.getController().getLock().wait();
                 } catch (InterruptedException ie) {
                     Log.debug("Game update thread has been interrupted.");
                     Thread.currentThread().interrupt();
                 }
+                Platform.runLater(client::changeScene);
+                Log.debug("gui updated");
             }
-            Platform.runLater(client::changeScene);
+
         }
     }
 
-    /**
-     * Wakes up the thread waiting on the "lock" attribute.
-     */
-    @Override
-    public void notifyUpdate() {
-        synchronized (this.lock) {
-            this.lock.notifyAll();
-        }
+    public void stop() {
+        Thread.currentThread().interrupt();
     }
 }

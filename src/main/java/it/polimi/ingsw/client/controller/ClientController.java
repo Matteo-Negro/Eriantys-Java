@@ -5,7 +5,6 @@ import com.google.gson.JsonObject;
 import it.polimi.ingsw.client.model.GameModel;
 import it.polimi.ingsw.client.model.Player;
 import it.polimi.ingsw.client.model.SpecialCharacter;
-import it.polimi.ingsw.client.view.GameModelObserver;
 import it.polimi.ingsw.client.view.View;
 import it.polimi.ingsw.utilities.*;
 import it.polimi.ingsw.utilities.exceptions.IllegalActionException;
@@ -37,7 +36,6 @@ public class ClientController {
     private EndType endState;
     private ClientState state;
     private boolean replyArrived;
-    private GameModelObserver modelObserver;
 
     /**
      * Default class constructor.
@@ -52,7 +50,6 @@ public class ClientController {
         this.lock = new Object();
         this.view = view;
         this.replyArrived = false;
-        this.modelObserver = null;
     }
 
     /**
@@ -105,15 +102,6 @@ public class ClientController {
      */
     public boolean isReplyArrived() {
         return this.replyArrived;
-    }
-
-    /**
-     * Adds a new ModelObserver.
-     *
-     * @param observer The observer to add.
-     */
-    public void addModelObserver(GameModelObserver observer) {
-        this.modelObserver = observer;
     }
 
     /**
@@ -688,8 +676,7 @@ public class ClientController {
             if (newGameModel != null) {
                 this.lock.notifyAll();
             }
-            if (this.modelObserver != null)
-                this.modelObserver.notifyUpdate();
+            Log.debug("Gui notified");
         }
     }
 

@@ -3,6 +3,8 @@ package it.polimi.ingsw.client.view;
 import it.polimi.ingsw.client.controller.ClientController;
 import it.polimi.ingsw.client.view.gui.Start;
 import it.polimi.ingsw.client.view.gui.Update;
+import it.polimi.ingsw.client.view.gui.updates.Game;
+import it.polimi.ingsw.client.view.gui.updates.WaitingRoom;
 import it.polimi.ingsw.utilities.ClientState;
 import it.polimi.ingsw.utilities.Log;
 import it.polimi.ingsw.utilities.Pair;
@@ -28,7 +30,8 @@ public class ClientGui extends Application implements View {
     private Stage stage;
     private ClientController controller;
     private Map<ClientState, Scene> scenes;
-    private GameModelObserver modelObserver;
+    private Game gameUpdater;
+    private WaitingRoom waitingRoomUpdater;
 
     /**
      * Gets the scene from the name of the FXML file to load.
@@ -81,7 +84,8 @@ public class ClientGui extends Application implements View {
         stage = primaryStage;
         controller = new ClientController(this);
         scenes = new EnumMap<>(ClientState.class);
-        modelObserver = new GameModelObserver(controller);
+        gameUpdater = null;
+        waitingRoomUpdater = null;
 
         Log.info("Initializing scenes...");
         try {
@@ -140,8 +144,22 @@ public class ClientGui extends Application implements View {
         }
 
         synchronized (instances) {
-            if (instances.get(state) != null)
+            if (instances.get(state) != null) {
                 instances.get(state).prepare();
+                if(state.equals(ClientState.GAME_RUNNING)) {
+                    if(this.gameUpdater == null) {
+                        this.gameUpdater = new Game(this);
+                        new Thread(this.gameUpdater).start();
+                    }
+                }
+                else {
+                    if(this.gameUpdater != null) {
+                        this.gameUpdater.stop();
+                        this.gameUpdater = null;
+                    }
+                }
+            }
+
         }
 
         Log.info("Displaying " + state);
@@ -170,10 +188,6 @@ public class ClientGui extends Application implements View {
      */
     public ClientController getController() {
         return controller;
-    }
-
-    public GameModelObserver getModelObserver() {
-        return modelObserver;
     }
 
     /**

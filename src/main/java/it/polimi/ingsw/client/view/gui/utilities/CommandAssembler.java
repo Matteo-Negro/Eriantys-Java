@@ -1,11 +1,9 @@
 package it.polimi.ingsw.client.view.gui.utilities;
 
 import it.polimi.ingsw.client.controller.ClientController;
-import it.polimi.ingsw.client.view.ClientGui;
 import it.polimi.ingsw.utilities.GameControllerStates;
 import it.polimi.ingsw.utilities.HouseColor;
 import it.polimi.ingsw.utilities.Log;
-import it.polimi.ingsw.utilities.MessageCreator;
 
 import java.util.Locale;
 

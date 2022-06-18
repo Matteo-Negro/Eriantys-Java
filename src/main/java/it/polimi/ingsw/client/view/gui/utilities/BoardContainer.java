@@ -53,6 +53,7 @@ public class BoardContainer {
                 entranceImages.get(index).setGraphic(Images.student2d(index < students.size() ? students.get(index) : null));
                 entranceImages.get(index).setVisible(index < students.size() && students.get(index) != null);
                 entranceImages.get(index).setOnMouseClicked(mouseEvent -> commandAssembler.manageEntranceSelection(students.get(studentNumber)));
+                enableEntranceButtons(false);
             }
         };
         wizard = null;
@@ -224,11 +225,13 @@ public class BoardContainer {
                         "-fx-padding: 2px;" +
                         "-fx-border-color: #FCFFAD;" +
                         "-fx-background-color: radial-gradient(focus-distance 0% ,center 50% 50%, radius 99%, transparent, #FCFFAD);");
+                entranceButton.setMouseTransparent(false);
             } else {
                 entranceButton.setStyle("-fx-background-radius: 50em;" +
                         "-fx-max-width: 10px;" +
                         "-fx-max-height: 10px;" +
                         "-fx-padding: 0px;");
+                entranceButton.setMouseTransparent(true);
             }
         }
     }
@@ -237,7 +240,6 @@ public class BoardContainer {
         try {
             Button diningRoomButton = (Button) pane.getChildrenUnmodifiable().get(1);
             diningRoomButton.setVisible(enable);
-            Log.debug("diningRoom set to " + enable);
         } catch (Exception e) {
             Log.warning(e);
         }
@@ -249,7 +251,6 @@ public class BoardContainer {
             VBox vBox = (VBox) pane.getChildrenUnmodifiable().get(0);
             GridPane gPane = (GridPane) vBox.getChildren().get(2);
             gPane.setVisible(enable);
-            Log.debug("Assistants set to " + enable);
         } catch (Exception e) {
             Log.warning(e);
         }
