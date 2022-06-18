@@ -14,7 +14,7 @@ import java.util.Map;
 public class WaitingRoom implements Runnable {
 
     private final ClientGui client;
-    private final it.polimi.ingsw.client.view.gui.WaitingRoom waitingRoomGUI;
+    private final it.polimi.ingsw.client.view.gui.scenes.WaitingRoom waitingRoomGUI;
 
     public WaitingRoom(ClientGui client, it.polimi.ingsw.client.view.gui.scenes.WaitingRoom waitingRoomGUI) {
         this.client = client;
@@ -58,5 +58,9 @@ public class WaitingRoom implements Runnable {
         }
 
         return players;
+    }
+
+    public void stop() {
+        Thread.currentThread().interrupt();
     }
 }

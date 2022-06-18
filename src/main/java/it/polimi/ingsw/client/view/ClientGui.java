@@ -1,8 +1,6 @@
 package it.polimi.ingsw.client.view;
 
 import it.polimi.ingsw.client.controller.ClientController;
-import it.polimi.ingsw.client.view.gui.Start;
-import it.polimi.ingsw.client.view.gui.Update;
 import it.polimi.ingsw.client.view.gui.updates.Game;
 import it.polimi.ingsw.client.view.gui.updates.WaitingRoom;
 import it.polimi.ingsw.client.view.gui.scenes.Start;
@@ -150,7 +148,7 @@ public class ClientGui extends Application implements View {
                 instances.get(state).prepare();
                 if(state.equals(ClientState.GAME_RUNNING)) {
                     if(this.gameUpdater == null) {
-                        this.gameUpdater = new Game(this);
+                        this.gameUpdater = new Game(this, (it.polimi.ingsw.client.view.gui.scenes.Game) instances.get(state));
                         new Thread(this.gameUpdater).start();
                     }
                 }
@@ -158,6 +156,18 @@ public class ClientGui extends Application implements View {
                     if(this.gameUpdater != null) {
                         this.gameUpdater.stop();
                         this.gameUpdater = null;
+                    }
+                }
+                if(state.equals(ClientState.GAME_WAITING_ROOM)) {
+                    if(this.waitingRoomUpdater == null) {
+                        this.waitingRoomUpdater = new WaitingRoom(this, (it.polimi.ingsw.client.view.gui.scenes.WaitingRoom) instances.get(state));
+                        new Thread(this.gameUpdater).start();
+                    }
+                }
+                else {
+                    if(this.waitingRoomUpdater != null) {
+                        this.waitingRoomUpdater.stop();
+                        this.waitingRoomUpdater = null;
                     }
                 }
             }

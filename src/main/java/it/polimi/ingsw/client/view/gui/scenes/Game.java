@@ -6,8 +6,8 @@ import it.polimi.ingsw.client.view.ClientGui;
 import it.polimi.ingsw.client.view.gui.CommandAssembler;
 import it.polimi.ingsw.client.view.gui.utilities.*;
 import it.polimi.ingsw.utilities.ClientState;
-import it.polimi.ingsw.utilities.Log;
 import it.polimi.ingsw.utilities.GameControllerState;
+import it.polimi.ingsw.utilities.Log;
 import it.polimi.ingsw.utilities.Pair;
 import javafx.application.Platform;
 import javafx.event.Event;
@@ -106,7 +106,6 @@ public class Game implements Update {
             player.setText(client.getController().getGameModel().getCurrentPlayer());
         });
         new Thread(this::prepareGraphicElements).start();
-        new Thread(new it.polimi.ingsw.client.view.gui.updates.Game(client, this)).start();
     }
 
     /**
@@ -123,7 +122,7 @@ public class Game implements Update {
         Thread cloudsThread = new Thread(() -> updateClouds(gameBoard));
         Thread islandsThread = new Thread(() -> updateIslands(gameBoard));
 
-        infoThread.start();
+        //infoThread.start();
         boardsThread.start();
         cloudsThread.start();
         islandsThread.start();
@@ -188,7 +187,6 @@ public class Game implements Update {
                 }
             }
         }
-    }
         activateButtons(true);
     }
 
@@ -356,6 +354,7 @@ public class Game implements Update {
             phase.setText(gameModel.getSubphase().name().toLowerCase(Locale.ROOT));
             player.setText(gameModel.getCurrentPlayer());
         });
+        Log.debug("info updated");
     }
 
     /**
@@ -379,14 +378,17 @@ public class Game implements Update {
             if (gameModel.isExpert())
                 boardContainer.updateCoins(currentPlayer.getCoins());
         }
+        Log.debug("boards updated");
     }
 
     /**
      * Updates all the clouds.
      */
     private void updateClouds(GameBoard gameBoard) {
-        for (int index = 0; index < gameBoard.getClouds().size(); index++)
-            clouds.get(index).updateStudents(gameBoard.getClouds().get(index).getStudents(false));
+
+            for (int index = 0; index < gameBoard.getClouds().size(); index++)
+                clouds.get(index).updateStudents(gameBoard.getClouds().get(index).getStudents(false));
+        Log.debug("clouds updated");
     }
 
     /**
@@ -404,6 +406,7 @@ public class Game implements Update {
             if (island.hasNext())
                 islandContainer.connect();
         }
+        Log.debug("Islands updated");
     }
 
     /**
