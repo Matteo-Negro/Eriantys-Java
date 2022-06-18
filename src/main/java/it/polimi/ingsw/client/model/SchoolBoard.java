@@ -37,6 +37,8 @@ public class SchoolBoard {
         this.entrance = JsonToObjects.parseStudents(entrance);
         this.diningRoom = JsonToObjects.parseStudents(diningRoom);
         this.professors = new EnumMap<>(HouseColor.class);
+        for (HouseColor color : HouseColor.values())
+            professors.put(color, false);
     }
 
     /**

@@ -1,6 +1,6 @@
 package it.polimi.ingsw.utilities;
 
-public enum GameControllerStates {
+public enum GameControllerState {
     ASSISTANT_PLAYED,
     CHOOSE_CLOUD,
     END_TURN,

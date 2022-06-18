@@ -13,16 +13,18 @@ import javafx.application.Platform;
 public class Game implements Runnable, Observer {
     private final ClientGui client;
     private final Object lock;
+    private final it.polimi.ingsw.client.view.gui.scenes.Game gameGUI;
 
     /**
      * Default class constructor.
      *
      * @param client The client that's currently running.
      */
-    public Game(ClientGui client) {
+    public Game(ClientGui client, it.polimi.ingsw.client.view.gui.scenes.Game gameGUI) {
         this.client = client;
         this.lock = new Object();
         this.client.getModelObserver().attachObserver(this);
+        this.gameGUI = gameGUI;
     }
 
     /**
@@ -38,9 +40,10 @@ public class Game implements Runnable, Observer {
                     Log.debug("Game update thread has been interrupted.");
                     Thread.currentThread().interrupt();
                 }
+                gameGUI.update();
             }
-            Platform.runLater(client::changeScene);
         }
+        Platform.runLater(client::changeScene);
     }
 
     /**

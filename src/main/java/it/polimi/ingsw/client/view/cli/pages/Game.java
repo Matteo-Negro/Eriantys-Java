@@ -3,7 +3,7 @@ package it.polimi.ingsw.client.view.cli.pages;
 import it.polimi.ingsw.client.model.GameModel;
 import it.polimi.ingsw.client.view.cli.pages.subparts.PlayerStuff;
 import it.polimi.ingsw.client.view.cli.pages.subparts.Realm;
-import it.polimi.ingsw.utilities.GameControllerStates;
+import it.polimi.ingsw.utilities.GameControllerState;
 import it.polimi.ingsw.utilities.Phase;
 import org.fusesource.jansi.Ansi;
 import org.jline.terminal.Terminal;
@@ -69,7 +69,7 @@ public class Game {
      * @param subphase          The current subphase of the game.
      * @return The generated Ansi stream.
      */
-    private static Ansi printBorder(int y, int x, String gameId, int round, boolean currentPlayerTurn, Phase phase, GameControllerStates subphase) {
+    private static Ansi printBorder(int y, int x, String gameId, int round, boolean currentPlayerTurn, Phase phase, GameControllerState subphase) {
         Ansi ansi = new Ansi();
 
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy");

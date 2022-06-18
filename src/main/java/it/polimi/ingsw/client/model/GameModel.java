@@ -4,7 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
-import it.polimi.ingsw.utilities.GameControllerStates;
+import it.polimi.ingsw.utilities.GameControllerState;
 import it.polimi.ingsw.utilities.HouseColor;
 import it.polimi.ingsw.utilities.Phase;
 import it.polimi.ingsw.utilities.WizardType;
@@ -25,7 +25,7 @@ public class GameModel {
 
     private int round;
     private Phase phase;
-    private GameControllerStates subphase;
+    private GameControllerState subphase;
 
     private String currentPlayer;
     private boolean expert;
@@ -56,7 +56,7 @@ public class GameModel {
      * @param statusPlayers       A JsonArray containing the info about the players.
      * @param statusGameBoard     A JsonObject containing the info about the game board.
      */
-    public GameModel(int statusPlayersNumber, int statusRound, Phase statusPhase, GameControllerStates statusSubphase, boolean statusExpert, String statusCurrentPlayer, JsonArray statusPlayers, JsonObject statusGameBoard) {
+    public GameModel(int statusPlayersNumber, int statusRound, Phase statusPhase, GameControllerState statusSubphase, boolean statusExpert, String statusCurrentPlayer, JsonArray statusPlayers, JsonObject statusGameBoard) {
         this.waitingRoom = null;
         this.playersNumber = statusPlayersNumber;
         this.round = statusRound;
@@ -209,7 +209,7 @@ public class GameModel {
      *
      * @return The subphase attribute.
      */
-    public GameControllerStates getSubphase() {
+    public GameControllerState getSubphase() {
         return subphase;
     }
 

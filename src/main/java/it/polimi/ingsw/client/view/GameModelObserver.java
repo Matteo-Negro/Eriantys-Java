@@ -37,6 +37,7 @@ public class GameModelObserver {
      * Notifies all observer objects about the game model changes.
      */
     public void notifyUpdate() {
-        for (Observer observer : this.observers) observer.notifyUpdate();
+        for (Observer observer : this.observers)
+            observer.notifyUpdate();
     }
 }

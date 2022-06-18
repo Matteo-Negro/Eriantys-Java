@@ -15,9 +15,9 @@ public class WaitingRoom implements Runnable, Observer {
 
     private final ClientGui client;
     private final Object lock;
-    private final it.polimi.ingsw.client.view.gui.WaitingRoom waitingRoomGUI;
+    private final it.polimi.ingsw.client.view.gui.scenes.WaitingRoom waitingRoomGUI;
 
-    public WaitingRoom(ClientGui client, it.polimi.ingsw.client.view.gui.WaitingRoom waitingRoomGUI) {
+    public WaitingRoom(ClientGui client, it.polimi.ingsw.client.view.gui.scenes.WaitingRoom waitingRoomGUI) {
         this.client = client;
         lock = new Object();
         this.waitingRoomGUI = waitingRoomGUI;

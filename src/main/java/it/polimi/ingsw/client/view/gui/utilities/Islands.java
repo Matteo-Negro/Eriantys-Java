@@ -1,6 +1,7 @@
 package it.polimi.ingsw.client.view.gui.utilities;
 
 import it.polimi.ingsw.client.model.GameBoard;
+import it.polimi.ingsw.client.view.gui.CommandAssembler;
 import it.polimi.ingsw.utilities.Pair;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
@@ -39,6 +40,7 @@ public class Islands {
                     "-fx-background-color: radial-gradient(focus-distance 0% ,center 50% 50%, radius 90%, transparent, #FCFFAD);" +
                     "-fx-min-width: 155px;" +
                     "-fx-min-height: 155px;");
+            islandButton.setVisible(false);
             islandButton.setOnAction(mouseEvent -> assembler.manageIslandSelection(islandId));
             group.getChildren().addAll(Images.island(), Grids.island(gameBoard.getIslandById(index), islandContainer), islandButton);
         }

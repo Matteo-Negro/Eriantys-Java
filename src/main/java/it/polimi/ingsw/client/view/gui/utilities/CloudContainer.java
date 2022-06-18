@@ -26,20 +26,19 @@ public class CloudContainer {
         this.pane = pane;
     }
 
-    public void setStudent(List<HouseColor> students) {
-        Platform.runLater(() -> {
-            for (int index = 0; index < this.students.size(); index++) {
-                this.students.get(index).setImage(Images.getStudent3dByColor(students.get(index)));
-                this.students.get(index).setVisible(true);
-            }
-        });
-    }
-
-    public void refill() {
-        Platform.runLater(() -> {
-            for (ImageView student : students)
-                student.setVisible(false);
-        });
+    public void updateStudents(List<HouseColor> students) {
+        if (students == null)
+            Platform.runLater(() -> {
+                for (ImageView student : this.students)
+                    student.setVisible(false);
+            });
+        else
+            Platform.runLater(() -> {
+                for (int index = 0; index < this.students.size(); index++) {
+                    this.students.get(index).setImage(Images.getStudent3dByColor(students.get(index)));
+                    this.students.get(index).setVisible(true);
+                }
+            });
     }
 
     void addStudent(ImageView student) {
