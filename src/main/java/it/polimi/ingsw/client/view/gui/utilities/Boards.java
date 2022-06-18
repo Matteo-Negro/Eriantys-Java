@@ -1,6 +1,5 @@
 package it.polimi.ingsw.client.view.gui.utilities;
 
-import it.polimi.ingsw.client.model.Assistant;
 import it.polimi.ingsw.client.model.GameModel;
 import it.polimi.ingsw.client.model.Player;
 import it.polimi.ingsw.client.view.gui.CommandAssembler;
@@ -9,7 +8,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
@@ -22,35 +20,12 @@ public class Boards {
     private Boards() {
     }
 
-    public static Map<String, BoardContainer> get(GameModel gameModel, CommandAssembler assembler) {
+    public static Map<String, BoardContainer> get(GameModel gameModel, CommandAssembler assembler, String currentPlayer) {
 
         BoardContainer boardContainer;
         Map<String, BoardContainer> map = new HashMap<>();
 
         for (Player player : gameModel.getPlayers()) {
-            GridPane gPane = new GridPane();
-            gPane.setMinSize(900, 160);
-            gPane.setMaxSize(1000, 160);
-            gPane.setPadding(new Insets(0, 0, 0, 0));
-            gPane.setHgap(5);
-            gPane.setVgap(5);
-            gPane.setAlignment(Pos.TOP_CENTER);
-
-            for (Assistant availableAssistant : gameModel.getPlayerByName(player.getName()).getHand()) {
-                final int assistantId = availableAssistant.getId();
-                Button assistantButton = new Button("", Images.assistant(assistantId));
-                assistantButton.setStyle("-fx-border-width: 2px;" +
-                        "-fx-padding: 2px;" +
-                        "-fx-border-color: #FCFFAD;" +
-                        "-fx-max-height: 133px;" +
-                        "-fx-max-width: 90px;" +
-                        "-fx-background-color: transparent;" +
-                        "-fx-background-color: radial-gradient(focus-distance 0%, center 50% 50%, radius 100% ,transparent, #FCFFAD);");
-                assistantButton.setOnMouseClicked(mouseEvent -> assembler.manageAssistantSelection(assistantId));
-                gPane.add(assistantButton, assistantId, 0);
-            }
-            gPane.setVisible(false);
-            gPane.setManaged(false);
 
             boardContainer = new BoardContainer(assembler);
             map.put(player.getName(), boardContainer);
@@ -75,9 +50,12 @@ public class Boards {
             Label name = Labels.playerName(player.getName());
 
             HBox board = Boxes.board(gameModel, player.getName(), boardContainer);
-            vBox.getChildren().addAll(name, board, gPane);
+            vBox.getChildren().addAll(name, board);
             VBox.setMargin(name, new Insets(10, 0, 10, 0));
             VBox.setMargin(board, new Insets(0, 0, 10, 0));
+
+            if (player.getName().equals(currentPlayer))
+                vBox.getChildren().add(Various.assistantsPane(assembler, gameModel, player));
 
             group.getChildren().addAll(vBox, diningRoomButton);
         }

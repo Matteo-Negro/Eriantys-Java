@@ -1,8 +1,8 @@
 package it.polimi.ingsw.client.view;
 
 import it.polimi.ingsw.client.controller.ClientController;
-import it.polimi.ingsw.client.view.gui.scenes.Start;
 import it.polimi.ingsw.client.view.gui.scenes.Prepare;
+import it.polimi.ingsw.client.view.gui.scenes.Start;
 import it.polimi.ingsw.client.view.gui.updates.Game;
 import it.polimi.ingsw.client.view.gui.updates.WaitingRoom;
 import it.polimi.ingsw.utilities.ClientState;

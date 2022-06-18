@@ -195,7 +195,7 @@ public class Game implements Prepare {
      * Adds all the boards to the GUI.
      */
     private void addBoards() {
-        boards = Boards.get(client.getController().getGameModel(), commandAssembler);
+        boards = Boards.get(client.getController().getGameModel(), commandAssembler, client.getController().getUserName());
         this.boardsList = reorder();
         Platform.runLater(() -> {
             Rectangle rectangle;

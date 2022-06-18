@@ -9,7 +9,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 
 import java.util.*;
@@ -221,10 +221,9 @@ public class BoardContainer {
 
     public void enableAssistantButtons(boolean enable) {
         try {
-            VBox vBox = (VBox) pane.getChildrenUnmodifiable().get(0);
-            GridPane gPane = (GridPane) vBox.getChildren().get(2);
-            gPane.setVisible(enable);
-            gPane.setManaged(enable);
+            FlowPane scrollPane = (FlowPane) ((VBox) pane.getChildrenUnmodifiable().get(0)).getChildren().get(2);
+            scrollPane.setVisible(enable);
+            scrollPane.setManaged(enable);
         } catch (Exception e) {
             Log.warning(e);
         }
