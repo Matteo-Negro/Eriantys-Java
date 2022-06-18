@@ -201,7 +201,7 @@ public class GameServer implements Runnable {
         if (!(message.get("activeUser") instanceof JsonNull)) activeUser = message.get("activeUser").getAsString();
         boolean expert = message.get("expert").getAsBoolean();
         Phase phase = Phase.valueOf(message.get("phase").getAsString());
-        GameControllerStates subphase = GameControllerStates.valueOf(message.get("subPhase").getAsString());
+        GameControllerState subphase = GameControllerState.valueOf(message.get("subPhase").getAsString());
         JsonArray players = message.get("players").getAsJsonArray();
         JsonObject gameBoard = message.get("gameBoard").getAsJsonObject();
         GameModel model = new GameModel(players.size(), round, phase, subphase, expert, activeUser, players, gameBoard);

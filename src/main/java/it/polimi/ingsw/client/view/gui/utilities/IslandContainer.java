@@ -42,10 +42,8 @@ public class IslandContainer {
         this.motherNature = motherNature;
     }
 
-    public void setMotherNatureVisibility(boolean visible) {
-        Platform.runLater(() -> {
-            motherNature.setVisible(visible);
-        });
+    public void updateMotherNatureVisibility(boolean visible) {
+        Platform.runLater(() -> motherNature.setVisible(visible));
     }
 
     public Parent getPane() {
@@ -68,10 +66,12 @@ public class IslandContainer {
         studentsLabels.put(houseColor, label);
     }
 
-    public void setStudentsNumber(HouseColor houseColor, int number) {
+    public void updateStudents(Map<HouseColor, Integer> map) {
         Platform.runLater(() -> {
-            studentsBoxes.get(houseColor).setVisible(number != 0);
-            studentsLabels.get(houseColor).setText(String.format("x%1d", number));
+            for (Map.Entry<HouseColor, Integer> entry : map.entrySet()) {
+                studentsBoxes.get(entry.getKey()).setVisible(entry.getValue() != 0);
+                studentsLabels.get(entry.getKey()).setText(String.format("x%1d", entry.getValue()));
+            }
         });
     }
 
@@ -79,7 +79,7 @@ public class IslandContainer {
         this.tower = tower;
     }
 
-    public void setTower(TowerType towerType) {
+    public void updateTower(TowerType towerType) {
         if (towerType != null)
             Platform.runLater(() -> {
                 tower.setImage(Images.getTowerRealmByColor(towerType));

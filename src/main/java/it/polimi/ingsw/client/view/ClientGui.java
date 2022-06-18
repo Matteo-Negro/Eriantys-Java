@@ -5,6 +5,8 @@ import it.polimi.ingsw.client.view.gui.Start;
 import it.polimi.ingsw.client.view.gui.Update;
 import it.polimi.ingsw.client.view.gui.updates.Game;
 import it.polimi.ingsw.client.view.gui.updates.WaitingRoom;
+import it.polimi.ingsw.client.view.gui.scenes.Start;
+import it.polimi.ingsw.client.view.gui.scenes.Update;
 import it.polimi.ingsw.utilities.ClientState;
 import it.polimi.ingsw.utilities.Log;
 import it.polimi.ingsw.utilities.Pair;

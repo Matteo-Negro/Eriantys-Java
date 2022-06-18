@@ -38,7 +38,7 @@ public class EventProcessing {
      */
     public static boolean boardsToggle(Event event) {
         event.consume();
-        return !(event instanceof KeyEvent keyEvent) || keyEvent.getCode().equals(KeyCode.B);
+        return event instanceof KeyEvent keyEvent && keyEvent.getCode().equals(KeyCode.B);
     }
 
     /**

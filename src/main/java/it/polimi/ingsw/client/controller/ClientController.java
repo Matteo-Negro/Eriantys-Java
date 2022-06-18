@@ -16,8 +16,8 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
-import static it.polimi.ingsw.utilities.GameControllerStates.CHOOSE_CLOUD;
-import static it.polimi.ingsw.utilities.GameControllerStates.MOVE_MOTHER_NATURE;
+import static it.polimi.ingsw.utilities.GameControllerState.CHOOSE_CLOUD;
+import static it.polimi.ingsw.utilities.GameControllerState.MOVE_MOTHER_NATURE;
 
 /**
  * This is the client controller, it runs the main client's finite state machine.

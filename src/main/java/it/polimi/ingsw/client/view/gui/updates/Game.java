@@ -12,14 +12,17 @@ import javafx.application.Platform;
  */
 public class Game implements Runnable {
     private final ClientGui client;
+    private final it.polimi.ingsw.client.view.gui.scenes.Game gameGUI;
 
     /**
      * Default class constructor.
      *
      * @param client The client that's currently running.
      */
-    public Game(ClientGui client) {
+    public Game(ClientGui client, it.polimi.ingsw.client.view.gui.scenes.Game gameGUI) {
         this.client = client;
+        this.client.getModelObserver().attachObserver(this);
+        this.gameGUI = gameGUI;
     }
 
     /**

@@ -3,6 +3,7 @@ package it.polimi.ingsw.client.view.gui.utilities;
 import it.polimi.ingsw.client.model.Assistant;
 import it.polimi.ingsw.client.model.GameModel;
 import it.polimi.ingsw.client.model.Player;
+import it.polimi.ingsw.client.view.gui.CommandAssembler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
@@ -15,7 +16,6 @@ import javafx.scene.layout.VBox;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
 
 public class Boards {
 

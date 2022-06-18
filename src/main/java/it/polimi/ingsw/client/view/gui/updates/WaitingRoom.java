@@ -16,7 +16,7 @@ public class WaitingRoom implements Runnable {
     private final ClientGui client;
     private final it.polimi.ingsw.client.view.gui.WaitingRoom waitingRoomGUI;
 
-    public WaitingRoom(ClientGui client, it.polimi.ingsw.client.view.gui.WaitingRoom waitingRoomGUI) {
+    public WaitingRoom(ClientGui client, it.polimi.ingsw.client.view.gui.scenes.WaitingRoom waitingRoomGUI) {
         this.client = client;
         this.waitingRoomGUI = waitingRoomGUI;
     }

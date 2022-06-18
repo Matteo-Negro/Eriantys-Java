@@ -41,7 +41,7 @@ public class GameController implements Runnable {
     private int connectedPlayers;
     private int round;
     private Phase phase;
-    private GameControllerStates subPhase;
+    private GameControllerState subPhase;
     private String activeUser;
     private boolean initialized;
     private boolean ended;
@@ -66,7 +66,7 @@ public class GameController implements Runnable {
         this.users = new HashMap<>();
         this.isFullLock = new Object();
         this.actionNeededLock = new Object();
-        this.subPhase = GameControllerStates.PLAY_ASSISTANT;
+        this.subPhase = GameControllerState.PLAY_ASSISTANT;
         this.activeUser = null;
         this.initialized = false;
         this.ended = false;
@@ -103,7 +103,7 @@ public class GameController implements Runnable {
         this.connectedPlayers = 0;
         this.isFullLock = new Object();
         this.actionNeededLock = new Object();
-        this.subPhase = GameControllerStates.valueOf(subPhase);
+        this.subPhase = GameControllerState.valueOf(subPhase);
         this.activeUser = null;
         this.initialized = true;
         this.ended = false;
@@ -213,7 +213,7 @@ public class GameController implements Runnable {
      *
      * @return The subPhase attribute.
      */
-    public GameControllerStates getSubPhase() {
+    public GameControllerState getSubPhase() {
         return subPhase;
     }
 
@@ -222,7 +222,7 @@ public class GameController implements Runnable {
      *
      * @param state The state to set into the subPhase attribute.
      */
-    private void setSubPhase(GameControllerStates state) {
+    private void setSubPhase(GameControllerState state) {
         this.subPhase = state;
     }
 
@@ -384,7 +384,7 @@ public class GameController implements Runnable {
 
                 // WAITING FOR ASSISTANT TO BE PLAYED
                 Log.debug("Waiting for assistant to be played.");
-                while (this.getSubPhase() != GameControllerStates.ASSISTANT_PLAYED) {
+                while (this.getSubPhase() != GameControllerState.ASSISTANT_PLAYED) {
                     synchronized (this.actionNeededLock) {
                         try {
                             this.actionNeededLock.wait();
@@ -405,7 +405,7 @@ public class GameController implements Runnable {
                 // DISABLING THE CURRENT USER'S INPUT.
                 this.activeUser = null;
                 notifyUsers(MessageCreator.turnEnable(currentUser.getUsername(), false));
-                this.setSubPhase(GameControllerStates.PLAY_ASSISTANT);
+                this.setSubPhase(GameControllerState.PLAY_ASSISTANT);
                 gameModel.nextTurn();
                 notifyUsers(MessageCreator.status(this));
             }
@@ -418,7 +418,7 @@ public class GameController implements Runnable {
 
         this.getGameModel().updateTurnOrder();
         this.phase = Phase.ACTION;
-        this.setSubPhase(GameControllerStates.MOVE_STUDENT_1);
+        this.setSubPhase(GameControllerState.MOVE_STUDENT_1);
         notifyUsers(MessageCreator.status(this));
         saveGame();
     }
@@ -436,7 +436,7 @@ public class GameController implements Runnable {
 
         //WAITING FOR A CLOUD TO BE CHOSEN (refill command)
         Log.debug("Waiting for a cloud to be chosen.");
-        while (this.getSubPhase() != GameControllerStates.END_TURN) {
+        while (this.getSubPhase() != GameControllerState.END_TURN) {
             notifyUsers(MessageCreator.turnEnable(currentUser.getUsername(), true));
             Log.debug("Current subphase: " + this.subPhase.toString());
             synchronized (this.actionNeededLock) {
@@ -463,7 +463,7 @@ public class GameController implements Runnable {
 
         try {
             this.getGameModel().nextTurn();
-            this.setSubPhase(GameControllerStates.MOVE_STUDENT_1);
+            this.setSubPhase(GameControllerState.MOVE_STUDENT_1);
         } catch (RoundConcluded rc) {
             Log.debug("Round concluded.");
             try {
@@ -476,7 +476,7 @@ public class GameController implements Runnable {
             }
             this.round++;
             this.phase = Phase.PLANNING;
-            this.setSubPhase(GameControllerStates.PLAY_ASSISTANT);
+            this.setSubPhase(GameControllerState.PLAY_ASSISTANT);
         }
         saveGame();
         notifyUsers(MessageCreator.status(this));
@@ -491,7 +491,7 @@ public class GameController implements Runnable {
     public void playAssistantCard(String player, int assistant) {
         try {
             this.gameModel.getGameBoard().addPlayedAssistant(this.gameModel.getPlayerByName(player), this.gameModel.getPlayerByName(player).playAssistant(assistant));
-            this.setSubPhase(GameControllerStates.ASSISTANT_PLAYED);
+            this.setSubPhase(GameControllerState.ASSISTANT_PLAYED);
         } catch (IllegalMoveException | AlreadyPlayedException e) {
             Log.warning(e);
             this.getUsers().remove(this.getUser(player));
@@ -534,17 +534,17 @@ public class GameController implements Runnable {
 
                 if (!command.get("special").getAsBoolean()) {
                     switch (this.getSubPhase()) {
-                        case MOVE_STUDENT_1 -> this.setSubPhase(GameControllerStates.MOVE_STUDENT_2);
+                        case MOVE_STUDENT_1 -> this.setSubPhase(GameControllerState.MOVE_STUDENT_2);
 
-                        case MOVE_STUDENT_2 -> this.setSubPhase(GameControllerStates.MOVE_STUDENT_3);
+                        case MOVE_STUDENT_2 -> this.setSubPhase(GameControllerState.MOVE_STUDENT_3);
                         case MOVE_STUDENT_3 -> {
                             if ((this.getExpectedPlayers() == 3)) {
-                                this.setSubPhase(GameControllerStates.MOVE_STUDENT_4);
+                                this.setSubPhase(GameControllerState.MOVE_STUDENT_4);
                             } else {
-                                this.setSubPhase(GameControllerStates.MOVE_MOTHER_NATURE);
+                                this.setSubPhase(GameControllerState.MOVE_MOTHER_NATURE);
                             }
                         }
-                        case MOVE_STUDENT_4 -> this.setSubPhase(GameControllerStates.MOVE_MOTHER_NATURE);
+                        case MOVE_STUDENT_4 -> this.setSubPhase(GameControllerState.MOVE_MOTHER_NATURE);
                         default -> throw new IllegalMoveException();
                     }
                 }
@@ -648,7 +648,7 @@ public class GameController implements Runnable {
             targetIsland = this.gameModel.getGameBoard().getIslandById(idIsland);
             if (move) {
                 this.gameModel.getGameBoard().moveMotherNature(targetIsland, this.gameModel.getGameBoard().getPlayedAssistants().get(this.gameModel.getCurrentPlayer()));
-                this.setSubPhase(GameControllerStates.CHOOSE_CLOUD);
+                this.setSubPhase(GameControllerState.CHOOSE_CLOUD);
             }
         } catch (IslandNotFoundException e) {
             Log.warning(e);
@@ -738,7 +738,7 @@ public class GameController implements Runnable {
      */
     public void chooseCloud(JsonObject command) {
         this.gameModel.getPlayerByName(command.get("player").getAsString()).getSchoolBoard().addToEntrance(this.gameModel.getGameBoard().getClouds().get(command.get("cloud").getAsInt()).flush());
-        this.setSubPhase(GameControllerStates.END_TURN);
+        this.setSubPhase(GameControllerState.END_TURN);
         endGame();
         synchronized (this.actionNeededLock) {
             this.actionNeededLock.notifyAll();

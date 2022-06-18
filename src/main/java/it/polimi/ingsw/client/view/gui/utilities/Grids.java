@@ -112,9 +112,6 @@ public class Grids {
             gridPane.add(cloudStudents(cloud, cloudContainer), 1, 2);
         }
 
-        if (cloud.getStudents(false) == null)
-            cloudContainer.refill();
-
         return gridPane;
     }
 
@@ -405,6 +402,7 @@ public class Grids {
             imageView.setVisible(false);
             Button studentButton = new Button("", imageView);
             studentButton.setStyle("-fx-background-radius: 50em;" + "-fx-max-width: 10px;" + "-fx-max-height: 10px;" + "-fx-padding: 0px;");
+            studentButton.setVisible(false);
             students.add(studentButton);
             gridPane.add(studentButton, 1 - index % 2, (number == 7 ? 3 : 4) - index / 2);
         }

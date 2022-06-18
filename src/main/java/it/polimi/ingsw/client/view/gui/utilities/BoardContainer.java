@@ -1,9 +1,9 @@
 package it.polimi.ingsw.client.view.gui.utilities;
 
+import it.polimi.ingsw.client.view.gui.CommandAssembler;
 import it.polimi.ingsw.utilities.HouseColor;
 import it.polimi.ingsw.utilities.Log;
 import it.polimi.ingsw.utilities.WizardType;
-import it.polimi.ingsw.utilities.exceptions.IllegalActionException;
 import javafx.application.Platform;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
@@ -80,7 +80,7 @@ public class BoardContainer {
         this.assistant = assistant;
     }
 
-    public void setAssistant(Integer id) {
+    public void updateAssistant(Integer id) {
         Platform.runLater(() -> {
             if (id == null)
                 assistant.setImage(Images.getWizardByType(wizard));
@@ -93,7 +93,7 @@ public class BoardContainer {
         this.coins = coins;
     }
 
-    public void setCoins(int coins) {
+    public void updateCoins(int coins) {
         if (this.coins != null && coins >= 0)
             this.coins.setText(String.format("x%d", coins));
     }
@@ -110,17 +110,9 @@ public class BoardContainer {
             updateDiningRoom(false);
     }
 
-    public void addToDiningRoom(HouseColor houseColor) throws IllegalActionException {
-        if (diningRoom.get(houseColor) == 10)
-            throw new IllegalActionException("Already enough students of color " + houseColor.name().toLowerCase(Locale.ROOT));
-        diningRoom.replace(houseColor, diningRoom.get(houseColor) + 1);
-        updateDiningRoom(true);
-    }
-
-    public void removeFromDiningRoom(HouseColor houseColor) throws IllegalActionException {
-        if (diningRoom.get(houseColor) == 0)
-            throw new IllegalActionException("No more students of color " + houseColor.name().toLowerCase(Locale.ROOT));
-        diningRoom.replace(houseColor, diningRoom.get(houseColor) - 1);
+    public void updateDiningRoom(Map<HouseColor, Integer> diningRoom) {
+        for (HouseColor color : HouseColor.values())
+            this.diningRoom.replace(color, diningRoom.get(color));
         updateDiningRoom(true);
     }
 
@@ -140,15 +132,9 @@ public class BoardContainer {
             updateEntrance(false);
     }
 
-    public void addToEntrance(HouseColor houseColor) {
-        entrance.replace(houseColor, entrance.get(houseColor) + 1);
-        updateEntrance(true);
-    }
-
-    public void removeFromEntrance(HouseColor houseColor) throws IllegalActionException {
-        if (entrance.get(houseColor) == 0)
-            throw new IllegalActionException("No more students of color " + houseColor.name().toLowerCase(Locale.ROOT));
-        entrance.replace(houseColor, entrance.get(houseColor) - 1);
+    public void updateEntrance(Map<HouseColor, Integer> entrance) {
+        for (HouseColor color : HouseColor.values())
+            this.entrance.replace(color, entrance.get(color));
         updateEntrance(true);
     }
 
@@ -156,34 +142,22 @@ public class BoardContainer {
         this.professors = Collections.unmodifiableMap(professors);
     }
 
-    public void addProfessor(HouseColor houseColor) {
-        Platform.runLater(() -> professors.get(houseColor).setVisible(true));
-    }
-
-    public void removeProfessor(HouseColor houseColor) {
-        Platform.runLater(() -> professors.get(houseColor).setVisible(false));
+    public void updateProfessors(Map<HouseColor, Boolean> professors) {
+        Platform.runLater(() -> {
+            for (HouseColor color : HouseColor.values())
+                this.professors.get(color).setVisible(professors.get(color));
+        });
     }
 
     void setTowers(List<ImageView> towers) {
         this.towers = Collections.unmodifiableList(towers);
     }
 
-    public void addTower() throws IllegalActionException {
-        Optional<ImageView> tower = towers.stream().filter(imageView -> !imageView.isVisible()).findFirst();
-        if (tower.isEmpty())
-            throw new IllegalActionException("All the towers are already here.");
-        else
-            Platform.runLater(() -> tower.get().setVisible(true));
-    }
-
-    public void removeTower() throws IllegalActionException {
-        List<ImageView> reverse = new ArrayList<>(towers);
-        Collections.reverse(reverse);
-        Optional<ImageView> tower = reverse.stream().filter(ImageView::isVisible).findFirst();
-        if (tower.isEmpty())
-            throw new IllegalActionException("There is no tower left.");
-        else
-            Platform.runLater(() -> tower.get().setVisible(false));
+    public void updateTowers(int towersNumber) {
+        Platform.runLater(() -> {
+            for (int index = 0; index < towers.size(); index++)
+                towers.get(index).setVisible(index < towersNumber);
+        });
     }
 
     void setWizard(WizardType wizard) {
