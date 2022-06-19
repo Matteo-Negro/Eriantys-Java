@@ -14,7 +14,7 @@
 
 <AnchorPane onKeyPressed="#toggleView" prefHeight="720.0" prefWidth="1280.0" style="-fx-background-color: #74c4ed;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.client.view.gui.scenes.Game">
    <children>
-      <AnchorPane fx:id="boardsTab" style="-fx-background-color: #74c4ed;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <AnchorPane fx:id="realmTab" style="-fx-background-color: #74c4ed;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <GridPane layoutX="253.0" layoutY="-31.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="50.0">
                <columnConstraints>
@@ -78,15 +78,15 @@
             <HBox fx:id="cloudsLayout" alignment="CENTER" layoutX="1112.0" layoutY="625.0" AnchorPane.bottomAnchor="250.0" AnchorPane.leftAnchor="300.0" AnchorPane.rightAnchor="300.0" AnchorPane.topAnchor="250.0" />
          </children>
       </AnchorPane>
-      <ScrollPane fx:id="realmTab" fitToHeight="true" fitToWidth="true" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <ScrollPane fx:id="boardsTab" fitToHeight="true" fitToWidth="true" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <content>
             <VBox fx:id="boardsLayout" alignment="TOP_CENTER" style="-fx-background-color: #74c4ed;" />
          </content>
       </ScrollPane>
       <GridPane alignment="CENTER_LEFT" prefHeight="79.0" prefWidth="210.0" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0">
          <columnConstraints>
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="47.553348541259766" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="203.02315521240234" minWidth="10.0" prefWidth="135.44665145874023" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="48.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="203.02315521240234" minWidth="10.0" prefWidth="161.5" />
          </columnConstraints>
          <rowConstraints>
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />

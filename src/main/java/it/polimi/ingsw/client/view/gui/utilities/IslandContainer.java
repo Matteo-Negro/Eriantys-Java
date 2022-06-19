@@ -14,6 +14,7 @@ import java.util.Map;
 
 public class IslandContainer {
 
+    private ImageView ban;
     private Line connection;
     private ImageView motherNature;
     private Parent pane;
@@ -22,12 +23,21 @@ public class IslandContainer {
     private ImageView tower;
 
     IslandContainer() {
+        ban = null;
         connection = null;
         motherNature = null;
         pane = null;
         studentsBoxes = null;
         studentsLabels = null;
         tower = null;
+    }
+
+    void setBan(ImageView ban) {
+        this.ban = ban;
+    }
+
+    public void updateBan(boolean ban) {
+        Platform.runLater(() -> this.ban.setVisible(ban));
     }
 
     void setConnection(Line connection) {

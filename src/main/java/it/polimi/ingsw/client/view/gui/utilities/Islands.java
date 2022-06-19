@@ -5,6 +5,7 @@ import it.polimi.ingsw.client.view.gui.CommandAssembler;
 import it.polimi.ingsw.utilities.Pair;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
+import javafx.scene.image.ImageView;
 import javafx.scene.shape.Line;
 
 import java.util.ArrayList;
@@ -43,7 +44,11 @@ public class Islands {
             islandButton.setVisible(false);
             islandButton.setOnAction(mouseEvent -> assembler.manageIslandSelection(islandId));
             islandButton.setVisible(false);
-            group.getChildren().addAll(Images.island(), Grids.island(gameBoard.getIslandById(index), islandContainer), islandButton);
+
+            ImageView ban = Images.ban();
+            islandContainer.setBan(ban);
+
+            group.getChildren().addAll(Images.island(), Grids.island(gameBoard.getIslandById(index), islandContainer), ban, islandButton);
         }
 
         return new Pair<>(Collections.unmodifiableList(list), nextList);

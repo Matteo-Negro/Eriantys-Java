@@ -37,7 +37,7 @@ public class Game implements Prepare {
     @FXML
     private VBox boardsLayout;
     @FXML
-    private AnchorPane boardsTab;
+    private ScrollPane boardsTab;
     @FXML
     private HBox cloudsLayout;
     @FXML
@@ -73,7 +73,7 @@ public class Game implements Prepare {
     @FXML
     private Label phase;
     @FXML
-    private ScrollPane realmTab;
+    private AnchorPane realmTab;
     @FXML
     private Label round;
 
@@ -98,8 +98,8 @@ public class Game implements Prepare {
     public void prepare() {
         Platform.runLater(() -> {
             id.requestFocus();
-            realmTab.setVisible(false);
-            boardsTab.setVisible(true);
+            realmTab.setVisible(true);
+            boardsTab.setVisible(false);
             id.setText(client.getController().getGameCode());
             round.setText(String.valueOf(client.getController().getGameModel().getRound()));
             phase.setText(client.getController().getGameModel().getSubphase().name().toLowerCase(Locale.ROOT));
@@ -281,7 +281,7 @@ public class Game implements Prepare {
 
         this.islandButtons = new ArrayList<>();
         for (int islandId = 0; islandId < 12; islandId++)
-            islandButtons.add((Button) this.islands.get(islandId).getPane().getChildrenUnmodifiable().get(2));
+            islandButtons.add((Button) this.islands.get(islandId).getPane().getChildrenUnmodifiable().get(3));
     }
 
     /**
@@ -388,6 +388,7 @@ public class Game implements Prepare {
             islandContainer.updateMotherNatureVisibility(island.hasMotherNature());
             islandContainer.updateStudents(island.getStudents());
             islandContainer.updateTower(island.getTower());
+            islandContainer.updateBan(island.isBanned());
             if (island.hasNext())
                 islandContainer.connect();
         }
