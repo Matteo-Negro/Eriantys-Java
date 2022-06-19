@@ -13,6 +13,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class Images {
 
     private static List<Image> assistants = null;
+    private static Image ban = null;
     private static Image board = null;
     private static Image boardCoins = null;
     private static List<Image> clouds = null;
@@ -21,6 +22,7 @@ public class Images {
     private static List<Image> islands = null;
     private static Image motherNature = null;
     private static Map<HouseColor, Image> professors = null;
+    private static List<Image> specialCharacters = null;
     private static Map<HouseColor, Image> studentsRealm = null;
     private static Map<HouseColor, Image> studentsBoard = null;
     private static Map<TowerType, Image> towersBoard = null;
@@ -35,6 +37,17 @@ public class Images {
         imageView.setFitWidth(135);
         imageView.setFitHeight(200);
         imageView.setImage(getAssistantById(id));
+        return imageView;
+    }
+
+    static ImageView ban() {
+        if (ban == null)
+            ban = new Image("/ban.png");
+        ImageView imageView = new ImageView();
+        imageView.setFitWidth(162);
+        imageView.setFitHeight(156);
+        imageView.setImage(ban);
+        imageView.setVisible(false);
         return imageView;
     }
 
@@ -100,6 +113,14 @@ public class Images {
         imageView.setFitWidth(45);
         imageView.setFitHeight(39);
         imageView.setImage(getProfessorByColor(color));
+        return imageView;
+    }
+
+    static ImageView specialCharacter(int id) {
+        ImageView imageView = new ImageView();
+        imageView.setFitWidth(261);
+        imageView.setFitHeight(384);
+        imageView.setImage(getSpecialCharacterById(id));
         return imageView;
     }
 
@@ -187,6 +208,12 @@ public class Images {
         return endTitles.get(endType);
     }
 
+    static Image getSpecialCharacterById(int id) {
+        if (specialCharacters == null)
+            initializeSpecialCharacters();
+        return specialCharacters.get(id - 1);
+    }
+
     static Image getTowerBoardByColor(TowerType towerType) {
         if (towersBoard == null)
             initializeTowersBoard();
@@ -252,6 +279,27 @@ public class Images {
         for (HouseColor houseColor : HouseColor.values())
             images.put(houseColor, new Image(String.format("/pawns/students/board/%s.png", houseColor.name().toLowerCase(Locale.ROOT))));
         studentsBoard = Collections.unmodifiableMap(images);
+    }
+
+    private static void initializeSpecialCharacters() {
+        List<Image> images = new ArrayList<>();
+        List<String> characters = List.of(
+                "monk",
+                "farmer",
+                "herald",
+                "messenger",
+                "herbalist",
+                "centaur",
+                "jester",
+                "knight",
+                "mushroomer",
+                "ministrel",
+                "princess",
+                "thief"
+        );
+        for (String character : characters)
+            images.add(new Image(String.format("/cards/characters/%s.png", character)));
+        specialCharacters = Collections.unmodifiableList(images);
     }
 
     private static void initializeTowersBoard() {
