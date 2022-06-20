@@ -106,9 +106,9 @@ public class SpecialCharacterContainer {
     void setBansImages(List<Button> banButtons) {
         this.bansImages = Collections.unmodifiableList(banButtons);
         if (bansNum != 0)
-            Platform.runLater(() ->  updateBans(this.bansNum));
+            Platform.runLater(() -> updateBans(this.bansNum));
         else
-        updateBans(this.bansNum);
+            updateBans(this.bansNum);
     }
 
     public void updateBans(int bansNum) {
@@ -133,6 +133,9 @@ public class SpecialCharacterContainer {
     }
 
     public void enableStudentButtons(boolean enable) {
+        if (this.studentsImages == null)
+            return;
+
         for (Button studentButton : this.studentsImages) {
             if (enable)
                 // TODO: check for it
@@ -155,6 +158,9 @@ public class SpecialCharacterContainer {
     }
 
     public void enableBanButtons(boolean enable) {
+        if (this.bansImages == null)
+            return;
+
         for (Button banButton : this.bansImages) {
             if (enable)
                 // TODO: check for it
@@ -174,6 +180,31 @@ public class SpecialCharacterContainer {
                         "-fx-padding: 0px;");
             banButton.setMouseTransparent(!enable);
         }
+    }
+
+    public void enableCharacterButton(boolean activePlayer, boolean enable, boolean effectActive, boolean active) {
+        Button characterButton = (Button) this.getPane().getChildrenUnmodifiable().get(0);
+
+        if (activePlayer && enable && !effectActive && !active) {
+            characterButton.setStyle("-fx-border-color: #FCFFAD;" +
+                    "-fx-border-width: 1px;" +
+                    "-fx-background-color: radial-gradient(focus-distance 0%, center 50% 50%, radius 90%, transparent, #FCFFAD);");
+            characterButton.setMouseTransparent(false);
+        } else if (enable && effectActive && active) {
+            characterButton.setStyle("-fx-border-color: #38DC77;" +
+                    "-fx-border-width: 2px;" +
+                    "-fx-background-color: radial-gradient(focus-distance 0%, center 50% 50%, radius 90%, transparent, #38DC77);");
+            characterButton.setMouseTransparent(true);
+        }else {
+            characterButton.setStyle("-fx-border-width: 0px;" +
+                    "-fx-background-color: transparent;" +
+                    "-fx-min-width: 130px;" +
+                    "-fx-min-height: 130px;");
+            characterButton.setMouseTransparent(true);
+        }
+        enableStudentButtons(activePlayer && enable && effectActive && active);
+        enableBanButtons(activePlayer && enable && effectActive && active);
+        characterButton.setMouseTransparent(!activePlayer || !enable || effectActive || active);
     }
 
     private List<HouseColor> studentsToList() {

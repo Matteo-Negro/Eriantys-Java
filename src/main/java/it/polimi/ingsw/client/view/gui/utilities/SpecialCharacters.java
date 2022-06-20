@@ -28,19 +28,14 @@ public class SpecialCharacters {
             specialCharacterContainer.setPane(group);
 
             Button specialCharacterButton = new Button("");
-            // TODO: check for it
-            specialCharacterButton.setStyle("-fx-border-color: #FCFFAD;" +
-                    "-fx-border-width: 1px;" +
-                    "-fx-border-radius: 50em;" +
-                    "-fx-background-radius: 50em;" +
-                    "-fx-background-color: radial-gradient(focus-distance 0%, center 50% 50%, radius 90%, transparent, #FCFFAD);" +
+            specialCharacterButton.setStyle("-fx-border-color: transparent;" +
+                    "-fx-background-color: transparent;" +
                     "-fx-min-width: 130px;" +
                     "-fx-min-height: 130px;");
-            specialCharacterButton.setVisible(false);
+            specialCharacterButton.setVisible(true);
             specialCharacterButton.setGraphic(Images.specialCharacter(idSpecialCharacter));
             specialCharacterButton.setOnAction(mouseEvent -> assembler.managePaymentsSpecialCharacterSelection(idSpecialCharacter));
-            specialCharacterButton.setVisible(false);
-            group.getChildren().addAll(Images.specialCharacter(idSpecialCharacter), Grids.specialCharacter(specialCharacter, specialCharacterContainer), specialCharacterButton);
+            group.getChildren().addAll(specialCharacterButton, Grids.specialCharacter(specialCharacter, specialCharacterContainer));
         }
         return Collections.unmodifiableList(list);
     }

@@ -33,6 +33,7 @@ public class Game implements Prepare {
     private Map<String, BoardContainer> boards;
     private List<CloudContainer> clouds;
     private List<IslandContainer> islands;
+    private List<SpecialCharacterContainer> characters;
 
     @FXML
     private VBox boardsLayout;
@@ -83,6 +84,7 @@ public class Game implements Prepare {
     private List<Button> islandButtons;
     private List<Button> cloudButtons;
     private List<BoardContainer> boardsList;
+    private List<Button> characterButtons;
 
     /**
      * Initializes the scene.
@@ -309,10 +311,10 @@ public class Game implements Prepare {
     }
 
     private void addSpecialCharacters() {
-        List<SpecialCharacterContainer> specialCharacters = SpecialCharacters.get(client.getController().getGameModel().getGameBoard().getSpecialCharacters(), commandAssembler);
+        this.characters = SpecialCharacters.get(client.getController().getGameModel().getGameBoard().getSpecialCharacters(), commandAssembler);
         Platform.runLater(() -> {
             charactersTab.getChildren().clear();
-            for (SpecialCharacterContainer specialCharacter : specialCharacters) {
+            for (SpecialCharacterContainer specialCharacter : characters) {
                 HBox.setMargin(specialCharacter.getPane(), new Insets(10));
                 charactersTab.getChildren().add(specialCharacter.getPane());
             }
@@ -331,6 +333,12 @@ public class Game implements Prepare {
         this.islandButtons = new ArrayList<>();
         for (int islandId = 0; islandId < 12; islandId++)
             islandButtons.add((Button) this.islands.get(islandId).getPane().getChildrenUnmodifiable().get(3));
+
+        if (this.client.getController().getGameModel().isExpert()) {
+            this.characterButtons = new ArrayList<>();
+            for (SpecialCharacterContainer character : this.characters)
+                characterButtons.add((Button) character.getPane().getChildrenUnmodifiable().get(0));
+        }
     }
 
     /**
@@ -355,6 +363,8 @@ public class Game implements Prepare {
                         firstBoard.enableEntranceButtons(false);
                         enableIslandButtons(false);
                         enableCloudButtons(false);
+                        if (this.client.getController().getGameModel().isExpert())
+                            enableCharacterButtons(false);
                     }
                     case MOVE_STUDENT_1, MOVE_STUDENT_2, MOVE_STUDENT_3, MOVE_STUDENT_4 -> {
                         firstBoard.enableAssistantButtons(false);
@@ -362,6 +372,8 @@ public class Game implements Prepare {
                         firstBoard.enableEntranceButtons(true);
                         enableIslandButtons(true);
                         enableCloudButtons(false);
+                        if (this.client.getController().getGameModel().isExpert())
+                            enableCharacterButtons(true);
                     }
                     case MOVE_MOTHER_NATURE -> {
                         firstBoard.enableAssistantButtons(false);
@@ -369,6 +381,8 @@ public class Game implements Prepare {
                         firstBoard.enableEntranceButtons(false);
                         enableIslandButtons(true);
                         enableCloudButtons(false);
+                        if (this.client.getController().getGameModel().isExpert())
+                            enableCharacterButtons(true);
                     }
                     case CHOOSE_CLOUD -> {
                         firstBoard.enableAssistantButtons(false);
@@ -376,6 +390,8 @@ public class Game implements Prepare {
                         firstBoard.enableEntranceButtons(false);
                         enableIslandButtons(false);
                         enableCloudButtons(true);
+                        if (this.client.getController().getGameModel().isExpert())
+                            enableCharacterButtons(true);
                     }
                 }
             }
@@ -480,5 +496,26 @@ public class Game implements Prepare {
     private void enableCloudButtons(boolean enable) {
         for (Button cloudButton : this.cloudButtons)
             cloudButton.setVisible(enable);
+    }
+
+    /**
+     * Sets the special character buttons visibility to the given value.
+     *
+     * @param enable The value to set.
+     */
+    private void enableCharacterButtons(boolean enable) {
+        boolean activePlayer = this.client.getController().hasCommunicationToken();
+        boolean effectActive = false;
+        int activeCharacterPosition = 0;
+        for (SpecialCharacter character : this.client.getController().getGameModel().getGameBoard().getSpecialCharacters()) {
+            if (character.isActive()) {
+                effectActive = true;
+                break;
+            }
+            activeCharacterPosition++;
+        }
+        for(SpecialCharacterContainer character : this.characters) {
+            character.enableCharacterButton(activePlayer, enable, effectActive, this.characters.indexOf(character) == activeCharacterPosition);
+        }
     }
 }
