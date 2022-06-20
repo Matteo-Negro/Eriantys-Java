@@ -12,6 +12,7 @@ import it.polimi.ingsw.utilities.Pair;
 import org.fusesource.jansi.Ansi;
 import org.jline.builtins.Completers;
 import org.jline.reader.History;
+import org.jline.reader.UserInterruptException;
 import org.jline.reader.impl.history.DefaultHistory;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
@@ -31,7 +32,8 @@ import static org.jline.builtins.Completers.TreeCompleter.node;
  * @author Riccardo Motta
  * @author Matteo Negro
  */
-public class ClientCli extends Thread implements View {
+public class ClientCli implements Runnable, View {
+
     /**
      * Manages the waiting-room-screen's output.
      */
@@ -127,7 +129,12 @@ public class ClientCli extends Thread implements View {
      */
     public void runMainMenu() {
         MainMenu.print(terminal);
-        this.controller.manageMainMenu(readLine(" ", terminal, List.of(node("1"), node("2"), node("exit")), false, null));
+        try {
+            this.controller.manageMainMenu(readLine(" ", terminal, List.of(node("1"), node("2"), node("exit")), false, null));
+        } catch (UserInterruptException e) {
+            updateScreen(false);
+            controller.manageConnectionLost();
+        }
     }
 
     /**
@@ -138,7 +145,13 @@ public class ClientCli extends Thread implements View {
         boolean expert;
 
         GameCreation.print(terminal);
-        String playersNumber = readLine(" ", terminal, List.of(node("2"), node("3"), node("4"), node("exit")), false, null);
+        String playersNumber;
+        try {
+            playersNumber = readLine(" ", terminal, List.of(node("2"), node("3"), node("4"), node("exit")), false, null);
+        } catch (UserInterruptException e) {
+            manageExit();
+            return;
+        }
         terminal.writer().print(ansi().restoreCursorPosition());
         terminal.writer().print(ansi().cursorMove(-1, 1));
         terminal.writer().print(ansi().saveCursorPosition());
@@ -158,7 +171,13 @@ public class ClientCli extends Thread implements View {
             }
         }
 
-        String difficulty = readLine(" ", terminal, List.of(node("normal"), node("expert"), node("exit")), false, null);
+        String difficulty;
+        try {
+            difficulty = readLine(" ", terminal, List.of(node("normal"), node("expert"), node("exit")), false, null);
+        } catch (UserInterruptException e) {
+            manageExit();
+            return;
+        }
         switch (difficulty) {
             case "normal" -> expert = false;
             case "expert" -> expert = true;
@@ -183,7 +202,11 @@ public class ClientCli extends Thread implements View {
      */
     public void runJoinGame() {
         JoinGame.print(terminal);
-        this.controller.manageJoinGame(readLine(" ", terminal, List.of(node("exit")), false, null).toUpperCase(Locale.ROOT));
+        try {
+            this.controller.manageJoinGame(readLine(" ", terminal, List.of(node("exit")), false, null).toUpperCase(Locale.ROOT));
+        } catch (UserInterruptException e) {
+            manageExit();
+        }
     }
 
     /**
@@ -191,7 +214,11 @@ public class ClientCli extends Thread implements View {
      */
     public void runGameLogin() {
         Login.print(terminal, this.controller.getGameModel().getWaitingRoom(), this.controller.getGameModel().getPlayersNumber());
-        this.controller.manageGameLogin(readLine(" ", terminal, playersToNodes(), false, null));
+        try {
+            this.controller.manageGameLogin(readLine(" ", terminal, playersToNodes(), false, null));
+        } catch (UserInterruptException e) {
+            manageExit();
+        }
     }
 
     public void runWaitingRoom() {
@@ -303,6 +330,11 @@ public class ClientCli extends Thread implements View {
                 nodes.add(node(entry.getKey()));
         nodes.add(node("exit"));
         return Collections.unmodifiableList(nodes);
+    }
+
+    private void manageExit() {
+        updateScreen(false);
+        controller.setClientState(ClientState.MAIN_MENU);
     }
 
     /**

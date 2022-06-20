@@ -186,10 +186,10 @@ public class Utilities {
                     .option(LineReader.Option.AUTO_LIST, suggestions)
                     .history(history)
                     .build().readLine(prefix));
-        } catch (EndOfFileException e) {
-            throw new UserInterruptException(e.getMessage());
         } catch (IOError e) {
             return "";
+        } catch (Exception e) {
+            throw new UserInterruptException(e.getMessage());
         }
     }
 

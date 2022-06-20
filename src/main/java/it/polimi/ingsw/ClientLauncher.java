@@ -28,23 +28,14 @@ public class ClientLauncher {
         }
 
         try {
-            //new Client(parseArgument(args));
-            try {
-                if (parseArgument((args)).equals(GraphicsType.CLI)) {
-                    new Thread(new ClientCli()).start();
-                } else {
-                    Application.launch(ClientGui.class);
-                }
-            } catch (IOException ioe) {
-                Log.error("An error occurred while creating the controller class.");
-            }
-
-            /*else{
-                // create ClientGui
-            }*/
-
+            if (parseArgument((args)).equals(GraphicsType.CLI))
+                new Thread(new ClientCli()).start();
+            else
+                Application.launch(ClientGui.class);
         } catch (IllegalArgumentException e) {
             Log.error("Accepted arguments: --cli, -c, --gui or -g.");
+        } catch (IOException ioe) {
+            Log.error("An error occurred while creating the controller class.");
         }
     }
 
