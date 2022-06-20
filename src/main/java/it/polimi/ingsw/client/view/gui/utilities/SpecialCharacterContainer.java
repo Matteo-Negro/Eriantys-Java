@@ -24,8 +24,8 @@ public class SpecialCharacterContainer {
     private ImageView extraPrice;
     private final CommandAssembler commandAssembler;
 
-    SpecialCharacterContainer(int idSpecialCharacter) {
-        this.commandAssembler = null;
+    SpecialCharacterContainer(int idSpecialCharacter, CommandAssembler assembler) {
+        this.commandAssembler = assembler;
         this.idSpecialCharacter = idSpecialCharacter;
         this.connection = null;
         this.pane = null;
@@ -36,14 +36,15 @@ public class SpecialCharacterContainer {
         this.extraPrice = null;
         updateStudents = students -> {
             for (int index = 0; index < studentsImages.size(); index++) {
+                int studentIndex = index;
                 studentsImages.get(index).setGraphic(Images.student2d(index < students.size() ? students.get(index) : null));
                 studentsImages.get(index).setVisible(index < students.size() && students.get(index) != null);
                 studentsImages.get(index).setOnMouseClicked(mouseEvent -> {
                     switch (idSpecialCharacter) {
-                        case 1 -> commandAssembler.manageStudentSCFromCardToIslandSelection();
+                        case 1 -> commandAssembler.manageStudentSCFromCardToIslandSelection(students.get(studentIndex));
                         case 7 -> commandAssembler.manageStudentSCSwapCardEntranceSelection();
                         case 9 -> commandAssembler.manageStudentSCIgnoreColorSelection();
-                        case 11 -> commandAssembler.manageStudentSCFromCardToDiningRoomSelection();
+                        case 11 -> commandAssembler.manageStudentSCFromCardToDiningRoomSelection(students.get(studentIndex));
                         case 12 -> commandAssembler.manageStudentSCReturnColorSelection();
                     }
                 });

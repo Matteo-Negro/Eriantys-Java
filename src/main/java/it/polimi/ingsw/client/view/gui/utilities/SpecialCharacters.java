@@ -21,7 +21,7 @@ public class SpecialCharacters {
 
         for (SpecialCharacter specialCharacter : specialCharacters) {
             final int idSpecialCharacter = specialCharacter.getId();
-            specialCharacterContainer = new SpecialCharacterContainer(idSpecialCharacter);
+            specialCharacterContainer = new SpecialCharacterContainer(idSpecialCharacter, assembler);
             list.add(specialCharacterContainer);
 
             Group group = new Group();
