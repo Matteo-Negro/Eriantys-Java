@@ -11,16 +11,31 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Updates the WaitingRoom.
+ *
+ * @author Riccardo Milici
+ * @author Riccardo Motta
+ */
 public class WaitingRoom implements Runnable {
 
     private final ClientGui client;
     private final it.polimi.ingsw.client.view.gui.scenes.WaitingRoom waitingRoomGUI;
 
+    /**
+     * Default constructor.
+     *
+     * @param client         The current ClientGUI instance.
+     * @param waitingRoomGUI The current WaitingRoom (GUI) instance.
+     */
     public WaitingRoom(ClientGui client, it.polimi.ingsw.client.view.gui.scenes.WaitingRoom waitingRoomGUI) {
         this.client = client;
         this.waitingRoomGUI = waitingRoomGUI;
     }
 
+    /**
+     * The core class method, which periodically updates the view.
+     */
     @Override
     public void run() {
         while (client.getController().getClientState().equals(ClientState.GAME_WAITING_ROOM)) {
@@ -38,6 +53,11 @@ public class WaitingRoom implements Runnable {
         Platform.runLater(client::changeScene);
     }
 
+    /**
+     * Gets the labels containing players' names.
+     *
+     * @return List of Labels containing players' names.
+     */
     private List<Label> getPlayers() {
 
         List<Label> players = new ArrayList<>();
@@ -60,6 +80,9 @@ public class WaitingRoom implements Runnable {
         return players;
     }
 
+    /**
+     * Stops the current thread.
+     */
     public void stop() {
         Thread.currentThread().interrupt();
     }

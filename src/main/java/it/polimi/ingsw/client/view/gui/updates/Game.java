@@ -44,6 +44,9 @@ public class Game implements Runnable {
         }
     }
 
+    /**
+     * Stops the current thread.
+     */
     public void stop() {
         Thread.currentThread().interrupt();
     }
