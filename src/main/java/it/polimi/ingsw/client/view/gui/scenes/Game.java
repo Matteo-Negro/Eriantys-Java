@@ -514,7 +514,7 @@ public class Game implements Prepare {
             }
             activeCharacterPosition++;
         }
-        for(SpecialCharacterContainer character : this.characters) {
+        for (SpecialCharacterContainer character : this.characters) {
             character.enableCharacterButton(activePlayer, enable, effectActive, this.characters.indexOf(character) == activeCharacterPosition);
         }
     }

@@ -14,15 +14,15 @@ import java.util.function.Consumer;
 public class SpecialCharacterContainer {
 
     private final Consumer<List<HouseColor>> updateStudents;
-    private List<Button> bansImages;
     private final int idSpecialCharacter;
+    private final CommandAssembler commandAssembler;
+    private List<Button> bansImages;
     private Line connection;
     private Parent pane;
     private Map<HouseColor, Integer> students;
     private List<Button> studentsImages;
     private int bansNum;
     private ImageView extraPrice;
-    private final CommandAssembler commandAssembler;
 
     SpecialCharacterContainer(int idSpecialCharacter, CommandAssembler assembler) {
         this.commandAssembler = assembler;
@@ -42,10 +42,11 @@ public class SpecialCharacterContainer {
                 studentsImages.get(index).setOnMouseClicked(mouseEvent -> {
                     switch (idSpecialCharacter) {
                         case 1 -> commandAssembler.manageStudentSCFromCardToIslandSelection(students.get(studentIndex));
-                        case 7 -> commandAssembler.manageStudentSCSwapCardEntranceSelection();
-                        case 9 -> commandAssembler.manageStudentSCIgnoreColorSelection();
-                        case 11 -> commandAssembler.manageStudentSCFromCardToDiningRoomSelection(students.get(studentIndex));
-                        case 12 -> commandAssembler.manageStudentSCReturnColorSelection();
+                        case 7 -> commandAssembler.manageStudentSCSwapCardEntranceSelection(students.get(studentIndex));
+                        case 9 -> commandAssembler.manageStudentSCIgnoreColorSelection(students.get(studentIndex));
+                        case 11 ->
+                                commandAssembler.manageStudentSCFromCardToDiningRoomSelection(students.get(studentIndex));
+                        case 12 -> commandAssembler.manageStudentSCReturnColorSelection(students.get(studentIndex));
                     }
                 });
                 enableStudentButtons(false);
@@ -195,7 +196,7 @@ public class SpecialCharacterContainer {
                     "-fx-border-width: 2px;" +
                     "-fx-background-color: radial-gradient(focus-distance 0%, center 50% 50%, radius 90%, transparent, #38DC77);");
             characterButton.setMouseTransparent(true);
-        }else {
+        } else {
             characterButton.setStyle("-fx-border-width: 0px;" +
                     "-fx-background-color: transparent;" +
                     "-fx-min-width: 130px;" +

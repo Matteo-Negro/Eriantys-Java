@@ -23,7 +23,7 @@ public class CommandAssembler {
         Log.debug("Island selected with id " + islandId);
         String island = islandId >= 0 && islandId <= 11 ? String.format("isl%02d", islandId + 1) : "";
 
-        if(command.contains("from sc01 to") || command.equals("ban "))
+        if (command.contains("from chr01 to") || command.equals("ban "))
             command = String.format("%s%s", command, island);
         else {
             switch (controller.getGameModel().getSubphase()) {
@@ -58,9 +58,13 @@ public class CommandAssembler {
 
     public void manageEntranceSelection(HouseColor color) {
         Log.debug("Selected student from entrance of color " + color.toString());
-        if (!command.equals(""))
-            flushCommand();
-        command = String.format("move student %s from entrance to ", color.name().toLowerCase(Locale.ROOT));
+        if (command.contains("swap chr07-student"))
+            command = String.format("%s%s", command, color.name().toLowerCase(Locale.ROOT));
+        else {
+            if (!command.equals(""))
+                flushCommand();
+            command = String.format("move student %s from entrance to ", color.name().toLowerCase(Locale.ROOT));
+        }
     }
 
     public void manageAssistantSelection(int assistantId) {
@@ -85,15 +89,21 @@ public class CommandAssembler {
         Log.debug("Selected student from special character of color " + color.toString());
         if (!command.equals(""))
             flushCommand();
-        command = String.format("move student %s from sc01 to ", color.name().toLowerCase(Locale.ROOT));
+        command = String.format("move student %s from chr01 to ", color.name().toLowerCase(Locale.ROOT));
     }
 
-    public void manageStudentSCSwapCardEntranceSelection() {
-        // TODO
+    public void manageStudentSCSwapCardEntranceSelection(HouseColor color) {
+        Log.debug("Selected student from special character of color " + color.toString());
+        if (!command.equals(""))
+            flushCommand();
+        command = String.format("swap chr07-student %s with entrance-student ", color.name().toLowerCase(Locale.ROOT));
     }
 
-    public void manageStudentSCIgnoreColorSelection() {
-        // TODO
+    public void manageStudentSCIgnoreColorSelection(HouseColor color) {
+        Log.debug("Selected student from special character of color " + color.toString());
+        if (!command.equals(""))
+            flushCommand();
+        command = String.format("ignore %s", color.name().toLowerCase(Locale.ROOT));
     }
 
     public void manageStudentSCFromCardToDiningRoomSelection(HouseColor color) {
@@ -103,8 +113,11 @@ public class CommandAssembler {
         command = String.format("move student %s from sc11 to ", color.name().toLowerCase(Locale.ROOT));
     }
 
-    public void manageStudentSCReturnColorSelection() {
-        // TODO
+    public void manageStudentSCReturnColorSelection(HouseColor color) {
+        Log.debug("Selected student from special character of color " + color.toString());
+        if (!command.equals(""))
+            flushCommand();
+        command = String.format("return students %s", color.name().toLowerCase(Locale.ROOT));
 
     }
 
