@@ -281,7 +281,8 @@ public class Grids {
                 bans.add(banButton);
                 gridPane.add(banButton, 3 - index / 2, (index % 2 == 0) ? 1 : 0);
             }
-            // FIXME: add bans to specialCharacterContainer
+            specialCharacterContainer.setBansNum(specialCharacter.getAvailableBans());
+            specialCharacterContainer.setBansImages(bans);
             return;
         }
 

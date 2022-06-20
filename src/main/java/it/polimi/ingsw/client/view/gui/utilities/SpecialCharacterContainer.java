@@ -14,7 +14,7 @@ import java.util.function.Consumer;
 public class SpecialCharacterContainer {
 
     private final Consumer<List<HouseColor>> updateStudents;
-    private final List<Button> bansImages;
+    private List<Button> bansImages;
     private final int idSpecialCharacter;
     private Line connection;
     private Parent pane;
@@ -100,6 +100,14 @@ public class SpecialCharacterContainer {
 
     void setBansNum(int bansNum) {
         this.bansNum = bansNum;
+    }
+
+    void setBansImages(List<Button> banButtons) {
+        this.bansImages = Collections.unmodifiableList(banButtons);
+        if (bansNum != 0)
+            Platform.runLater(() ->  updateBans(this.bansNum));
+        else
+        updateBans(this.bansNum);
     }
 
     public void updateBans(int bansNum) {
