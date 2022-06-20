@@ -119,6 +119,8 @@ public class GameBoard {
             }
             this.characters.add(new SpecialCharacter(randomVector.get(i), students));
         }
+
+        this.characters.sort(Comparator.comparing((SpecialCharacter::getId)));
     }
 
     /**
@@ -256,7 +258,7 @@ public class GameBoard {
      * Gets the influence points given by towers' contribution.
      *
      * @param partialResult The current influence.
-     * @param targetIsland The island on which the influence is being calculated.
+     * @param targetIsland  The island on which the influence is being calculated.
      */
     private void getInfluenceByTowers(Map<Player, Integer> partialResult, Island targetIsland) {
         boolean towersAreIgnored = false;
