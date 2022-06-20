@@ -66,6 +66,39 @@ public class CommandAssembler {
         flushCommand();
     }
 
+    public void managePaymentsSpecialCharacterSelection(int idSpecialCharacter) {
+        Log.debug("Selected assistant with id " + idSpecialCharacter);
+        if (!command.equals(""))
+            flushCommand();
+        command = String.format("pay %s", idSpecialCharacter >= 1 && idSpecialCharacter <= 12 ? String.format("chr%02d", idSpecialCharacter) : "");
+        sendCommand();
+        flushCommand();
+    }
+
+    public void manageStudentSCFromCardToIslandSelection() {
+        // TODO
+    }
+
+    public void manageStudentSCSwapCardEntranceSelection() {
+        // TODO
+    }
+
+    public void manageStudentSCIgnoreColorSelection() {
+        // TODO
+    }
+
+    public void manageStudentSCFromCardToDiningRoomSelection() {
+        // TODO
+    }
+
+    public void manageStudentSCReturnColorSelection() {
+        // TODO
+    }
+
+    public void manageStudentSCBanSelection() {
+        // TODO
+    }
+
     private void sendCommand() {
         Log.debug("Sending command " + command);
         this.controller.manageGameRunning(command);

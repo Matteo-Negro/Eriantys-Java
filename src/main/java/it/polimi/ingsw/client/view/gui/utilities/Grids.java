@@ -3,6 +3,7 @@ package it.polimi.ingsw.client.view.gui.utilities;
 import it.polimi.ingsw.client.model.Cloud;
 import it.polimi.ingsw.client.model.Island;
 import it.polimi.ingsw.client.model.SchoolBoard;
+import it.polimi.ingsw.client.model.SpecialCharacter;
 import it.polimi.ingsw.utilities.HouseColor;
 import it.polimi.ingsw.utilities.TowerType;
 import javafx.collections.ObservableList;
@@ -62,8 +63,7 @@ public class Grids {
             columns.add(new ColumnConstraints());
         }
         rows.add(new RowConstraints());
-        if (playersNumber == 3)
-            columns.add(new ColumnConstraints());
+        if (playersNumber == 3) columns.add(new ColumnConstraints());
 
         initialize(rows, columns);
 
@@ -80,8 +80,7 @@ public class Grids {
         columns.get(0).setPrefWidth(20);
         columns.get(1).setPrefWidth(playersNumber == 3 ? 40 : 80);
         columns.get(2).setPrefWidth(playersNumber == 3 ? 40 : 20);
-        if (playersNumber == 3)
-            columns.get(3).setPrefWidth(20);
+        if (playersNumber == 3) columns.get(3).setPrefWidth(20);
 
         ImageView student;
 
@@ -112,6 +111,68 @@ public class Grids {
             gridPane.add(cloudStudents(cloud, cloudContainer), 1, 2);
         }
 
+        return gridPane;
+    }
+
+    static GridPane specialCharacter(SpecialCharacter specialCharacter, SpecialCharacterContainer specialCharacterContainer) {
+
+        GridPane gridPane = new GridPane();
+        ObservableList<RowConstraints> rows = gridPane.getRowConstraints();
+        ObservableList<ColumnConstraints> columns = gridPane.getColumnConstraints();
+
+        // TODO: check for it (choose wisely the size)
+        gridPane.setPrefHeight(450);
+        gridPane.setPrefWidth(222);
+
+        for (int index = 0; index < 4; index++) {
+            rows.add(new RowConstraints());
+        }
+
+        for (int index = 0; index < 2; index++) {
+            columns.add(new ColumnConstraints());
+        }
+
+        initialize(rows, columns);
+
+        for (RowConstraints row : rows)
+            row.setValignment(VPos.CENTER);
+
+        for (ColumnConstraints column : columns)
+            column.setHalignment(HPos.CENTER);
+
+        if (specialCharacter.isAlreadyPaid()) {
+            gridPane.add(Images.coin(), 0, 0);
+        }
+
+        if (specialCharacter.getAvailableBans() != 0) {
+            List<Button> bans = new ArrayList<>();
+            ImageView ban;
+            for (int index = 0; index < specialCharacter.getAvailableBans(); index++) {
+                ban = Images.ban();
+                ban.setVisible(false);
+                Button banButton = new Button("", ban);
+                // TODO: check for it
+                banButton.setStyle("-fx-background-radius: 50em;" + "-fx-max-width: 10px;" + "-fx-max-height: 10px;" + "-fx-padding: 0px;");
+                banButton.setVisible(false);
+                bans.add(banButton);
+                gridPane.add(banButton, 3 - index / 2, (index % 2 == 0) ? 1 : 0);
+            }
+        } else if (specialCharacter.getStudents() != null) {
+            List<Button> students = new ArrayList<>();
+            ImageView imageView;
+            for (int index = 0; index < specialCharacter.getStudents().values().stream().mapToInt(Integer::intValue).sum(); index++) {
+                imageView = Images.student2d(null);
+                imageView.setVisible(false);
+                Button studentButton = new Button("", imageView);
+                studentButton.setStyle("-fx-background-radius: 50em;" + "-fx-max-width: 10px;" + "-fx-max-height: 10px;" + "-fx-padding: 0px;");
+                studentButton.setVisible(false);
+                students.add(studentButton);
+                gridPane.add(studentButton, 3 - index / 2, (index % 2 == 0) ? 1 : 0);
+            }
+
+            specialCharacterContainer.setStudents(specialCharacter.getStudents());
+            specialCharacterContainer.setStudentsImages(students);
+        }
         return gridPane;
     }
 
@@ -411,13 +472,7 @@ public class Grids {
 
     private static Map<HouseColor, ImageView> initializeProfessors(GridPane gridPane) {
         Map<HouseColor, ImageView> professors = new EnumMap<>(HouseColor.class);
-        List<HouseColor> colors = List.of(
-                HouseColor.GREEN,
-                HouseColor.RED,
-                HouseColor.YELLOW,
-                HouseColor.FUCHSIA,
-                HouseColor.BLUE
-        );
+        List<HouseColor> colors = List.of(HouseColor.GREEN, HouseColor.RED, HouseColor.YELLOW, HouseColor.FUCHSIA, HouseColor.BLUE);
         ImageView imageView;
         for (int index = 0; index < 5; index++) {
             imageView = Images.professor(colors.get(index));

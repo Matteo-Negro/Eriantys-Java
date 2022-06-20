@@ -39,6 +39,8 @@ public class Game implements Prepare {
     @FXML
     private ScrollPane boardsTab;
     @FXML
+    private GridPane charactersTab;
+    @FXML
     private HBox cloudsLayout;
     @FXML
     private Label id;
