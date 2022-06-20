@@ -268,7 +268,7 @@ public class Grids {
 
     private static void processSpecialCharacter(GridPane gridPane, SpecialCharacter specialCharacter, SpecialCharacterContainer specialCharacterContainer) {
 
-        if (specialCharacter.getAvailableBans() != 0) {
+        if (specialCharacter.getAvailableBans() != null) {
             List<Button> bans = new ArrayList<>();
             ImageView ban;
             for (int index = 0; index < specialCharacter.getAvailableBans(); index++) {
