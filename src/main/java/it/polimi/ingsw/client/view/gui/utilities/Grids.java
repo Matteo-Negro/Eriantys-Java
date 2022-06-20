@@ -80,36 +80,10 @@ public class Grids {
         columns.get(0).setPrefWidth(20);
         columns.get(1).setPrefWidth(playersNumber == 3 ? 40 : 80);
         columns.get(2).setPrefWidth(playersNumber == 3 ? 40 : 20);
-        if (playersNumber == 3) columns.get(3).setPrefWidth(20);
+        if (playersNumber == 3)
+            columns.get(3).setPrefWidth(20);
 
-        ImageView student;
-
-        if (playersNumber == 3) {
-
-            student = Images.student3d(cloud.getStudents(false) != null ? cloud.getStudents(false).get(0) : null);
-            cloudContainer.addStudent(student);
-            gridPane.add(student, 1, 1);
-
-            student = Images.student3d(cloud.getStudents(false) != null ? cloud.getStudents(false).get(1) : null);
-            cloudContainer.addStudent(student);
-            gridPane.add(student, 2, 1);
-
-            student = Images.student3d(cloud.getStudents(false) != null ? cloud.getStudents(false).get(2) : null);
-            cloudContainer.addStudent(student);
-            gridPane.add(student, 1, 2);
-
-            student = Images.student3d(cloud.getStudents(false) != null ? cloud.getStudents(false).get(3) : null);
-            cloudContainer.addStudent(student);
-            gridPane.add(student, 2, 2);
-
-        } else {
-
-            student = Images.student3d(cloud.getStudents(false) != null ? cloud.getStudents(false).get(0) : null);
-            cloudContainer.addStudent(student);
-            gridPane.add(student, 1, 1);
-
-            gridPane.add(cloudStudents(cloud, cloudContainer), 1, 2);
-        }
+        addStudentsToCloud(gridPane, cloud, playersNumber, cloudContainer);
 
         return gridPane;
     }
@@ -120,17 +94,14 @@ public class Grids {
         ObservableList<RowConstraints> rows = gridPane.getRowConstraints();
         ObservableList<ColumnConstraints> columns = gridPane.getColumnConstraints();
 
-        // TODO: check for it (choose wisely the size)
-        gridPane.setPrefHeight(450);
-        gridPane.setPrefWidth(222);
+        gridPane.setPrefWidth(261);
+        gridPane.setPrefHeight(384);
 
-        for (int index = 0; index < 4; index++) {
+        for (int index = 0; index < 4; index++)
             rows.add(new RowConstraints());
-        }
 
-        for (int index = 0; index < 2; index++) {
+        for (int index = 0; index < 2; index++)
             columns.add(new ColumnConstraints());
-        }
 
         initialize(rows, columns);
 
@@ -140,39 +111,11 @@ public class Grids {
         for (ColumnConstraints column : columns)
             column.setHalignment(HPos.CENTER);
 
-        if (specialCharacter.isAlreadyPaid()) {
+        if (specialCharacter.isAlreadyPaid())
             gridPane.add(Images.coin(), 0, 0);
-        }
 
-        if (specialCharacter.getAvailableBans() != 0) {
-            List<Button> bans = new ArrayList<>();
-            ImageView ban;
-            for (int index = 0; index < specialCharacter.getAvailableBans(); index++) {
-                ban = Images.ban();
-                ban.setVisible(false);
-                Button banButton = new Button("", ban);
-                // TODO: check for it
-                banButton.setStyle("-fx-background-radius: 50em;" + "-fx-max-width: 10px;" + "-fx-max-height: 10px;" + "-fx-padding: 0px;");
-                banButton.setVisible(false);
-                bans.add(banButton);
-                gridPane.add(banButton, 3 - index / 2, (index % 2 == 0) ? 1 : 0);
-            }
-        } else if (specialCharacter.getStudents() != null) {
-            List<Button> students = new ArrayList<>();
-            ImageView imageView;
-            for (int index = 0; index < specialCharacter.getStudents().values().stream().mapToInt(Integer::intValue).sum(); index++) {
-                imageView = Images.student2d(null);
-                imageView.setVisible(false);
-                Button studentButton = new Button("", imageView);
-                studentButton.setStyle("-fx-background-radius: 50em;" + "-fx-max-width: 10px;" + "-fx-max-height: 10px;" + "-fx-padding: 0px;");
-                studentButton.setVisible(false);
-                students.add(studentButton);
-                gridPane.add(studentButton, 3 - index / 2, (index % 2 == 0) ? 1 : 0);
-            }
+        processSpecialCharacter(gridPane, specialCharacter, specialCharacterContainer);
 
-            specialCharacterContainer.setStudents(specialCharacter.getStudents());
-            specialCharacterContainer.setStudentsImages(students);
-        }
         return gridPane;
     }
 
@@ -203,6 +146,38 @@ public class Grids {
         gridPane.add(islandStudents(island, islandContainer), 1, 1);
 
         return gridPane;
+    }
+
+    private static void addStudentsToCloud(GridPane gridPane, Cloud cloud, int playersNumber, CloudContainer cloudContainer) {
+
+        ImageView student;
+
+        if (playersNumber == 3) {
+
+            student = Images.student3d(cloud.getStudents(false) != null ? cloud.getStudents(false).get(0) : null);
+            cloudContainer.addStudent(student);
+            gridPane.add(student, 1, 1);
+
+            student = Images.student3d(cloud.getStudents(false) != null ? cloud.getStudents(false).get(1) : null);
+            cloudContainer.addStudent(student);
+            gridPane.add(student, 2, 1);
+
+            student = Images.student3d(cloud.getStudents(false) != null ? cloud.getStudents(false).get(2) : null);
+            cloudContainer.addStudent(student);
+            gridPane.add(student, 1, 2);
+
+            student = Images.student3d(cloud.getStudents(false) != null ? cloud.getStudents(false).get(3) : null);
+            cloudContainer.addStudent(student);
+            gridPane.add(student, 2, 2);
+
+        } else {
+
+            student = Images.student3d(cloud.getStudents(false) != null ? cloud.getStudents(false).get(0) : null);
+            cloudContainer.addStudent(student);
+            gridPane.add(student, 1, 1);
+
+            gridPane.add(cloudStudents(cloud, cloudContainer), 1, 2);
+        }
     }
 
     private static GridPane cloudStudents(Cloud cloud, CloudContainer cloudContainer) {
@@ -289,6 +264,43 @@ public class Grids {
         boardContainer.setEntranceImages(initializeEntranceButtons(gridPane, number));
 
         return gridPane;
+    }
+
+    private static void processSpecialCharacter(GridPane gridPane, SpecialCharacter specialCharacter, SpecialCharacterContainer specialCharacterContainer) {
+
+        if (specialCharacter.getAvailableBans() != 0) {
+            List<Button> bans = new ArrayList<>();
+            ImageView ban;
+            for (int index = 0; index < specialCharacter.getAvailableBans(); index++) {
+                ban = Images.banIsland();
+                ban.setVisible(false);
+                Button banButton = new Button("", ban);
+                // TODO: check for it
+                banButton.setStyle("-fx-background-radius: 50em;" + "-fx-max-width: 10px;" + "-fx-max-height: 10px;" + "-fx-padding: 0px;");
+                banButton.setVisible(false);
+                bans.add(banButton);
+                gridPane.add(banButton, 3 - index / 2, (index % 2 == 0) ? 1 : 0);
+            }
+            // FIXME: add bans to specialCharacterContainer
+            return;
+        }
+
+        if (specialCharacter.getStudents() != null) {
+            List<Button> students = new ArrayList<>();
+            ImageView imageView;
+            for (int index = 0; index < specialCharacter.getStudents().values().stream().mapToInt(Integer::intValue).sum(); index++) {
+                imageView = Images.student2d(null);
+                imageView.setVisible(false);
+                Button studentButton = new Button("", imageView);
+                studentButton.setStyle("-fx-background-radius: 50em;" + "-fx-max-width: 10px;" + "-fx-max-height: 10px;" + "-fx-padding: 0px;");
+                studentButton.setVisible(false);
+                students.add(studentButton);
+                gridPane.add(studentButton, 3 - index / 2, (index % 2 == 0) ? 1 : 0);
+            }
+
+            specialCharacterContainer.setStudents(specialCharacter.getStudents());
+            specialCharacterContainer.setStudentsImages(students);
+        }
     }
 
     private static GridPane professors(Map<HouseColor, Boolean> professors, BoardContainer boardContainer) {

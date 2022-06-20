@@ -45,7 +45,7 @@ public class Various {
         return flowPane;
     }
 
-    public static Rectangle rectangle() {
+    public static Rectangle divisor() {
         Rectangle rectangle = new Rectangle(900, 5);
         rectangle.setArcWidth(5);
         rectangle.setArcHeight(5);

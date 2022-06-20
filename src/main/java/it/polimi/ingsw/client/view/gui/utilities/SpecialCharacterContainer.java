@@ -91,11 +91,11 @@ public class SpecialCharacterContainer {
     }
 
     private void updateStudents(boolean safe) {
-        List<HouseColor> students = studentsToList();
+        List<HouseColor> studentsList = studentsToList();
         if (safe)
-            Platform.runLater(() -> updateStudents.accept(students));
+            Platform.runLater(() -> updateStudents.accept(studentsList));
         else
-            updateStudents.accept(students);
+            updateStudents.accept(studentsList);
     }
 
     void setBansNum(int bansNum) {
@@ -105,7 +105,7 @@ public class SpecialCharacterContainer {
     public void updateBans(int bansNum) {
         if (bansNum > 0) Platform.runLater(() -> {
             for (int index = 0; index < bansImages.size(); index++) {
-                this.bansImages.get(index).setGraphic(Images.ban());
+                this.bansImages.get(index).setGraphic(Images.banIcon());
                 this.bansImages.get(index).setVisible(index < bansNum);
                 this.bansImages.get(index).setOnMouseClicked(mouseEvent -> {
                     if (this.idSpecialCharacter == 5) this.commandAssembler.manageStudentSCBanSelection();

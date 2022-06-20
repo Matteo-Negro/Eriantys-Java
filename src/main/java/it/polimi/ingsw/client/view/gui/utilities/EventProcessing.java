@@ -42,6 +42,17 @@ public class EventProcessing {
     }
 
     /**
+     * Toggles the special character pane visibility.
+     *
+     * @param event The event that triggered the function.
+     * @return true if it's the desired event, false otherwise.
+     */
+    public static boolean specialCharactersToggle(Event event) {
+        event.consume();
+        return event instanceof KeyEvent keyEvent && keyEvent.getCode().equals(KeyCode.S);
+    }
+
+    /**
      * Standard event management.
      *
      * @param event The event that triggered the function.

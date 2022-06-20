@@ -45,7 +45,7 @@ public class Islands {
             islandButton.setOnAction(mouseEvent -> assembler.manageIslandSelection(islandId));
             islandButton.setVisible(false);
 
-            ImageView ban = Images.ban();
+            ImageView ban = Images.banIsland();
             islandContainer.setBan(ban);
 
             group.getChildren().addAll(Images.island(), Grids.island(gameBoard.getIslandById(index), islandContainer), ban, islandButton);

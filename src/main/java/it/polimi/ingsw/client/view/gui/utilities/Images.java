@@ -13,7 +13,8 @@ import java.util.concurrent.ThreadLocalRandom;
 public class Images {
 
     private static List<Image> assistants = null;
-    private static Image ban = null;
+    private static Image banIcon = null;
+    private static Image banIsland = null;
     private static Image board = null;
     private static Image boardCoins = null;
     private static List<Image> clouds = null;
@@ -40,13 +41,23 @@ public class Images {
         return imageView;
     }
 
-    static ImageView ban() {
-        if (ban == null)
-            ban = new Image("/ban.png");
+    static ImageView banIcon() {
+        if (banIcon == null)
+            banIcon = new Image("/ban/icon.png");
+        ImageView imageView = new ImageView();
+        imageView.setFitWidth(42);
+        imageView.setFitHeight(48);
+        imageView.setImage(banIcon);
+        return imageView;
+    }
+
+    static ImageView banIsland() {
+        if (banIsland == null)
+            banIsland = new Image("/ban/island.png");
         ImageView imageView = new ImageView();
         imageView.setFitWidth(162);
         imageView.setFitHeight(156);
-        imageView.setImage(ban);
+        imageView.setImage(banIsland);
         imageView.setVisible(false);
         return imageView;
     }

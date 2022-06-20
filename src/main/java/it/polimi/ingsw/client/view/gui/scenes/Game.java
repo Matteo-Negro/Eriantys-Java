@@ -39,7 +39,7 @@ public class Game implements Prepare {
     @FXML
     private ScrollPane boardsTab;
     @FXML
-    private GridPane charactersTab;
+    private HBox charactersTab;
     @FXML
     private HBox cloudsLayout;
     @FXML
@@ -102,6 +102,7 @@ public class Game implements Prepare {
             id.requestFocus();
             realmTab.setVisible(true);
             boardsTab.setVisible(false);
+            charactersTab.setVisible(false);
             id.setText(client.getController().getGameCode());
             round.setText(String.valueOf(client.getController().getGameModel().getRound()));
             phase.setText(client.getController().getGameModel().getSubphase().name().toLowerCase(Locale.ROOT));
@@ -124,17 +125,22 @@ public class Game implements Prepare {
         Thread boardsThread = new Thread(() -> updateBoards(gameModel));
         Thread cloudsThread = new Thread(() -> updateClouds(gameBoard));
         Thread islandsThread = new Thread(() -> updateIslands(gameBoard));
+        Thread specialCharactersThread = new Thread(() -> updateSpecialCharacters());
 
         infoThread.start();
         boardsThread.start();
         cloudsThread.start();
         islandsThread.start();
+        if (client.getController().getGameModel().isExpert())
+            specialCharactersThread.start();
 
         try {
             infoThread.join();
             boardsThread.join();
             cloudsThread.join();
             islandsThread.join();
+            if (client.getController().getGameModel().isExpert())
+                specialCharactersThread.join();
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -149,7 +155,7 @@ public class Game implements Prepare {
      */
     @FXML
     private void exit(Event event) {
-        if (EventProcessing.boardsToggle(event))
+        if (EventProcessing.boardsToggle(event) || EventProcessing.specialCharactersToggle(event))
             toggleView(event);
         else
             EventProcessing.exit(event, client);
@@ -164,8 +170,25 @@ public class Game implements Prepare {
     public void toggleView(Event event) {
         if (EventProcessing.boardsToggle(event))
             Platform.runLater(() -> {
-                boardsTab.setVisible(!boardsTab.isVisible());
-                realmTab.setVisible(!realmTab.isVisible());
+                if (charactersTab.isVisible()) {
+                    charactersTab.setVisible(false);
+                    boardsTab.setVisible(true);
+                    realmTab.setVisible(false);
+                } else {
+                    boardsTab.setVisible(!boardsTab.isVisible());
+                    realmTab.setVisible(!realmTab.isVisible());
+                }
+            });
+        else if (EventProcessing.specialCharactersToggle(event) && client.getController().getGameModel().isExpert())
+            Platform.runLater(() -> {
+                if (boardsTab.isVisible()) {
+                    charactersTab.setVisible(true);
+                    boardsTab.setVisible(false);
+                    realmTab.setVisible(false);
+                } else {
+                    charactersTab.setVisible(!charactersTab.isVisible());
+                    realmTab.setVisible(!realmTab.isVisible());
+                }
             });
     }
 
@@ -177,15 +200,20 @@ public class Game implements Prepare {
         Thread boardsThread = new Thread(this::addBoards);
         Thread cloudsThread = new Thread(this::addClouds);
         Thread islandsThread = new Thread(this::addIslands);
+        Thread specialCharactersThread = new Thread(this::addSpecialCharacters);
 
         boardsThread.start();
         cloudsThread.start();
         islandsThread.start();
+        if (client.getController().getGameModel().isExpert())
+            specialCharactersThread.start();
 
         try {
             boardsThread.join();
             cloudsThread.join();
             islandsThread.join();
+            if (client.getController().getGameModel().isExpert())
+                specialCharactersThread.join();
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -197,19 +225,28 @@ public class Game implements Prepare {
      * Adds all the boards to the GUI.
      */
     private void addBoards() {
+
         boards = Boards.get(client.getController().getGameModel(), commandAssembler, client.getController().getUserName());
+        List<Rectangle> divisors = new ArrayList<>();
+        Rectangle rectangle;
+
         this.boardsList = reorder();
+
+        for (int index = 0; index < boardsList.size() - 1; index++) {
+            rectangle = Various.divisor();
+            VBox.setMargin(rectangle, new Insets(10, 0, 0, 0));
+            divisors.add(rectangle);
+        }
+
+        for (BoardContainer board : boardsList)
+            VBox.setMargin(board.getPane(), new Insets(10));
+
         Platform.runLater(() -> {
-            Rectangle rectangle;
             boardsLayout.getChildren().clear();
-            for (BoardContainer board : boardsList) {
-                boardsLayout.getChildren().add(board.getPane());
-                VBox.setMargin(board.getPane(), new Insets(10));
-                if (boardsList.get(boardsList.size() - 1) != board) {
-                    rectangle = Various.rectangle();
-                    boardsLayout.getChildren().add(rectangle);
-                    VBox.setMargin(rectangle, new Insets(10, 0, 0, 0));
-                }
+            for (int index = 0; index < boardsList.size(); index++) {
+                boardsLayout.getChildren().add(boardsList.get(index).getPane());
+                if (index != boardsList.size() - 1)
+                    boardsLayout.getChildren().add(divisors.get(index));
             }
         });
     }
@@ -231,13 +268,12 @@ public class Game implements Prepare {
      */
     private void addClouds() {
         clouds = Clouds.get(client.getController().getGameModel().getGameBoard().getClouds(), client.getController().getGameModel().getPlayersNumber(), commandAssembler);
+        for (CloudContainer cloud : clouds)
+            HBox.setMargin(cloud.getPane(), new Insets(5));
         Platform.runLater(() -> {
             cloudsLayout.getChildren().clear();
-            for (CloudContainer cloud : clouds) {
-                HBox.setMargin(cloud.getPane(), new Insets(5));
+            for (CloudContainer cloud : clouds)
                 cloudsLayout.getChildren().add(cloud.getPane());
-            }
-
         });
     }
 
@@ -269,6 +305,17 @@ public class Game implements Prepare {
             for (int index = 0; index < 11; index++)
                 if (client.getController().getGameModel().getGameBoard().getIslandById(index).hasNext())
                     this.islands.get(index).connect();
+        });
+    }
+
+    private void addSpecialCharacters() {
+        List<SpecialCharacterContainer> specialCharacters = SpecialCharacters.get(client.getController().getGameModel().getGameBoard().getSpecialCharacters(), commandAssembler);
+        Platform.runLater(() -> {
+            charactersTab.getChildren().clear();
+            for (SpecialCharacterContainer specialCharacter : specialCharacters) {
+                HBox.setMargin(specialCharacter.getPane(), new Insets(10));
+                charactersTab.getChildren().add(specialCharacter.getPane());
+            }
         });
     }
 
@@ -335,6 +382,11 @@ public class Game implements Prepare {
         });
     }
 
+    /**
+     * Updates all the game information.
+     *
+     * @param gameModel The GameModel connected to the game.
+     */
     private void updateInfo(GameModel gameModel) {
         Platform.runLater(() -> {
             round.setText(String.valueOf(gameModel.getRound()));
@@ -346,6 +398,8 @@ public class Game implements Prepare {
 
     /**
      * Updates all the boards.
+     *
+     * @param gameModel The GameModel connected to the game.
      */
     private void updateBoards(GameModel gameModel) {
         Assistant currentAssistant;
@@ -370,6 +424,8 @@ public class Game implements Prepare {
 
     /**
      * Updates all the clouds.
+     *
+     * @param gameBoard The GameBoard connected to the game.
      */
     private void updateClouds(GameBoard gameBoard) {
 
@@ -380,6 +436,8 @@ public class Game implements Prepare {
 
     /**
      * Updates all the islands.
+     *
+     * @param gameBoard The GameBoard connected to the game.
      */
     private void updateIslands(GameBoard gameBoard) {
         Island island;
@@ -395,6 +453,13 @@ public class Game implements Prepare {
                 islandContainer.connect();
         }
         Log.debug("Islands updated");
+    }
+
+    /**
+     * Updates all the special characters.
+     */
+    private void updateSpecialCharacters() {
+        // TODO
     }
 
     /**
