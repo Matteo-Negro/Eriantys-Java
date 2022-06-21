@@ -78,11 +78,11 @@ public class CommandAssembler {
 
     public void managePaymentsSpecialCharacterSelection(int idSpecialCharacter) {
         Log.debug("Selected character with id " + idSpecialCharacter);
-        /*if (!command.equals(""))
+        if (!command.equals(""))
             flushCommand();
         command = String.format("pay %s", idSpecialCharacter >= 1 && idSpecialCharacter <= 12 ? String.format("chr%02d", idSpecialCharacter) : "");
         sendCommand();
-        flushCommand();*/
+        flushCommand();
     }
 
     public void manageStudentSCFromCardToIslandSelection(HouseColor color) {
