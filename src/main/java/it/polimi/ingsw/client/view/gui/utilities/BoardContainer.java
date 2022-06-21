@@ -16,6 +16,9 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+/**
+ * This class is a simple interface to manage GUI boards. Provides all the required methods to create and update it.
+ */
 public class BoardContainer {
 
     private final Supplier<Void> updateDiningRoom;
@@ -32,6 +35,11 @@ public class BoardContainer {
     private List<ImageView> towers;
     private WizardType wizard;
 
+    /**
+     * Default class constructor.
+     *
+     * @param commandAssembler CommandAssembler for building the game messages to send to the server.
+     */
     BoardContainer(CommandAssembler commandAssembler) {
         assistant = null;
         coins = null;
@@ -60,27 +68,38 @@ public class BoardContainer {
         wizard = null;
     }
 
+    /**
+     * Gets the pane to print on the screen.
+     *
+     * @return The pane with all the graphics.
+     */
     public Parent getPane() {
         return pane;
     }
 
+    /**
+     * Initializes the pane.
+     *
+     * @param pane The pane to add.
+     */
     void setPane(Parent pane) {
         this.pane = pane;
     }
 
-    public void enable(boolean value) {
-        Platform.runLater(() -> {
-            if (value) {
-                pane.setStyle("-fx-background-color: #38a2ed");
-            } else
-                pane.setStyle("-fx-background-color: rgba(255, 255, 255, 0%)");
-        });
-    }
-
+    /**
+     * Initializes the assistant image.
+     *
+     * @param assistant The ImageView of the assistant or wizard.
+     */
     void setAssistant(ImageView assistant) {
         this.assistant = assistant;
     }
 
+    /**
+     * Updates the assistant.
+     *
+     * @param id The id of the assistant to show, or null for the wizard.
+     */
     public void updateAssistant(Integer id) {
         Platform.runLater(() -> {
             if (id == null)
@@ -90,59 +109,105 @@ public class BoardContainer {
         });
     }
 
+    /**
+     * Sets the label for the coins.
+     *
+     * @param coins The label.
+     */
     void setCoins(Label coins) {
         this.coins = coins;
     }
 
+    /**
+     * Updates the number of coins.
+     *
+     * @param coins The number of coins to display.
+     */
     public void updateCoins(int coins) {
         if (this.coins != null && coins >= 0)
-            this.coins.setText(String.format("x%d", coins));
+            Platform.runLater(() -> this.coins.setText(String.format("x%d", coins)));
     }
 
+    /**
+     * Sets the number of students in the dining room.
+     *
+     * @param diningRoom A Map with all the colors and their respective number of students.
+     */
     void setDiningRoom(Map<HouseColor, Integer> diningRoom) {
         this.diningRoom = new EnumMap<>(diningRoom);
         if (diningRoomImages != null)
             updateDiningRoom(false);
     }
 
+    /**
+     * Sets the images of the students in the dining room.
+     *
+     * @param diningRoom A Map with all the colors and their respective list of students (ImageViews).
+     */
     void setDiningRoomImages(Map<HouseColor, List<ImageView>> diningRoom) {
         this.diningRoomImages = Collections.unmodifiableMap(diningRoom);
         if (this.diningRoom != null)
             updateDiningRoom(false);
     }
 
+    /**
+     * Upodates the dining room with the new number of students.
+     *
+     * @param diningRoom A Map with all the colors and their respective number of students.
+     */
     public void updateDiningRoom(Map<HouseColor, Integer> diningRoom) {
         for (HouseColor color : HouseColor.values())
             this.diningRoom.replace(color, diningRoom.get(color));
         updateDiningRoom(true);
     }
 
+    /**
+     * Sets the number of students in the entrance.
+     *
+     * @param entranceColors A Map with all the colors and their respective number of students.
+     */
     void setEntrance(Map<HouseColor, Integer> entranceColors) {
         this.entrance = new EnumMap<>(entranceColors);
         if (entranceImages != null)
             updateEntrance(false);
     }
 
-    public List<Button> getEntranceImages() {
-        return this.entranceImages;
-    }
-
+    /**
+     * Sets all the entrance students.
+     *
+     * @param entranceButtons List of buttons with images.
+     */
     void setEntranceImages(List<Button> entranceButtons) {
         this.entranceImages = Collections.unmodifiableList(entranceButtons);
         if (entrance != null)
             updateEntrance(false);
     }
 
+    /**
+     * Updates the entrance with the new students.
+     *
+     * @param entrance A Map with all the colors and their respective number of students.
+     */
     public void updateEntrance(Map<HouseColor, Integer> entrance) {
         for (HouseColor color : HouseColor.values())
             this.entrance.replace(color, entrance.get(color));
         updateEntrance(true);
     }
 
+    /**
+     * Sets the images of the professors in the dining room.
+     *
+     * @param professors A Map with all the colors and their respective professor (ImageViews).
+     */
     void setProfessors(Map<HouseColor, ImageView> professors) {
         this.professors = Collections.unmodifiableMap(professors);
     }
 
+    /**
+     * Updates the dining room with the new professors.
+     *
+     * @param professors A Map with a boolean for each color that is true if that professor is present.
+     */
     public void updateProfessors(Map<HouseColor, Boolean> professors) {
         Platform.runLater(() -> {
             for (HouseColor color : HouseColor.values())
@@ -150,10 +215,20 @@ public class BoardContainer {
         });
     }
 
+    /**
+     * Sets the images of all the towers in the garden.
+     *
+     * @param towers List of ImageViews containing the player.
+     */
     void setTowers(List<ImageView> towers) {
         this.towers = Collections.unmodifiableList(towers);
     }
 
+    /**
+     * Updates all the towers in the garden.
+     *
+     * @param towersNumber Number of towers to display.
+     */
     public void updateTowers(int towersNumber) {
         Platform.runLater(() -> {
             for (int index = 0; index < towers.size(); index++)
@@ -161,10 +236,20 @@ public class BoardContainer {
         });
     }
 
+    /**
+     * Sets the WizardType of the player.
+     *
+     * @param wizard WizardType of the player.
+     */
     void setWizard(WizardType wizard) {
         this.wizard = wizard;
     }
 
+    /**
+     * Converts the entrance into an ordered list of students
+     *
+     * @return A list containing all the students in the entrance, ordered by color.
+     */
     private List<HouseColor> entranceToList() {
         List<HouseColor> list = new ArrayList<>();
         for (Map.Entry<HouseColor, Integer> entry : entrance.entrySet())
@@ -173,6 +258,11 @@ public class BoardContainer {
         return list;
     }
 
+    /**
+     * Updates the dining room.
+     *
+     * @param safe true if it has to be run on the GUI thread.
+     */
     private void updateDiningRoom(boolean safe) {
         if (safe)
             Platform.runLater(updateDiningRoom::get);
@@ -180,6 +270,11 @@ public class BoardContainer {
             updateDiningRoom.get();
     }
 
+    /**
+     * Updates the entrance.
+     *
+     * @param safe true if it has to be run on the GUI thread.
+     */
     private void updateEntrance(boolean safe) {
         List<HouseColor> entranceStudents = entranceToList();
         if (safe)
@@ -188,6 +283,11 @@ public class BoardContainer {
             updateEntrance.accept(entranceStudents);
     }
 
+    /**
+     * Enables the entrance so that the player can interact with it.
+     *
+     * @param enable true if it has to be enabled, false otherwise.
+     */
     public void enableEntranceButtons(boolean enable) {
 
         for (Button entranceButton : this.entranceImages) {
@@ -209,6 +309,11 @@ public class BoardContainer {
         }
     }
 
+    /**
+     * Enables the dining room so that the player can interact with it.
+     *
+     * @param enable true if it has to be enabled, false otherwise.
+     */
     public void enableDiningRoomButton(boolean enable) {
         try {
             Button diningRoomButton = (Button) pane.getChildrenUnmodifiable().get(1);
@@ -216,9 +321,13 @@ public class BoardContainer {
         } catch (Exception e) {
             Log.warning(e);
         }
-
     }
 
+    /**
+     * Enables the assistants so that the player can interact with it.
+     *
+     * @param enable true if it has to be enabled, false otherwise.
+     */
     public void enableAssistantButtons(boolean enable) {
         try {
             FlowPane scrollPane = (FlowPane) ((VBox) pane.getChildrenUnmodifiable().get(0)).getChildren().get(2);
@@ -227,10 +336,5 @@ public class BoardContainer {
         } catch (Exception e) {
             Log.warning(e);
         }
-
-    }
-
-    public List<Button> getEntranceButtons() {
-        return this.entranceImages;
     }
 }
