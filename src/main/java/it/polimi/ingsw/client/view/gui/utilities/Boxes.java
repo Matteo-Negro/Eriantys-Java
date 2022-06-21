@@ -73,6 +73,7 @@ public class Boxes {
 
     private static VBox boardRightBox(Player player, BoardContainer boardContainer) {
         VBox vBox = new VBox();
+        vBox.setAlignment(Pos.CENTER);
         ImageView assistant = getAssistant(player, boardContainer);
         VBox.setMargin(assistant, new Insets(0, 0, 30, 0));
         vBox.getChildren().addAll(assistant, coins(player.getCoins(), boardContainer));
