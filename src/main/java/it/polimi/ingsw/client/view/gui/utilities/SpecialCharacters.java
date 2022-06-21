@@ -4,6 +4,7 @@ import it.polimi.ingsw.client.model.SpecialCharacter;
 import it.polimi.ingsw.client.view.gui.CommandAssembler;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
+import javafx.scene.layout.GridPane;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,15 +28,18 @@ public class SpecialCharacters {
             Group group = new Group();
             specialCharacterContainer.setPane(group);
 
-            Button specialCharacterButton = new Button("");
-            specialCharacterButton.setStyle("-fx-border-color: transparent;" +
-                    "-fx-background-color: transparent;" +
-                    "-fx-min-width: 130px;" +
-                    "-fx-min-height: 130px;");
-            specialCharacterButton.setVisible(true);
-            specialCharacterButton.setGraphic(Images.specialCharacter(idSpecialCharacter));
-            specialCharacterButton.setOnAction(mouseEvent -> assembler.managePaymentsSpecialCharacterSelection(idSpecialCharacter));
-            group.getChildren().addAll(specialCharacterButton, Grids.specialCharacter(specialCharacter, specialCharacterContainer));
+            GridPane gPane = Grids.specialCharacter(specialCharacter, specialCharacterContainer);
+            gPane.setMouseTransparent(true);
+            gPane.setVisible(true);
+            gPane.setStyle(
+                    "-fx-border-color: transparent;" +
+                            "-fx-padding: 0px;" +
+                            "-fx-background-color: transparent;" +
+                            "-fx-min-width: 130px;" +
+                            "-fx-min-height: 130px;"
+            );
+            gPane.setOnMouseClicked(mouseEvent -> assembler.managePaymentsSpecialCharacterSelection(idSpecialCharacter));
+            group.getChildren().addAll(Images.specialCharacter(idSpecialCharacter), gPane);
         }
         return Collections.unmodifiableList(list);
     }

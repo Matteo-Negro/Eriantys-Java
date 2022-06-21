@@ -84,7 +84,6 @@ public class Game implements Prepare {
     private List<Button> islandButtons;
     private List<Button> cloudButtons;
     private List<BoardContainer> boardsList;
-    private List<Button> characterButtons;
 
     /**
      * Initializes the scene.
@@ -333,12 +332,6 @@ public class Game implements Prepare {
         this.islandButtons = new ArrayList<>();
         for (int islandId = 0; islandId < 12; islandId++)
             islandButtons.add((Button) this.islands.get(islandId).getPane().getChildrenUnmodifiable().get(3));
-
-        if (this.client.getController().getGameModel().isExpert()) {
-            this.characterButtons = new ArrayList<>();
-            for (SpecialCharacterContainer character : this.characters)
-                characterButtons.add((Button) character.getPane().getChildrenUnmodifiable().get(0));
-        }
     }
 
     /**

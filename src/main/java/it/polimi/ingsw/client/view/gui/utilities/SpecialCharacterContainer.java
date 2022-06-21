@@ -6,6 +6,7 @@ import javafx.application.Platform;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
 import javafx.scene.shape.Line;
 
 import java.util.*;
@@ -184,28 +185,23 @@ public class SpecialCharacterContainer {
     }
 
     public void enableCharacterButton(boolean activePlayer, boolean enable, boolean effectActive, boolean active) {
-        Button characterButton = (Button) this.getPane().getChildrenUnmodifiable().get(0);
-
+        GridPane characterButton = (GridPane) this.getPane().getChildrenUnmodifiable().get(1);
         if (activePlayer && enable && !effectActive && !active) {
             characterButton.setStyle("-fx-border-color: #FCFFAD;" +
                     "-fx-border-width: 1px;" +
-                    "-fx-background-color: radial-gradient(focus-distance 0%, center 50% 50%, radius 90%, transparent, #FCFFAD);");
-            characterButton.setMouseTransparent(false);
+                    "-fx-background-color: radial-gradient(focus-distance 0%, center 50% 50%, radius 99%, transparent, #FCFFAD);");
         } else if (enable && effectActive && active) {
             characterButton.setStyle("-fx-border-color: #38DC77;" +
                     "-fx-border-width: 2px;" +
-                    "-fx-background-color: radial-gradient(focus-distance 0%, center 50% 50%, radius 90%, transparent, #38DC77);");
-            characterButton.setMouseTransparent(true);
+                    "-fx-background-color: radial-gradient(focus-distance 0%, center 50% 50%, radius 99%, transparent, #38DC77);");
         } else {
             characterButton.setStyle("-fx-border-width: 0px;" +
                     "-fx-background-color: transparent;" +
                     "-fx-min-width: 130px;" +
                     "-fx-min-height: 130px;");
-            characterButton.setMouseTransparent(true);
         }
         enableStudentButtons(activePlayer && enable && effectActive && active);
         enableBanButtons(activePlayer && enable && effectActive && active);
-        characterButton.setMouseTransparent(!activePlayer || !enable || effectActive || active);
     }
 
     private List<HouseColor> studentsToList() {

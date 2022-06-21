@@ -32,6 +32,7 @@ public class ClientGui extends Application implements View {
     private Map<ClientState, Scene> scenes;
     private Game gameUpdater;
     private WaitingRoom waitingRoomUpdater;
+    private ClientState currentState;
 
     /**
      * Gets the scene from the name of the FXML file to load.
@@ -123,12 +124,14 @@ public class ClientGui extends Application implements View {
      * Changes the scene according to the state.
      */
     public void changeScene() {
+        if(getController().getClientState().equals(currentState))
+            return;
 
-        ClientState state = getController().getClientState();
+        currentState = getController().getClientState();
 
-        if (state.equals(ClientState.MAIN_MENU))
+        if (currentState.equals(ClientState.MAIN_MENU))
             synchronized (sceneLock) {
-                while (scenes.get(state) == null) {
+                while (scenes.get(currentState) == null) {
                     try {
                         sceneLock.wait(100);
                     } catch (InterruptedException e) {
@@ -144,11 +147,11 @@ public class ClientGui extends Application implements View {
         }
 
         synchronized (instances) {
-            if (instances.get(state) != null) {
-                instances.get(state).prepare();
-                if (state.equals(ClientState.GAME_RUNNING)) {
+            if (instances.get(currentState) != null) {
+                instances.get(currentState).prepare();
+                if (currentState.equals(ClientState.GAME_RUNNING)) {
                     if (this.gameUpdater == null) {
-                        this.gameUpdater = new Game(this, (it.polimi.ingsw.client.view.gui.scenes.Game) instances.get(state));
+                        this.gameUpdater = new Game(this, (it.polimi.ingsw.client.view.gui.scenes.Game) instances.get(currentState));
                         new Thread(this.gameUpdater).start();
                     }
                 } else {
@@ -157,9 +160,9 @@ public class ClientGui extends Application implements View {
                         this.gameUpdater = null;
                     }
                 }
-                if (state.equals(ClientState.GAME_WAITING_ROOM)) {
+                if (currentState.equals(ClientState.GAME_WAITING_ROOM)) {
                     if (this.waitingRoomUpdater == null) {
-                        this.waitingRoomUpdater = new WaitingRoom(this, (it.polimi.ingsw.client.view.gui.scenes.WaitingRoom) instances.get(state));
+                        this.waitingRoomUpdater = new WaitingRoom(this, (it.polimi.ingsw.client.view.gui.scenes.WaitingRoom) instances.get(currentState));
                         new Thread(this.gameUpdater).start();
                     }
                 } else {
@@ -171,13 +174,13 @@ public class ClientGui extends Application implements View {
             }
         }
 
-        Log.info("Displaying " + state);
-        stage.setScene(scenes.get(state));
+        Log.info("Displaying " + currentState);
+        stage.setScene(scenes.get(currentState));
 
         stage.sizeToScene();
-        stage.setResizable(state.equals(ClientState.GAME_RUNNING));
+        stage.setResizable(currentState.equals(ClientState.GAME_RUNNING));
 
-        stage.setTitle(switch (state) {
+        stage.setTitle(switch (currentState) {
             case CONNECTION_LOST, START_SCREEN -> "Connect to a game server";
             case END_GAME -> "This is the end";
             case EXIT -> "";

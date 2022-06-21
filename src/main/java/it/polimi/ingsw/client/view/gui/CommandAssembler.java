@@ -77,12 +77,12 @@ public class CommandAssembler {
     }
 
     public void managePaymentsSpecialCharacterSelection(int idSpecialCharacter) {
-        Log.debug("Selected assistant with id " + idSpecialCharacter);
-        if (!command.equals(""))
+        Log.debug("Selected character with id " + idSpecialCharacter);
+        /*if (!command.equals(""))
             flushCommand();
         command = String.format("pay %s", idSpecialCharacter >= 1 && idSpecialCharacter <= 12 ? String.format("chr%02d", idSpecialCharacter) : "");
         sendCommand();
-        flushCommand();
+        flushCommand();*/
     }
 
     public void manageStudentSCFromCardToIslandSelection(HouseColor color) {
@@ -110,7 +110,7 @@ public class CommandAssembler {
         Log.debug("Selected student from special character of color " + color.toString());
         if (!command.equals(""))
             flushCommand();
-        command = String.format("move student %s from sc11 to ", color.name().toLowerCase(Locale.ROOT));
+        command = String.format("move student %s from chr11 to ", color.name().toLowerCase(Locale.ROOT));
     }
 
     public void manageStudentSCReturnColorSelection(HouseColor color) {
