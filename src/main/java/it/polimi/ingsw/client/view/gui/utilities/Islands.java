@@ -12,11 +12,22 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Parses the model to obtain the clouds.
+ */
 public class Islands {
 
     private Islands() {
     }
 
+    /**
+     * Returns all the islands.
+     *
+     * @param gameBoard   GameBoard from which get all the information.
+     * @param connections The List of lines which connect the various islands.
+     * @param assembler   CommandAssembler for generating the commands to send to the server.
+     * @return A List of islands and a corresponding list of booleans which indicate whether the island is connected to the following one (subdivision done only for graphical purposes).
+     */
     public static Pair<List<IslandContainer>, List<Boolean>> get(GameBoard gameBoard, List<Line> connections, CommandAssembler assembler) {
 
         IslandContainer islandContainer;

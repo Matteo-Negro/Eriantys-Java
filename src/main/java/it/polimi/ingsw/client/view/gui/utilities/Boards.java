@@ -15,11 +15,22 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Parses the model to obtain the boards.
+ */
 public class Boards {
 
     private Boards() {
     }
 
+    /**
+     * Returns all the boards.
+     *
+     * @param gameModel     GameModel from which get all the information.
+     * @param assembler     CommandAssembler for generating the commands to send to the server.
+     * @param currentPlayer The name of the players who owns the instance.
+     * @return A Map with the username and it's respective board.
+     */
     public static Map<String, BoardContainer> get(GameModel gameModel, CommandAssembler assembler, String currentPlayer) {
 
         BoardContainer boardContainer;
@@ -55,7 +66,7 @@ public class Boards {
             VBox.setMargin(board, new Insets(0, 0, 10, 0));
 
             if (player.getName().equals(currentPlayer))
-                vBox.getChildren().add(Various.assistantsPane(assembler, gameModel, player));
+                vBox.getChildren().add(Various.assistantsPane(assembler, gameModel.getPlayerByName(player.getName()).getHand()));
 
             group.getChildren().addAll(vBox, diningRoomButton);
         }

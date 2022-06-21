@@ -9,11 +9,22 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Parses the model to obtain the clouds.
+ */
 public class Clouds {
 
     private Clouds() {
     }
 
+    /**
+     * Returns all the clouds.
+     *
+     * @param clouds        The list of clouds from the model.
+     * @param playersNumber The number of players according to which the clouds are generated.
+     * @param assembler     CommandAssembler for generating the commands to send to the server.
+     * @return A List of clouds.
+     */
     public static List<CloudContainer> get(List<Cloud> clouds, int playersNumber, CommandAssembler assembler) {
 
         CloudContainer cloudContainer;
