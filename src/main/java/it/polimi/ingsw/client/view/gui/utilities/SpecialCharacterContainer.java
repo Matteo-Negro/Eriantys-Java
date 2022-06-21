@@ -186,13 +186,15 @@ public class SpecialCharacterContainer {
 
     public void enableCharacterButton(boolean enable) {
         if(enable) {
-            pane.getChildrenUnmodifiable().get(0).setStyle(
+            pane.getChildrenUnmodifiable().get(1).setStyle(
                     "-fx-border-color: green;"
             );
         }
-        else pane.getChildrenUnmodifiable().get(0).setStyle(
+        else pane.getChildrenUnmodifiable().get(1).setStyle(
                 "-fx-border-color: transparent;"
         );
+        enableBanButtons(enable);
+        enableStudentButtons(enable);
     }
 
     private List<HouseColor> studentsToList() {
