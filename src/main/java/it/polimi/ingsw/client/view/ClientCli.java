@@ -248,10 +248,21 @@ public class ClientCli implements Runnable, View {
     public void runGameRunning() {
         synchronized (this.controller.getLock()) {
             if (this.controller.getGameServer() != null) {
-                Game.print(terminal, this.controller.getGameModel(), this.controller.getGameCode(), this.controller.getGameModel().getRound(), this.controller.getGameModel().getPlayerByName(controller.getUserName()).isActive());
+
+                Game.print(terminal,
+                        this.controller.getGameModel(),
+                        this.controller.getGameCode(),
+                        this.controller.getGameModel().getRound(),
+                        this.controller.getGameModel().getPlayerByName(controller.getUserName()).isActive()
+                );
 
                 if (this.controller.hasCommunicationToken() && !this.controller.getClientState().equals(ClientState.CONNECTION_LOST)) {
-                    String command = readLine(getPrettyUserName(), terminal, Autocompletion.get(), true, history).toLowerCase(Locale.ROOT);
+                    String command;
+                    try {
+                        command = readLine(getPrettyUserName(), terminal, Autocompletion.get(), true, history).toLowerCase(Locale.ROOT);
+                    } catch (UserInterruptException e) {
+                        command = "logout";
+                    }
                     terminal.writer().print(foreground(White.getInstance()));
                     terminal.writer().print(background(Black.getInstance()));
                     terminal.flush();
