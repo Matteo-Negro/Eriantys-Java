@@ -2,6 +2,7 @@ package it.polimi.ingsw.client.view.gui.utilities;
 
 import it.polimi.ingsw.client.view.gui.CommandAssembler;
 import it.polimi.ingsw.utilities.HouseColor;
+import it.polimi.ingsw.utilities.Log;
 import javafx.application.Platform;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
@@ -45,8 +46,7 @@ public class SpecialCharacterContainer {
                         case 1 -> commandAssembler.manageStudentSCFromCardToIslandSelection(students.get(studentIndex));
                         case 7 -> commandAssembler.manageStudentSCSwapCardEntranceSelection(students.get(studentIndex));
                         case 9 -> commandAssembler.manageStudentSCIgnoreColorSelection(students.get(studentIndex));
-                        case 11 ->
-                                commandAssembler.manageStudentSCFromCardToDiningRoomSelection(students.get(studentIndex));
+                        case 11 -> commandAssembler.manageStudentSCFromCardToDiningRoomSelection(students.get(studentIndex));
                         case 12 -> commandAssembler.manageStudentSCReturnColorSelection(students.get(studentIndex));
                     }
                 });
@@ -88,6 +88,8 @@ public class SpecialCharacterContainer {
     }
 
     public void updateStudents(Map<HouseColor, Integer> entrance) {
+        if (entrance == null)
+            return;
         for (HouseColor color : HouseColor.values())
             this.students.replace(color, entrance.get(color));
         updateStudents(true);
@@ -113,7 +115,9 @@ public class SpecialCharacterContainer {
             updateBans(this.bansNum);
     }
 
-    public void updateBans(int bansNum) {
+    public void updateBans(Integer bansNum) {
+        if (bansNum == null)
+            return;
         if (bansNum > 0) Platform.runLater(() -> {
             for (int index = 0; index < bansImages.size(); index++) {
                 this.bansImages.get(index).setGraphic(Images.banIcon());
@@ -126,12 +130,15 @@ public class SpecialCharacterContainer {
         });
     }
 
-    void setExtraPrice(ImageView extraPrice) {
-        this.extraPrice = extraPrice;
+    public void setExtraPrice(boolean alreadyPaid) {
+        GridPane gPane = (GridPane) pane.getChildrenUnmodifiable().get(1);
+        this.extraPrice = (ImageView) gPane.getChildren().get(0);
+        this.extraPrice.setVisible(alreadyPaid);
     }
 
     public void updateExtraPrice(boolean extraPrice) {
         Platform.runLater(() -> this.extraPrice.setVisible(extraPrice));
+        Log.debug("set extra price visibility to " + extraPrice);
     }
 
     public void enableStudentButtons(boolean enable) {
@@ -140,7 +147,6 @@ public class SpecialCharacterContainer {
 
         for (Button studentButton : this.studentsImages) {
             if (enable)
-                // TODO: check for it
                 studentButton.setStyle("-fx-background-radius: 50em;" +
                         "-fx-border-radius: 50em;" +
                         "-fx-border-width: 1px;" +
@@ -150,7 +156,6 @@ public class SpecialCharacterContainer {
                         "-fx-border-color: #FCFFAD;" +
                         "-fx-background-color: radial-gradient(focus-distance 0% ,center 50% 50%, radius 99%, transparent, #FCFFAD);");
             else
-                // TODO: check for it
                 studentButton.setStyle("-fx-background-radius: 50em;" +
                         "-fx-max-width: 10px;" +
                         "-fx-max-height: 10px;" +
@@ -165,7 +170,6 @@ public class SpecialCharacterContainer {
 
         for (Button banButton : this.bansImages) {
             if (enable)
-                // TODO: check for it
                 banButton.setStyle("-fx-background-radius: 50em;" +
                         "-fx-border-radius: 50em;" +
                         "-fx-border-width: 1px;" +
@@ -175,7 +179,6 @@ public class SpecialCharacterContainer {
                         "-fx-border-color: #FCFFAD;" +
                         "-fx-background-color: radial-gradient(focus-distance 0% ,center 50% 50%, radius 99%, transparent, #FCFFAD);");
             else
-                // TODO: check for it
                 banButton.setStyle("-fx-background-radius: 50em;" +
                         "-fx-max-width: 10px;" +
                         "-fx-max-height: 10px;" +
@@ -185,12 +188,12 @@ public class SpecialCharacterContainer {
     }
 
     public void enableCharacterButton(boolean enable) {
-        if(enable) {
+        if (enable) {
             pane.getChildrenUnmodifiable().get(1).setStyle(
-                    "-fx-border-color: green;"
+                    "-fx-border-color: green;" +
+                            "-fx-border-width: 3px;"
             );
-        }
-        else pane.getChildrenUnmodifiable().get(1).setStyle(
+        } else pane.getChildrenUnmodifiable().get(1).setStyle(
                 "-fx-border-color: transparent;"
         );
         enableBanButtons(enable);

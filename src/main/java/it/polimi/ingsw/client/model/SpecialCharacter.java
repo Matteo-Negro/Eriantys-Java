@@ -30,7 +30,7 @@ public class SpecialCharacter {
      *
      * @param id            The identification number of the special character card.
      * @param active        True if the special character's effect is active.
-     * @param alreadyPaid   True if the special character has already been payed and it's effect has already been activated during this game.
+     * @param alreadyPaid   True if the special character has already been paid and it's effect has already been activated during this game.
      * @param students      A map with the students to put on the card (null, otherwise).
      * @param availableBans Number of ban marker available.
      * @param cost          Price to activate the effect.

@@ -23,6 +23,7 @@ public class SpecialCharacters {
         for (SpecialCharacter specialCharacter : specialCharacters) {
             final int idSpecialCharacter = specialCharacter.getId();
             specialCharacterContainer = new SpecialCharacterContainer(idSpecialCharacter, assembler);
+
             list.add(specialCharacterContainer);
 
             Group group = new Group();
@@ -33,15 +34,16 @@ public class SpecialCharacters {
 
             Button characterButton = new Button();
             characterButton.setStyle("-fx-border-color: #FCFFAD;" +
-                            "-fx-border-width: 1px;" +
-                            "-fx-background-color: radial-gradient(focus-distance 0%, center 50% 50%, radius 99%, transparent, #FCFFAD);" +
-                            "-fx-padding: 0px;" +
-                            "-fx-min-width: 261px;" +
-                            "-fx-min-height: 384px;"
+                    "-fx-border-width: 1px;" +
+                    "-fx-background-color: radial-gradient(focus-distance 0%, center 50% 50%, radius 99%, transparent, #FCFFAD);" +
+                    "-fx-padding: 0px;" +
+                    "-fx-min-width: 261px;" +
+                    "-fx-min-height: 384px;"
             );
             characterButton.setVisible(false);
             characterButton.setOnMouseClicked(mouseEvent -> assembler.managePaymentsSpecialCharacterSelection(idSpecialCharacter));
             group.getChildren().addAll(Images.specialCharacter(idSpecialCharacter), gPane, characterButton);
+            specialCharacterContainer.setExtraPrice(specialCharacter.isAlreadyPaid());
         }
         return Collections.unmodifiableList(list);
     }

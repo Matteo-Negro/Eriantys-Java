@@ -111,8 +111,7 @@ public class Grids {
         for (ColumnConstraints column : columns)
             column.setHalignment(HPos.CENTER);
 
-        if (specialCharacter.isAlreadyPaid())
-            gridPane.add(Images.coin(), 1, 0);
+        gridPane.getChildren().add(Images.coin());
 
         processSpecialCharacter(gridPane, specialCharacter, specialCharacterContainer);
 

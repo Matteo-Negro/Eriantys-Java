@@ -127,7 +127,7 @@ public class Game implements Prepare {
         Thread boardsThread = new Thread(() -> updateBoards(gameModel));
         Thread cloudsThread = new Thread(() -> updateClouds(gameBoard));
         Thread islandsThread = new Thread(() -> updateIslands(gameBoard));
-        Thread specialCharactersThread = new Thread(() -> updateSpecialCharacters());
+        Thread specialCharactersThread = new Thread(() -> updateSpecialCharacters(gameBoard));
 
         infoThread.start();
         boardsThread.start();
@@ -475,8 +475,21 @@ public class Game implements Prepare {
     /**
      * Updates all the special characters.
      */
-    private void updateSpecialCharacters() {
-        // TODO
+    private void updateSpecialCharacters(GameBoard gameBoard) {
+        if(!this.client.getController().getGameModel().isExpert())
+            return;
+
+        SpecialCharacter character;
+        SpecialCharacterContainer characterContainer;
+
+        for(int index = 0; index < gameBoard.getSpecialCharacters().size(); index++) {
+            character = gameBoard.getSpecialCharacters().get(index);
+            characterContainer = this.characters.get(index);
+            characterContainer.updateStudents(character.getStudents());
+            characterContainer.updateBans(character.getAvailableBans());
+            characterContainer.updateExtraPrice(character.isAlreadyPaid());
+        }
+        Log.debug("Special characters updated");
     }
 
     /**
@@ -515,7 +528,6 @@ public class Game implements Prepare {
             }
             activeCharacterPosition++;
         }
-
 
         for (Button characterButton : this.characterButtons) {
             characterButton.setVisible(enable && !effectActive && activePlayer);
