@@ -225,14 +225,14 @@ public class GameModel {
     }
 
     /**
-     * Tells if a special character's effect involving the students move is currently active.
+     * Tells if a special character's effect is active.
      *
-     * @return True if a movement effect is currently active, false otherwise.
+     * @return True if an effect is currently active, false otherwise.
      */
-    public boolean isMovementEffectActive() {
+    public boolean isEffectActive() {
         if (this.isExpert()) {
             for (SpecialCharacter sc : this.getGameBoard().getSpecialCharacters()) {
-                if (sc.isActive() && (sc.getId() == 1 || sc.getId() == 7 || sc.getId() == 11)) return true;
+                if (sc.isActive()) return true;
             }
         }
         return false;

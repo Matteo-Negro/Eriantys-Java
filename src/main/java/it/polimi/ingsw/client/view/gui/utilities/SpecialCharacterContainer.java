@@ -187,17 +187,19 @@ public class SpecialCharacterContainer {
         }
     }
 
-    public void enableCharacterButton(boolean enable) {
+    public void enableCharacterButton(boolean enable, boolean activePlayer) {
         if (enable) {
             pane.getChildrenUnmodifiable().get(1).setStyle(
-                    "-fx-border-color: green;" +
-                            "-fx-border-width: 3px;"
+                    "-fx-border-color: #66eb66;" +
+                            "-fx-border-width: 2px;" +
+                            "-fx-padding: 0px;" +
+                            "-fx-background-color: radial-gradient(focus-distance 0% ,center 50% 50%, radius 99.9%, transparent, #66eb66);"
             );
         } else pane.getChildrenUnmodifiable().get(1).setStyle(
                 "-fx-border-color: transparent;"
         );
-        enableBanButtons(enable);
-        enableStudentButtons(enable);
+        enableBanButtons(activePlayer && enable);
+        enableStudentButtons(activePlayer && enable);
     }
 
     private List<HouseColor> studentsToList() {

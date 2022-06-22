@@ -356,6 +356,7 @@ public class Game implements Prepare {
                 firstBoard.enableEntranceButtons(false);
                 enableIslandButtons(false);
                 enableCloudButtons(false);
+                enableCharacterButtons(false);
             } else {
                 switch (this.client.getController().getGameModel().getSubphase()) {
                     case PLAY_ASSISTANT -> {
@@ -382,8 +383,13 @@ public class Game implements Prepare {
                         firstBoard.enableEntranceButtons(false);
                         enableIslandButtons(true);
                         enableCloudButtons(false);
-                        if (this.client.getController().getGameModel().isExpert())
+                        if (this.client.getController().getGameModel().isExpert()) {
                             enableCharacterButtons(true);
+                            if(this.client.getController().getGameModel().isEffectActive()) {
+                                firstBoard.enableDiningRoomButton(true);
+                                firstBoard.enableEntranceButtons(true);
+                            }
+                        }
                     }
                     case CHOOSE_CLOUD -> {
                         firstBoard.enableAssistantButtons(false);
@@ -391,8 +397,14 @@ public class Game implements Prepare {
                         firstBoard.enableEntranceButtons(false);
                         enableIslandButtons(false);
                         enableCloudButtons(true);
-                        if (this.client.getController().getGameModel().isExpert())
+                        if (this.client.getController().getGameModel().isExpert()) {
                             enableCharacterButtons(true);
+                            if(this.client.getController().getGameModel().isEffectActive()) {
+                                firstBoard.enableDiningRoomButton(true);
+                                firstBoard.enableEntranceButtons(true);
+                            }
+                        }
+
                     }
                 }
             }
@@ -533,7 +545,7 @@ public class Game implements Prepare {
             characterButton.setVisible(enable && !effectActive && activePlayer);
         }
         for(SpecialCharacterContainer character : characters) {
-            character.enableCharacterButton(effectActive && characters.indexOf(character) == activeCharacterPosition);
+            character.enableCharacterButton(effectActive && characters.indexOf(character) == activeCharacterPosition, activePlayer);
         }
 
     }

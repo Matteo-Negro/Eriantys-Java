@@ -282,6 +282,7 @@ public class Grids {
             }
             specialCharacterContainer.setBansNum(specialCharacter.getAvailableBans());
             specialCharacterContainer.setBansImages(bans);
+            gridPane.setStyle("-fx-background-color: radial-gradient(focus-distance 0%, center 50% 60%, radius 99%, white, transparent);");
         } else if (specialCharacter.getStudents() != null) {
             List<Button> students = new ArrayList<>();
             ImageView imageView;
@@ -296,6 +297,7 @@ public class Grids {
             }
             specialCharacterContainer.setStudents(specialCharacter.getStudents());
             specialCharacterContainer.setStudentsImages(students);
+            gridPane.setStyle("-fx-background-color: radial-gradient(focus-distance 0%, center 50% 60%, radius 99%, white, transparent);");
         } else if (specialCharacter.getId() == 9 || specialCharacter.getId() == 12) {
             List<Button> students = new ArrayList<>();
             ImageView imageView;
