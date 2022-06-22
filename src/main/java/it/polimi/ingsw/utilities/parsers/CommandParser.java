@@ -53,33 +53,20 @@ public class CommandParser {
      */
     public static boolean checker(String command) {
         String[] parsedCommand = command.split(" ");
-        switch (parsedCommand.length) {
-            case 1 -> {
-                return Pattern.matches("exit|logout", command);
-            }
-            case 2 -> {
-                if (Pattern.matches("(info|play|ban|resolve)\s(isl|ast)\\d\\d", command)) return true;
-                else if (Pattern.matches("(info|pay)\schr\\d\\d", command)) return true;
-                else return Pattern.matches("ignore\s(blue|fuchsia|green|red|yellow)", command);
-            }
-            case 3 -> {
-                if (Pattern.matches("take\schr\\d\\d-student\s(blue|fuchsia|green|red|yellow)", command)) return true;
-                else return Pattern.matches("return\sstudents\s(blue|fuchsia|green|red|yellow)", command);
-            }
-            case 4 -> {
-                if (Pattern.matches("move\smother-nature\sto\sisl\\d\\d", command)) return true;
-                else return Pattern.matches("refill\sentrance\sfrom\scl\\d", command);
-            }
-            case 6 -> {
-                if (Pattern.matches("swap\sentrance-student\s(blue|fuchsia|green|red|yellow)\swith\s(dining-room|chr\\d\\d)-student\s(blue|fuchsia|green|red|yellow)", command))
-                    return true;
-                else
-                    return Pattern.matches("swap\s(dining-room|chr\\d\\d)-student\s(blue|fuchsia|green|red|yellow)\swith\sentrance-student\s(blue|fuchsia|green|red|yellow)", command);
-            }
-            default -> {
-                return Pattern.matches("move\sstudent\s(blue|fuchsia|green|red|yellow)\sfrom\s(entrance|chr\\d\\d)\sto\s(dining-room|isl\\d\\d)", command);
-            }
-        }
+        return switch (parsedCommand.length) {
+            case 1 -> Pattern.matches("exit|logout", command);
+            case 2 -> Pattern.matches("(info|play|ban|resolve)\s(isl|ast)\\d\\d", command) ||
+                    Pattern.matches("(info|pay)\schr\\d\\d", command) ||
+                    Pattern.matches("ignore\s(blue|fuchsia|green|red|yellow)", command);
+            case 3 -> Pattern.matches("take\schr\\d\\d-student\s(blue|fuchsia|green|red|yellow)", command) ||
+                    Pattern.matches("return\sstudents\s(blue|fuchsia|green|red|yellow)", command);
+            case 4 -> Pattern.matches("move\smother-nature\sto\sisl\\d\\d", command) ||
+                    Pattern.matches("refill\sentrance\sfrom\scl\\d", command);
+            case 6 ->
+                    Pattern.matches("swap\sentrance-student\s(blue|fuchsia|green|red|yellow)\swith\s(dining-room|chr\\d\\d)-student\s(blue|fuchsia|green|red|yellow)", command) ||
+                            Pattern.matches("swap\s(dining-room|chr\\d\\d)-student\s(blue|fuchsia|green|red|yellow)\swith\sentrance-student\s(blue|fuchsia|green|red|yellow)", command);
+            default -> Pattern.matches("move\sstudent\s(blue|fuchsia|green|red|yellow)\sfrom\s(entrance|chr\\d\\d)\sto\s(dining-room|isl\\d\\d)", command);
+        };
     }
 
     /**

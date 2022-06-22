@@ -96,7 +96,8 @@ public class GameBoard {
      * Initializes the special characters.
      */
     private void initializeChracters() {
-        List<Integer> randomVector = new Vector<>();
+
+        List<Integer> randomVector = new ArrayList<>();
 
         for (int i = 1; i <= 12; i++) randomVector.add(i);
         Collections.shuffle(randomVector);
