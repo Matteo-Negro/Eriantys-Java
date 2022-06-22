@@ -46,7 +46,10 @@ public class SpecialCharacterContainer {
                         case 1 -> commandAssembler.manageStudentSCFromCardToIslandSelection(students.get(studentIndex));
                         case 7 -> commandAssembler.manageStudentSCSwapCardEntranceSelection(students.get(studentIndex));
                         case 9 -> commandAssembler.manageStudentSCIgnoreColorSelection(students.get(studentIndex));
-                        case 11 -> commandAssembler.manageStudentSCFromCardToDiningRoomSelection(students.get(studentIndex));
+                        case 10 ->
+                                commandAssembler.manageStudentSCSwapCardEntranceDiningRoomSelection(students.get(studentIndex), studentIndex);
+                        case 11 ->
+                                commandAssembler.manageStudentSCFromCardToDiningRoomSelection(students.get(studentIndex));
                         case 12 -> commandAssembler.manageStudentSCReturnColorSelection(students.get(studentIndex));
                     }
                 });
@@ -203,10 +206,16 @@ public class SpecialCharacterContainer {
     }
 
     private List<HouseColor> studentsToList() {
+        boolean end = false;
         List<HouseColor> list = new ArrayList<>();
-        for (Map.Entry<HouseColor, Integer> entry : students.entrySet())
-            for (int index = 0; index < entry.getValue(); index++)
-                list.add(entry.getKey());
+
+        while (!end) {
+            Arrays.stream(HouseColor.values()).forEach(color -> {
+                if (list.stream().filter(c -> c.equals(color)).count() < students.get(color)) list.add(color);
+            });
+            if (list.size() == students.values().stream().mapToInt(i -> i).sum()) end = true;
+        }
+
         return list;
     }
 }

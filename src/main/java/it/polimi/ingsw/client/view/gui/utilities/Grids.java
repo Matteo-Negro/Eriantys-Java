@@ -97,7 +97,7 @@ public class Grids {
         gridPane.setPrefWidth(261);
         gridPane.setPrefHeight(384);
 
-        for (int index = 0; index < 4; index++)
+        for (int index = 0; index < 8; index++)
             rows.add(new RowConstraints());
 
         for (int index = 0; index < 2; index++)
@@ -274,11 +274,10 @@ public class Grids {
                 ban = Images.banIsland();
                 ban.setVisible(false);
                 Button banButton = new Button("", ban);
-                // TODO: check for it
                 banButton.setStyle("-fx-background-radius: 50em;" + "-fx-max-width: 10px;" + "-fx-max-height: 10px;" + "-fx-padding: 0px;");
                 banButton.setVisible(false);
                 bans.add(banButton);
-                gridPane.add(banButton, (index % 2 == 0) ? 1 : 0, 3 - index / 2);
+                gridPane.add(banButton, (index % 2 == 0) ? 1 : 0, 7 - index / 2);
             }
             specialCharacterContainer.setBansNum(specialCharacter.getAvailableBans());
             specialCharacterContainer.setBansImages(bans);
@@ -293,7 +292,7 @@ public class Grids {
                 studentButton.setStyle("-fx-background-radius: 50em;" + "-fx-max-width: 10px;" + "-fx-max-height: 10px;" + "-fx-padding: 0px;");
                 studentButton.setVisible(false);
                 students.add(studentButton);
-                gridPane.add(studentButton, (index % 2 == 0) ? 1 : 0, 3 - index / 2);
+                gridPane.add(studentButton, (index % 2 == 0) ? 1 : 0, 7 - index / 2);
             }
             specialCharacterContainer.setStudents(specialCharacter.getStudents());
             specialCharacterContainer.setStudentsImages(students);
@@ -309,9 +308,25 @@ public class Grids {
                 studentButton.setStyle("-fx-background-radius: 50em;" + "-fx-max-width: 10px;" + "-fx-max-height: 10px;" + "-fx-padding: 0px;");
                 studentButton.setVisible(false);
                 students.add(studentButton);
-                gridPane.add(studentButton, (index % 2 == 0) ? 1 : 0, 3 - index / 2);
+                gridPane.add(studentButton, (index % 2 == 0) ? 1 : 0, 7 - index / 2);
             }
             Arrays.stream(HouseColor.values()).forEach(c -> tmp.put(c, 1));
+            specialCharacterContainer.setStudents(tmp);
+            specialCharacterContainer.setStudentsImages(students);
+        } else if (specialCharacter.getId() == 10) {
+            List<Button> students = new ArrayList<>();
+            ImageView imageView;
+            Map<HouseColor, Integer> tmp = new EnumMap<>(HouseColor.class);
+            for (int index = 0; index < 10; index++) {
+                imageView = Images.student2d(null);
+                imageView.setVisible(false);
+                Button studentButton = new Button("", imageView);
+                studentButton.setStyle("-fx-background-radius: 50em;" + "-fx-max-width: 10px;" + "-fx-max-height: 10px;" + "-fx-padding: 0px;");
+                studentButton.setVisible(false);
+                students.add(studentButton);
+                gridPane.add(studentButton, (index < 5) ? 0 : 1, 7 - ((index < 5) ? index : index - 5));
+            }
+            Arrays.stream(HouseColor.values()).forEach(c -> tmp.put(c, 2));
             specialCharacterContainer.setStudents(tmp);
             specialCharacterContainer.setStudentsImages(students);
         }
