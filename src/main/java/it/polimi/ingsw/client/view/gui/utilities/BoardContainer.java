@@ -17,7 +17,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
- * This class is a simple interface to manage GUI boards. Provides all the required methods to create and update it.
+ * This class is a simple interface to manage a GUI board. Provides all the required methods to create and update it.
  */
 public class BoardContainer {
 

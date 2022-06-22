@@ -385,7 +385,7 @@ public class Game implements Prepare {
                         enableCloudButtons(false);
                         if (this.client.getController().getGameModel().isExpert()) {
                             enableCharacterButtons(true);
-                            if(this.client.getController().getGameModel().isEffectActive()) {
+                            if (this.client.getController().getGameModel().isEffectActive()) {
                                 firstBoard.enableDiningRoomButton(true);
                                 firstBoard.enableEntranceButtons(true);
                             }
@@ -399,7 +399,7 @@ public class Game implements Prepare {
                         enableCloudButtons(true);
                         if (this.client.getController().getGameModel().isExpert()) {
                             enableCharacterButtons(true);
-                            if(this.client.getController().getGameModel().isEffectActive()) {
+                            if (this.client.getController().getGameModel().isEffectActive()) {
                                 firstBoard.enableDiningRoomButton(true);
                                 firstBoard.enableEntranceButtons(true);
                             }
@@ -488,13 +488,14 @@ public class Game implements Prepare {
      * Updates all the special characters.
      */
     private void updateSpecialCharacters(GameBoard gameBoard) {
-        if(!this.client.getController().getGameModel().isExpert())
+
+        if (!this.client.getController().getGameModel().isExpert())
             return;
 
         SpecialCharacter character;
         SpecialCharacterContainer characterContainer;
 
-        for(int index = 0; index < gameBoard.getSpecialCharacters().size(); index++) {
+        for (int index = 0; index < gameBoard.getSpecialCharacters().size(); index++) {
             character = gameBoard.getSpecialCharacters().get(index);
             characterContainer = this.characters.get(index);
             characterContainer.updateStudents(character.getStudents());
@@ -544,7 +545,7 @@ public class Game implements Prepare {
         for (Button characterButton : this.characterButtons) {
             characterButton.setVisible(enable && !effectActive && activePlayer);
         }
-        for(SpecialCharacterContainer character : characters) {
+        for (SpecialCharacterContainer character : characters) {
             character.enableCharacterButton(effectActive && characters.indexOf(character) == activeCharacterPosition, activePlayer);
         }
 

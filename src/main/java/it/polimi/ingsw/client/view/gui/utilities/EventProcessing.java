@@ -6,6 +6,9 @@ import javafx.event.Event;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
+/**
+ * Static class for managing some common events from the GUI.
+ */
 public class EventProcessing {
 
     private EventProcessing() {

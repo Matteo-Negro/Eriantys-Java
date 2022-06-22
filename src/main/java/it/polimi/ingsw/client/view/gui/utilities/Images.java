@@ -17,24 +17,6 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class Images {
 
-    private static List<Image> assistants = null;
-    private static Image banIcon = null;
-    private static Image banIsland = null;
-    private static Image board = null;
-    private static Image boardCoins = null;
-    private static List<Image> clouds = null;
-    private static Image coin = null;
-    private static Map<EndType, Image> endTitles = null;
-    private static List<Image> islands = null;
-    private static Image motherNature = null;
-    private static Map<HouseColor, Image> professors = null;
-    private static List<Image> specialCharacters = null;
-    private static Map<HouseColor, Image> studentsRealm = null;
-    private static Map<HouseColor, Image> studentsBoard = null;
-    private static Map<TowerType, Image> towersBoard = null;
-    private static Map<TowerType, Image> towersRealm = null;
-    private static Map<WizardType, Image> wizards = null;
-
     private static final Object assistantLock = new Object();
     private static final Object banIconLock = new Object();
     private static final Object banIslandLock = new Object();
@@ -52,6 +34,23 @@ public class Images {
     private static final Object towersBoardLock = new Object();
     private static final Object towersRealmLock = new Object();
     private static final Object wizardsLock = new Object();
+    private static List<Image> assistants = null;
+    private static Image banIcon = null;
+    private static Image banIsland = null;
+    private static Image board = null;
+    private static Image boardCoins = null;
+    private static List<Image> clouds = null;
+    private static Image coin = null;
+    private static Map<EndType, Image> endTitles = null;
+    private static List<Image> islands = null;
+    private static Image motherNature = null;
+    private static Map<HouseColor, Image> professors = null;
+    private static List<Image> specialCharacters = null;
+    private static Map<HouseColor, Image> studentsRealm = null;
+    private static Map<HouseColor, Image> studentsBoard = null;
+    private static Map<TowerType, Image> towersBoard = null;
+    private static Map<TowerType, Image> towersRealm = null;
+    private static Map<WizardType, Image> wizards = null;
 
     private Images() {
     }
