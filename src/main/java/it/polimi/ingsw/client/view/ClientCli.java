@@ -266,8 +266,10 @@ public class ClientCli implements Runnable, View {
                     terminal.writer().print(foreground(White.getInstance()));
                     terminal.writer().print(background(Black.getInstance()));
                     terminal.flush();
-                    if (!command.equals(""))
+                    if (!command.equals("")) {
                         this.controller.manageGameRunning(command);
+                        return;
+                    }
                 } else {
                     try {
                         this.controller.getLock().wait(1000);

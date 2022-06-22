@@ -96,15 +96,6 @@ public class ClientController {
     }
 
     /**
-     * Returns true if the server has replied to a command.
-     *
-     * @return The "replyArrived" attribute.
-     */
-    public boolean isReplyArrived() {
-        return this.replyArrived;
-    }
-
-    /**
      * Returns the username used in the current game, null if the client is currently not playing a game.
      *
      * @return The userName attribute.
