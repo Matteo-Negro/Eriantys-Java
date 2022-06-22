@@ -291,16 +291,8 @@ public class ClientController {
 
         //Command parsing and check.
         List<JsonObject> messages;
-        try {
-            messages = new ArrayList<>(CommandParser.commandManager(command, this.gameModel.getPlayers()));
-            if (messages.isEmpty()) return;
-            if (this.gameModel.isExpert()) checkOccurrences(messages);
-        } catch (IllegalMoveException e) {
-            Log.warning(e);
-            updateScreen();
-            this.errorOccurred("This is an illegal move.");
-            return;
-        }
+        messages = new ArrayList<>(CommandParser.commandManager(command, this.gameModel.getPlayers()));
+        if (messages.isEmpty()) return;
 
         //Sending messages to the server.
         try {
@@ -332,6 +324,15 @@ public class ClientController {
     private void sendCommandsToServer(List<JsonObject> messages) throws IllegalActionException, InterruptedException, IllegalMoveException {
         for (JsonObject message : messages) {
             if (checkMessage(message)) {
+                try {
+                    if (this.gameModel.isExpert()) checkOccurrences(message);
+                } catch (IllegalMoveException e) {
+                    Log.warning(e);
+                    updateScreen();
+                    this.errorOccurred("This is an illegal move.");
+                    return;
+                }
+
                 synchronized (this.lock) {
                     this.replyArrived = false;
                     getGameServer().sendCommand(message);
@@ -346,25 +347,24 @@ public class ClientController {
     /**
      * This method is a helper for 'manageGameRunning', check occurrences in specialCharacter.
      *
-     * @param messages The messages have to be checked.
+     * @param message The message has to be checked.
      * @throws IllegalMoveException Thrown if the client model is not aligned with that of the game server.
      */
-    private void checkOccurrences(List<JsonObject> messages) throws IllegalMoveException {
-        for (JsonObject m : messages) {
-            if (this.gameModel.isExpert() && ((m.get("subtype").getAsString().equals("ban")) || (m.get("special") != null && m.get("special").getAsBoolean()) || (m.get("move") != null && !m.get("move").getAsBoolean()))) {
-                int idSpecialCharacter = 0;
-                for (SpecialCharacter sc : gameModel.getGameBoard().getSpecialCharacters()) {
-                    if (sc.isActive()) {
-                        idSpecialCharacter = sc.getId();
-                        break;
-                    }
+    private void checkOccurrences(JsonObject message) throws IllegalMoveException {
+        if (this.gameModel.isExpert() && ((message.get("subtype").getAsString().equals("ban")) || (message.get("special") != null && message.get("special").getAsBoolean()) || (message.get("move") != null && !message.get("move").getAsBoolean()))) {
+            int idSpecialCharacter = 0;
+            for (SpecialCharacter sc : gameModel.getGameBoard().getSpecialCharacters()) {
+                if (sc.isActive()) {
+                    idSpecialCharacter = sc.getId();
+                    break;
                 }
-                if (idSpecialCharacter == 0) throw new IllegalMoveException();
-                else {
-                    if (gameModel.getGameBoard().getSpecialCharacterById(idSpecialCharacter).getUsesNumber() == 0)
-                        throw new IllegalMoveException();
-                    gameModel.getGameBoard().getSpecialCharacterById(idSpecialCharacter).decreaseUsesNumber();
-                }
+            }
+            if (idSpecialCharacter == 0) throw new IllegalMoveException();
+            else {
+                Log.debug("TEST id-> " + idSpecialCharacter + "; uses-> " + gameModel.getGameBoard().getSpecialCharacterById(idSpecialCharacter).getUsesNumber());
+                if (gameModel.getGameBoard().getSpecialCharacterById(idSpecialCharacter).getUsesNumber() == 0)
+                    throw new IllegalMoveException();
+                gameModel.getGameBoard().getSpecialCharacterById(idSpecialCharacter).decreaseUsesNumber();
             }
         }
     }
@@ -517,7 +517,7 @@ public class ClientController {
             case "entrance" -> {
                 SpecialCharacter chr10 = this.gameModel.getGameBoard().getSpecialCharacterById(10);
                 SpecialCharacter chr7 = this.gameModel.getGameBoard().getSpecialCharacterById(7);
-                if ((chr10 != null && !chr10.isActive()) || (chr7 != null && !chr7.isActive()))
+                if ((chr10 != null && !chr10.isActive()) && (chr7 != null && !chr7.isActive()))
                     throw new IllegalMoveException();
             }
             case "card" -> {

@@ -101,6 +101,10 @@ public class GameBoard {
         for (int i = 1; i <= 12; i++) randomVector.add(i);
         Collections.shuffle(randomVector);
 
+        randomVector.add(0, 10);
+        randomVector.add(1, 1);
+        randomVector.add(2, 7);
+
         for (int i = 0; i < 3; i++) {
 
             Map<HouseColor, Integer> students = new EnumMap<>(HouseColor.class);
