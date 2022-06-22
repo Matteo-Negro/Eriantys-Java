@@ -393,7 +393,8 @@ public class Grids {
         islandContainer.setTower(tower);
         gridPane.add(tower, 0, 0);
 
-        ImageView motherNature = Images.motherNature(island.hasMotherNature());
+        ImageView motherNature = Images.motherNature();
+        motherNature.setVisible(island.hasMotherNature());
         islandContainer.setMotherNature(motherNature);
         gridPane.add(motherNature, 1, 0);
 
