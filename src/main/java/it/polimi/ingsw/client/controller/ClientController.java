@@ -361,8 +361,6 @@ public class ClientController {
                 }
                 if (idSpecialCharacter == 0) throw new IllegalMoveException();
                 else {
-                    Log.debug("MAT: id: " + idSpecialCharacter);
-                    Log.debug("MAT: NumberOfUses: " + gameModel.getGameBoard().getSpecialCharacterById(idSpecialCharacter).getUsesNumber());
                     if (gameModel.getGameBoard().getSpecialCharacterById(idSpecialCharacter).getUsesNumber() == 0)
                         throw new IllegalMoveException();
                     gameModel.getGameBoard().getSpecialCharacterById(idSpecialCharacter).decreaseUsesNumber();

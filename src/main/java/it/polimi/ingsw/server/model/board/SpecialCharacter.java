@@ -135,7 +135,11 @@ public class SpecialCharacter {
      */
     public void cleanEffect() {
         isActive = false;
-        usesNumber = 1;
+        switch (this.id) {
+            case 10 -> usesNumber = 4;
+            case 7 -> usesNumber = 6;
+            default -> usesNumber = 1;
+        }
     }
 
     /**
