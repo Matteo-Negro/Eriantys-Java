@@ -65,8 +65,10 @@ public class Boards {
             VBox.setMargin(name, new Insets(10, 0, 10, 0));
             VBox.setMargin(board, new Insets(0, 0, 10, 0));
 
-            if (player.getName().equals(currentPlayer))
+            if (player.getName().equals(currentPlayer)) {
                 vBox.getChildren().add(Various.assistantsPane(assembler, gameModel.getPlayerByName(player.getName()).getHand()));
+                boardContainer.setHand(gameModel.getPlayerByName(player.getName()).getHand());
+            }
 
             group.getChildren().addAll(vBox, diningRoomButton);
         }

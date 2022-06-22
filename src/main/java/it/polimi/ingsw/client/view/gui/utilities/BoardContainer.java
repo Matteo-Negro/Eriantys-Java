@@ -1,5 +1,6 @@
 package it.polimi.ingsw.client.view.gui.utilities;
 
+import it.polimi.ingsw.client.model.Assistant;
 import it.polimi.ingsw.client.view.gui.CommandAssembler;
 import it.polimi.ingsw.utilities.HouseColor;
 import it.polimi.ingsw.utilities.Log;
@@ -34,6 +35,8 @@ public class BoardContainer {
     private Map<HouseColor, ImageView> professors;
     private List<ImageView> towers;
     private WizardType wizard;
+    private final CommandAssembler assembler;
+    private List<Assistant> hand;
 
     /**
      * Default class constructor.
@@ -41,6 +44,8 @@ public class BoardContainer {
      * @param commandAssembler CommandAssembler for building the game messages to send to the server.
      */
     BoardContainer(CommandAssembler commandAssembler) {
+        assembler = commandAssembler;
+        hand = null;
         assistant = null;
         coins = null;
         diningRoom = null;
@@ -96,6 +101,15 @@ public class BoardContainer {
     }
 
     /**
+     * Initializes the player's hand with the available assistant cards.
+     *
+     * @param hand The hand to set.
+     */
+    void setHand(List<Assistant> hand) {
+        this.hand = new ArrayList<>(hand);
+    }
+
+    /**
      * Updates the assistant.
      *
      * @param id The id of the assistant to show, or null for the wizard.
@@ -104,8 +118,16 @@ public class BoardContainer {
         Platform.runLater(() -> {
             if (id == null)
                 assistant.setImage(Images.getWizardByType(wizard));
-            else
+            else {
                 assistant.setImage(Images.getAssistantById(id));
+
+                VBox vBox = (VBox) pane.getChildrenUnmodifiable().get(0);
+                if(this.hand != null) {
+                    this.hand.removeIf(assistantCard -> assistantCard.getId() == id);
+                    vBox.getChildren().remove(2);
+                    vBox.getChildren().add(Various.assistantsPane(assembler, this.hand));
+                }
+            }
         });
     }
 
