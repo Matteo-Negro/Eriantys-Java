@@ -15,18 +15,29 @@ import javafx.scene.layout.*;
 
 import java.util.*;
 
+/**
+ * Static class for getting all the required boxes for the game.
+ */
 public class Grids {
 
     private Grids() {
     }
 
-    static AnchorPane board(SchoolBoard schoolBoard, int number, BoardContainer boardContainer) {
+    /**
+     * Method for generating all the required grids for the board.
+     *
+     * @param schoolBoard      The SchoolBoard to display.
+     * @param entranceStudents The number of students to display in the entrance.
+     * @param boardContainer   The BoardContainer for storing all required information.
+     * @return The generated AnchorPane with all the required items.
+     */
+    static AnchorPane board(SchoolBoard schoolBoard, int entranceStudents, BoardContainer boardContainer) {
 
         AnchorPane anchorPane = new AnchorPane();
         anchorPane.setPrefWidth(703);
         anchorPane.setPrefHeight(305);
 
-        GridPane entrance = entrance(schoolBoard.getEntrance(), number, boardContainer);
+        GridPane entrance = entrance(schoolBoard.getEntrance(), entranceStudents, boardContainer);
         AnchorPane.setTopAnchor(entrance, 29.0);
         AnchorPane.setLeftAnchor(entrance, 5.0);
         anchorPane.getChildren().add(entrance);
@@ -41,7 +52,7 @@ public class Grids {
         AnchorPane.setLeftAnchor(professors, 503.0);
         anchorPane.getChildren().add(professors);
 
-        GridPane towers = towers(schoolBoard.getTowerType(), schoolBoard.getTowersNumber(), number == 9 ? 6 : 8, boardContainer);
+        GridPane towers = towers(schoolBoard.getTowerType(), schoolBoard.getTowersNumber(), entranceStudents == 9 ? 6 : 8, boardContainer);
         AnchorPane.setTopAnchor(towers, 61.0);
         AnchorPane.setLeftAnchor(towers, 569.0);
         anchorPane.getChildren().add(towers);
@@ -49,6 +60,14 @@ public class Grids {
         return anchorPane;
     }
 
+    /**
+     * Method for generating all the required grids for the cloud.
+     *
+     * @param cloud          The Cloud to display.
+     * @param playersNumber  The number of players according to which the number of students di display is picked.
+     * @param cloudContainer The CloudContainer for storing all required information.
+     * @return The generated GridPane with all the required items.
+     */
     static GridPane cloud(Cloud cloud, int playersNumber, CloudContainer cloudContainer) {
 
         GridPane gridPane = new GridPane();
@@ -88,6 +107,13 @@ public class Grids {
         return gridPane;
     }
 
+    /**
+     * Method for generating all the required grids for the special character.
+     *
+     * @param specialCharacter          The SpecialCharacter to display.
+     * @param specialCharacterContainer The SpecialCharacterContainer for storing all required information.
+     * @return The generated AnchorPane with all the required items.
+     */
     static GridPane specialCharacter(SpecialCharacter specialCharacter, SpecialCharacterContainer specialCharacterContainer) {
 
         GridPane gridPane = new GridPane();
@@ -116,6 +142,13 @@ public class Grids {
         return gridPane;
     }
 
+    /**
+     * Method for generating all the required grids for the board.
+     *
+     * @param island          The Island to display.
+     * @param islandContainer The IslandContainer for storing all required information.
+     * @return The generated GridPane with all the required items.
+     */
     static GridPane island(Island island, IslandContainer islandContainer) {
 
         GridPane gridPane = new GridPane();
@@ -145,6 +178,14 @@ public class Grids {
         return gridPane;
     }
 
+    /**
+     * Method for adding all the students to the cloud.
+     *
+     * @param gridPane       The pane where to add the students.
+     * @param cloud          The Cloud to display.
+     * @param playersNumber  The number of players according to which the number of students di display is picked.
+     * @param cloudContainer The CloudContainer for storing all required information.
+     */
     private static void addStudentsToCloud(GridPane gridPane, Cloud cloud, int playersNumber, CloudContainer cloudContainer) {
 
         ImageView student;
@@ -177,6 +218,13 @@ public class Grids {
         }
     }
 
+    /**
+     * Internal method for generating all the required grids for the cloud.
+     *
+     * @param cloud          The Cloud to display.
+     * @param cloudContainer The CloudContainer for storing all required information.
+     * @return The generated GridPane with all the required items.
+     */
     private static GridPane cloudStudents(Cloud cloud, CloudContainer cloudContainer) {
 
         GridPane gridPane = new GridPane();
@@ -206,6 +254,13 @@ public class Grids {
         return gridPane;
     }
 
+    /**
+     * Method for generating the dining room grid.
+     *
+     * @param diningRoom     The dining room to display.
+     * @param boardContainer The BoardContainer for storing all required information.
+     * @return The generated GridPane with all the required items.
+     */
     private static GridPane diningRoom(Map<HouseColor, Integer> diningRoom, BoardContainer boardContainer) {
 
         GridPane gridPane = new GridPane();
@@ -234,6 +289,14 @@ public class Grids {
         return gridPane;
     }
 
+    /**
+     * Method for generating the entrance grid.
+     *
+     * @param entrance       The entrance to display.
+     * @param number         The number of student to display.
+     * @param boardContainer The BoardContainer for storing all required information.
+     * @return The generated GridPane with all the required items.
+     */
     private static GridPane entrance(Map<HouseColor, Integer> entrance, int number, BoardContainer boardContainer) {
 
         GridPane gridPane = new GridPane();
@@ -263,6 +326,13 @@ public class Grids {
         return gridPane;
     }
 
+    /**
+     * Method for adding all the features required by the special character.
+     *
+     * @param gridPane                  The pane where to add the features.
+     * @param specialCharacter          The SpecialCharacter to display.
+     * @param specialCharacterContainer The SpecialCharacterContainer for storing all required information.
+     */
     private static void processSpecialCharacter(GridPane gridPane, SpecialCharacter specialCharacter, SpecialCharacterContainer specialCharacterContainer) {
 
         if (specialCharacter.getAvailableBans() != null) {
@@ -328,6 +398,13 @@ public class Grids {
         }
     }
 
+    /**
+     * Method for generating the professors' grid.
+     *
+     * @param professors     The professors to display.
+     * @param boardContainer The BoardContainer for storing all required information.
+     * @return The generated GridPane with all the required items.
+     */
     private static GridPane professors(Map<HouseColor, Boolean> professors, BoardContainer boardContainer) {
 
         GridPane gridPane = new GridPane();
@@ -357,6 +434,15 @@ public class Grids {
         return gridPane;
     }
 
+    /**
+     * Method for generating the towers' grid.
+     *
+     * @param towerType      The tower to display.
+     * @param towersNumber   The maximum number of towers to display.
+     * @param towersToShow   The number of towers to display.
+     * @param boardContainer The BoardContainer for storing all required information.
+     * @return The generated GridPane with all the required items.
+     */
     private static GridPane towers(TowerType towerType, int towersToShow, int towersNumber, BoardContainer boardContainer) {
 
         GridPane gridPane = new GridPane();
@@ -386,6 +472,13 @@ public class Grids {
         return gridPane;
     }
 
+    /**
+     * Method for generating the grid which contains the tower and MotherNature.
+     *
+     * @param island          The Island to display.
+     * @param islandContainer The IslandContainer for storing all required information.
+     * @return The generated GridPane with all the required items.
+     */
     private static GridPane islandTowerMotherNature(Island island, IslandContainer islandContainer) {
 
         GridPane gridPane = new GridPane();
@@ -414,6 +507,13 @@ public class Grids {
         return gridPane;
     }
 
+    /**
+     * Method for putting all the students on the island.
+     *
+     * @param island          The Island to display.
+     * @param islandContainer The IslandContainer for storing all required information.
+     * @return The generated GridPane with all the required items.
+     */
     private static GridPane islandStudents(Island island, IslandContainer islandContainer) {
 
         GridPane gridPane = new GridPane();
@@ -432,6 +532,14 @@ public class Grids {
         return gridPane;
     }
 
+    /**
+     * Method for putting all the students on the island according to the row number.
+     *
+     * @param row             The number of the row (0 or 1) where to put the students.
+     * @param island          The Island to display.
+     * @param islandContainer The IslandContainer for storing all required information.
+     * @return The generated GridPane with all the required items.
+     */
     private static GridPane islandStudents(int row, Island island, IslandContainer islandContainer) {
 
         GridPane gridPane = new GridPane();
@@ -457,6 +565,12 @@ public class Grids {
         return gridPane;
     }
 
+    /**
+     * Initializes rows and columns.
+     *
+     * @param rows    The List of rows.
+     * @param columns The List of columns.
+     */
     private static void initialize(ObservableList<RowConstraints> rows, ObservableList<ColumnConstraints> columns) {
 
         for (RowConstraints row : rows) {
@@ -470,6 +584,12 @@ public class Grids {
         }
     }
 
+    /**
+     * Initializes the dining room.
+     *
+     * @param gridPane The grid where to put the students.
+     * @return The generated Map with color and list of images.
+     */
     private static Map<HouseColor, List<ImageView>> initializeDiningRoom(GridPane gridPane) {
         Map<HouseColor, List<ImageView>> students = new EnumMap<>(HouseColor.class);
         List<ImageView> colorStudents;
@@ -493,6 +613,12 @@ public class Grids {
         return students;
     }
 
+    /**
+     * Initializes the entrance buttons.
+     *
+     * @param gridPane The grid where to put the buttons.
+     * @return The generated List of buttons.
+     */
     private static List<Button> initializeEntranceButtons(GridPane gridPane, int number) {
         List<Button> students = new ArrayList<>();
         ImageView imageView;
@@ -508,6 +634,12 @@ public class Grids {
         return students;
     }
 
+    /**
+     * Initializes the professors.
+     *
+     * @param gridPane The grid where to put the professors.
+     * @return The generated Map.
+     */
     private static Map<HouseColor, ImageView> initializeProfessors(GridPane gridPane) {
         Map<HouseColor, ImageView> professors = new EnumMap<>(HouseColor.class);
         List<HouseColor> colors = List.of(HouseColor.GREEN, HouseColor.RED, HouseColor.YELLOW, HouseColor.FUCHSIA, HouseColor.BLUE);
@@ -521,6 +653,15 @@ public class Grids {
         return professors;
     }
 
+    /**
+     * Initializes the towers.
+     *
+     * @param gridPane     The grid where to put the towers.
+     * @param towerType    The color of the towers to display.
+     * @param towersNumber The maximum number of towers to display.
+     * @param towersToShow The number of towers to display.
+     * @return The generated list of buttons.
+     */
     private static List<ImageView> initializeTowers(GridPane gridPane, TowerType towerType, int towersNumber, int towersToShow) {
         List<ImageView> towers = new ArrayList<>();
         ImageView imageView;

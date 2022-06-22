@@ -11,11 +11,21 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Parses the model to obtain the special characters.
+ */
 public class SpecialCharacters {
 
     private SpecialCharacters() {
     }
 
+    /**
+     * Returns all the special characters.
+     *
+     * @param specialCharacters The List of Special Characters to display.
+     * @param assembler         CommandAssembler for generating the commands to send to the server.
+     * @return A List of SpecialCharacterContainers to display.
+     */
     public static List<SpecialCharacterContainer> get(List<SpecialCharacter> specialCharacters, CommandAssembler assembler) {
         SpecialCharacterContainer specialCharacterContainer;
         List<SpecialCharacterContainer> list = new ArrayList<>();
@@ -32,7 +42,7 @@ public class SpecialCharacters {
             GridPane gPane = Grids.specialCharacter(specialCharacter, specialCharacterContainer);
             ImageView coin = Images.coin();
             gPane.add(coin, 1, 0);
-            if(specialCharacter.getStudents() != null || specialCharacter.getAvailableBans() != null || specialCharacter.getId() == 10) {
+            if (specialCharacter.getStudents() != null || specialCharacter.getAvailableBans() != null || specialCharacter.getId() == 10) {
                 gPane.setStyle("-fx-background-color: radial-gradient(focus-distance 0%, center 50% 60%, radius 99%, white, transparent);");
             }
             gPane.setVisible(true);

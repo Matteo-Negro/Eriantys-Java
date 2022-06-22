@@ -7,29 +7,34 @@ import javafx.application.Platform;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.GridPane;
-import javafx.scene.shape.Line;
 
 import java.util.*;
 import java.util.function.Consumer;
 
+/**
+ * This class is a simple interface to manage a GUI special character. Provides all the required methods to create and update it.
+ */
 public class SpecialCharacterContainer {
 
     private final Consumer<List<HouseColor>> updateStudents;
     private final int idSpecialCharacter;
     private final CommandAssembler commandAssembler;
     private List<Button> bansImages;
-    private Line connection;
     private Parent pane;
     private Map<HouseColor, Integer> students;
     private List<Button> studentsImages;
     private int bansNum;
     private ImageView extraPrice;
 
+    /**
+     * Default class constructor.
+     *
+     * @param idSpecialCharacter The id of the special character.
+     * @param assembler          CommandAssembler for generating the commands to send to the server.
+     */
     SpecialCharacterContainer(int idSpecialCharacter, CommandAssembler assembler) {
         this.commandAssembler = assembler;
         this.idSpecialCharacter = idSpecialCharacter;
-        this.connection = null;
         this.pane = null;
         this.students = null;
         this.studentsImages = null;
@@ -58,46 +63,64 @@ public class SpecialCharacterContainer {
         };
     }
 
-    void setConnection(Line connection) {
-        this.connection = connection;
-    }
-
-    public void connect() {
-        Platform.runLater(() -> this.connection.setVisible(true));
-    }
-
+    /**
+     * Gets the pane to print on the screen.
+     *
+     * @return The pane with all the graphics.
+     */
     public Parent getPane() {
         return pane;
     }
 
+    /**
+     * Initializes the pane.
+     *
+     * @param pane The pane to add.
+     */
     void setPane(Parent pane) {
         this.pane = pane;
     }
 
+    /**
+     * Sets the student on the character.
+     *
+     * @param students The students on the character.
+     */
     void setStudents(Map<HouseColor, Integer> students) {
         this.students = new EnumMap<>(students);
         if (studentsImages != null)
             updateStudents(false);
     }
 
-    public List<Button> getStudentsImages() {
-        return this.studentsImages;
-    }
-
+    /**
+     * Sets the students button for selecting the students.
+     *
+     * @param studentButtons The buttons.
+     */
     void setStudentsImages(List<Button> studentButtons) {
         this.studentsImages = Collections.unmodifiableList(studentButtons);
         if (students != null)
             updateStudents(false);
     }
 
-    public void updateStudents(Map<HouseColor, Integer> entrance) {
-        if (entrance == null)
+    /**
+     * Updates the students number.
+     *
+     * @param students The new number of students.
+     */
+    public void updateStudents(Map<HouseColor, Integer> students) {
+        if (students == null)
             return;
         for (HouseColor color : HouseColor.values())
-            this.students.replace(color, entrance.get(color));
+            this.students.replace(color, students.get(color));
         updateStudents(true);
     }
 
+    /**
+     * Updates the students on the card.
+     *
+     * @param safe true if it has to be run on the GUI thread, false otherwise.
+     */
     private void updateStudents(boolean safe) {
         List<HouseColor> studentsList = studentsToList();
         if (safe)
@@ -106,10 +129,20 @@ public class SpecialCharacterContainer {
             updateStudents.accept(studentsList);
     }
 
+    /**
+     * Sets the number of bans.
+     *
+     * @param bansNum The number of bans.
+     */
     void setBansNum(int bansNum) {
         this.bansNum = bansNum;
     }
 
+    /**
+     * Sets all the bans.
+     *
+     * @param banButtons The list of bans.
+     */
     void setBansImages(List<Button> banButtons) {
         this.bansImages = Collections.unmodifiableList(banButtons);
         if (bansNum != 0)
@@ -118,9 +151,16 @@ public class SpecialCharacterContainer {
             updateBans(this.bansNum);
     }
 
+    /**
+     * Updates the number of available bans on the card.
+     *
+     * @param bansNum The number of bans.
+     */
     public void updateBans(Integer bansNum) {
+
         if (bansNum == null)
             return;
+
         if (bansNum > 0) Platform.runLater(() -> {
             for (int index = 0; index < bansImages.size(); index++) {
                 this.bansImages.get(index).setGraphic(Images.banIcon());
@@ -133,17 +173,33 @@ public class SpecialCharacterContainer {
         });
     }
 
+    /**
+     * Sets the increment to the price.
+     *
+     * @param alreadyPaid true if this card has already been played.
+     */
     public void setExtraPrice(boolean alreadyPaid, ImageView coin) {
         this.extraPrice = coin;
         this.extraPrice.setVisible(alreadyPaid);
     }
 
+    /**
+     * Updates the price of the card.
+     *
+     * @param extraPrice true if it has to be increased.
+     */
     public void updateExtraPrice(boolean extraPrice) {
         Platform.runLater(() -> this.extraPrice.setVisible(extraPrice));
         Log.debug("set extra price visibility to " + extraPrice);
     }
 
+    /**
+     * Enables or disables the students buttons.
+     *
+     * @param enable Enable signal.
+     */
     public void enableStudentButtons(boolean enable) {
+
         if (this.studentsImages == null)
             return;
 
@@ -166,7 +222,13 @@ public class SpecialCharacterContainer {
         }
     }
 
+    /**
+     * Enables or disables the bans buttons.
+     *
+     * @param enable Enable signal.
+     */
     public void enableBanButtons(boolean enable) {
+
         if (this.bansImages == null)
             return;
 
@@ -189,6 +251,12 @@ public class SpecialCharacterContainer {
         }
     }
 
+    /**
+     * Enables or disables the button for the special character.
+     *
+     * @param enable       Enable signal.
+     * @param activePlayer true of the player is active.
+     */
     public void enableCharacterButton(boolean enable, boolean activePlayer) {
         if (enable) {
             pane.getChildrenUnmodifiable().get(1).setStyle(
@@ -204,6 +272,11 @@ public class SpecialCharacterContainer {
         enableStudentButtons(activePlayer && enable);
     }
 
+    /**
+     * Converts the map of students into an ordered list.
+     *
+     * @return The generated list.
+     */
     private List<HouseColor> studentsToList() {
         boolean end = false;
         List<HouseColor> list = new ArrayList<>();

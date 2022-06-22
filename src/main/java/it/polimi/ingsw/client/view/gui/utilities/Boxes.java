@@ -12,12 +12,24 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
+/**
+ * Static class for getting all the required boxes for the game.
+ */
 public class Boxes {
 
     private Boxes() {
     }
 
+    /**
+     * General box for containing the board and the assistant.
+     *
+     * @param gameModel      GameModel for getting all the required information.
+     * @param player         The name of the player who owns the board.
+     * @param boardContainer The BoardContainer for storing all required information.
+     * @return The generated HBox.
+     */
     static HBox board(GameModel gameModel, String player, BoardContainer boardContainer) {
+
         HBox hBox = new HBox();
         hBox.setAlignment(Pos.CENTER);
 
@@ -43,6 +55,14 @@ public class Boxes {
         return hBox;
     }
 
+    /**
+     * General box for containing a student on an island.
+     *
+     * @param houseColor      The color of the student to put.
+     * @param students        The number of students of that color.
+     * @param islandContainer The IslandContainer for storing all required information.
+     * @return The generated HBox.
+     */
     static HBox islandStudent(HouseColor houseColor, int students, IslandContainer islandContainer) {
 
         HBox hBox = new HBox();
@@ -60,6 +80,28 @@ public class Boxes {
         return hBox;
     }
 
+    /**
+     * General box for containing the assistant and, eventually, the number of owned coins.
+     *
+     * @param player         The required player.
+     * @param boardContainer The BoardContainer for storing all required information.
+     * @return The generated VBox.
+     */
+    private static VBox boardRightBox(Player player, BoardContainer boardContainer) {
+        VBox vBox = new VBox();
+        ImageView assistant = getAssistant(player, boardContainer);
+        VBox.setMargin(assistant, new Insets(0, 0, 30, 0));
+        vBox.getChildren().addAll(assistant, coins(player.getCoins(), boardContainer));
+        return vBox;
+    }
+
+    /**
+     * Gets the played assistant or wizard according to the situation.
+     *
+     * @param player         The player who owns the played assistant.
+     * @param boardContainer The BoardContainer for storing all required information.
+     * @return The obtained ImageView.
+     */
     private static ImageView getAssistant(Player player, BoardContainer boardContainer) {
         ImageView assistant;
         if (player.getCurrentPlayedAssistant() == null)
@@ -71,17 +113,16 @@ public class Boxes {
         return assistant;
     }
 
-    private static VBox boardRightBox(Player player, BoardContainer boardContainer) {
-        VBox vBox = new VBox();
-        vBox.setAlignment(Pos.CENTER);
-        ImageView assistant = getAssistant(player, boardContainer);
-        VBox.setMargin(assistant, new Insets(0, 0, 30, 0));
-        vBox.getChildren().addAll(assistant, coins(player.getCoins(), boardContainer));
-        return vBox;
-    }
-
+    /**
+     * General box for containing the number of coins of a player.
+     *
+     * @param coins          The number of coins to display.
+     * @param boardContainer The BoardContainer for storing all required information.
+     * @return The generated HBox.
+     */
     private static HBox coins(int coins, BoardContainer boardContainer) {
         HBox hBox = new HBox();
+        hBox.setAlignment(Pos.CENTER);
         ImageView coin = Images.coin();
         HBox.setMargin(coin, new Insets(0, 5, 0, 0));
         Label number = Labels.coinsNumber(coins);
