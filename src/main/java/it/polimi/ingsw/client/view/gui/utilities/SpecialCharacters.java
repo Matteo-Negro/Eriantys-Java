@@ -4,6 +4,7 @@ import it.polimi.ingsw.client.model.SpecialCharacter;
 import it.polimi.ingsw.client.view.gui.CommandAssembler;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 
 import java.util.ArrayList;
@@ -15,7 +16,6 @@ public class SpecialCharacters {
     private SpecialCharacters() {
     }
 
-    // TODO: check for it in general
     public static List<SpecialCharacterContainer> get(List<SpecialCharacter> specialCharacters, CommandAssembler assembler) {
         SpecialCharacterContainer specialCharacterContainer;
         List<SpecialCharacterContainer> list = new ArrayList<>();
@@ -30,6 +30,11 @@ public class SpecialCharacters {
             specialCharacterContainer.setPane(group);
 
             GridPane gPane = Grids.specialCharacter(specialCharacter, specialCharacterContainer);
+            ImageView coin = Images.coin();
+            gPane.add(coin, 1, 0);
+            if(specialCharacter.getStudents() != null || specialCharacter.getAvailableBans() != null || specialCharacter.getId() == 10) {
+                gPane.setStyle("-fx-background-color: radial-gradient(focus-distance 0%, center 50% 60%, radius 99%, white, transparent);");
+            }
             gPane.setVisible(true);
 
             Button characterButton = new Button();
@@ -43,7 +48,7 @@ public class SpecialCharacters {
             characterButton.setVisible(false);
             characterButton.setOnMouseClicked(mouseEvent -> assembler.managePaymentsSpecialCharacterSelection(idSpecialCharacter));
             group.getChildren().addAll(Images.specialCharacter(idSpecialCharacter), gPane, characterButton);
-            specialCharacterContainer.setExtraPrice(specialCharacter.isAlreadyPaid());
+            specialCharacterContainer.setExtraPrice(specialCharacter.isAlreadyPaid(), coin);
         }
         return Collections.unmodifiableList(list);
     }

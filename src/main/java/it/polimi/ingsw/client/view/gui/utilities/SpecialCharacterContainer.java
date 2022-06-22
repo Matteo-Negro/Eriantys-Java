@@ -133,9 +133,8 @@ public class SpecialCharacterContainer {
         });
     }
 
-    public void setExtraPrice(boolean alreadyPaid) {
-        GridPane gPane = (GridPane) pane.getChildrenUnmodifiable().get(1);
-        this.extraPrice = (ImageView) gPane.getChildren().get(0);
+    public void setExtraPrice(boolean alreadyPaid, ImageView coin) {
+        this.extraPrice = coin;
         this.extraPrice.setVisible(alreadyPaid);
     }
 
