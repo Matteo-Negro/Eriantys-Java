@@ -240,8 +240,6 @@ public class GamePlatform {
             }
             cloud.refill(map);
         });
-        if (expert)
-            gameBoard.getCharacters().forEach(SpecialCharacter::changedRound);
         currentPlayer = roundWinner;
     }
 
@@ -265,6 +263,9 @@ public class GamePlatform {
         Log.debug(players.get(currentPlayer).getName());
         Log.debug(String.valueOf((turnOrder.indexOf(players.get(currentPlayer)) + 1) % playersNumber));
         player = turnOrder.get((turnOrder.indexOf(players.get(currentPlayer)) + 1) % playersNumber).getName();
+
+        if (expert)
+            gameBoard.getCharacters().forEach(SpecialCharacter::changedTurn);
 
         if (player.equals(roundWinner))
             throw new RoundConcluded();

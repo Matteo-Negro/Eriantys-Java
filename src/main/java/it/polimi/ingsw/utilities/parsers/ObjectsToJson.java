@@ -244,7 +244,7 @@ public enum ObjectsToJson {
         object.addProperty("id", specialCharacter.getId());
         object.addProperty("effectCost", (specialCharacter.isAlreadyPaid()) ? specialCharacter.getEffectCost() - 1 : specialCharacter.getEffectCost());
         object.addProperty("alreadyPaid", specialCharacter.isAlreadyPaid());
-        object.addProperty("paidInRound", specialCharacter.isPaidInRound());
+        object.addProperty("paidInTurn", specialCharacter.isPaidInTurn());
         object.addProperty("active", specialCharacter.isActive());
         object.addProperty("usesNumber", specialCharacter.getUsesNumber());
         switch (specialCharacter.getEffect().getId()) {

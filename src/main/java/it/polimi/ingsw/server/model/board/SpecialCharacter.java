@@ -19,7 +19,7 @@ public class SpecialCharacter {
     private final int effectCost;
     private final Effect assignedEffect;
     private boolean alreadyPaid;
-    private boolean paidInRound;
+    private boolean paidInTurn;
     private boolean isActive;
     private int usesNumber;
 
@@ -34,7 +34,7 @@ public class SpecialCharacter {
         this.id = id;
         isActive = false;
         alreadyPaid = false;
-        paidInRound = false;
+        paidInTurn = false;
         assignedEffect = getEffectBy(id, students, 4);
         effectCost = assignedEffect.getCost();
         switch (this.id) {
@@ -52,16 +52,16 @@ public class SpecialCharacter {
      * @param statusId          The identification number of the special character card.
      * @param statusEffectCost  The special character's activation cost.
      * @param statusAlreadyPaid True if the special character has already been paid, and it's effect has already been activated during this game.
-     * @param statusPaidInRound True if the special character has already been paid, and it's effect has already been activated during this round.
+     * @param statusPaidInTurn True if the special character has already been paid, and it's effect has already been activated during this turn.
      * @param statusIsActive    True if the special character's effect is active.
      * @param usesNumber        The number of uses.
      */
-    public SpecialCharacter(int statusId, int statusEffectCost, boolean statusAlreadyPaid, boolean statusPaidInRound, boolean statusIsActive, Map<HouseColor, Integer> statusStudents, int bans, int usesNumber) {
+    public SpecialCharacter(int statusId, int statusEffectCost, boolean statusAlreadyPaid, boolean statusPaidInTurn, boolean statusIsActive, Map<HouseColor, Integer> statusStudents, int bans, int usesNumber) {
         this.id = statusId;
         this.effectCost = statusEffectCost;
         this.assignedEffect = getEffectBy(statusId, statusStudents, bans);
         this.alreadyPaid = statusAlreadyPaid;
-        this.paidInRound = statusPaidInRound;
+        this.paidInTurn = statusPaidInTurn;
         this.isActive = statusIsActive;
         this.usesNumber = usesNumber;
 
@@ -126,7 +126,7 @@ public class SpecialCharacter {
      */
     public void activateEffect() {
         alreadyPaid = true;
-        paidInRound = true;
+        paidInTurn = true;
         isActive = true;
     }
 
@@ -145,8 +145,8 @@ public class SpecialCharacter {
     /**
      * Sets the "payedInRound" attribute to false.
      */
-    public void changedRound() {
-        paidInRound = false;
+    public void changedTurn() {
+        paidInTurn = false;
     }
 
     /**
@@ -163,8 +163,8 @@ public class SpecialCharacter {
      *
      * @return if the card had been paid in the current round.
      */
-    public boolean isPaidInRound() {
-        return paidInRound;
+    public boolean isPaidInTurn() {
+        return paidInTurn;
     }
 
     /**
@@ -203,7 +203,7 @@ public class SpecialCharacter {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         SpecialCharacter that = (SpecialCharacter) o;
-        return id == that.id && effectCost == that.effectCost && alreadyPaid == that.alreadyPaid && paidInRound == that.paidInRound && isActive == that.isActive && Objects.equals(assignedEffect, that.assignedEffect);
+        return id == that.id && effectCost == that.effectCost && alreadyPaid == that.alreadyPaid && paidInTurn == that.paidInTurn && isActive == that.isActive && Objects.equals(assignedEffect, that.assignedEffect);
     }
 
     /**
@@ -213,6 +213,6 @@ public class SpecialCharacter {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(id, effectCost, assignedEffect, alreadyPaid, paidInRound, isActive);
+        return Objects.hash(id, effectCost, assignedEffect, alreadyPaid, paidInTurn, isActive);
     }
 }

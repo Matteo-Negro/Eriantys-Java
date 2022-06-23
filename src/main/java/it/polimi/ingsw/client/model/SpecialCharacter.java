@@ -20,7 +20,7 @@ public class SpecialCharacter {
     private Map<HouseColor, Integer> students;
     private boolean active;
     private boolean alreadyPaid;
-    private boolean paidInRound;
+    private boolean paidInTurn;
     private Integer availableBans;
     private Integer usesNumber;
 
@@ -35,11 +35,11 @@ public class SpecialCharacter {
      * @param availableBans Number of ban marker available.
      * @param cost          Price to activate the effect.
      */
-    public SpecialCharacter(int id, boolean active, boolean alreadyPaid, boolean paidInRound, JsonObject students, Integer availableBans, int cost, int usesNumber) {
+    public SpecialCharacter(int id, boolean active, boolean alreadyPaid, boolean paidInTurn, JsonObject students, Integer availableBans, int cost, int usesNumber) {
         this.id = id;
         this.active = active;
         this.alreadyPaid = alreadyPaid;
-        this.paidInRound = paidInRound;
+        this.paidInTurn = paidInTurn;
         this.availableBans = availableBans;
         this.cost = cost;
         this.students = null;
@@ -114,8 +114,8 @@ public class SpecialCharacter {
      *
      * @return The paidInRound attribute.
      */
-    public boolean isPaidInRound() {
-        return this.paidInRound;
+    public boolean isPaidInTurn() {
+        return this.paidInTurn;
     }
 
     /**
@@ -124,7 +124,7 @@ public class SpecialCharacter {
     public void activateEffect() {
         this.active = true;
         this.alreadyPaid = true;
-        this.paidInRound = true;
+        this.paidInTurn = true;
         //update view.
     }
 

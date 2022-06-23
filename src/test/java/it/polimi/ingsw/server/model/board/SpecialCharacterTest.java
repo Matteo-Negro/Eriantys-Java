@@ -111,7 +111,7 @@ class SpecialCharacterTest {
     void activateEffect() {
         specialCharacter.activateEffect();
         assertTrue(specialCharacter.isAlreadyPaid());
-        assertTrue(specialCharacter.isPaidInRound());
+        assertTrue(specialCharacter.isPaidInTurn());
         assertTrue(specialCharacter.isActive());
     }
 
@@ -128,8 +128,8 @@ class SpecialCharacterTest {
      * Tests if the method correctly sets the paidInRound variable to false.
      */
     @Test
-    void changedRound() {
-        specialCharacter.changedRound();
-        assertFalse(specialCharacter.isPaidInRound());
+    void changedTurn() {
+        specialCharacter.changedTurn();
+        assertFalse(specialCharacter.isPaidInTurn());
     }
 }
