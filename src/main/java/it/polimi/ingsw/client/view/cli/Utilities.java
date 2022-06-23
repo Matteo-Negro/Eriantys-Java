@@ -4,7 +4,10 @@ import it.polimi.ingsw.client.view.cli.colours.*;
 import it.polimi.ingsw.utilities.HouseColor;
 import org.fusesource.jansi.Ansi;
 import org.jline.builtins.Completers.TreeCompleter;
-import org.jline.reader.*;
+import org.jline.reader.History;
+import org.jline.reader.LineReader;
+import org.jline.reader.LineReaderBuilder;
+import org.jline.reader.UserInterruptException;
 import org.jline.terminal.Terminal;
 
 import java.io.IOError;

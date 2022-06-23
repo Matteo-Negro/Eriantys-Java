@@ -253,7 +253,7 @@ public class SpecialCharacter {
     /**
      * Gets the default foreground for writing things.
      *
-     * @param active Boolean value to set the active card.
+     * @param active Boolean second to set the active card.
      * @return The Ansi stream to print to terminal.
      */
     private static Ansi defaultForeground(boolean active) {
@@ -265,7 +265,7 @@ public class SpecialCharacter {
      * Parses the number of students of a specific color in order to render them correctly.
      *
      * @param houseColor Color of the student.
-     * @param active     Boolean value to set the active card.
+     * @param active     Boolean second to set the active card.
      * @return The Ansi stream to print to terminal.
      */
     private static Ansi parseStudent(HouseColor houseColor, boolean active) {

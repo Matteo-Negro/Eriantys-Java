@@ -1,6 +1,6 @@
 package it.polimi.ingsw.client.view.gui.utilities;
 
-import it.polimi.ingsw.client.view.ClientGui;
+import it.polimi.ingsw.client.ClientGui;
 import it.polimi.ingsw.utilities.ClientState;
 import javafx.event.Event;
 import javafx.scene.input.KeyCode;

@@ -6,23 +6,23 @@ package it.polimi.ingsw.client.view.cli;
 public interface Colour {
 
     /**
-     * Gets R value.
+     * Gets R second.
      *
-     * @return R value.
+     * @return R second.
      */
     int getR();
 
     /**
-     * Gets G value.
+     * Gets G second.
      *
-     * @return G value.
+     * @return G second.
      */
     int getG();
 
     /**
-     * Gets B value.
+     * Gets B second.
      *
-     * @return B value.
+     * @return B second.
      */
     int getB();
 }

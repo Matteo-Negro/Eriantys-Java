@@ -73,7 +73,7 @@ public class Island {
     }
 
     /**
-     * This method returns the island's size, default value is 1, but due to group aggregations size could rise.
+     * This method returns the island's size, default second is 1, but due to group aggregations size could rise.
      *
      * @return The island's size.
      */
@@ -111,7 +111,7 @@ public class Island {
     /**
      * This method returns a copy of the data structure, that contains the students on the island.
      *
-     * @return An HashMap (key: HouseColor, value: Integer), that contains the number of students on the island.
+     * @return An HashMap (first: HouseColor, second: Integer), that contains the number of students on the island.
      */
     public Map<HouseColor, Integer> getStudents() {
         return new EnumMap<>(this.students);
@@ -129,21 +129,21 @@ public class Island {
     /**
      * This method gives the status of the attribute 'ban'.
      *
-     * @return The boolean value of ban.
+     * @return The boolean second of ban.
      */
     public boolean isBanned() {
         return this.ban;
     }
 
     /**
-     * This method set true the value of ban.
+     * This method set true the second of ban.
      */
     public void setBan() {
         this.ban = true;
     }
 
     /**
-     * This method set false the value of ban.
+     * This method set false the second of ban.
      */
     public void removeBan() {
         this.ban = false;

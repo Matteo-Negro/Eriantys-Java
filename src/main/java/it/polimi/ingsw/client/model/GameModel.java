@@ -217,7 +217,7 @@ public class GameModel {
      * Sets the current player and activates/deactivates it's input, receiving the communication token.
      *
      * @param currentPlayer The username of the current player.
-     * @param token         The boolean value associated with the communication token.
+     * @param token         The boolean second associated with the communication token.
      */
     public void setCurrentPlayer(String currentPlayer, boolean token) {
         this.currentPlayer = currentPlayer;

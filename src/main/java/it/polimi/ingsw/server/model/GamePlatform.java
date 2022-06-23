@@ -287,13 +287,13 @@ public class GamePlatform {
 
         while (!remainingPlayers.isEmpty()) {
             player = playedAssistantsOrder.stream()
-                    .filter(pair -> pair.value().getId() == remainingPlayers.stream()
+                    .filter(pair -> pair.second().getId() == remainingPlayers.stream()
                             .mapToInt(item -> playedAssistants.get(item).getId())
                             .min()
                             .getAsInt())
                     .toList()
                     .get(0)
-                    .key();
+                    .first();
             turnOrder.add(player);
             remainingPlayers.remove(player);
         }

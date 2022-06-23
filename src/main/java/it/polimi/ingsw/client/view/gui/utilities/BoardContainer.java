@@ -24,7 +24,7 @@ public class BoardContainer {
 
     private final Supplier<Void> updateDiningRoom;
     private final Consumer<List<HouseColor>> updateEntrance;
-
+    private final CommandAssembler assembler;
     private ImageView assistant;
     private Label coins;
     private Map<HouseColor, Integer> diningRoom;
@@ -35,7 +35,6 @@ public class BoardContainer {
     private Map<HouseColor, ImageView> professors;
     private List<ImageView> towers;
     private WizardType wizard;
-    private final CommandAssembler assembler;
     private List<Assistant> hand;
 
     /**
@@ -122,7 +121,7 @@ public class BoardContainer {
                 assistant.setImage(Images.getAssistantById(id));
 
                 VBox vBox = (VBox) pane.getChildrenUnmodifiable().get(0);
-                if(this.hand != null) {
+                if (this.hand != null) {
                     this.hand.removeIf(assistantCard -> assistantCard.getId() == id);
                     vBox.getChildren().remove(2);
                     vBox.getChildren().add(Various.assistantsPane(assembler, this.hand));

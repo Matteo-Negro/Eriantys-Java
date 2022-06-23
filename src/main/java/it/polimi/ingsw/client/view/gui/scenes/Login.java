@@ -1,6 +1,6 @@
 package it.polimi.ingsw.client.view.gui.scenes;
 
-import it.polimi.ingsw.client.view.ClientGui;
+import it.polimi.ingsw.client.ClientGui;
 import it.polimi.ingsw.client.view.gui.utilities.EventProcessing;
 import it.polimi.ingsw.utilities.ClientState;
 import it.polimi.ingsw.utilities.Pair;
@@ -61,10 +61,10 @@ public class Login implements Prepare {
                 .map(name -> new Pair<>(name, playersMap.get(name))).toList();
         int index = client.getController().getGameModel().getWaitingRoom().size();
         for (Pair<String, Boolean> entry : sortedPlayers) {
-            Label label = new Label(entry.key());
+            Label label = new Label(entry.first());
             if (index != 1)
                 label.setOpaqueInsets(new Insets(0, 0, 10, 0));
-            if (Boolean.TRUE.equals(entry.value()))
+            if (Boolean.TRUE.equals(entry.second()))
                 label.setTextFill(Color.rgb(181, 255, 181));
             else
                 label.setTextFill(Color.rgb(255, 181, 181));

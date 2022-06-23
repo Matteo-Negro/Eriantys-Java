@@ -41,11 +41,10 @@ public class Server {
     private final Map<String, GameController> games;
     private final String savePath;
     private final int port;
+    private final ExecutorService gameExecutor;
     boolean processRunning;
     ServerSocket serverSocket;
     ServerIO debugIO;
-
-    private final ExecutorService gameExecutor;
 
     /**
      * Class constructor.
@@ -73,7 +72,7 @@ public class Server {
         if (!directory.exists()) {
             directoryCreated = directory.mkdir();
         }
-        if(!directoryCreated) {
+        if (!directoryCreated) {
             throw new IOException("An error occurred while creating the database directory.");
         }
         Log.info("Loading games...");
@@ -84,7 +83,6 @@ public class Server {
     /**
      * The main server method, it runs the Server instance as a parallel thread,
      * managing the new connection requests from the clients.
-     *
      */
     public void start() {
         new Thread(debugIO).start();
@@ -172,7 +170,7 @@ public class Server {
             Log.info("Loaded " + json.get("id").getAsString());
 
         } catch (Exception e) {
-            Log.warning("Cannot to load " + json.get("id").getAsString().toUpperCase() + " because of the following error: ", e);
+            Log.warning("Cannot to load " + json.get("id").getAsString().toUpperCase() + " because of the following error", e);
         }
     }
 
@@ -264,9 +262,9 @@ public class Server {
             }
             Log.debug("Games saved.");
 
-            try (Socket endSocket = new Socket()){
+            try (Socket endSocket = new Socket()) {
                 endSocket.connect(serverSocket.getLocalSocketAddress());
-            }catch(IOException ioe) {
+            } catch (IOException ioe) {
                 Log.debug("An error occurred while closing server socket, the server didn't shut-down.");
             }
         }

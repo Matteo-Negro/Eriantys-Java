@@ -118,16 +118,16 @@ public class Login {
             StringBuilder adaptiveString;
 
             for (Pair<String, Boolean> player : sortedPlayers) {
-                shortName = player.key();
+                shortName = player.first();
 
-                if (player.key().length() > 22) shortName = player.key().substring(0, 22);
+                if (player.first().length() > 22) shortName = player.first().substring(0, 22);
 
                 adaptiveString = new StringBuilder();
-                adaptiveString.append(" ".repeat(Math.max(0, (size - 2 - shortName.length() - 1 - (Boolean.TRUE.equals(player.value()) ? 9 : 10)))));
+                adaptiveString.append(" ".repeat(Math.max(0, (size - 2 - shortName.length() - 1 - (Boolean.TRUE.equals(player.second()) ? 9 : 10)))));
 
                 ansi.a("  " + shortName + ":" + adaptiveString);
-                ansi.a(Boolean.TRUE.equals(player.value()) ? foreground(Green.getInstance()) : foreground(Red.getInstance()));
-                ansi.a(Boolean.TRUE.equals(player.value()) ? " ONLINE  " : " OFFLINE  ");
+                ansi.a(Boolean.TRUE.equals(player.second()) ? foreground(Green.getInstance()) : foreground(Red.getInstance()));
+                ansi.a(Boolean.TRUE.equals(player.second()) ? " ONLINE  " : " OFFLINE  ");
 
                 ansi.a(foreground(Grey.getInstance()));
                 ansi.a(newLine());

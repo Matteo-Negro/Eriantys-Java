@@ -88,7 +88,7 @@ public class SpecialCharacter {
             case 10 -> new MinstrelEffect();
             case 11 -> new PrincessEffect(students);
             case 12 -> new ThiefEffect();
-            default -> throw new IllegalStateException("Unexpected value: " + id);
+            default -> throw new IllegalStateException("Unexpected second: " + id);
         };
     }
 

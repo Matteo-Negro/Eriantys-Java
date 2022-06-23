@@ -24,9 +24,9 @@ public class TowerBlack implements Colour {
     }
 
     /**
-     * Gets R value.
+     * Gets R second.
      *
-     * @return R value.
+     * @return R second.
      */
     @Override
     public int getR() {
@@ -34,9 +34,9 @@ public class TowerBlack implements Colour {
     }
 
     /**
-     * Gets G value.
+     * Gets G second.
      *
-     * @return G value.
+     * @return G second.
      */
     @Override
     public int getG() {
@@ -44,9 +44,9 @@ public class TowerBlack implements Colour {
     }
 
     /**
-     * Gets B value.
+     * Gets B second.
      *
-     * @return B value.
+     * @return B second.
      */
     @Override
     public int getB() {

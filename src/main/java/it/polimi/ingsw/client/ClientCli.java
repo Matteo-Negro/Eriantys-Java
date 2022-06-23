@@ -1,4 +1,4 @@
-package it.polimi.ingsw.client.view;
+package it.polimi.ingsw.client;
 
 import it.polimi.ingsw.client.controller.ClientController;
 import it.polimi.ingsw.client.view.cli.Autocompletion;
@@ -365,7 +365,7 @@ public class ClientCli implements Runnable, View {
      * @param info The info to show.
      */
     public void showInfo(Pair<String, String> info) {
-        Utilities.printInfo(terminal, info.key(), info.value());
+        Utilities.printInfo(terminal, info.first(), info.second());
     }
 
 }

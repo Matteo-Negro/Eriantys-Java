@@ -234,7 +234,7 @@ public class User implements Runnable {
     }
 
     /**
-     * Returns the boolean value of logged attribute.
+     * Returns the boolean second of logged attribute.
      *
      * @return True if the user has successfully logged into a game, false otherwise.
      */
@@ -245,7 +245,7 @@ public class User implements Runnable {
     /**
      * Sets the logged attribute to the given status.
      *
-     * @param status The new logged value.
+     * @param status The new logged second.
      */
     private void setLogged(boolean status) {
         this.logged = status;

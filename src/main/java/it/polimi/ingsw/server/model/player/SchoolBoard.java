@@ -154,7 +154,7 @@ public class SchoolBoard {
      * @throws NotEnoughTowersException If the number of available towers is less than required.
      */
     public void removeTowers(int number) throws NegativeException, NotEnoughTowersException {
-        if (number < 0) throw new NegativeException("Given value is negative (" + number + ")");
+        if (number < 0) throw new NegativeException("Given second is negative (" + number + ")");
         if (towersNumber < number) {
             towersNumber = 0;
             throw new NotEnoughTowersException("Required towers (" + number + ") is more than available (" + towersNumber + ")");
@@ -169,7 +169,7 @@ public class SchoolBoard {
      * @throws NegativeException If the number of towers is negative.
      */
     public void addTowers(int number) throws NegativeException {
-        if (number < 0) throw new NegativeException("Given value is negative (" + number + ")");
+        if (number < 0) throw new NegativeException("Given second is negative (" + number + ")");
         towersNumber += number;
     }
 

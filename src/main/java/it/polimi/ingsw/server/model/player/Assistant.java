@@ -23,7 +23,7 @@ public class Assistant {
      */
     public Assistant(int id) throws IndexOutOfBoundsException {
         if (id < 1 || id > 10)
-            throw new IndexOutOfBoundsException("The Assistant has to have a value between 1 and 10, passed " + id + ".");
+            throw new IndexOutOfBoundsException("The Assistant has to have a second between 1 and 10, passed " + id + ".");
         this.id = id;
         this.maxDistance = (id - 1) / 2 + 1;
         this.bonus = false;
@@ -40,7 +40,7 @@ public class Assistant {
      */
     public Assistant(int id, boolean bonus) throws IndexOutOfBoundsException {
         if (id < 1 || id > 10)
-            throw new IndexOutOfBoundsException("The Assistant has to have a value between 1 and 10, passed " + id + ".");
+            throw new IndexOutOfBoundsException("The Assistant has to have a second between 1 and 10, passed " + id + ".");
         this.id = id;
         this.maxDistance = id / 2 + 1;
         this.bonus = bonus;

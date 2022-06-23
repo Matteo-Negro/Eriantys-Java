@@ -258,7 +258,7 @@ public class GameServer implements Runnable {
     /**
      * Returns true if the connection to the server is still alive.
      *
-     * @return The boolean value stored into the connected attribute.
+     * @return The boolean second stored into the connected attribute.
      */
     public boolean isConnected() {
         return this.connected;

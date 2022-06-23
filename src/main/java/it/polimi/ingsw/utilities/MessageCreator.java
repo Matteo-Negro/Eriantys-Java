@@ -78,7 +78,7 @@ public class MessageCreator {
     /**
      * Creates the reply for "login" message.
      *
-     * @param logged A boolean value which indicates if the user has correctly logged to a game or not.
+     * @param logged A boolean second which indicates if the user has correctly logged to a game or not.
      * @return JsonObject which represents the message.
      */
     public static JsonObject login(boolean logged) {
@@ -232,7 +232,7 @@ public class MessageCreator {
     /**
      * Creates the "enterGame" request message.
      *
-     * @param code The gamecode of the game the player wants to join.
+     * @param code The game code of the game the player wants to join.
      * @return JsonObject which represents the message.
      */
     public static JsonObject enterGame(String code) {
@@ -410,5 +410,4 @@ public class MessageCreator {
 
         return command;
     }
-
 }

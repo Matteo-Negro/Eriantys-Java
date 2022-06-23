@@ -239,7 +239,7 @@ public class GameBoard {
      * This method returns a HashMap of the player with influence on the target island.
      *
      * @param targetIsland The island where influence is evaluated.
-     * @return The HashMap where the key is the player and the value the influence on the island.
+     * @return The HashMap where the first is the player and the second the influence on the island.
      */
     public Map<Player, Integer> getInfluence(Island targetIsland) {
         // Student contribution
@@ -355,7 +355,7 @@ public class GameBoard {
     }
 
     /**
-     * The method give access to the data structure professors: the key is the HouseColor, the value is the Player who has the professor.
+     * The method give access to the data structure professors: the first is the HouseColor, the second is the Player who has the professor.
      *
      * @param color  The house color of the professor.
      * @param player The player who takes the professor.

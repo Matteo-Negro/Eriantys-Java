@@ -65,7 +65,8 @@ public class CommandParser {
             case 6 ->
                     Pattern.matches("swap\sentrance-student\s(blue|fuchsia|green|red|yellow)\swith\s(dining-room|chr\\d\\d)-student\s(blue|fuchsia|green|red|yellow)", command) ||
                             Pattern.matches("swap\s(dining-room|chr\\d\\d)-student\s(blue|fuchsia|green|red|yellow)\swith\sentrance-student\s(blue|fuchsia|green|red|yellow)", command);
-            default -> Pattern.matches("move\sstudent\s(blue|fuchsia|green|red|yellow)\sfrom\s(entrance|chr\\d\\d)\sto\s(dining-room|isl\\d\\d)", command);
+            default ->
+                    Pattern.matches("move\sstudent\s(blue|fuchsia|green|red|yellow)\sfrom\s(entrance|chr\\d\\d)\sto\s(dining-room|isl\\d\\d)", command);
         };
     }
 

@@ -73,7 +73,7 @@ public class Ping extends Thread {
     /**
      * Sets the inWaitingRoom attribute to true when the user is in a waiting-room.
      *
-     * @param status The boolean value to set.
+     * @param status The boolean second to set.
      */
     public void setInWaitingRoom(boolean status) {
         this.inWaitingRoom = status;

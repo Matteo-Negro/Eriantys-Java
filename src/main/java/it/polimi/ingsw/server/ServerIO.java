@@ -42,7 +42,7 @@ public class ServerIO implements Runnable {
      * @param command The command to manage.
      */
     private void manageCommand(String command) {
-        if(command.equals("close")) {
+        if (command.equals("close")) {
             Log.debug("Shutting down server.");
             this.server.shutdown();
         }

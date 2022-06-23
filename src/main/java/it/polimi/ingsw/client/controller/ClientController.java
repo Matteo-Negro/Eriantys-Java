@@ -2,10 +2,10 @@ package it.polimi.ingsw.client.controller;
 
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
+import it.polimi.ingsw.client.View;
 import it.polimi.ingsw.client.model.GameModel;
 import it.polimi.ingsw.client.model.Player;
 import it.polimi.ingsw.client.model.SpecialCharacter;
-import it.polimi.ingsw.client.view.View;
 import it.polimi.ingsw.utilities.*;
 import it.polimi.ingsw.utilities.exceptions.IllegalActionException;
 import it.polimi.ingsw.utilities.exceptions.IllegalMoveException;
@@ -142,7 +142,7 @@ public class ClientController {
     }
 
     /**
-     * Sets the gameCode to the given value.
+     * Sets the gameCode to the given second.
      *
      * @param gameCode The code associated to the game which the user is attempting join.
      */
@@ -679,7 +679,7 @@ public class ClientController {
     }
 
     /**
-     * Sets the current client's state to a new value.
+     * Sets the current client's state to a new second.
      *
      * @param newState The next state to set.
      */

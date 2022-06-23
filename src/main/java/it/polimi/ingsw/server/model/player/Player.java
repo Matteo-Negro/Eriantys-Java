@@ -104,7 +104,7 @@ public class Player {
      * @throws NotEnoughCoinsException If the number of available coins is less than the required one.
      */
     private void takeCoins(int number) throws NegativeException, NotEnoughCoinsException {
-        if (number < 0) throw new NegativeException("Given value is negative (" + number + ")");
+        if (number < 0) throw new NegativeException("Given second is negative (" + number + ")");
         if (coins < number)
             throw new NotEnoughCoinsException("Required coins (" + number + ") is more than available (" + coins + ")");
         coins -= number;

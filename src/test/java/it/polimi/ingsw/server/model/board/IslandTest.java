@@ -76,7 +76,7 @@ public class IslandTest {
     }
 
     /**
-     * Tests if the correct value of the ban is returned.
+     * Tests if the correct second of the ban is returned.
      */
     @Test
     void isBanned() {

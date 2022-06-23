@@ -1,7 +1,7 @@
 package it.polimi.ingsw;
 
-import it.polimi.ingsw.client.view.ClientCli;
-import it.polimi.ingsw.client.view.ClientGui;
+import it.polimi.ingsw.client.ClientCli;
+import it.polimi.ingsw.client.ClientGui;
 import it.polimi.ingsw.utilities.GraphicsType;
 import it.polimi.ingsw.utilities.Log;
 import javafx.application.Application;
@@ -18,6 +18,11 @@ import java.util.List;
  */
 public class ClientLauncher {
 
+    /**
+     * Launch method.
+     *
+     * @param args The command line arguments passed to the program.
+     */
     public static void main(String[] args) {
 
         try {

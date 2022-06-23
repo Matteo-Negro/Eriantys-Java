@@ -1,7 +1,7 @@
 package it.polimi.ingsw.client.view.gui.scenes;
 
+import it.polimi.ingsw.client.ClientGui;
 import it.polimi.ingsw.client.model.*;
-import it.polimi.ingsw.client.view.ClientGui;
 import it.polimi.ingsw.client.view.gui.CommandAssembler;
 import it.polimi.ingsw.client.view.gui.utilities.*;
 import it.polimi.ingsw.utilities.ClientState;
@@ -289,7 +289,7 @@ public class Game implements Prepare {
                 next1, next2, next3, next4, next5, next6,
                 next7, next8, next9, next10, next11, next12
         ), commandAssembler);
-        this.islands = tmp.key();
+        this.islands = tmp.first();
         Platform.runLater(() -> {
             islandsLayout.getChildren().clear();
             islandsLayout.add(this.islands.get(0).getPane(), 0, 1);
@@ -509,9 +509,9 @@ public class Game implements Prepare {
     }
 
     /**
-     * Set the island buttons visibility to the given value.
+     * Set the island buttons visibility to the given second.
      *
-     * @param enable The value to set.
+     * @param enable The second to set.
      */
     private void enableIslandButtons(boolean enable) {
         for (Button islandButton : this.islandButtons)
@@ -519,9 +519,9 @@ public class Game implements Prepare {
     }
 
     /**
-     * Sets the cloud buttons visibility to the given value.
+     * Sets the cloud buttons visibility to the given second.
      *
-     * @param enable The value to set.
+     * @param enable The second to set.
      */
     private void enableCloudButtons(boolean enable) {
         for (Button cloudButton : this.cloudButtons)
@@ -529,9 +529,9 @@ public class Game implements Prepare {
     }
 
     /**
-     * Sets the special character buttons visibility to the given value.
+     * Sets the special character buttons visibility to the given second.
      *
-     * @param enable The value to set.
+     * @param enable The second to set.
      */
     private void enableCharacterButtons(boolean enable) {
         boolean activePlayer = this.client.getController().hasCommunicationToken();

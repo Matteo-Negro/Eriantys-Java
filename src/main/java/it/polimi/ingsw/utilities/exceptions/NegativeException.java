@@ -1,7 +1,7 @@
 package it.polimi.ingsw.utilities.exceptions;
 
 /**
- * Exception thrown when a value is negative.
+ * Exception thrown when a second is negative.
  *
  * @author Riccardo Motta
  */

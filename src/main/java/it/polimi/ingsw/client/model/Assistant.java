@@ -42,7 +42,7 @@ public class Assistant {
     }
 
     /**
-     * Gets the bonus value.
+     * Gets the bonus second.
      */
     public boolean getBonusValue() {
         return this.bonus;

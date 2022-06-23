@@ -70,8 +70,8 @@ public class SchoolBoard {
      * @param coins        Number of coins.
      * @param name         Name of the school board owner.
      * @param wizard       Wizard type link to the player.
-     * @param active       Boolean value to set the active player.
-     * @param exp          Boolean value to set whether the school board is for expert game mode.
+     * @param active       Boolean second to set the active player.
+     * @param exp          Boolean second to set whether the school board is for expert game mode.
      * @return The Ansi stream to print to terminal.
      */
     public static Ansi print(Map<HouseColor, Integer> entrance, Map<HouseColor, Integer> diningRoom, Map<HouseColor, Boolean> professors, TowerType tower, int towersNumber, int assistant, int coins, String name, WizardType wizard, boolean active, boolean exp) {
@@ -263,7 +263,7 @@ public class SchoolBoard {
     /**
      * Gets the default foreground for writing things.
      *
-     * @param active Boolean value to set the active player.
+     * @param active Boolean second to set the active player.
      * @param wizard Wizard type link to the player.
      * @return The Ansi stream to print to terminal.
      */
@@ -283,7 +283,7 @@ public class SchoolBoard {
      * @param pawnsNumber Number of pawns.
      * @param houseColor  Pawn color.
      * @param precision   Number of digits.
-     * @param active      Boolean value to set the active player.
+     * @param active      Boolean second to set the active player.
      * @param wizard      Wizard type link to the player.
      * @return The Ansi stream to print to terminal.
      */

@@ -358,7 +358,7 @@ public class GameController implements Runnable {
             Log.info(String.format("Deleted %s after game end.", this.id));
             server.removeGame(id);
         } catch (Exception e) {
-            Log.warning(String.format("The following error occurred while trying to delete %s, please delete it manually: ", this.id), e);
+            Log.warning(String.format("The following error occurred while trying to delete %s, please delete it manually", this.id), e);
         }
     }
 
@@ -386,13 +386,7 @@ public class GameController implements Runnable {
                 Log.debug("Waiting for assistant to be played.");
                 while (this.getSubPhase() != GameControllerState.ASSISTANT_PLAYED) {
                     synchronized (this.actionNeededLock) {
-                        try {
-                            this.actionNeededLock.wait();
-                        } catch (InterruptedException ie) {
-                            notifyUsers(MessageCreator.error("GameServerError"));
-                            for (User user : this.getUsers()) this.removeUser(user);
-                            return;
-                        }
+                        this.actionNeededLock.wait();
                     }
                     synchronized (this.isFullLock) {
                         if (!this.isFull()) {
@@ -411,9 +405,10 @@ public class GameController implements Runnable {
             }
         } catch (RoundConcluded e) {
             Log.info("Every player has chosen an assistant.");
-        } catch (Exception e) {
-            Log.error(e);
-            System.exit(1);
+        } catch (InterruptedException ie) {
+            notifyUsers(MessageCreator.error("GameServerError"));
+            for (User user : this.getUsers()) this.removeUser(user);
+            Thread.currentThread().interrupt();
         }
 
         this.getGameModel().updateTurnOrder();
@@ -449,7 +444,7 @@ public class GameController implements Runnable {
                     notifyUsers(MessageCreator.error("GameServerError"));
                     for (User user : this.getUsers())
                         this.removeUser(user);
-                    return;
+                    Thread.currentThread().interrupt();
                 }
             }
             synchronized (this.isFullLock) {
@@ -572,9 +567,8 @@ public class GameController implements Runnable {
                         break;
                     }
                 }
-                if (!check) {
+                if (!check)
                     throw new IllegalMoveException();
-                }
             }
             default -> throw new IllegalMoveException();
         }
@@ -592,10 +586,8 @@ public class GameController implements Runnable {
                 this.gameModel.getPlayerByName(command.get("player").getAsString()).getSchoolBoard().addToDiningRoom(HouseColor.valueOf(command.get("color").getAsString()));
 
                 checkProfessor(command.get("color").getAsString(), command.get("player").getAsString());
-                if (this.gameModel.isExpert()) {
-                    if (this.gameModel.getPlayerByName(command.get("player").getAsString()).getSchoolBoard().getStudentsNumberOf(HouseColor.valueOf(command.get("color").getAsString())) % 3 == 0) {
-                        this.gameModel.getPlayerByName(command.get("player").getAsString()).addCoins();
-                    }
+                if (this.gameModel.isExpert() && this.gameModel.getPlayerByName(command.get("player").getAsString()).getSchoolBoard().getStudentsNumberOf(HouseColor.valueOf(command.get("color").getAsString())) % 3 == 0) {
+                    this.gameModel.getPlayerByName(command.get("player").getAsString()).addCoins();
                 }
             }
             case "bag" ->
@@ -804,7 +796,7 @@ public class GameController implements Runnable {
     }
 
     /**
-     * This method sets the value Ban.
+     * This method sets the second Ban.
      *
      * @param island The id of the island
      * @throws IllegalMoveException This exception is thrown whether the player tries to do illegal move.
@@ -953,20 +945,6 @@ public class GameController implements Runnable {
         synchronized (this.users) {
             for (User user : this.getUsers()) {
                 if (user != null) user.sendMessage(message);
-            }
-        }
-    }
-
-    /**
-     * Sends a message to the users except for the one given as argument.
-     *
-     * @param message   The JsonObject containing the message.
-     * @param exception The user to ignore.
-     */
-    public void notifyUsersExcept(JsonObject message, User exception) {
-        synchronized (this.users) {
-            for (User user : this.getUsers()) {
-                if (!user.getUsername().equals(exception.getUsername())) user.sendMessage(message);
             }
         }
     }

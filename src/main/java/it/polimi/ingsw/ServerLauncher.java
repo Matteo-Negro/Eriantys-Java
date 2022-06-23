@@ -14,6 +14,11 @@ import java.io.IOException;
  */
 public class ServerLauncher {
 
+    /**
+     * Launch method.
+     *
+     * @param args The command line arguments passed to the program.
+     */
     public static void main(String[] args) {
 
         try {
@@ -26,7 +31,7 @@ public class ServerLauncher {
         Pair<String, Integer> arguments = parseArguments(args);
 
         try {
-            new Server(arguments.key(), arguments.value()).start();
+            new Server(arguments.first(), arguments.second()).start();
         } catch (IOException e) {
             Log.error("Shutdown server.");
         }

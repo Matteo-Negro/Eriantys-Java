@@ -1,4 +1,4 @@
-package it.polimi.ingsw.client.view;
+package it.polimi.ingsw.client;
 
 import it.polimi.ingsw.client.controller.ClientController;
 import it.polimi.ingsw.client.view.gui.scenes.Prepare;
@@ -92,7 +92,7 @@ public class ClientGui extends Application implements View {
         try {
             scenes.put(ClientState.START_SCREEN, loadScene("start"));
         } catch (IOException e) {
-            Log.error("Cannot initialize scenes because of the following error: ", e);
+            Log.error("Cannot initialize scenes because of the following error", e);
             return;
         }
 
@@ -115,7 +115,7 @@ public class ClientGui extends Application implements View {
                 scenes.put(ClientState.GAME_WAITING_ROOM, loadScene("wait"));
                 Log.info("Initialization completed.");
             } catch (IOException e) {
-                Log.error("Cannot initialize scenes because of the following error: ", e);
+                Log.error("Cannot initialize scenes because of the following error", e);
             }
         }).start();
     }
@@ -124,7 +124,7 @@ public class ClientGui extends Application implements View {
      * Changes the scene according to the state.
      */
     public void changeScene() {
-        if(getController().getClientState().equals(currentState))
+        if (getController().getClientState().equals(currentState))
             return;
 
         currentState = getController().getClientState();
@@ -223,8 +223,8 @@ public class ClientGui extends Application implements View {
     @Override
     public void showInfo(Pair<String, String> info) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(info.key());
-        alert.setHeaderText(info.value());
+        alert.setTitle(info.first());
+        alert.setHeaderText(info.second());
         alert.show();
     }
 
