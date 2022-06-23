@@ -576,7 +576,7 @@ public class ClientController {
 
         int characterId = message.get("character").getAsInt();
         if (!getGameModel().isExpert()) throw new IllegalMoveException();
-        if (getGameModel().getGameBoard().getSpecialCharacterById(characterId) == null || getGameModel().getGameBoard().getSpecialCharacterById(characterId).isActive() || getGameModel().getGameBoard().getSpecialCharacterById(characterId).isPaidInTurn())
+        if (getGameModel().getGameBoard().getSpecialCharacterById(characterId) == null || getGameModel().getGameBoard().getSpecialCharacterById(characterId).isActive() || getGameModel().getGameBoard().characterPaidInTurn())
             throw new IllegalMoveException();
         if (getGameModel().getPlayerByName(this.getUserName()).getCoins() < getGameModel().getGameBoard().getSpecialCharacterById(characterId).getCost())
             throw new IllegalMoveException();

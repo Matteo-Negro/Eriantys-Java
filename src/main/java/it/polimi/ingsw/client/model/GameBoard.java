@@ -203,4 +203,19 @@ public class GameBoard {
         }
         return null;
     }
+
+    /**
+     * Returns true if a special character has been paid during this round.
+     *
+     * @return True if a special character has been paid during this turn, false otherwise.
+     */
+    public boolean characterPaidInTurn() {
+        if(this.specialCharacters != null) {
+            for(SpecialCharacter character : getSpecialCharacters()) {
+                if(character.isPaidInTurn())
+                    return true;
+            }
+        }
+        return false;
+    }
 }
