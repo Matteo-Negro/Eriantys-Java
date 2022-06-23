@@ -144,7 +144,8 @@ public class Game implements Prepare {
             if (client.getController().getGameModel().isExpert())
                 specialCharactersThread.join();
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            Log.error(e);
+            Thread.currentThread().interrupt();
         }
 
         activateButtons(false);
@@ -217,7 +218,8 @@ public class Game implements Prepare {
             if (client.getController().getGameModel().isExpert())
                 specialCharactersThread.join();
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            Log.error(e);
+            Thread.currentThread().interrupt();
         }
 
         activateButtons(true);
@@ -356,7 +358,8 @@ public class Game implements Prepare {
                 firstBoard.enableEntranceButtons(false);
                 enableIslandButtons(false);
                 enableCloudButtons(false);
-                enableCharacterButtons(false);
+                if (this.client.getController().getGameModel().isExpert())
+                    enableCharacterButtons(false);
             } else {
                 switch (this.client.getController().getGameModel().getSubphase()) {
                     case PLAY_ASSISTANT -> {
