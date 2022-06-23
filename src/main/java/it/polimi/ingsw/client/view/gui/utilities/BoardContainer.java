@@ -65,7 +65,10 @@ public class BoardContainer {
                 final int studentNumber = index;
                 entranceImages.get(index).setGraphic(Images.student2d(index < students.size() ? students.get(index) : null));
                 entranceImages.get(index).setVisible(index < students.size() && students.get(index) != null);
-                entranceImages.get(index).setOnMouseClicked(mouseEvent -> commandAssembler.manageEntranceSelection(students.get(studentNumber)));
+                entranceImages.get(index).setOnMouseClicked(mouseEvent -> {
+                    enableEntranceButtonExcept(studentNumber);
+                    commandAssembler.manageEntranceSelection(students.get(studentNumber));
+                });
                 enableEntranceButtons(false);
             }
         };
@@ -312,6 +315,7 @@ public class BoardContainer {
     public void enableEntranceButtons(boolean enable) {
 
         for (Button entranceButton : this.entranceImages) {
+            entranceButton.setDisable(false);
             if (enable)
                 entranceButton.setStyle("-fx-background-radius: 50em;" +
                         "-fx-border-radius: 50em;" +
@@ -320,14 +324,26 @@ public class BoardContainer {
                         "-fx-min-height: 25px;" +
                         "-fx-padding: 2px;" +
                         "-fx-border-color: #FCFFAD;" +
+                        "-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 10, 0.3, 0.0, 0.0);" +
                         "-fx-background-color: radial-gradient(focus-distance 0% ,center 50% 50%, radius 99%, transparent, #FCFFAD);");
             else
                 entranceButton.setStyle("-fx-background-radius: 50em;" +
                         "-fx-max-width: 10px;" +
                         "-fx-max-height: 10px;" +
+                        "-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 10, 0.7, 0.0, 0.0);" +
                         "-fx-padding: 0px;");
             entranceButton.setMouseTransparent(!enable);
         }
+    }
+
+    /**
+     * Enables all the entrance buttons except for the given one.
+     *
+     * @param index The index of the entrance button to disable.
+     */
+    private void enableEntranceButtonExcept(int index) {
+        enableEntranceButtons(true);
+        entranceImages.get(index).setDisable(true);
     }
 
     /**

@@ -47,6 +47,7 @@ public class SpecialCharacterContainer {
                 studentsImages.get(index).setGraphic(Images.student2d(index < students.size() ? students.get(index) : null));
                 studentsImages.get(index).setVisible(index < students.size() && students.get(index) != null);
                 studentsImages.get(index).setOnMouseClicked(mouseEvent -> {
+                    enableStudentsButtonExcept(studentIndex);
                     switch (idSpecialCharacter) {
                         case 1 -> commandAssembler.manageStudentSCFromCardToIslandSelection(students.get(studentIndex));
                         case 7 -> commandAssembler.manageStudentSCSwapCardEntranceSelection(students.get(studentIndex));
@@ -163,9 +164,11 @@ public class SpecialCharacterContainer {
 
         if (bansNum > 0) Platform.runLater(() -> {
             for (int index = 0; index < bansImages.size(); index++) {
+                int banNumber = index;
                 this.bansImages.get(index).setGraphic(Images.banIcon());
                 this.bansImages.get(index).setVisible(index < bansNum);
                 this.bansImages.get(index).setOnMouseClicked(mouseEvent -> {
+                    enableBanButtonsExcept(banNumber);
                     if (this.idSpecialCharacter == 5) this.commandAssembler.manageStudentSCBanSelection();
                 });
                 enableBanButtons(false);
@@ -204,6 +207,7 @@ public class SpecialCharacterContainer {
             return;
 
         for (Button studentButton : this.studentsImages) {
+            studentButton.setDisable(false);
             if (enable)
                 studentButton.setStyle("-fx-background-radius: 50em;" +
                         "-fx-border-radius: 50em;" +
@@ -212,14 +216,26 @@ public class SpecialCharacterContainer {
                         "-fx-min-height: 25px;" +
                         "-fx-padding: 2px;" +
                         "-fx-border-color: #FCFFAD;" +
+                        "-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 10, 0.3, 0.0, 0.0);" +
                         "-fx-background-color: radial-gradient(focus-distance 0% ,center 50% 50%, radius 99%, transparent, #FCFFAD);");
             else
                 studentButton.setStyle("-fx-background-radius: 50em;" +
                         "-fx-max-width: 10px;" +
                         "-fx-max-height: 10px;" +
+                        "-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 10, 0.7, 0.0, 0.0);" +
                         "-fx-padding: 0px;");
             studentButton.setMouseTransparent(!enable);
         }
+    }
+
+    /**
+     * Enables all the student buttons except for the given one.
+     *
+     * @param index The index of the student button to disable.
+     */
+    private void enableStudentsButtonExcept(int index) {
+        enableStudentButtons(true);
+        this.studentsImages.get(index).setDisable(true);
     }
 
     /**
@@ -233,6 +249,7 @@ public class SpecialCharacterContainer {
             return;
 
         for (Button banButton : this.bansImages) {
+            banButton.setDisable(false);
             if (enable)
                 banButton.setStyle("-fx-background-radius: 50em;" +
                         "-fx-border-radius: 50em;" +
@@ -241,14 +258,26 @@ public class SpecialCharacterContainer {
                         "-fx-min-height: 25px;" +
                         "-fx-padding: 2px;" +
                         "-fx-border-color: #FCFFAD;" +
+                        "-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 10, 0.3, 0.0, 0.0);" +
                         "-fx-background-color: radial-gradient(focus-distance 0% ,center 50% 50%, radius 99%, transparent, #FCFFAD);");
             else
                 banButton.setStyle("-fx-background-radius: 50em;" +
+                        "-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 10, 0.7, 0.0, 0.0);" +
                         "-fx-max-width: 10px;" +
                         "-fx-max-height: 10px;" +
                         "-fx-padding: 0px;");
             banButton.setMouseTransparent(!enable);
         }
+    }
+
+    /**
+     * Enables all the student buttons except for the given one.
+     *
+     * @param index The index of the student button to disable.
+     */
+    private void enableBanButtonsExcept(int index) {
+        enableBanButtons(true);
+        this.bansImages.get(index).setDisable(true);
     }
 
     /**
