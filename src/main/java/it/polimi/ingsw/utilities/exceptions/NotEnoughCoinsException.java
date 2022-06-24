@@ -6,10 +6,19 @@ package it.polimi.ingsw.utilities.exceptions;
  * @author Riccardo Motta
  */
 public class NotEnoughCoinsException extends Exception {
+
+    /**
+     * Default exception constructor.
+     */
     public NotEnoughCoinsException() {
         super();
     }
 
+    /**
+     * Default exception constructor.
+     *
+     * @param message The message to display.
+     */
     public NotEnoughCoinsException(String message) {
         super(message);
     }

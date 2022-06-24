@@ -5,11 +5,10 @@ import it.polimi.ingsw.utilities.exceptions.NoMoreBansLeftException;
 import java.util.Objects;
 
 /**
- * Specific effect n.5
+ * Specific effect n.5.
  *
  * @author Riccardo Milici
  */
-
 public class HerbalistEffect implements Effect {
 
     private int availableBans;
@@ -31,13 +30,17 @@ public class HerbalistEffect implements Effect {
         this.availableBans = statusAvailableBans;
     }
 
+    /**
+     * Returns the identification number of the specific effect object.
+     *
+     * @return id attribute.
+     */
     @Override
     public int getId() {
         return 5;
     }
 
     /**
-     * effect() method overload.
      * Decides to call the takeBan() method or the restoreBan() method, through a conditional branch on command parameter.
      *
      * @param action The action to be performed.
@@ -46,7 +49,7 @@ public class HerbalistEffect implements Effect {
         if (action.equals(Action.TAKE))
             takeBan();
         else
-            restoreBan();
+            putBackBan();
     }
 
     @Override
@@ -75,7 +78,7 @@ public class HerbalistEffect implements Effect {
     /**
      * Increases the number of the available bans.
      */
-    private void restoreBan() {
+    private void putBackBan() {
         availableBans++;
     }
 
@@ -103,5 +106,8 @@ public class HerbalistEffect implements Effect {
         return Objects.hash(availableBans);
     }
 
-    public enum Action {TAKE, RESTORE}
+    /**
+     * The two possible actions: take or restore a ban.
+     */
+    public enum Action {TAKE, PUT_BACK}
 }

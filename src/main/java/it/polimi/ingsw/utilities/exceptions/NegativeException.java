@@ -6,10 +6,19 @@ package it.polimi.ingsw.utilities.exceptions;
  * @author Riccardo Motta
  */
 public class NegativeException extends Exception {
+
+    /**
+     * Default exception constructor.
+     */
     public NegativeException() {
         super();
     }
 
+    /**
+     * Default exception constructor.
+     *
+     * @param message The message to display.
+     */
     public NegativeException(String message) {
         super(message);
     }

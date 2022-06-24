@@ -7,10 +7,18 @@ package it.polimi.ingsw.utilities.exceptions;
  */
 public class GameNotFoundException extends Exception {
 
+    /**
+     * Default exception constructor.
+     */
     public GameNotFoundException() {
         super();
     }
 
+    /**
+     * Default exception constructor.
+     *
+     * @param message The message to display.
+     */
     public GameNotFoundException(String message) {
         super(message);
     }

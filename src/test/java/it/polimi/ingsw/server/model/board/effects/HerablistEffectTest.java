@@ -60,7 +60,7 @@ class HerablistEffectTest {
             assert true;
         }
         try {
-            herbalistEffect.effect(HerbalistEffect.Action.RESTORE);
+            herbalistEffect.effect(HerbalistEffect.Action.PUT_BACK);
             assert true;
         } catch (NoMoreBansLeftException e) {
             assert false;

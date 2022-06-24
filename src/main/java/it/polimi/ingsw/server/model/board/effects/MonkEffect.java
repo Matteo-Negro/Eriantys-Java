@@ -8,11 +8,10 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Specific effect n.1
+ * Specific effect n.1.
  *
  * @author Riccardo Milici
  */
-
 public class MonkEffect implements Effect {
 
     private final Map<HouseColor, Integer> students;
@@ -40,22 +39,34 @@ public class MonkEffect implements Effect {
         students = new EnumMap<>(studentsStatus);
     }
 
+    /**
+     * Returns the identification number of the specific effect object.
+     *
+     * @return id attribute.
+     */
     @Override
     public int getId() {
         return 1;
     }
 
     /**
-     * effect() method overload.
+     * The effect of the card.
      *
      * @param toTake The color of the student to take from the card.
      * @param toPut  The color of the student to put on the card.
      */
     public void effect(HouseColor toTake, HouseColor toPut) {
-        if (toTake != null) takeStudent(toTake);
-        if (toPut != null) addStudent(toPut);
+        if (toTake != null)
+            takeStudent(toTake);
+        if (toPut != null)
+            addStudent(toPut);
     }
 
+    /**
+     * Returns the activation cost of the effect.
+     *
+     * @return cost attribute.
+     */
     @Override
     public int getCost() {
         return 1;

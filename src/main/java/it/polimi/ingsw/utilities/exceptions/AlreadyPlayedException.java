@@ -6,10 +6,19 @@ package it.polimi.ingsw.utilities.exceptions;
  * @author Riccardo Motta
  */
 public class AlreadyPlayedException extends Exception {
+
+    /**
+     * Default exception constructor.
+     */
     public AlreadyPlayedException() {
         super();
     }
 
+    /**
+     * Default exception constructor.
+     *
+     * @param message The message to display.
+     */
     public AlreadyPlayedException(String message) {
         super(message);
     }

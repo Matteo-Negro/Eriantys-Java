@@ -12,13 +12,13 @@ import java.util.*;
  */
 
 public class Bag {
-    private final Stack<HouseColor> listStudents;
+    private Deque<HouseColor> listStudents;
 
     /**
      * Bag Constructor, listStudents is initialized with the all 120 students and shuffled.
      */
     public Bag() {
-        this.listStudents = new Stack<>();
+        this.listStudents = new ArrayDeque<>();
 
         Arrays.stream(HouseColor.values()).forEach(color -> {
             for (int i = 0; i < 24; i++) {
@@ -37,7 +37,7 @@ public class Bag {
      * @param status Last state of the bag, it's a map that contains the number of student for each house color.
      */
     public Bag(Map<HouseColor, Integer> status) {
-        this.listStudents = new Stack<>();
+        this.listStudents = new ArrayDeque<>();
 
         Arrays.stream(HouseColor.values()).forEach(color -> {
             for (int i = 0; i < status.get(color); i++) {
@@ -120,7 +120,9 @@ public class Bag {
      * This method shuffles the students in the List.
      */
     private void randomize() {
-        Collections.shuffle(this.listStudents);
+        List<HouseColor> tmpList = new ArrayList<>(this.listStudents);
+        Collections.shuffle(tmpList);
+        this.listStudents = new ArrayDeque<>(tmpList);
     }
 
     /**
@@ -130,9 +132,11 @@ public class Bag {
      * @return true if the two objects are the same.
      */
     public boolean equals(Object o) {
-        if (this == o) return true;
+        if (this == o)
+            return true;
 
-        if (o == null || o.getClass() != this.getClass()) return false;
+        if (o == null || o.getClass() != this.getClass())
+            return false;
 
         Bag that = (Bag) o;
         return this.listStudents.equals(that.listStudents);

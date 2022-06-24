@@ -72,15 +72,6 @@ public class GamePlatform {
     }
 
     /**
-     * Gets the number of players.
-     *
-     * @return Number of players.
-     */
-    public int getPlayersNumber() {
-        return playersNumber;
-    }
-
-    /**
      * Gets the clockwise order of the players.
      *
      * @return Clockwise order of the players.
@@ -204,15 +195,6 @@ public class GamePlatform {
     }
 
     /**
-     * Gets the player who played the lowest Assistant.
-     *
-     * @return The player who played the lowest Assistant.
-     */
-    public Player getRoundWinner() {
-        return players.get(roundWinner);
-    }
-
-    /**
      * Gets a reference to the game board.
      *
      * @return Reference to the game board.
@@ -288,10 +270,12 @@ public class GamePlatform {
 
         while (!remainingPlayers.isEmpty()) {
             player = playedAssistantsOrder.stream()
-                    .filter(pair -> pair.second().getId() == remainingPlayers.stream()
-                            .mapToInt(item -> playedAssistants.get(item).getId())
-                            .min()
-                            .getAsInt())
+                    .filter(pair -> {
+                        OptionalInt optional = remainingPlayers.stream()
+                                .mapToInt(item -> playedAssistants.get(item).getId())
+                                .min();
+                        return optional.isPresent() && pair.second().getId() == optional.getAsInt();
+                    })
                     .toList()
                     .get(0)
                     .first();

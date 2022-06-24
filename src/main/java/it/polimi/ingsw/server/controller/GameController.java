@@ -653,7 +653,7 @@ public class GameController implements Runnable {
             Optional<SpecialCharacter> specialCharacter = getGameModel().getGameBoard().getCharacters().stream().filter(character -> character.getId() == 5).findFirst();
             try {
                 if (specialCharacter.isPresent())
-                    ((HerbalistEffect) specialCharacter.get().getEffect()).effect(HerbalistEffect.Action.RESTORE);
+                    ((HerbalistEffect) specialCharacter.get().getEffect()).effect(HerbalistEffect.Action.PUT_BACK);
                 else throw new IllegalMoveException();
             } catch (NoMoreBansLeftException e) {
                 throw new IllegalMoveException();

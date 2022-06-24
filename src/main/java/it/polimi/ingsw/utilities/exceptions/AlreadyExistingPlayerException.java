@@ -6,10 +6,19 @@ package it.polimi.ingsw.utilities.exceptions;
  * @author Riccardo Motta
  */
 public class AlreadyExistingPlayerException extends Exception {
+
+    /**
+     * Default exception constructor.
+     */
     public AlreadyExistingPlayerException() {
         super();
     }
 
+    /**
+     * Default exception constructor.
+     *
+     * @param message The message to display.
+     */
     public AlreadyExistingPlayerException(String message) {
         super(message);
     }

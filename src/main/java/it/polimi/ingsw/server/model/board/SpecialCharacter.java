@@ -37,11 +37,11 @@ public class SpecialCharacter {
         paidInTurn = false;
         assignedEffect = getEffectBy(id, students, 4);
         effectCost = assignedEffect.getCost();
-        switch (this.id) {
-            case 10 -> usesNumber = 4;
-            case 7 -> usesNumber = 6;
-            default -> usesNumber = 1;
-        }
+        usesNumber = switch (this.id) {
+            case 7 -> 6;
+            case 10 -> 4;
+            default -> 1;
+        };
 
         Log.info("*** New SpecialCharacter successfully created with id: " + id);
     }
@@ -135,11 +135,11 @@ public class SpecialCharacter {
      */
     public void cleanEffect() {
         isActive = false;
-        switch (this.id) {
-            case 10 -> usesNumber = 4;
-            case 7 -> usesNumber = 6;
-            default -> usesNumber = 1;
-        }
+        usesNumber = switch (this.id) {
+            case 7 -> 6;
+            case 10 -> 4;
+            default -> 1;
+        };
     }
 
     /**

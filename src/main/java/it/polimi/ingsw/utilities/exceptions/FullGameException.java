@@ -6,10 +6,19 @@ package it.polimi.ingsw.utilities.exceptions;
  * @author Riccardo Motta
  */
 public class FullGameException extends Exception {
+
+    /**
+     * Default exception constructor.
+     */
     public FullGameException() {
         super();
     }
 
+    /**
+     * Default exception constructor.
+     *
+     * @param message The message to display.
+     */
     public FullGameException(String message) {
         super(message);
     }

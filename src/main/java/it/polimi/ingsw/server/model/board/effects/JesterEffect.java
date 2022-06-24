@@ -8,11 +8,10 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Specific effect n.7
+ * Specific effect n.7.
  *
  * @author Riccardo Milici
  */
-
 public class JesterEffect implements Effect {
 
     private final Map<HouseColor, Integer> students;
@@ -40,13 +39,18 @@ public class JesterEffect implements Effect {
         this.students = statusStudents;
     }
 
+    /**
+     * Returns the identification number of the specific effect object.
+     *
+     * @return id attribute.
+     */
     @Override
     public int getId() {
         return 7;
     }
 
     /**
-     * effect() method overload.
+     * The effect of the card.
      *
      * @param toTake The color of the student to take from the card.
      * @param toPut  The color of the student to put on the card.

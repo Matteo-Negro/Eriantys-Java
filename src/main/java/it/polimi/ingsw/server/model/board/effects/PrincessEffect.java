@@ -8,11 +8,10 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Specific effect n.11
+ * Specific effect n.11.
  *
  * @author Riccardo Milici
  */
-
 public class PrincessEffect implements Effect {
 
     private final Map<HouseColor, Integer> students;
@@ -36,13 +35,18 @@ public class PrincessEffect implements Effect {
         this.students = statusStudents;
     }
 
+    /**
+     * Returns the identification number of the specific effect object.
+     *
+     * @return id attribute.
+     */
     @Override
     public int getId() {
         return 11;
     }
 
     /**
-     * effect() method overload.
+     * The effect of the card.
      *
      * @param toTake The color of the student to take from the card.
      * @param toPut  The color of the student to put on the card.
@@ -52,6 +56,11 @@ public class PrincessEffect implements Effect {
         if (toPut != null) addStudent(toPut);
     }
 
+    /**
+     * Returns the activation cost of the effect.
+     *
+     * @return cost attribute.
+     */
     @Override
     public int getCost() {
         return 2;
