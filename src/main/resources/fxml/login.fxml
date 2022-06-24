@@ -52,7 +52,7 @@
             </ImageView>
             <VBox alignment="CENTER" prefHeight="200.0" prefWidth="271.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER">
                <children>
-                  <VBox fx:id="players" alignment="CENTER" prefHeight="200.0" prefWidth="198.0" />
+                  <VBox fx:id="players" alignment="CENTER" prefHeight="200.0" prefWidth="198.0" style="-fx-background-color: radial-gradient(focus-distance 0% ,center 50% 50%, radius 55%, #4C28B0, transparent);; -fx-background-radius: 2em;" />
                   <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                      <children>
                         <TextField fx:id="name" alignment="CENTER" onKeyPressed="#name" promptText="Enter your name">

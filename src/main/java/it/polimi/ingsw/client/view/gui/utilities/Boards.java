@@ -59,6 +59,7 @@ public class Boards {
 
             vBox.setAlignment(Pos.CENTER);
             Label name = Labels.playerName(player.getName());
+            name.setStyle("-fx-font-weight: bold;");
 
             HBox board = Boxes.board(gameModel, player.getName(), boardContainer);
             vBox.getChildren().addAll(name, board);

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
@@ -32,9 +33,9 @@
       </ImageView>
       <GridPane prefHeight="467.0" prefWidth="700.0">
         <columnConstraints>
-          <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="300.0" />
-            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+          <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="208.6000213623047" minWidth="10.0" prefWidth="203.80001831054688" />
+            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="401.6666564941406" minWidth="10.0" prefWidth="285.0" />
+            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="204.66665649414062" minWidth="10.0" prefWidth="204.66665649414062" />
         </columnConstraints>
         <rowConstraints>
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -51,7 +52,10 @@
             </ImageView>
             <VBox alignment="CENTER" prefHeight="200.0" prefWidth="271.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER">
                <children>
-                  <VBox fx:id="names" alignment="CENTER" prefHeight="200.0" prefWidth="198.0" />
+                  <VBox fx:id="names" alignment="CENTER" prefHeight="150.0" prefWidth="356.0" style="-fx-background-color: radial-gradient(focus-distance 0%, center 50% 50%, radius 55% ,#4C28B0, transparent); -fx-background-radius: 2em; -fx-border-radius: 2em;">
+                     <padding>
+                        <Insets top="10.0" />
+                     </padding></VBox>
                </children>
             </VBox>
             <Label fx:id="code" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
