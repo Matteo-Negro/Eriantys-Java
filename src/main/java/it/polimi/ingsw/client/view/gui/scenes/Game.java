@@ -306,12 +306,15 @@ public class Game implements Prepare {
             }
             islandsLayout.add(this.islands.get(11).getPane(), 0, 3);
 
-            for (int index = 0; index < 11; index++)
+            for (int index = 0; index < 12; index++)
                 if (client.getController().getGameModel().getGameBoard().getIslandById(index).hasNext())
                     this.islands.get(index).connect();
         });
     }
 
+    /**
+     * Adds the special characters to the GUI.
+     */
     private void addSpecialCharacters() {
         this.characters = SpecialCharacters.get(client.getController().getGameModel().getGameBoard().getSpecialCharacters(), commandAssembler);
         Platform.runLater(() -> {

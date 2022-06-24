@@ -52,8 +52,8 @@ public class Boards {
                     "-fx-border-color: #FCFFAD;" +
                     "-fx-padding: 0px;" +
                     "-fx-background-color: radial-gradient(focus-distance 0%, center 50% 50%, radius 100% ,transparent, #FCFFAD);");
-            diningRoomButton.setTranslateX(114);
-            diningRoomButton.setTranslateY(70);
+            diningRoomButton.setTranslateX(118);
+            diningRoomButton.setTranslateY(74);
             diningRoomButton.setOnMouseClicked(mouseEvent -> assembler.manageDiningRoomSelection());
             diningRoomButton.setVisible(false);
 

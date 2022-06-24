@@ -212,18 +212,16 @@ public class SpecialCharacterContainer {
             if (enable)
                 studentButton.setStyle("-fx-background-radius: 50em;" +
                         "-fx-border-radius: 50em;" +
-                        "-fx-border-width: 0px;" +
+                        "-fx-border-width: 1px;" +
                         "-fx-min-width: 25px;" +
                         "-fx-min-height: 25px;" +
                         "-fx-padding: 3px;" +
                         "-fx-border-color: #FCFFAD;" +
-                        "-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 10, 0.5, 0.0, 2);" +
                         "-fx-background-color: radial-gradient(focus-distance 0% ,center 50% 50%, radius 99%, transparent, #FCFFAD);");
             else
                 studentButton.setStyle("-fx-background-radius: 50em;" +
                         "-fx-max-width: 10px;" +
                         "-fx-max-height: 10px;" +
-                        "-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 10, 0.5, 0.0, 2);" +
                         "-fx-padding: 0px;");
             studentButton.setMouseTransparent(!enable);
         }
@@ -259,11 +257,9 @@ public class SpecialCharacterContainer {
                         "-fx-min-height: 25px;" +
                         "-fx-padding: 3px;" +
                         "-fx-border-color: #FCFFAD;" +
-                        "-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 10, 0.5, 0.0, 2);" +
                         "-fx-background-color: radial-gradient(focus-distance 0% ,center 50% 50%, radius 99%, transparent, #FCFFAD);");
             else
                 banButton.setStyle("-fx-background-radius: 50em;" +
-                        "-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 10, 0.5, 0.0, 2);" +
                         "-fx-max-width: 10px;" +
                         "-fx-max-height: 10px;" +
                         "-fx-padding: 0px;");

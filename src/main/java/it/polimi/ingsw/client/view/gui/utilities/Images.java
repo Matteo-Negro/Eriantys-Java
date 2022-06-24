@@ -66,6 +66,7 @@ public class Images {
         imageView.setFitWidth(135);
         imageView.setFitHeight(200);
         imageView.setImage(getAssistantById(id));
+        imageView.setStyle("-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 10, 0.5, 0.0, 1);");
         return imageView;
     }
 
@@ -83,6 +84,7 @@ public class Images {
         imageView.setFitWidth(42);
         imageView.setFitHeight(48);
         imageView.setImage(banIcon);
+        imageView.setStyle("-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 10, 0.5, 0.0, 2);");
         return imageView;
     }
 
@@ -135,6 +137,7 @@ public class Images {
         imageView.setFitWidth(715);
         imageView.setFitHeight(305);
         imageView.setImage(board);
+        imageView.setStyle("-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 10, 0.5, 0.0, 2);");
         return imageView;
     }
 
@@ -165,6 +168,7 @@ public class Images {
         imageView.setFitWidth(50);
         imageView.setFitHeight(50);
         imageView.setImage(coin);
+        imageView.setStyle("-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 10, 0.5, 0.0, 2);");
         return imageView;
     }
 
@@ -195,6 +199,7 @@ public class Images {
         imageView.setFitWidth(30);
         imageView.setFitHeight(43);
         imageView.setImage(motherNature);
+        imageView.setStyle("-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 10, 0.5, 0.0, 4);");
         return imageView;
     }
 
@@ -209,6 +214,7 @@ public class Images {
         imageView.setFitWidth(45);
         imageView.setFitHeight(39);
         imageView.setImage(getProfessorByColor(color));
+        imageView.setStyle("-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 10, 0.5, 0.0, 4);");
         return imageView;
     }
 
@@ -223,6 +229,7 @@ public class Images {
         imageView.setFitWidth(261);
         imageView.setFitHeight(384);
         imageView.setImage(getSpecialCharacterById(id));
+        imageView.setStyle("-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 10, 0.5, 0.0, 1);");
         return imageView;
     }
 
@@ -238,6 +245,7 @@ public class Images {
         imageView.setFitHeight(58);
         imageView.setImage(getTowerBoardByColor(tower));
         imageView.setVisible(tower != null);
+        imageView.setStyle("-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 10, 0.5, 0.0, 2);");
         return imageView;
     }
 
@@ -253,6 +261,7 @@ public class Images {
         imageView.setFitHeight(52);
         imageView.setImage(getTowerRealmByColor(tower));
         imageView.setVisible(tower != null);
+        imageView.setStyle("-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 10, 0.5, 0.0, 2);");
         return imageView;
     }
 
@@ -267,6 +276,7 @@ public class Images {
         imageView.setFitWidth(30);
         imageView.setFitHeight(30);
         imageView.setImage(getStudent2dByColor(houseColor));
+        imageView.setStyle("-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 10, 0.5, 0.0, 2);");
         return imageView;
     }
 
@@ -281,6 +291,7 @@ public class Images {
         imageView.setFitWidth(20);
         imageView.setFitHeight(20);
         imageView.setImage(getStudent3dByColor(houseColor));
+        imageView.setStyle("-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 10, 0.5, 0.0, 3);");
         return imageView;
     }
 
@@ -295,6 +306,7 @@ public class Images {
         imageView.setFitWidth(135);
         imageView.setFitHeight(200);
         imageView.setImage(getWizardByType(wizardType));
+        imageView.setStyle("-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 10, 0.5, 0.0, 1);");
         return imageView;
     }
 
