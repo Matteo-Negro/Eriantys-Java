@@ -377,8 +377,7 @@ public class Game implements Prepare {
                         firstBoard.enableEntranceButtons(true);
                         enableIslandButtons(true);
                         enableCloudButtons(false);
-                        if (this.client.getController().getGameModel().isExpert())
-                            enableCharacterButtons(true);
+                        checkCharactersEffectOnButtons(firstBoard);
                     }
                     case MOVE_MOTHER_NATURE -> {
                         firstBoard.enableAssistantButtons(false);
@@ -386,13 +385,7 @@ public class Game implements Prepare {
                         firstBoard.enableEntranceButtons(false);
                         enableIslandButtons(true);
                         enableCloudButtons(false);
-                        if (this.client.getController().getGameModel().isExpert()) {
-                            enableCharacterButtons(true);
-                            if (this.client.getController().getGameModel().isEffectActive()) {
-                                firstBoard.enableDiningRoomButton(true);
-                                firstBoard.enableEntranceButtons(true);
-                            }
-                        }
+                        checkCharactersEffectOnButtons(firstBoard);
                     }
                     case CHOOSE_CLOUD -> {
                         firstBoard.enableAssistantButtons(false);
@@ -400,18 +393,35 @@ public class Game implements Prepare {
                         firstBoard.enableEntranceButtons(false);
                         enableIslandButtons(false);
                         enableCloudButtons(true);
-                        if (this.client.getController().getGameModel().isExpert()) {
-                            enableCharacterButtons(true);
-                            if (this.client.getController().getGameModel().isEffectActive()) {
-                                firstBoard.enableDiningRoomButton(true);
-                                firstBoard.enableEntranceButtons(true);
-                            }
-                        }
-
+                        checkCharactersEffectOnButtons(firstBoard);
                     }
                 }
             }
         });
+    }
+
+    /**
+     * Checks the active special character and activates the due buttons.
+     *
+     * @param firstBoard The client-player's board
+     */
+    private void checkCharactersEffectOnButtons(BoardContainer firstBoard) {
+        if (this.client.getController().getGameModel().isExpert()) {
+            enableCharacterButtons(true);
+            if (this.client.getController().getGameModel().isEffectActive()) {
+                int activeCharacterId = 0;
+                for (SpecialCharacter character : this.client.getController().getGameModel().getGameBoard().getSpecialCharacters())
+                    if (character.isActive())
+                        activeCharacterId = character.getId();
+
+                if(this.client.getController().getGameModel().getGameBoard().getSpecialCharacterById(activeCharacterId).getUsesNumber() > 0)
+                    switch (activeCharacterId) {
+                        case 1, 3, 5-> enableIslandButtons(true);
+                        case 7 -> firstBoard.enableEntranceButtons(true);
+                        case 11 -> firstBoard.enableDiningRoomButton(true);
+                    }
+            }
+        }
     }
 
     /**
@@ -549,8 +559,7 @@ public class Game implements Prepare {
             characterButton.setVisible(enable && !effectActive && activePlayer);
         }
         for (SpecialCharacterContainer character : characters) {
-            character.enableCharacterButton(effectActive && characters.indexOf(character) == activeCharacterPosition, activePlayer);
+            character.enableCharacterButton(effectActive && characters.indexOf(character) == activeCharacterPosition, activePlayer, client.getController().getGameModel());
         }
-
     }
 }

@@ -1,5 +1,6 @@
 package it.polimi.ingsw.client.view.gui.utilities;
 
+import it.polimi.ingsw.client.model.GameModel;
 import it.polimi.ingsw.client.view.gui.CommandAssembler;
 import it.polimi.ingsw.utilities.HouseColor;
 import it.polimi.ingsw.utilities.Log;
@@ -211,18 +212,18 @@ public class SpecialCharacterContainer {
             if (enable)
                 studentButton.setStyle("-fx-background-radius: 50em;" +
                         "-fx-border-radius: 50em;" +
-                        "-fx-border-width: 1px;" +
+                        "-fx-border-width: 0px;" +
                         "-fx-min-width: 25px;" +
                         "-fx-min-height: 25px;" +
-                        "-fx-padding: 2px;" +
+                        "-fx-padding: 3px;" +
                         "-fx-border-color: #FCFFAD;" +
-                        "-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 10, 0.3, 0.0, 0.0);" +
+                        "-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 10, 0.5, 0.0, 2);" +
                         "-fx-background-color: radial-gradient(focus-distance 0% ,center 50% 50%, radius 99%, transparent, #FCFFAD);");
             else
                 studentButton.setStyle("-fx-background-radius: 50em;" +
                         "-fx-max-width: 10px;" +
                         "-fx-max-height: 10px;" +
-                        "-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 10, 0.7, 0.0, 0.0);" +
+                        "-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 10, 0.5, 0.0, 2);" +
                         "-fx-padding: 0px;");
             studentButton.setMouseTransparent(!enable);
         }
@@ -253,16 +254,16 @@ public class SpecialCharacterContainer {
             if (enable)
                 banButton.setStyle("-fx-background-radius: 50em;" +
                         "-fx-border-radius: 50em;" +
-                        "-fx-border-width: 1px;" +
+                        "-fx-border-width: 0px;" +
                         "-fx-min-width: 25px;" +
                         "-fx-min-height: 25px;" +
-                        "-fx-padding: 2px;" +
+                        "-fx-padding: 3px;" +
                         "-fx-border-color: #FCFFAD;" +
-                        "-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 10, 0.3, 0.0, 0.0);" +
+                        "-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 10, 0.5, 0.0, 2);" +
                         "-fx-background-color: radial-gradient(focus-distance 0% ,center 50% 50%, radius 99%, transparent, #FCFFAD);");
             else
                 banButton.setStyle("-fx-background-radius: 50em;" +
-                        "-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 10, 0.7, 0.0, 0.0);" +
+                        "-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 10, 0.5, 0.0, 2);" +
                         "-fx-max-width: 10px;" +
                         "-fx-max-height: 10px;" +
                         "-fx-padding: 0px;");
@@ -286,7 +287,7 @@ public class SpecialCharacterContainer {
      * @param enable       Enable signal.
      * @param activePlayer true of the player is active.
      */
-    public void enableCharacterButton(boolean enable, boolean activePlayer) {
+    public void enableCharacterButton(boolean enable, boolean activePlayer, GameModel model) {
         if (enable) {
             pane.getChildrenUnmodifiable().get(1).setStyle(
                     "-fx-border-color: #66eb66;" +
@@ -297,8 +298,10 @@ public class SpecialCharacterContainer {
         } else pane.getChildrenUnmodifiable().get(1).setStyle(
                 "-fx-border-color: transparent;"
         );
-        enableBanButtons(activePlayer && enable);
-        enableStudentButtons(activePlayer && enable);
+
+        int usesNumber = model.getGameBoard().getSpecialCharacterById(this.idSpecialCharacter).getUsesNumber();
+        enableBanButtons(activePlayer && enable && usesNumber > 0);
+        enableStudentButtons(activePlayer && enable && usesNumber > 0);
     }
 
     /**

@@ -41,6 +41,7 @@ public class SpecialCharacters {
 
             GridPane gPane = Grids.specialCharacter(specialCharacter, specialCharacterContainer);
             ImageView coin = Images.coin();
+            coin.setStyle("-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 10, 0.5, 0.0, 1);");
             gPane.add(coin, 1, 0);
             if (specialCharacter.getStudents() != null || specialCharacter.getAvailableBans() != null || specialCharacter.getId() == 10) {
                 gPane.setStyle("-fx-background-color: radial-gradient(focus-distance 0%, center 50% 60%, radius 99%, white, transparent);");
@@ -49,7 +50,7 @@ public class SpecialCharacters {
 
             Button characterButton = new Button();
             characterButton.setStyle("-fx-border-color: #FCFFAD;" +
-                    "-fx-border-width: 1px;" +
+                    "-fx-border-width: 2px;" +
                     "-fx-background-color: radial-gradient(focus-distance 0%, center 50% 50%, radius 99%, transparent, #FCFFAD);" +
                     "-fx-padding: 0px;" +
                     "-fx-min-width: 261px;" +
