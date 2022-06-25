@@ -50,6 +50,7 @@ public class Server {
      * Class constructor.
      *
      * @param savePath Path where to find and store the games.
+     * @param port     The port on which the server has to listen for connections.
      * @throws IOException Thrown if there is an error while processing files.
      */
     public Server(String savePath, int port) throws IOException {

@@ -80,6 +80,11 @@ public class GamePlatform {
         return new ArrayList<>(clockwiseOrder);
     }
 
+    /**
+     * Gets the turn order.
+     *
+     * @return The turn order.
+     */
     public List<Player> getTurnOrder() {
         return new ArrayList<>(turnOrder);
     }
@@ -237,6 +242,8 @@ public class GamePlatform {
 
     /**
      * Moves to the next player, unless the round is concluded.
+     *
+     * @throws RoundConcluded when the round is finished.
      */
     public void nextTurn() throws RoundConcluded {
         String player;

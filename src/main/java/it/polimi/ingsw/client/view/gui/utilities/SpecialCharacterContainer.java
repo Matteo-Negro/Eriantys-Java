@@ -181,6 +181,7 @@ public class SpecialCharacterContainer {
      * Sets the increment to the price.
      *
      * @param alreadyPaid true if this card has already been played.
+     * @param coin        The ImageView for the coin.
      */
     public void setExtraPrice(boolean alreadyPaid, ImageView coin) {
         this.extraPrice = coin;
@@ -282,6 +283,7 @@ public class SpecialCharacterContainer {
      *
      * @param enable       Enable signal.
      * @param activePlayer true of the player is active.
+     * @param model        The GameModel from which all the required data are taken.
      */
     public void enableCharacterButton(boolean enable, boolean activePlayer, GameModel model) {
         if (enable) {

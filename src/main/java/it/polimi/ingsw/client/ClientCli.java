@@ -221,6 +221,9 @@ public class ClientCli implements Runnable, View {
         }
     }
 
+    /**
+     * Manages the waiting room.
+     */
     public void runWaitingRoom() {
         synchronized (this.controller.getLock()) {
             if (this.controller.getGameModel() != null) {

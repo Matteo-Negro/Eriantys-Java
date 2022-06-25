@@ -30,10 +30,12 @@ public class SpecialCharacter {
      *
      * @param id            The identification number of the special character card.
      * @param active        True if the special character's effect is active.
-     * @param alreadyPaid   True if the special character has already been paid and it's effect has already been activated during this game.
+     * @param alreadyPaid   True if the special character has already been paid, and it's effect has already been activated during this game.
+     * @param paidInTurn    Tells whether the current card has already been played in the current turn.
      * @param students      A map with the students to put on the card (null, otherwise).
      * @param availableBans Number of ban marker available.
      * @param cost          Price to activate the effect.
+     * @param usesNumber    The number of players in the game.
      */
     public SpecialCharacter(int id, boolean active, boolean alreadyPaid, boolean paidInTurn, JsonObject students, Integer availableBans, int cost, int usesNumber) {
         this.id = id;

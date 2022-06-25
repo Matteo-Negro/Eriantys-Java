@@ -17,6 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * GUI scene for logging into a game.
+ */
 public class Login implements Prepare {
 
     private ClientGui client;

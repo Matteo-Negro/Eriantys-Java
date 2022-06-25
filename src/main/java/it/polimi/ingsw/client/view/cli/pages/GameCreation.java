@@ -11,6 +11,11 @@ import org.jline.terminal.Terminal;
 import static it.polimi.ingsw.client.view.cli.Utilities.*;
 import static org.fusesource.jansi.Ansi.ansi;
 
+/**
+ * Prints the GameCreation screen on the CLI.
+ *
+ * @author Riccardo Motta
+ */
 public class GameCreation {
 
     private static final String[] title = {

@@ -11,6 +11,9 @@ import javafx.scene.control.TextField;
 
 import java.net.Socket;
 
+/**
+ * GUI scene for showing the splash screen.
+ */
 public class Start implements Prepare {
 
     private ClientGui client;

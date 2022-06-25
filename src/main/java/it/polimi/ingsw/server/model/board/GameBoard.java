@@ -30,9 +30,10 @@ public class GameBoard {
     /**
      * GameBoard Constructor, this constructor initializes all the elements in the board.
      *
-     * @param isExp This parameter is set true whether the game is in expert mode.
+     * @param playersNumber The number of players.
+     * @param isExp         This parameter is set true whether the game is in expert mode.
      */
-    public GameBoard(int numPlayer, boolean isExp) {
+    public GameBoard(int playersNumber, boolean isExp) {
         List<HouseColor> temp;
 
         this.bag = new Bag();
@@ -55,7 +56,7 @@ public class GameBoard {
 
         if (isExp) initializeChracters();
         Arrays.stream(HouseColor.values()).forEach(color -> this.professors.put(color, null));
-        this.initializeClouds(numPlayer);
+        this.initializeClouds(playersNumber);
         this.motherNatureIsland = this.islands.get(0);
 
         Log.info("*** New GameBoard successfully created.");

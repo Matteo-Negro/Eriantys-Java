@@ -30,13 +30,14 @@ public class Game {
      * @param terminal          Terminal where to write.
      * @param gameModel         The model of the game where the data are stored.
      * @param gameId            The id of the game.
+     * @param round             The number of the round.
      * @param currentPlayerTurn true if it's the turn of the current player.
      */
     public static void print(Terminal terminal, GameModel gameModel, String gameId, int round, boolean currentPlayerTurn) {
         terminal.writer().print(printBorder(terminal.getHeight(), terminal.getWidth(), gameId, round, currentPlayerTurn, gameModel.getPhase(), gameModel.getSubphase()));
         terminal.flush();
         terminal.writer().print(ansi().cursor((terminal.getHeight() - 31 - 5) / 2, (terminal.getWidth() - 165 - 6) / 2));
-        Realm.print(terminal, gameModel.getGameBoard(), gameModel.getGameBoard().getClouds());
+        Realm.print(terminal, gameModel.getGameBoard());
 
         if (!gameModel.isExpert()) {
             if (gameModel.getPlayersNumber() == 2)

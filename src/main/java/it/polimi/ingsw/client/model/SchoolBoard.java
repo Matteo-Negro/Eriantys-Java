@@ -149,6 +149,8 @@ public class SchoolBoard {
 
     /**
      * Gets a map of the professors.
+     *
+     * @return The map of the professors.
      */
     public Map<HouseColor, Boolean> getProfessors() {
         return new EnumMap<>(this.professors);

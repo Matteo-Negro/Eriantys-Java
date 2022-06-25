@@ -10,6 +10,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 
+/**
+ * GUI scene for showing the end of a game.
+ */
 public class End implements Prepare {
 
     private ClientGui client;

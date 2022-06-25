@@ -27,6 +27,7 @@ public class Island {
     /**
      * Default constructor.
      *
+     * @param id           The id of the island.
      * @param next         true if connected to next island.
      * @param prev         true if connected to previous island.
      * @param tower        The tower on the island.

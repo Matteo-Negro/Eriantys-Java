@@ -39,6 +39,8 @@ public class ClientController {
 
     /**
      * Default class constructor.
+     *
+     * @param view The connected view.
      */
     public ClientController(View view) {
         this.state = ClientState.START_SCREEN;
@@ -152,6 +154,8 @@ public class ClientController {
 
     /**
      * Manages the start-screen logic.
+     *
+     * @param hostSocket The socket on which communicate.
      */
     public void manageStartScreen(Socket hostSocket) {
         try {
@@ -168,6 +172,8 @@ public class ClientController {
 
     /**
      * Manages the main-menu logic.
+     *
+     * @param option The selected option.
      */
     public void manageMainMenu(String option) {
         switch (option) {
@@ -187,6 +193,8 @@ public class ClientController {
 
     /**
      * Manages the game-creation logic.
+     *
+     * @param command The command to send to the user.
      */
     public void manageGameCreation(JsonObject command) {
         this.gameServer.sendCommand(command);
@@ -202,6 +210,8 @@ public class ClientController {
 
     /**
      * Manages the join-game logic.
+     *
+     * @param gameCode The code of the game.
      */
     public void manageJoinGame(String gameCode) {
         if ("EXIT".equals(gameCode)) {
@@ -224,6 +234,8 @@ public class ClientController {
 
     /**
      * Manages the login logic.
+     *
+     * @param username The username of the player.
      */
     public void manageGameLogin(String username) {
         if ("exit".equals(username)) {
@@ -247,6 +259,8 @@ public class ClientController {
 
     /**
      * Manages the game logic.
+     *
+     * @param command The command received from the user.
      */
     public void manageGameRunning(String command) {
 
@@ -399,6 +413,8 @@ public class ClientController {
 
     /**
      * Manages end-game logic.
+     *
+     * @param command The command inserted by the user.
      */
     public void manageEndGame(String command) {
         if (command.equals("") || command.equals("exit")) {

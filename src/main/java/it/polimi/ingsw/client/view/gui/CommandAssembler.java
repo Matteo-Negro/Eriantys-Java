@@ -6,19 +6,35 @@ import it.polimi.ingsw.utilities.Log;
 
 import java.util.Locale;
 
+/**
+ * Assembles the commands to send to the controller from inputs received from the GUI.
+ */
 public class CommandAssembler {
     private final ClientController controller;
     private String command;
 
+    /**
+     * The main constructor.
+     *
+     * @param controller The backend controller to which send the commands.
+     */
     public CommandAssembler(ClientController controller) {
         this.controller = controller;
         flushCommand();
     }
 
+    /**
+     * Resets the command.
+     */
     private void flushCommand() {
         this.command = "";
     }
 
+    /**
+     * Creates the command or completes it when the user clicks on an island.
+     *
+     * @param islandId The id of the island the user clicked.
+     */
     public void manageIslandSelection(int islandId) {
         Log.debug("Island selected with id " + islandId);
         String island = islandId >= 0 && islandId <= 11 ? String.format("isl%02d", islandId + 1) : "";
@@ -42,6 +58,11 @@ public class CommandAssembler {
         flushCommand();
     }
 
+    /**
+     * Creates the command when the user clicks on a cloud.
+     *
+     * @param cloudId The id of the cloud the user clicked.
+     */
     public void manageCloudSelection(int cloudId) {
         Log.debug("Cloud selected with id " + cloudId);
         if (!command.equals(""))
@@ -51,6 +72,9 @@ public class CommandAssembler {
         flushCommand();
     }
 
+    /**
+     * Completes the command when the user clicks on the dining room.
+     */
     public void manageDiningRoomSelection() {
         Log.debug("Dining-room selected");
         command = command.concat("dining-room");
@@ -58,6 +82,11 @@ public class CommandAssembler {
         flushCommand();
     }
 
+    /**
+     * Creates the command or completes it when the user clicks on an entrance student.
+     *
+     * @param color The color of the student the user clicked.
+     */
     public void manageEntranceSelection(HouseColor color) {
         Log.debug("Selected student from entrance of color " + color.toString());
         if (command.contains("swap chr07-student")) {
@@ -71,6 +100,11 @@ public class CommandAssembler {
         }
     }
 
+    /**
+     * Creates the command when the user clicks on an assistant.
+     *
+     * @param assistantId The id of the assistant the user clicked.
+     */
     public void manageAssistantSelection(int assistantId) {
         if (!command.equals(""))
             flushCommand();
@@ -80,15 +114,25 @@ public class CommandAssembler {
         flushCommand();
     }
 
-    public void managePaymentsSpecialCharacterSelection(int idSpecialCharacter) {
-        Log.debug("Selected character with id " + idSpecialCharacter);
+    /**
+     * Creates the command when the user clicks on a special character.
+     *
+     * @param specialCharacterId The id of the special character the user clicked.
+     */
+    public void managePaymentsSpecialCharacterSelection(int specialCharacterId) {
+        Log.debug("Selected character with id " + specialCharacterId);
         if (!command.equals(""))
             flushCommand();
-        command = String.format("pay %s", idSpecialCharacter >= 1 && idSpecialCharacter <= 12 ? String.format("chr%02d", idSpecialCharacter) : "");
+        command = String.format("pay %s", specialCharacterId >= 1 && specialCharacterId <= 12 ? String.format("chr%02d", specialCharacterId) : "");
         sendCommand();
         flushCommand();
     }
 
+    /**
+     * Creates the command when the user clicks on a special character.
+     *
+     * @param color The color of the student the user clicked.
+     */
     public void manageStudentSCFromCardToIslandSelection(HouseColor color) {
         Log.debug("Selected student from special character of color " + color.toString());
         if (!command.equals(""))
@@ -96,6 +140,11 @@ public class CommandAssembler {
         command = String.format("move student %s from chr01 to ", color.name().toLowerCase(Locale.ROOT));
     }
 
+    /**
+     * Creates the command when the user clicks on a special character.
+     *
+     * @param color The color the of the student user clicked.
+     */
     public void manageStudentSCSwapCardEntranceSelection(HouseColor color) {
         Log.debug("Selected student from special character of color " + color.toString());
         if (!command.equals(""))
@@ -103,20 +152,29 @@ public class CommandAssembler {
         command = String.format("swap chr07-student %s with entrance-student ", color.name().toLowerCase(Locale.ROOT));
     }
 
-    public void manageStudentSCSwapCardEntranceDiningRoomSelection(HouseColor color, int indexStudent) {
+    /**
+     * Creates the command when the user clicks on a special character.
+     *
+     * @param color        The color of the student the user clicked.
+     * @param studentIndex The index of the student the user clicked.
+     */
+    public void manageStudentSCSwapCardEntranceDiningRoomSelection(HouseColor color, int studentIndex) {
         Log.debug("Selected student from special character of color " + color.toString());
-        if (command.equals("") && indexStudent < 5) {
+        if (command.equals("") && studentIndex < 5) {
             command = String.format("swap entrance-student %s with dining-room-student ", color.name().toLowerCase(Locale.ROOT));
-            System.out.println(command);
-        } else if (command.contains("swap entrance-student") && indexStudent >= 5) {
+        } else if (command.contains("swap entrance-student") && studentIndex >= 5) {
             command = String.format("%s%s", command, color.name().toLowerCase(Locale.ROOT));
-            System.out.println(command);
             sendCommand();
             flushCommand();
         } else
             flushCommand();
     }
 
+    /**
+     * Creates the command when the user clicks on a special character.
+     *
+     * @param color The color of the student the user clicked.
+     */
     public void manageStudentSCIgnoreColorSelection(HouseColor color) {
         Log.debug("Selected student from special character of color " + color.toString());
         if (!command.equals(""))
@@ -126,6 +184,11 @@ public class CommandAssembler {
         flushCommand();
     }
 
+    /**
+     * Creates the command when the user clicks on a special character.
+     *
+     * @param color The color of the student the user clicked.
+     */
     public void manageStudentSCFromCardToDiningRoomSelection(HouseColor color) {
         Log.debug("Selected student from special character of color " + color.toString());
         if (!command.equals(""))
@@ -133,6 +196,11 @@ public class CommandAssembler {
         command = String.format("move student %s from chr11 to ", color.name().toLowerCase(Locale.ROOT));
     }
 
+    /**
+     * Creates the command when the user clicks on a special character.
+     *
+     * @param color The color of the student the user clicked.
+     */
     public void manageStudentSCReturnColorSelection(HouseColor color) {
         Log.debug("Selected student from special character of color " + color.toString());
         if (!command.equals(""))
@@ -142,12 +210,18 @@ public class CommandAssembler {
         flushCommand();
     }
 
+    /**
+     * Creates the command when the user clicks on a special character.
+     */
     public void manageStudentSCBanSelection() {
         if (!command.equals(""))
             flushCommand();
         command = "ban ";
     }
 
+    /**
+     * Sends the command to the backend in order to process it and send it to the server.
+     */
     private void sendCommand() {
         Log.debug("Sending command " + command);
         this.controller.manageGameRunning(command);

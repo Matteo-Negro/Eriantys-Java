@@ -50,6 +50,12 @@ public class MessageCreator {
         return reply;
     }
 
+    /**
+     * Sends a waiting room update message.
+     *
+     * @param gameController The backend controller of the game.
+     * @return JsonObject which represents the message.
+     */
     public static JsonObject waitingRoomUpdate(GameController gameController) {
         JsonObject reply = new JsonObject();
         reply.addProperty("type", "waitingRoomUpdate");
@@ -92,6 +98,7 @@ public class MessageCreator {
      * Creates the message used to give the communication token to a specified user.
      *
      * @param player The name of the player who is going to receive the communication token.
+     * @param enable true if it's this player's turn, false otherwise.
      * @return JsonObject which represents the message.
      */
     public static JsonObject turnEnable(String player, boolean enable) {
@@ -160,6 +167,7 @@ public class MessageCreator {
     /**
      * Creates the "win" message.
      *
+     * @param playerList A List with the winner of the game, or the players who drawn.
      * @return JsonObject which represents the message.
      */
     public static JsonObject win(List<Player> playerList) {
@@ -289,15 +297,16 @@ public class MessageCreator {
     /**
      * Creates the "moveStudent" command.
      *
-     * @param player The player who's performing the move.
-     * @param color  The color of the student moved.
-     * @param from   The initial position.
-     * @param to     The final position.
-     * @param fromId The initial island's id (null if the move doesn't involve islands or characters).
-     * @param toId   The final island's id (null if the move doesn't involve islands or characters).
+     * @param player           The player who's performing the move.
+     * @param color            The color of the student moved.
+     * @param from             The initial position.
+     * @param to               The final position.
+     * @param fromId           The initial island's id (null if the move doesn't involve islands or characters).
+     * @param toId             The final island's id (null if the move doesn't involve islands or characters).
+     * @param specialCharacter true if it comes from a special character.
      * @return JsonObject which represents the message.
      */
-    public static JsonObject moveStudent(String player, HouseColor color, String from, String to, Integer fromId, Integer toId, boolean special) {
+    public static JsonObject moveStudent(String player, HouseColor color, String from, String to, Integer fromId, Integer toId, boolean specialCharacter) {
         JsonObject command = new JsonObject();
         command.addProperty("type", "command");
         command.addProperty("subtype", "move");
@@ -310,7 +319,7 @@ public class MessageCreator {
         else command.addProperty("fromId", fromId);
         if (toId == null) command.add("toId", JsonNull.INSTANCE);
         else command.addProperty("toId", toId);
-        command.addProperty("special", special);
+        command.addProperty("special", specialCharacter);
 
         return command;
     }
@@ -319,6 +328,7 @@ public class MessageCreator {
      * Creates the "moveMotherNature" command.
      *
      * @param islandId The destination island.
+     * @param move     true if mother nature has to be moved, false only if resolving an island as the effect of a special character.
      * @return JsonObject which represents the message.
      */
     public static JsonObject moveMotherNature(int islandId, boolean move) {

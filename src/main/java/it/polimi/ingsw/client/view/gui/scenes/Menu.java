@@ -8,6 +8,9 @@ import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 
+/**
+ * GUI scene for showing the main menu.
+ */
 public class Menu implements Prepare {
 
     private ClientGui client;

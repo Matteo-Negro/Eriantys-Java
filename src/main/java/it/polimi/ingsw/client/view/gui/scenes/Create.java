@@ -13,6 +13,9 @@ import javafx.scene.control.RadioButton;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * GUI scene for creating a new game.
+ */
 public class Create implements Prepare {
 
     private final AtomicInteger players;
@@ -31,6 +34,9 @@ public class Create implements Prepare {
     @FXML
     private RadioButton players4;
 
+    /**
+     * Default constructor.
+     */
     public Create() {
         players = new AtomicInteger(2);
         expertMode = new AtomicBoolean(false);

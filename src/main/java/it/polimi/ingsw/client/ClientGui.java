@@ -20,6 +20,9 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * The GUI class. Manages all the scenes and is the central point for reaching the backend.
+ */
 public class ClientGui extends Application implements View {
 
     private static final Object instanceLock = new Object();

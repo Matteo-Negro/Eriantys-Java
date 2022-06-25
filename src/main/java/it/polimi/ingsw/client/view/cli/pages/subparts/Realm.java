@@ -22,12 +22,13 @@ public class Realm {
     /**
      * Method that prints all the islands and then all the clouds.
      *
-     * @param terminal Terminal where to write.
+     * @param terminal  Terminal where to write.
+     * @param gameBoard The GameBoard form which take all the required data.
      */
-    public static void print(Terminal terminal, GameBoard gameBoard, List<it.polimi.ingsw.client.model.Cloud> clouds) {
+    public static void print(Terminal terminal, GameBoard gameBoard) {
         terminal.writer().print(printIslands(gameBoard));
         terminal.flush();
-        terminal.writer().print(printClouds(clouds));
+        terminal.writer().print(printClouds(gameBoard.getClouds()));
         terminal.flush();
     }
 

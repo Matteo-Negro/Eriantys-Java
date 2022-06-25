@@ -26,6 +26,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+/**
+ * GUI scene for playing the game.
+ */
 public class Game implements Prepare {
 
     private ClientGui client;

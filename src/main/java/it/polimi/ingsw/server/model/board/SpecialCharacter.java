@@ -52,8 +52,10 @@ public class SpecialCharacter {
      * @param statusId          The identification number of the special character card.
      * @param statusEffectCost  The special character's activation cost.
      * @param statusAlreadyPaid True if the special character has already been paid, and it's effect has already been activated during this game.
-     * @param statusPaidInTurn True if the special character has already been paid, and it's effect has already been activated during this turn.
+     * @param statusPaidInTurn  True if the special character has already been paid, and it's effect has already been activated during this turn.
      * @param statusIsActive    True if the special character's effect is active.
+     * @param statusStudents    The students on the card.
+     * @param bans              The number of available bans.
      * @param usesNumber        The number of uses.
      */
     public SpecialCharacter(int statusId, int statusEffectCost, boolean statusAlreadyPaid, boolean statusPaidInTurn, boolean statusIsActive, Map<HouseColor, Integer> statusStudents, int bans, int usesNumber) {

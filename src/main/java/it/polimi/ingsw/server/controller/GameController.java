@@ -49,6 +49,7 @@ public class GameController implements Runnable {
     /**
      * The game controller constructor.
      *
+     * @param server          The main instance of the server used for deleting a game.
      * @param id              The id of the game.
      * @param gameModel       The reference to the game model, that represent the game state.
      * @param expectedPlayers The number of expected player.
@@ -77,6 +78,7 @@ public class GameController implements Runnable {
     /**
      * Game controller constructor user for restoring the game.
      *
+     * @param server          The main instance of the server used for deleting a game.
      * @param id              The id of the game.
      * @param gameModel       The reference to the game model, that represent the game state.
      * @param expectedPlayers The number of expected player.
@@ -501,6 +503,7 @@ public class GameController implements Runnable {
      * This method manages the movements of the student in the game.
      *
      * @param command The json with the directions of the movements.
+     * @throws IllegalMoveException if there are no students left.
      */
     public void moveStudent(JsonObject command) throws IllegalMoveException {
         try {
@@ -632,6 +635,8 @@ public class GameController implements Runnable {
      * This method manages the movements of mother nature in the game and her consequences.
      *
      * @param idIsland The id of the island where mother nature will be set.
+     * @param move     true when mother nature has to be moved, false when it's used for resolving an island.
+     * @throws IllegalMoveException if one of the actions can't be performed.
      */
     public void moveMotherNature(int idIsland, boolean move) throws IllegalMoveException {
         Island targetIsland;
@@ -741,6 +746,7 @@ public class GameController implements Runnable {
      * This method manages the payment of the special character.
      *
      * @param command The json that contains all the information of the special character that will be paid.
+     * @throws IllegalMoveException if one of the actions can't be performed.
      */
     public void paySpecialCharacter(JsonObject command) throws IllegalMoveException {
         boolean characterAlreadyPlayed = false;
@@ -754,7 +760,8 @@ public class GameController implements Runnable {
         } catch (Exception e) {
             Log.warning(e);
         }
-        if (characterAlreadyPlayed) throw new IllegalMoveException();
+        if (characterAlreadyPlayed)
+            throw new IllegalMoveException();
 
         int character = command.get("character").getAsInt();
         try {
@@ -913,6 +920,9 @@ public class GameController implements Runnable {
 
     /**
      * This method is a helper for the moveStudent method.
+     *
+     * @param color  The color of the professor.
+     * @param player The name of the player.
      */
     public void checkProfessor(String color, String player) {
         String newProfessorOwner = player;

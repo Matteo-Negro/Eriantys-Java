@@ -27,9 +27,14 @@ import java.util.Map;
 public enum ObjectsToJson {
 
     /**
-     * Possible actions when generating a JsonArray from players.
+     * Possible action when generating a JsonArray from players: getting a list of players' names.
      */
-    GET_NAMES, GET_PLAYERS;
+    GET_NAMES,
+
+    /**
+     * Possible action when generating a JsonArray from players: getting a list of players.
+     */
+    GET_PLAYERS;
 
     /**
      * Decides whether to create a list of names or a list of players with connected school board.

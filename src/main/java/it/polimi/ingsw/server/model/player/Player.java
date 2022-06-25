@@ -34,6 +34,7 @@ public class Player {
      * @param wizardType   Player's Wizard.
      * @param towersNumber Number of towers to put on the board.
      * @param towerType    Color of the tower.
+     * @param entrance     The entrance of the SchoolBoard.
      */
     public Player(String name, WizardType wizardType, int towersNumber, TowerType towerType, Map<HouseColor, Integer> entrance) {
         this.name = name;

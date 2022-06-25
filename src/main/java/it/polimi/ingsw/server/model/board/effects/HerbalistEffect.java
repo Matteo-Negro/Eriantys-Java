@@ -44,6 +44,7 @@ public class HerbalistEffect implements Effect {
      * Decides to call the takeBan() method or the restoreBan() method, through a conditional branch on command parameter.
      *
      * @param action The action to be performed.
+     * @throws NoMoreBansLeftException if there are no more available bans.
      */
     public void effect(Action action) throws NoMoreBansLeftException {
         if (action.equals(Action.TAKE))
@@ -109,5 +110,16 @@ public class HerbalistEffect implements Effect {
     /**
      * The two possible actions: take or restore a ban.
      */
-    public enum Action {TAKE, PUT_BACK}
+    public enum Action {
+
+        /**
+         * Take a ban.
+         */
+        TAKE,
+
+        /**
+         * Put back a ban.
+         */
+        PUT_BACK
+    }
 }

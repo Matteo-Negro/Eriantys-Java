@@ -12,6 +12,11 @@ import javafx.scene.layout.VBox;
 
 import java.util.List;
 
+/**
+ * This class manages the GUI update while in the waiting room.
+ *
+ * @author Riccardo Motta
+ */
 public class WaitingRoom implements Prepare {
 
     private ClientGui client;
@@ -70,6 +75,9 @@ public class WaitingRoom implements Prepare {
         });
     }
 
+    /**
+     * Interrupts the method.
+     */
     public void stop() {
         Thread.currentThread().interrupt();
     }

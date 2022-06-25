@@ -55,6 +55,7 @@ public class Utilities {
      * Moves the cursor to a specific position.
      *
      * @param delta Delta coordinates.
+     * @return The generated Ansi code.
      */
     public static Ansi moveCursor(DeltaCoordinates delta) {
         return ansi().cursorMove(delta.getX(), delta.getY());
@@ -64,6 +65,7 @@ public class Utilities {
      * Sets the foreground colour.
      *
      * @param colour Colour to set.
+     * @return The generated Ansi code.
      */
     public static Ansi foreground(Colour colour) {
         Ansi ansi = new Ansi();
@@ -76,6 +78,7 @@ public class Utilities {
      * Sets the background colour.
      *
      * @param colour Colour to set.
+     * @return The generated Ansi code.
      */
     public static Ansi background(Colour colour) {
         Ansi ansi = new Ansi();
@@ -88,6 +91,7 @@ public class Utilities {
      * Sets the font to bold or regular.
      *
      * @param enable Enable for bold, disable for regular.
+     * @return The generated Ansi code.
      */
     public static Ansi bold(boolean enable) {
         Ansi ansi = new Ansi();

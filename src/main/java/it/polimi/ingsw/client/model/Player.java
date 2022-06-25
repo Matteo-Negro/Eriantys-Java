@@ -31,11 +31,12 @@ public class Player {
     /**
      * Class constructor used to restore the game.
      *
-     * @param name        Player's name.
-     * @param wizardType  Player's Wizard.
-     * @param hand        Player's deck of Assistants.
-     * @param coins       Player's coins.
-     * @param schoolBoard Player's SchoolBoard.
+     * @param name            Player's name.
+     * @param wizardType      Player's Wizard.
+     * @param coins           Player's coins.
+     * @param schoolBoard     Player's SchoolBoard.
+     * @param hand            Player's deck of Assistants.
+     * @param playedAssistant The list of played Assistants.
      */
     public Player(String name, WizardType wizardType, int coins, JsonObject schoolBoard, JsonArray hand, JsonObject playedAssistant) {
         this.name = name;

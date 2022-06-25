@@ -25,6 +25,9 @@ public class PlayerStuff {
      * Method that prints all the school board and in case of expert mode the character cards.
      *
      * @param terminal Terminal where to write.
+     * @param players  The list of players.
+     * @param exp      Indicates whether the game is in expert mode.
+     * @param cards    The special characters in the game (if in expert mode).
      */
     public static void print(Terminal terminal, List<Player> players, boolean exp, List<it.polimi.ingsw.client.model.SpecialCharacter> cards) {
         terminal.writer().print(printSchoolBoards(players, exp));

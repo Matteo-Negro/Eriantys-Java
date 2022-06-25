@@ -45,7 +45,8 @@ public class JsonToObjects {
     /**
      * Parses a json to get the corresponding list of players.
      *
-     * @param json Json object which represents the list of players.
+     * @param json    Json object which represents the list of players.
+     * @param players The players in the game.
      * @return The List that has been built.
      */
     public static List<Player> parsePlayersList(JsonArray json, Map<String, Player> players) {
@@ -91,7 +92,9 @@ public class JsonToObjects {
     /**
      * Parses a json to get the corresponding GameBoard.
      *
-     * @param json Json object which represents the GameBoard.
+     * @param json    Json object which represents the GameBoard.
+     * @param expert  Determines whether the game is in expert mode or not.
+     * @param players The players in the game.
      * @return The GameBoard that has been built.
      */
     public static GameBoard parseGameBoard(JsonObject json, boolean expert, Map<String, Player> players) {

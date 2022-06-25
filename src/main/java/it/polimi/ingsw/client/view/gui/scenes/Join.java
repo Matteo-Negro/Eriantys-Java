@@ -15,6 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * GUI scene for joining the game.
+ */
 public class Join implements Prepare {
 
     private ClientGui client;

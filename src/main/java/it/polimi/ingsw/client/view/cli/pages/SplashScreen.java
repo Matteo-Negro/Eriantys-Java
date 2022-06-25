@@ -10,6 +10,11 @@ import org.jline.terminal.Terminal;
 import static it.polimi.ingsw.client.view.cli.Utilities.*;
 import static org.fusesource.jansi.Ansi.ansi;
 
+/**
+ * Prints the SplashScreen screen on the CLI.
+ *
+ * @author Riccardo Motta
+ */
 public class SplashScreen {
 
     private static final String[] title = {

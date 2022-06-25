@@ -17,7 +17,8 @@ public class Game implements Runnable {
     /**
      * Default class constructor.
      *
-     * @param client The client that's currently running.
+     * @param client  The client that's currently running.
+     * @param gameGui The Game instance to update.
      */
     public Game(ClientGui client, it.polimi.ingsw.client.view.gui.scenes.Game gameGui) {
         this.client = client;
