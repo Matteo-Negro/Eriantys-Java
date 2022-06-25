@@ -3,6 +3,12 @@
 [![SonarQube analysis](https://github.com/mrmotta/ing-sw-2022-milici-motta-negro/actions/workflows/sonarqube.yml/badge.svg?branch=main)](https://github.com/mrmotta/ing-sw-2022-milici-motta-negro/actions/workflows/sonarqube.yml)
 [![Maven test and package](https://github.com/mrmotta/ing-sw-2022-milici-motta-negro/actions/workflows/maven.yml/badge.svg)](https://github.com/mrmotta/ing-sw-2022-milici-motta-negro/actions/workflows/maven.yml)
 
+![Erianty splash screen](splash.jpg)
+
+Un gioco di Leo Colovini per 2-4 giocatori.
+
+Regole: [IT](https://www.craniocreations.it/wp-content/uploads/2021/11/Eriantys_ITA_bassa.pdf), [EN](https://craniointernational.com/2021/wp-content/uploads/2021/06/Eriantys_rules_small.pdf).
+
 Progetto realizzato da [Riccardo Milici](https://github.com/RiccardoMilici), [Riccardo Motta](https://github.com/mrmotta) e [Matteo Negro](https://github.com/Matteo-Negro).
 
 ---
@@ -17,7 +23,7 @@ Per eseguire il client occorre lanciare da riga di comando la seguente istruzion
 
     java -jar client.jar
 
-Di default, questo farà partire l'interfaccia grafica (GUI) del progetto. Se si desidera avere invece avere la scelta dell'interfaccia da lanciare, si possono passare i seguenti parametri:
+Di default, questo farà partire l'interfaccia grafica (GUI) del progetto. Se si desidera invece avere la scelta dell'interfaccia da lanciare, si possono passare i seguenti parametri:
 
 Parametro      | Descrizione
 ---------------|------------
@@ -47,13 +53,13 @@ Abbiamo implementato il gioco in modo tale che soddisfi tutte le regole di una p
 
 ### Funzionalità avanzate
 
-Funzionalità                 | Implementazione
------------------------------|----------------
-Carte personaggio            | 🟢
-Partita a 4 giocatori        | 🟢
-Partite multiple             | 🟢
-Persistenza                  | 🟢
-Relienza alle disconnessioni | 🟡
+Funzionalità                   | Implementazione
+-------------------------------|----------------
+Carte personaggio              | 🟢
+Partita a 4 giocatori          | 🟢
+Partite multiple               | 🟢
+Persistenza                    | 🟢
+Resilienza alle disconnessioni | 🟡
 
 🔴: funzionalità non implementata.
 
