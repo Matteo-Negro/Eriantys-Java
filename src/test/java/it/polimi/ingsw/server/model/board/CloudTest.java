@@ -4,6 +4,7 @@ import it.polimi.ingsw.utilities.HouseColor;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -30,7 +31,7 @@ public class CloudTest {
      * Allows the garbage collector to delete the created Assistant.
      */
     @AfterEach
-    void tearDown(){
+    void tearDown() {
         this.cloud = null;
     }
 
@@ -48,7 +49,7 @@ public class CloudTest {
     @Test
     void getStudents() {
         Map<HouseColor, Integer> sampleStudents = new EnumMap<>(HouseColor.class);
-        for(HouseColor color : HouseColor.values()) sampleStudents.put(color, 0);
+        for (HouseColor color : HouseColor.values()) sampleStudents.put(color, 0);
 
         assertEquals(sampleStudents, cloud.getStudents());
     }
@@ -67,7 +68,7 @@ public class CloudTest {
     @Test
     void isFull() {
         Map<HouseColor, Integer> sampleStudents = new EnumMap<>(HouseColor.class);
-        for(HouseColor color : HouseColor.values()) sampleStudents.put(color, 1);
+        for (HouseColor color : HouseColor.values()) sampleStudents.put(color, 1);
 
         cloud.refill(sampleStudents);
         assertTrue(cloud.isFull());
@@ -79,7 +80,7 @@ public class CloudTest {
     @Test
     void refill() {
         Map<HouseColor, Integer> sampleStudents = new EnumMap<>(HouseColor.class);
-        for(HouseColor color : HouseColor.values()) sampleStudents.put(color, 1);
+        for (HouseColor color : HouseColor.values()) sampleStudents.put(color, 1);
 
         cloud.refill(sampleStudents);
         assertEquals(sampleStudents, cloud.getStudents());
@@ -91,7 +92,7 @@ public class CloudTest {
     @Test
     void flush() {
         Map<HouseColor, Integer> sampleStudents = new EnumMap<>(HouseColor.class);
-        for(HouseColor color : HouseColor.values()) sampleStudents.put(color, 1);
+        for (HouseColor color : HouseColor.values()) sampleStudents.put(color, 1);
 
         cloud.refill(sampleStudents);
         cloud.flush();
@@ -104,7 +105,7 @@ public class CloudTest {
     @Test
     void cloudRestore() {
         Map<HouseColor, Integer> sampleStudents = new EnumMap<>(HouseColor.class);
-        for(HouseColor color : HouseColor.values()) sampleStudents.put(color, 1);
+        for (HouseColor color : HouseColor.values()) sampleStudents.put(color, 1);
         this.cloud = new Cloud(1, sampleStudents);
 
         assertEquals(sampleStudents, cloud.getStudents());
@@ -116,7 +117,7 @@ public class CloudTest {
     @Test
     void cloudsEquals() {
         Map<HouseColor, Integer> sampleStudents = new EnumMap<>(HouseColor.class);
-        for(HouseColor color : HouseColor.values()) sampleStudents.put(color, 1);
+        for (HouseColor color : HouseColor.values()) sampleStudents.put(color, 1);
         Cloud sampleCloud = new Cloud(1, sampleStudents);
         cloud.refill(sampleStudents);
 
@@ -129,7 +130,7 @@ public class CloudTest {
     @Test
     void cloudsHash() {
         Map<HouseColor, Integer> sampleStudents = new EnumMap<>(HouseColor.class);
-        for(HouseColor color : HouseColor.values()) sampleStudents.put(color, 1);
+        for (HouseColor color : HouseColor.values()) sampleStudents.put(color, 1);
         Cloud sampleCloud = new Cloud(1, sampleStudents);
         cloud.refill(sampleStudents);
 

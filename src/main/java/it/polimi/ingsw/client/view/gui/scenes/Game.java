@@ -420,9 +420,9 @@ public class Game implements Prepare {
                     if (character.isActive())
                         activeCharacterId = character.getId();
 
-                if(this.client.getController().getGameModel().getGameBoard().getSpecialCharacterById(activeCharacterId).getUsesNumber() > 0)
+                if (this.client.getController().getGameModel().getGameBoard().getSpecialCharacterById(activeCharacterId).getUsesNumber() > 0)
                     switch (activeCharacterId) {
-                        case 1, 3, 5-> enableIslandButtons(true);
+                        case 1, 3, 5 -> enableIslandButtons(true);
                         case 7 -> firstBoard.enableEntranceButtons(true);
                         case 11 -> firstBoard.enableDiningRoomButton(true);
                     }

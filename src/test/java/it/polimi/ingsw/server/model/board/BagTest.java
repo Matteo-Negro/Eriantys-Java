@@ -51,7 +51,7 @@ public class BagTest {
     @Test
     void getStatus() {
         Map<HouseColor, Integer> sampleContainedStudents = new EnumMap<>(HouseColor.class);
-        for(HouseColor color : HouseColor.values()) sampleContainedStudents.put(color, 24);
+        for (HouseColor color : HouseColor.values()) sampleContainedStudents.put(color, 24);
 
         assertEquals(sampleContainedStudents, bag.getStatus());
     }
@@ -62,7 +62,7 @@ public class BagTest {
     @Test
     void push() {
         Map<HouseColor, Integer> sampleContainedStudents = new EnumMap<>(HouseColor.class);
-        for(HouseColor color : HouseColor.values()) sampleContainedStudents.put(color, 24);
+        for (HouseColor color : HouseColor.values()) sampleContainedStudents.put(color, 24);
         sampleContainedStudents.replace(HouseColor.BLUE, 25);
 
         bag.push(HouseColor.BLUE);
@@ -92,7 +92,7 @@ public class BagTest {
      */
     @Test
     void isEmpty() {
-        for(int i = 0; i<120; i++) bag.pop();
+        for (int i = 0; i < 120; i++) bag.pop();
 
         assertTrue(bag.isEmpty());
     }

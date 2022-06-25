@@ -26,7 +26,7 @@ public class IslandTest {
      * Generates a new GameBoard.
      */
     @BeforeEach
-    void setUp(){
+    void setUp() {
         this.island = new Island(student, id);
     }
 
@@ -68,7 +68,7 @@ public class IslandTest {
     @Test
     void getStudents() {
         Map<HouseColor, Integer> students = new EnumMap<HouseColor, Integer>(HouseColor.class);
-        for(HouseColor color : HouseColor.values()) students.put(color, 0);
+        for (HouseColor color : HouseColor.values()) students.put(color, 0);
 
         students.replace(this.student, 1);
 
@@ -87,7 +87,7 @@ public class IslandTest {
      * Tests if the size is set correctly.
      */
     @Test
-    void setSize(){
+    void setSize() {
         island.setSize(4);
         assertEquals(4, island.getSize());
     }
@@ -107,7 +107,7 @@ public class IslandTest {
     @Test
     void addStudent() {
         Map<HouseColor, Integer> students = new EnumMap<HouseColor, Integer>(HouseColor.class);
-        for(HouseColor color : HouseColor.values()) students.put(color, 0);
+        for (HouseColor color : HouseColor.values()) students.put(color, 0);
         students.replace(HouseColor.BLUE, 2);
         students.replace(HouseColor.YELLOW, 1);
         students.replace(HouseColor.RED, 1);
@@ -147,7 +147,7 @@ public class IslandTest {
     @Test
     void restoreIsland() {
         Map<HouseColor, Integer> sampleContainedStudents = new EnumMap<>(HouseColor.class);
-        for(HouseColor color : HouseColor.values()) sampleContainedStudents.put(color, 4);
+        for (HouseColor color : HouseColor.values()) sampleContainedStudents.put(color, 4);
         int sampleId = 4;
         int sampleSize = 4;
         boolean sampleBan = true;
@@ -167,7 +167,7 @@ public class IslandTest {
      */
     @Test
     void islandsEquals() {
-        Island sampleIsland = new Island(HouseColor.BLUE ,1);
+        Island sampleIsland = new Island(HouseColor.BLUE, 1);
         sampleIsland.setTower(TowerType.WHITE);
         island.setTower(TowerType.WHITE);
         assertEquals(island, sampleIsland);
@@ -178,7 +178,7 @@ public class IslandTest {
      */
     @Test
     void islandsHash() {
-        Island sampleIsland = new Island(HouseColor.BLUE ,1);
+        Island sampleIsland = new Island(HouseColor.BLUE, 1);
         assertEquals(sampleIsland.hashCode(), island.hashCode());
     }
 }

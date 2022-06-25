@@ -21,13 +21,13 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Riccardo Milici
  */
 public class GameBoardTest {
-    private Player samplePlayer;
     private final Bag bag = new Bag();
     private final List<Cloud> clouds = new ArrayList<>();
     private final List<Island> islands = new ArrayList<>();
     private final Map<HouseColor, Player> professors = new EnumMap<>(HouseColor.class);
     private final Map<Player, Assistant> playedAssistants = new HashMap<>();
     private final List<SpecialCharacter> characters = new ArrayList<>();
+    private Player samplePlayer;
     private Island motherNatureIsland;
 
     private GameBoard gameBoard;
