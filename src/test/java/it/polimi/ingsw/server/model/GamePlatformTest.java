@@ -70,15 +70,6 @@ class GamePlatformTest {
     }
 
     /**
-     * Tests whether returns the number of players.
-     */
-    @Test
-    void getPlayersNumber() {
-        assertEquals(2, this.gamePlatforms.get(0).getPlayersNumber());
-        assertEquals(3, this.gamePlatforms.get(1).getPlayersNumber());
-    }
-
-    /**
      * Tests whether returns the list of players.
      */
     @Test
@@ -175,46 +166,6 @@ class GamePlatformTest {
     }
 
     /**
-     * Tests whether returns the round winner of the planning phase.
-     */
-    @Test
-    void getRoundWinner() {
-        try {
-            this.gamePlatforms.get(0).getGameBoard().addPlayedAssistant(
-                    this.gamePlatforms.get(0).getPlayerByName("Matteo"),
-                    this.gamePlatforms.get(0).getPlayerByName("Matteo").playAssistant(6)
-            );
-            this.gamePlatforms.get(0).getGameBoard().addPlayedAssistant(
-                    this.gamePlatforms.get(0).getPlayerByName("Motta"),
-                    this.gamePlatforms.get(0).getPlayerByName("Motta").playAssistant(2)
-            );
-        } catch (AlreadyPlayedException | IllegalMoveException e) {
-            assert false;
-        }
-        this.gamePlatforms.get(0).updateTurnOrder();
-        assertEquals("Motta", this.gamePlatforms.get(0).getRoundWinner().getName());
-
-        try {
-            this.gamePlatforms.get(1).getGameBoard().addPlayedAssistant(
-                    this.gamePlatforms.get(1).getPlayerByName("Matteo"),
-                    this.gamePlatforms.get(1).getPlayerByName("Matteo").playAssistant(6)
-            );
-            this.gamePlatforms.get(1).getGameBoard().addPlayedAssistant(
-                    this.gamePlatforms.get(1).getPlayerByName("Motta"),
-                    this.gamePlatforms.get(1).getPlayerByName("Motta").playAssistant(2)
-            );
-            this.gamePlatforms.get(1).getGameBoard().addPlayedAssistant(
-                    this.gamePlatforms.get(1).getPlayerByName("Milici"),
-                    this.gamePlatforms.get(1).getPlayerByName("Milici").playAssistant(1)
-            );
-        } catch (AlreadyPlayedException | IllegalMoveException e) {
-            assert false;
-        }
-        this.gamePlatforms.get(1).updateTurnOrder();
-        assertEquals("Milici", this.gamePlatforms.get(1).getRoundWinner().getName());
-    }
-
-    /**
      * Tests whether returns game board.
      */
     @Test
@@ -300,7 +251,7 @@ class GamePlatformTest {
             assert false;
         }
         this.gamePlatforms.get(0).updateTurnOrder();
-        assertEquals("Matteo", this.gamePlatforms.get(0).getRoundWinner().getName());
+        assertEquals("Matteo", this.gamePlatforms.get(0).getTurnOrder().get(0).getName());
 
         try {
             this.gamePlatforms.get(1).getGameBoard().addPlayedAssistant(
@@ -339,7 +290,7 @@ class GamePlatformTest {
             assert false;
         }
         this.gamePlatforms.get(0).updateTurnOrder();
-        assertEquals("Matteo", this.gamePlatforms.get(0).getRoundWinner().getName());
+        assertEquals("Matteo", this.gamePlatforms.get(0).getTurnOrder().get(0).getName());
     }
 
     /**
@@ -360,7 +311,7 @@ class GamePlatformTest {
             assert false;
         }
         this.gamePlatforms.get(0).updateTurnOrder();
-        assertEquals("Motta", this.gamePlatforms.get(0).getRoundWinner().getName());
+        assertEquals("Motta", this.gamePlatforms.get(0).getTurnOrder().get(0).getName());
 
         try {
             this.gamePlatforms.get(1).getGameBoard().addPlayedAssistant(
@@ -379,7 +330,7 @@ class GamePlatformTest {
             assert false;
         }
         this.gamePlatforms.get(1).updateTurnOrder();
-        assertEquals("Matteo", this.gamePlatforms.get(1).getRoundWinner().getName());
+        assertEquals("Matteo", this.gamePlatforms.get(1).getTurnOrder().get(0).getName());
     }
 
     /**
