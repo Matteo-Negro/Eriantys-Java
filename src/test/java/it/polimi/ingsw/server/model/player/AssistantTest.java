@@ -4,8 +4,10 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test of class Assistant.
@@ -14,17 +16,25 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class AssistantTest {
 
-
-    private final int id = 10;
-
-    private Assistant assistant;
+    private List<Assistant> assistants;
 
     /**
      * Generates a new Assistant.
      */
     @BeforeEach
     void setUp() {
-        this.assistant = new Assistant(this.id);
+        this.assistants = new ArrayList<>();
+        for (int i = 1; i <= 8; i++) this.assistants.add((i % 2 == 0) ? new Assistant(i) : new Assistant(i, true));
+        try {
+            this.assistants.add(new Assistant(11, true));
+        } catch (IndexOutOfBoundsException e) {
+            this.assistants.add(new Assistant(9, true));
+        }
+        try {
+            this.assistants.add(new Assistant(12));
+        } catch (IndexOutOfBoundsException e) {
+            this.assistants.add(new Assistant(10));
+        }
     }
 
     /**
@@ -32,7 +42,7 @@ class AssistantTest {
      */
     @AfterEach
     void tearDown() {
-        this.assistant = null;
+        this.assistants = null;
     }
 
     /**
@@ -40,7 +50,7 @@ class AssistantTest {
      */
     @Test
     void getId() {
-        assertEquals(this.id, this.assistant.getId());
+        for (int i = 1; i <= 10; i++) assertEquals(i, this.assistants.get(i - 1).getId());
     }
 
     /**
@@ -48,8 +58,7 @@ class AssistantTest {
      */
     @Test
     void hasBonus() {
-        this.assistant.setBonus();
-        assertTrue(this.assistant.hasBonus());
+        for (int i = 1; i <= 10; i++) assertEquals(!(i % 2 == 0), this.assistants.get(i - 1).hasBonus());
     }
 
     /**
@@ -57,7 +66,8 @@ class AssistantTest {
      */
     @Test
     void getMaxDistance() {
-        assertEquals((this.id - 1) / 2 + 1, this.assistant.getMaxDistance());
+        for (int i = 1; i <= 10; i++)
+            assertEquals((i % 2 == 0) ? (i - 1) / 2 + 1 : (i - 1) / 2 + 3, this.assistants.get(i - 1).getMaxDistance());
     }
 
     /**
@@ -65,7 +75,8 @@ class AssistantTest {
      */
     @Test
     void setBonus() {
-        this.assistant.setBonus();
-        assertEquals((this.id - 1) / 2 + 3, this.assistant.getMaxDistance());
+        for (int i = 1; i <= 10; i++) if (i % 2 == 0) this.assistants.get(i - 1).setBonus();
+        for (int i = 1; i <= 10; i++) assertEquals((i - 1) / 2 + 3, this.assistants.get(i - 1).getMaxDistance());
+
     }
 }
