@@ -342,6 +342,7 @@ public class GameController implements Runnable {
                 } catch (InterruptedException e) {
                     notifyUsers(MessageCreator.error("GameServerError"));
                     for (User user : this.getUsers()) this.removeUser(user);
+                    Thread.currentThread().interrupt();
                     return;
                 }
             }
