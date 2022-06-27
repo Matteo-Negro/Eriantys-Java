@@ -54,7 +54,8 @@ public class GameBoard {
             } else this.islands.add(new Island(temp.get(i < 6 ? i - 1 : i - 2), i));
         }
 
-        if (isExp) initializeChracters();
+        if (isExp)
+            initializeCharacters();
         Arrays.stream(HouseColor.values()).forEach(color -> this.professors.put(color, null));
         this.initializeClouds(playersNumber);
         this.motherNatureIsland = this.islands.get(0);
@@ -96,16 +97,12 @@ public class GameBoard {
     /**
      * Initializes the special characters.
      */
-    private void initializeChracters() {
+    private void initializeCharacters() {
 
         List<Integer> randomVector = new ArrayList<>();
 
         for (int i = 1; i <= 12; i++) randomVector.add(i);
         Collections.shuffle(randomVector);
-
-        randomVector.add(0, 10);
-        randomVector.add(1, 1);
-        randomVector.add(2, 7);
 
         for (int i = 0; i < 3; i++) {
 
