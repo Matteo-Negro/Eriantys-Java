@@ -94,7 +94,7 @@ public class SchoolBoard {
     }
 
     /**
-     * Gets the number of students of the specified color.
+     * Gets the number of students of the specified color into the dining room.
      *
      * @param houseColor Color of the students.
      * @return Number of students of the specified color.
