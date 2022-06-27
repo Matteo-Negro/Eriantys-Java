@@ -104,7 +104,7 @@ public class Utilities {
     }
 
     /**
-     * Prints an error message on the top of the screen.
+     * Prints an error message at the top of the screen.
      *
      * @param terminal Terminal where to execute.
      * @param message  Message to print
@@ -182,8 +182,9 @@ public class Utilities {
      * @param suggestions Enables suggestions.
      * @param history     History where to write commands for future use
      * @return String to write.
+     * @throws UserInterruptException if the user interrupts the read.
      */
-    public static String readLine(String prefix, Terminal terminal, List<TreeCompleter.Node> completers, boolean suggestions, History history) {
+    public static String readLine(String prefix, Terminal terminal, List<TreeCompleter.Node> completers, boolean suggestions, History history) throws UserInterruptException {
         try {
             return fixString(LineReaderBuilder.builder()
                     .terminal(terminal)

@@ -20,6 +20,7 @@ import org.jline.terminal.TerminalBuilder;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static it.polimi.ingsw.client.view.cli.Utilities.*;
 import static org.fusesource.jansi.Ansi.ansi;
@@ -231,19 +232,49 @@ public class ClientCli implements Runnable, View {
                 for (String name : this.controller.getGameModel().getWaitingRoom().keySet())
                     if (Boolean.TRUE.equals(this.controller.getGameModel().getWaitingRoom().get(name)))
                         onlinePlayers.add(name);
-
                 WaitingRoom.print(terminal, onlinePlayers, this.controller.getGameCode(), this.controller.getGameModel().getPlayersNumber(), waitingIteration++);
-                try {
-                    this.controller.getLock().wait(1000);
-                } catch (InterruptedException ie) {
-                    this.controller.resetGame();
-                    Thread.currentThread().interrupt();
-                }
+                pause();
             }
         }
         updateScreen(false);
     }
 
+    /**
+     * Pauses the waiting room for a while before changing state and catches the eventual user interruption.
+     */
+    private void pause() {
+
+        AtomicBoolean interrupted = new AtomicBoolean(false);
+
+        Thread thread = new Thread(() -> {
+            try {
+                readLine("", terminal, null, false, null);
+            } catch (UserInterruptException e) {
+                Thread.currentThread().interrupt();
+                interrupted.set(true);
+            }
+        });
+
+        thread.start();
+
+        synchronized (this.controller.getLock()) {
+            try {
+                this.controller.getLock().wait(1000);
+                thread.join(0);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                this.controller.getGameServer().sendCommand(MessageCreator.logout());
+                this.controller.resetGame();
+                manageExit();
+            }
+        }
+
+        if (interrupted.get()) {
+            this.controller.getGameServer().sendCommand(MessageCreator.logout());
+            this.controller.resetGame();
+            manageExit();
+        }
+    }
 
     /**
      * Manages the game-screen's I/O.
