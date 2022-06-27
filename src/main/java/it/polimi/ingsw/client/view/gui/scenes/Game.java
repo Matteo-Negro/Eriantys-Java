@@ -45,6 +45,8 @@ public class Game implements Prepare {
     @FXML
     private HBox charactersTab;
     @FXML
+    private Label charactersTabButtonNotice;
+    @FXML
     private HBox cloudsLayout;
     @FXML
     private Label id;
@@ -108,6 +110,7 @@ public class Game implements Prepare {
             realmTab.setVisible(true);
             boardsTab.setVisible(false);
             charactersTab.setVisible(false);
+            charactersTabButtonNotice.setVisible(client.getController().getGameModel().isExpert());
             id.setText(client.getController().getGameCode());
             round.setText(String.valueOf(client.getController().getGameModel().getRound()));
             phase.setText(client.getController().getGameModel().getSubPhase().name().toLowerCase(Locale.ROOT));

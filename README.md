@@ -9,6 +9,8 @@ Un gioco di Leo Colovini per 2-4 giocatori.
 
 Regole: [IT](https://www.craniocreations.it/wp-content/uploads/2021/11/Eriantys_ITA_bassa.pdf), [EN](https://craniointernational.com/2021/wp-content/uploads/2021/06/Eriantys_rules_small.pdf).
 
+Link al gioco: [IT](https://www.craniocreations.it/prodotto/eriantys/), [EN](https://craniointernational.com/products/eriantys/).
+
 Progetto realizzato da [Riccardo Milici](https://github.com/RiccardoMilici), [Riccardo Motta](https://github.com/mrmotta) e [Matteo Negro](https://github.com/Matteo-Negro).
 
 ---
