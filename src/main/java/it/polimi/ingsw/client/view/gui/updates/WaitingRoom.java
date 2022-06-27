@@ -1,6 +1,6 @@
 package it.polimi.ingsw.client.view.gui.updates;
 
-import it.polimi.ingsw.client.ClientGui;
+import it.polimi.ingsw.client.view.ClientGui;
 import it.polimi.ingsw.utilities.ClientState;
 import javafx.application.Platform;
 import javafx.geometry.Insets;

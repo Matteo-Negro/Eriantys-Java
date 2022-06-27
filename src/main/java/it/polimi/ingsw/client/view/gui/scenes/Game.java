@@ -1,6 +1,6 @@
 package it.polimi.ingsw.client.view.gui.scenes;
 
-import it.polimi.ingsw.client.ClientGui;
+import it.polimi.ingsw.client.view.ClientGui;
 import it.polimi.ingsw.client.model.*;
 import it.polimi.ingsw.client.view.gui.CommandAssembler;
 import it.polimi.ingsw.client.view.gui.utilities.*;

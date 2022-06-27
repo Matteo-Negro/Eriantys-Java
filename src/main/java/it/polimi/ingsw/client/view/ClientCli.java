@@ -1,4 +1,4 @@
-package it.polimi.ingsw.client;
+package it.polimi.ingsw.client.view;
 
 import it.polimi.ingsw.client.controller.ClientController;
 import it.polimi.ingsw.client.view.cli.Autocompletion;
@@ -97,7 +97,7 @@ public class ClientCli implements Runnable, View {
     /**
      * Manages the start-screen's I/O.
      */
-    public void runStartScreen() {
+    private void runStartScreen() {
         SplashScreen.print(terminal);
 
         int hostTcpPort;
@@ -128,7 +128,7 @@ public class ClientCli implements Runnable, View {
     /**
      * Manages the main-menu-screen's I/O.
      */
-    public void runMainMenu() {
+    private void runMainMenu() {
         MainMenu.print(terminal);
         try {
             this.controller.manageMainMenu(readLine(" ", terminal, List.of(node("1"), node("2"), node("exit")), false, null));
@@ -141,7 +141,7 @@ public class ClientCli implements Runnable, View {
     /**
      * Manages the game-creation-screen's I/O.
      */
-    public void runGameCreation() {
+    private void runGameCreation() {
         int expectedPlayers;
         boolean expert;
 
@@ -201,7 +201,7 @@ public class ClientCli implements Runnable, View {
     /**
      * Manages the join-game-screen's I/O.
      */
-    public void runJoinGame() {
+    private void runJoinGame() {
         JoinGame.print(terminal);
         try {
             this.controller.manageJoinGame(readLine(" ", terminal, List.of(node("exit")), false, null).toUpperCase(Locale.ROOT));
@@ -213,7 +213,7 @@ public class ClientCli implements Runnable, View {
     /**
      * Manages the login-screen's I/O.
      */
-    public void runGameLogin() {
+    private void runGameLogin() {
         Login.print(terminal, this.controller.getGameModel().getWaitingRoom(), this.controller.getGameModel().getPlayersNumber());
         try {
             this.controller.manageGameLogin(readLine(" ", terminal, playersToNodes(), false, null));
@@ -225,7 +225,7 @@ public class ClientCli implements Runnable, View {
     /**
      * Manages the waiting room.
      */
-    public void runWaitingRoom() {
+    private void runWaitingRoom() {
         synchronized (this.controller.getLock()) {
             if (this.controller.getGameModel() != null) {
                 List<String> onlinePlayers = new ArrayList<>();
@@ -279,7 +279,7 @@ public class ClientCli implements Runnable, View {
     /**
      * Manages the game-screen's I/O.
      */
-    public void runGameRunning() {
+    private void runGameRunning() {
         synchronized (this.controller.getLock()) {
             if (this.controller.getGameServer() != null) {
 
@@ -324,7 +324,7 @@ public class ClientCli implements Runnable, View {
     /**
      * Manages the end-game-screen's I/O.
      */
-    public void runEndGame() {
+    private void runEndGame() {
         switch (this.controller.getEndState()) {
             case DRAW -> DrawPage.print(terminal);
             case LOSE -> LosePage.print(terminal);

@@ -1,4 +1,4 @@
-package it.polimi.ingsw.client;
+package it.polimi.ingsw.client.view;
 
 import it.polimi.ingsw.client.controller.ClientController;
 import it.polimi.ingsw.client.view.gui.scenes.Prepare;

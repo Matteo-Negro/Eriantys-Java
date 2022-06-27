@@ -2,7 +2,7 @@ package it.polimi.ingsw.client.controller;
 
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
-import it.polimi.ingsw.client.View;
+import it.polimi.ingsw.client.view.View;
 import it.polimi.ingsw.client.model.GameModel;
 import it.polimi.ingsw.client.model.Player;
 import it.polimi.ingsw.client.model.SpecialCharacter;
