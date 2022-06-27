@@ -85,7 +85,7 @@ public class User implements Runnable {
         Log.info("User running");
         JsonObject incomingMessage;
 
-        this.ping.start();
+        new Thread(ping).start();
 
         while (true) {
             synchronized (connectedLock) {
