@@ -110,7 +110,7 @@ public class Game implements Prepare {
             charactersTab.setVisible(false);
             id.setText(client.getController().getGameCode());
             round.setText(String.valueOf(client.getController().getGameModel().getRound()));
-            phase.setText(client.getController().getGameModel().getSubphase().name().toLowerCase(Locale.ROOT));
+            phase.setText(client.getController().getGameModel().getSubPhase().name().toLowerCase(Locale.ROOT));
             player.setText(client.getController().getGameModel().getCurrentPlayer());
         });
         new Thread(this::prepareGraphicElements).start();
@@ -367,7 +367,7 @@ public class Game implements Prepare {
                 if (this.client.getController().getGameModel().isExpert())
                     enableCharacterButtons(false);
             } else {
-                switch (this.client.getController().getGameModel().getSubphase()) {
+                switch (this.client.getController().getGameModel().getSubPhase()) {
                     case PLAY_ASSISTANT -> {
                         firstBoard.enableAssistantButtons(true);
                         firstBoard.enableDiningRoomButton(false);
@@ -438,7 +438,7 @@ public class Game implements Prepare {
     private void updateInfo(GameModel gameModel) {
         Platform.runLater(() -> {
             round.setText(String.valueOf(gameModel.getRound()));
-            phase.setText(gameModel.getSubphase().name().toLowerCase(Locale.ROOT));
+            phase.setText(gameModel.getSubPhase().name().toLowerCase(Locale.ROOT));
             player.setText(gameModel.getCurrentPlayer());
         });
         Log.debug("info updated");

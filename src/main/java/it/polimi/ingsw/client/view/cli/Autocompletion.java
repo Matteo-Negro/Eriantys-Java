@@ -102,7 +102,7 @@ public class Autocompletion {
         if (controller.getGameModel().getPhase().equals(Phase.PLANNING))
             nodes.addAll(playableAssistants());
         else {
-            switch (controller.getGameModel().getSubphase()) {
+            switch (controller.getGameModel().getSubPhase()) {
                 case CHOOSE_CLOUD -> nodes.addAll(refillFromClouds());
                 case MOVE_MOTHER_NATURE -> nodes.addAll(motherNatureMoves());
                 case MOVE_STUDENT_1, MOVE_STUDENT_2, MOVE_STUDENT_3, MOVE_STUDENT_4 ->

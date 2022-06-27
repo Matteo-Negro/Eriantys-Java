@@ -454,14 +454,14 @@ public class ClientController {
      */
     private void checkStudentMove(JsonObject message) throws IllegalMoveException, IllegalActionException {
         synchronized (this.getGameModel()) {
-            switch (getGameModel().getSubphase()) {
+            switch (getGameModel().getSubPhase()) {
                 case MOVE_STUDENT_1, MOVE_STUDENT_2, MOVE_STUDENT_3 -> {
                 }
                 case MOVE_STUDENT_4 -> {
                     if (getGameModel().getPlayersNumber() != 3) throw new IllegalActionException();
                 }
                 default -> {
-                    if (getGameModel().getSubphase().equals(CHOOSE_CLOUD) && !gameModel.isExpert() || gameModel.isExpert() && !message.get("special").getAsBoolean()) {
+                    if (getGameModel().getSubPhase().equals(CHOOSE_CLOUD) && !gameModel.isExpert() || gameModel.isExpert() && !message.get("special").getAsBoolean()) {
                         throw new IllegalMoveException();
                     }
                 }
@@ -554,7 +554,7 @@ public class ClientController {
      * @throws IllegalMoveException Thrown if the client model is not aligned with that of the game server.
      */
     private void checkMotherNatureMove(JsonObject message) throws IllegalMoveException {
-        if (!getGameModel().getSubphase().equals(MOVE_MOTHER_NATURE) && (message.get("move").getAsBoolean()))
+        if (!getGameModel().getSubPhase().equals(MOVE_MOTHER_NATURE) && (message.get("move").getAsBoolean()))
             throw new IllegalMoveException();
 
         int finalIsland = message.get("island").getAsInt();
@@ -605,7 +605,7 @@ public class ClientController {
      * @throws IllegalMoveException Thrown if the client model is not aligned with that of the game server.
      */
     private void checkEntranceRefill(JsonObject message) throws IllegalMoveException {
-        if (!getGameModel().getSubphase().equals(CHOOSE_CLOUD)) throw new IllegalMoveException();
+        if (!getGameModel().getSubPhase().equals(CHOOSE_CLOUD)) throw new IllegalMoveException();
 
         if (getGameModel().getGameBoard().getClouds().get(message.get("cloud").getAsInt()).getStudents(true) == null)
             throw new IllegalMoveException();

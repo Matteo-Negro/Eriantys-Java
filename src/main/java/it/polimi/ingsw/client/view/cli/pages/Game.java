@@ -34,7 +34,7 @@ public class Game {
      * @param currentPlayerTurn true if it's the turn of the current player.
      */
     public static void print(Terminal terminal, GameModel gameModel, String gameId, int round, boolean currentPlayerTurn) {
-        terminal.writer().print(printBorder(terminal.getHeight(), terminal.getWidth(), gameId, round, currentPlayerTurn, gameModel.getPhase(), gameModel.getSubphase()));
+        terminal.writer().print(printBorder(terminal.getHeight(), terminal.getWidth(), gameId, round, currentPlayerTurn, gameModel.getPhase(), gameModel.getSubPhase()));
         terminal.flush();
         terminal.writer().print(ansi().cursor((terminal.getHeight() - 31 - 5) / 2, (terminal.getWidth() - 165 - 6) / 2));
         Realm.print(terminal, gameModel.getGameBoard());

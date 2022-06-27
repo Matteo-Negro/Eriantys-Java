@@ -25,7 +25,7 @@ public class GameModel {
 
     private int round;
     private Phase phase;
-    private GameControllerState subphase;
+    private GameControllerState subPhase;
 
     private String currentPlayer;
     private boolean expert;
@@ -61,7 +61,7 @@ public class GameModel {
         this.playersNumber = statusPlayersNumber;
         this.round = statusRound;
         this.phase = statusPhase;
-        this.subphase = statusSubphase;
+        this.subPhase = statusSubphase;
         this.expert = statusExpert;
         this.currentPlayer = statusCurrentPlayer;
         this.parsePlayers(statusPlayers, statusGameBoard);
@@ -209,8 +209,8 @@ public class GameModel {
      *
      * @return The subphase attribute.
      */
-    public GameControllerState getSubphase() {
-        return subphase;
+    public GameControllerState getSubPhase() {
+        return subPhase;
     }
 
     /**

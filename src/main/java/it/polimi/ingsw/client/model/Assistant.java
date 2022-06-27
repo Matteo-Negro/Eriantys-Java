@@ -46,7 +46,7 @@ public class Assistant {
      *
      * @return The bonus.
      */
-    public boolean getBonusValue() {
+    public boolean hasBonus() {
         return this.bonus;
     }
 

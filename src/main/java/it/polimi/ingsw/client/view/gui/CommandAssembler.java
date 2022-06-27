@@ -44,7 +44,7 @@ public class CommandAssembler {
         else if (command.equals("") && this.controller.getGameModel().getGameBoard().getSpecialCharacters().stream().anyMatch(sp -> sp.getId() == 3 && sp.isActive())) {
             command = String.format("resolve %s", island);
         } else {
-            switch (controller.getGameModel().getSubphase()) {
+            switch (controller.getGameModel().getSubPhase()) {
                 case MOVE_MOTHER_NATURE -> {
                     flushCommand();
                     command = String.format("move mother-nature to %s", island);
