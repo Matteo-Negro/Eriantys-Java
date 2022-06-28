@@ -21,7 +21,7 @@ Il software è suddiviso in due eseguibili: [client.jar](deliverables/jar/client
 
 ### Client
 
-Per eseguire il client occorre lanciare da riga di comando la seguente istruzione:
+Per eseguire il client occorre lanciare direttamente il JAR stesso oppure, da riga di comando, la seguente istruzione:
 
     java -jar client.jar
 
@@ -33,6 +33,8 @@ Parametro      | Descrizione
 `--gui` o `-g` | Lancia il programma da interfaccia grafica (GUI).
 
 Se durante la fase iniziale non si iseriscono i dati del server, l'indirizzo a cui il client cercherà di collegarsi sarà `localhost:36803` (o `127.0.0.1:36803`, che è l'indirizzo a cui viene trasformata la stringa di prima).
+
+**Attenzione!** Potrebbero esserci dei problemi di visualizzazione della CLI nel caso di terminali a bassa risoluzione o che non supportano i [codici di escape ANSI](https://it.wikipedia.org/wiki/Codici_di_escape_ANSI). Per risolvere il primo problema, nel caso in cui dovesse insorgere, è consigliato ingrandire il terminale e/o rimpicciolire la dimensione del font dello stesso. Per una corretta visualizzazione dei colori, invece, e della formattazione, si consiglia di utilizzare [Windows Terminal](https://docs.microsoft.com/en-us/windows/terminal/) su Windows e [iTerm2](https://iterm2.com/) su MacOS.
 
 ### Server
 
