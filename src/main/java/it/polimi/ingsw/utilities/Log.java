@@ -8,6 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.time.DateTimeException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -63,11 +64,13 @@ public class Log {
         try {
             file = new File(Paths.get(
                     new File(Log.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()).getParent(),
-                    (server ? "server" : "client") + ".log"
+                    String.format("%s - %s.log",
+                            DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss").format(LocalDateTime.now()),
+                            server ? "server" : "client"
+                    )
             ).toString());
         } catch (URISyntaxException e) {
             throw new IOException(e);
-
         }
 
         if (!file.exists() && !file.createNewFile())
