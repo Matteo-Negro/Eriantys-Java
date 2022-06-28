@@ -260,7 +260,7 @@ public class ClientCli implements Runnable, View {
         synchronized (this.controller.getLock()) {
             try {
                 this.controller.getLock().wait(1000);
-                thread.join(0);
+                thread.join(1);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 this.controller.getGameServer().sendCommand(MessageCreator.logout());
@@ -274,6 +274,8 @@ public class ClientCli implements Runnable, View {
             this.controller.resetGame();
             manageExit();
         }
+
+        thread.interrupt();
     }
 
     /**

@@ -45,7 +45,6 @@ public class WaitingRoom implements Prepare {
             code.requestFocus();
             code.setText(client.getController().getGameCode());
         });
-        new Thread(new it.polimi.ingsw.client.view.gui.updates.WaitingRoom(client, this)).start();
     }
 
     /**

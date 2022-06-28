@@ -105,6 +105,7 @@ public class ClientGui extends Application implements View {
             Platform.exit();
             System.exit(0);
         });
+        primaryStage.setResizable(false);
         primaryStage.show();
 
         new Thread(() -> {
@@ -166,7 +167,7 @@ public class ClientGui extends Application implements View {
                 if (currentState.equals(ClientState.GAME_WAITING_ROOM)) {
                     if (this.waitingRoomUpdater == null) {
                         this.waitingRoomUpdater = new WaitingRoom(this, (it.polimi.ingsw.client.view.gui.scenes.WaitingRoom) instances.get(currentState));
-                        new Thread(this.gameUpdater).start();
+                        new Thread(this.waitingRoomUpdater).start();
                     }
                 } else {
                     if (this.waitingRoomUpdater != null) {
@@ -181,7 +182,6 @@ public class ClientGui extends Application implements View {
         stage.setScene(scenes.get(currentState));
 
         stage.sizeToScene();
-        stage.setResizable(currentState.equals(ClientState.GAME_RUNNING));
 
         stage.setTitle(switch (currentState) {
             case CONNECTION_LOST, START_SCREEN -> "Connect to a game server";
