@@ -3,6 +3,7 @@ package it.polimi.ingsw.utilities;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -54,14 +55,24 @@ public class Log {
      * @throws IOException if an I/O exception occurs while creating the instance.
      */
     private static synchronized void createInstance(boolean server) throws IOException {
+
         dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
         level = Level.WARNING;
-        File file = new File(Paths.get(
-                new File(Log.class.getProtectionDomain().getCodeSource().getLocation().getFile()).getParent(),
-                (server ? "server" : "client") + ".log"
-        ).toString());
+
+        File file;
+        try {
+            file = new File(Paths.get(
+                    new File(Log.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()).getParent(),
+                    (server ? "server" : "client") + ".log"
+            ).toString());
+        } catch (URISyntaxException e) {
+            throw new IOException(e);
+
+        }
+
         if (!file.exists() && !file.createNewFile())
             throw new IOException();
+
         writer = Files.newBufferedWriter(
                 file.toPath(),
                 StandardCharsets.UTF_8,
