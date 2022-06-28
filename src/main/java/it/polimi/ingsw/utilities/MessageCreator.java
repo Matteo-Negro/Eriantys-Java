@@ -4,7 +4,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import it.polimi.ingsw.server.controller.GameController;
-import it.polimi.ingsw.server.model.board.Island;
 import it.polimi.ingsw.server.model.player.Player;
 import it.polimi.ingsw.utilities.parsers.ObjectsToJson;
 
@@ -177,34 +176,6 @@ public class MessageCreator {
         reply.addProperty("type", "win");
         reply.add("winners", (!playerList.isEmpty()) ? winners : JsonNull.INSTANCE);
 
-        return reply;
-    }
-
-    /**
-     * Creates the "moveTower" message.
-     *
-     * @param towerColor The color of the moving tower.
-     * @param island     The island's id on which the tower is being moved.
-     * @return JsonObject which represents the message.
-     */
-    public static JsonObject moveTower(TowerType towerColor, Island island) {
-        JsonObject reply = new JsonObject();
-        reply.addProperty("towerColor", towerColor.toString());
-        reply.addProperty("island", island.getId());
-        return reply;
-    }
-
-    /**
-     * Creates the "moveProfessor" message.
-     *
-     * @param professor The color of the professor that is going to be reassigned.
-     * @param player    The name of the player to whom the professor is going to be reassigned.
-     * @return JsonObject which represents the message.
-     */
-    public static JsonObject moveProfessor(String professor, String player) {
-        JsonObject reply = new JsonObject();
-        reply.addProperty("professor", professor);
-        reply.addProperty("player", player);
         return reply;
     }
 
