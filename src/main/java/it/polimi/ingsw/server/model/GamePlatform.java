@@ -163,9 +163,9 @@ public class GamePlatform {
             int whiteCount = (int) clockwiseOrder.stream().filter(player -> player.getSchoolBoard().getTowerType().equals(TowerType.WHITE)).count();
             int blackCount = (int) clockwiseOrder.stream().filter(player -> player.getSchoolBoard().getTowerType().equals(TowerType.BLACK)).count();
 
-            for (int index = playersNumber - whiteCount; index > 1 && whiteCount <= 2; index--)
+            for (int index = (playersNumber - whiteCount) / 2; index > 0 && whiteCount < 2; index--)
                 towers.add(TowerType.WHITE);
-            for (int index = playersNumber - blackCount; index > 1 && blackCount <= 2; index--)
+            for (int index = (playersNumber - blackCount) / 2; index > 0 && blackCount < 2; index--)
                 towers.add(TowerType.BLACK);
         }
         return towers.get(ThreadLocalRandom.current().nextInt(towers.size()));
