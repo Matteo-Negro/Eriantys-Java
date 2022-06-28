@@ -73,13 +73,13 @@
 	\paragraph{Request} Parameters:
 
 	\begin{itemize}
-		\item \verb|message|: the message which describes what happened.
+		\item \verb|message|: a text which describes the cause of the error.
 	\end{itemize}
 
 	\begin{minted}[samepage, tabsize=2]{json}
 {
 	"type": "error",
-	"message": "Message"
+	"message": "Cause"
 }
 	\end{minted}
 
@@ -144,7 +144,7 @@
 
 	\begin{multicols}{2}
 
-		\begin{minted}[samepage, tabsize=2]{json}
+	\begin{minted}[samepage, tabsize=2]{json}
 {
 	"type": "enterGame",
 	"found": true,
@@ -162,7 +162,7 @@
 }
 		\end{minted}
 
-		\begin{minted}[samepage, tabsize=2]{json}
+	\begin{minted}[samepage, tabsize=2]{json}
 {
 	"type": "enterGame",
 	"found": false
@@ -171,9 +171,39 @@
 
 	\end{multicols}
 
-	\subsection{Player entrance}
+	\subsection{Waiting room}
 
-	This message is sent from the client to the server in order to login, after the desired game has been found and a username has been selected.
+	This message is periodically sent from the server to the client in order to update the waiting room players list.
+
+	\paragraph{Request} Parameters:
+
+	\begin{itemize}
+		\item \verb|expectedPlayers|: the total players number of the game.
+		\item \verb|players|: the players that are currently online.
+	\end{itemize}
+
+	\begin{minted}[samepage, tabsize=2]{json}
+{
+	"type": "waitingRoomUpdate",
+	"expectedPlayers": "3",
+	"players": [
+		{
+			"name": "Player 1",
+			"online": true
+		},
+		{
+			"name": "Player 2",
+			"online": false
+		}
+	]
+}
+	\end{minted}
+
+	\paragraph{Response} This message doesn't require a response.
+
+	\subsection{Player login}
+
+	This message is sent from the client to the server in order to log into a game, after the desired game has been found and a username has been selected.
 
 	\paragraph{Request} Parameters:
 
@@ -201,6 +231,24 @@
 }
 	\end{minted}
 
+	\subsection{Player logout}
+
+	This message is sent from the client to the server in order to log out from a game.
+
+	\paragraph{Request} Parameters:
+
+	\begin{itemize}
+		\item \verb|name|: the name choosen by the player.
+	\end{itemize}
+
+	\begin{minted}[samepage, tabsize=2]{json}
+{
+	"type": "logout"
+}
+	\end{minted}
+
+	\paragraph{Response} This message doesn't need a response.
+
 	\subsection{Turn enable}
 
 	This message is sent from the server to a specific client, every turn to enable or disable the game of the player that receives this message, in order to manage the game shifting.
@@ -222,6 +270,22 @@
 {
 	"type": "turnEnable",
 	"enable": false
+}
+		\end{minted}
+	\end{multicols}
+
+	\paragraph{Response} This message doesn't require a response.
+	
+	\pagebreak
+
+	\subsection{Game start}
+
+	This message is sent from the server to all the clients, telling that the game is full and it's starting.
+
+	\begin{multicols}{2}
+		\begin{minted}[samepage, tabsize=2]{json}
+{
+	"type": "gameStart"
 }
 		\end{minted}
 	\end{multicols}
@@ -275,7 +339,7 @@
 }
 		\end{minted}
 
-		\begin{minted}[samepage, tabsize=2]{json}
+	\begin{minted}[samepage, tabsize=2]{json}
 {
 	"type": "command",
 	"subtype": "move",
@@ -288,6 +352,8 @@
 	\end{multicols}
 
 	\paragraph{Response} This message doesn't require a response.
+	
+	\pagebreak
 
 	\subsubsection{Move student}
 
@@ -317,7 +383,7 @@
 }
 		\end{minted}
 
-		\begin{minted}[samepage, tabsize=2]{json}
+	\begin{minted}[samepage, tabsize=2]{json}
 {
 	"type": "command",
 	"subtype": "move",
@@ -331,7 +397,7 @@
 }
 		\end{minted}
 
-		\begin{minted}[samepage, tabsize=2]{json}
+	\begin{minted}[samepage, tabsize=2]{json}
 {
 	"type": "command",
 	"subtype": "move",
@@ -345,26 +411,6 @@
 }
 		\end{minted}
 	\end{multicols}
-
-	\paragraph{Response} This message doesn't require a response.
-
-	\subsubsection{Move tower}
-
-	\paragraph{Request} Parameters:
-
-	\begin{itemize}
-		\item \verb|island|: the identification number of the island where the tower has to move.
-		\item \verb|tower|: the tower's colour.
-	\end{itemize}
-
-	\begin{minted}[samepage, tabsize=2]{json}
-{
-	"type": "command",
-	"subtype": "conquer",
-	"island": 0,
-	"tower": "WHITE"
-}
-	\end{minted}
 
 	\paragraph{Response} This message doesn't require a response.
 
@@ -404,6 +450,42 @@
 
 	\paragraph{Response} This message doesn't require a response.
 
+	\subsubsection{Ignore color}
+
+	\paragraph{Request} Parameters:
+
+	\begin{itemize}
+		\item \verb|color|: the color to ignore during an island resolution.
+	\end{itemize}
+
+	\begin{minted}[samepage, tabsize=2]{json}
+{
+	"type": "command",
+	"subtype": "ignore",
+	"color": "BLUE"
+}
+	\end{minted}
+
+	\paragraph{Response} This message doesn't require a response.
+
+	\subsubsection{Return color}
+
+	\paragraph{Request} Parameters:
+
+	\begin{itemize}
+		\item \verb|color|: the color of the students to move back from the dining room to the entrance.
+	\end{itemize}
+
+	\begin{minted}[samepage, tabsize=2]{json}
+{
+	"type": "command",
+	"subtype": "return",
+	"color": "RED"
+}
+	\end{minted}
+
+	\paragraph{Response} This message doesn't require a response.
+
 	\subsubsection{Pay character}
 
 	\paragraph{Request} Parameters:
@@ -424,7 +506,7 @@
 
 	\paragraph{Response} This message doesn't require a response.
 
-	\subsection{Refill}
+	\subsubsection{Refill cloud}
 
 	This message is sent from a specific client to the server (which then redirects the same massage to all the other clients to update their views) when the player, at the end of his/her turn, takes the students from a cloud to refill the entrance.
 
@@ -448,65 +530,29 @@
 
 	\pagebreak
 
-	\subsection{Refill cloud}
+	\subsection{Win}
 
-	This message is sent from the server to each client to indicate which cloud has to be refilled of students and which of them will be added to it.
-
-	\paragraph{Request} Parameters:
-
-	\begin{itemize}
-		\item \verb|cloud|: id of the cloud to refill.
-		\item \verb|students|: number of students to add to the cloud, divided by colour.
-	\end{itemize}
-
-	\begin{minted}[samepage, tabsize=2]{json}
-{
-	"type": "command",
-	"subtype": "refillCloud",
-	"cloud": 0,
-	"students": {
-		"BLUE": 1,
-		"FUCHSIA": 0,
-		"GREEN": 1,
-		"RED": 0,
-		"YELLOW": 1
-	}
-}
-	\end{minted}
-
-	\paragraph{Response} This message doesn't require a response.
-
-	\subsection{End game}
-
-	This message is sent from the server to each clients in order to indicate that the game is ended.
+	This message is sent from the server to each clients in order to indicate that the game is ended, carrying the winners list.
 
 	\paragraph{Request} Parameters:
 
 	\begin{itemize}
-		\item \verb|winner|: the name of the player who won the game. This could be either a \verb|string| with the name, or \mintinline{json}{null} if the game ends tie.
+		\item \verb|winners|: A list of the players that won the game.
 	\end{itemize}
 
 	\begin{multicols}{2}
-
 		\begin{minted}[samepage, tabsize=2]{json}
 {
-	"type": "end",
-	"winner": "Player 1"
+	"type": "win",
+	"winners": [
+		"player1",
+		"player3"
+	]
 }
 		\end{minted}
-
-		\begin{minted}[samepage, tabsize=2]{json}
-{
-	"type": "end",
-	"winner": null
-}
-		\end{minted}
-
 	\end{multicols}
 
 	\paragraph{Response} This message doesn't require a response.
-
-	\pagebreak
 
 	\subsection{Status}
 
