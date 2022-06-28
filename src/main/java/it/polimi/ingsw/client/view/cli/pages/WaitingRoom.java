@@ -64,23 +64,9 @@ public class WaitingRoom {
      */
     private static Ansi print(List<String> players, String gameCode, int expectedPlayers, int iteration) {
         Ansi ansi = new Ansi();
-
-        // Test testCode - start
-        // String testCode = "ABCDE";
-        // Test testCode - end
-
-        // Test players - start
-        // List<String> test = new ArrayList<>();
-        // test.add("Matteo");
-        // test.add("Milici");
-        //test.add("Motta");
-        //test.add("Lazzarin");
-        // Test players - end
-
         ansi.a(printTitle());
         ansi.a(moveCursor(WaitingOptions.getInstance()));
         ansi.a(printOptions(players, gameCode, expectedPlayers, iteration));
-        //ansi.a(printOptions(test, testCode, expectedPlayers, iteration));
         return ansi;
     }
 

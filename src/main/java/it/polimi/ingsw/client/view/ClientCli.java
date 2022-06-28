@@ -20,7 +20,6 @@ import org.jline.terminal.TerminalBuilder;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import static it.polimi.ingsw.client.view.cli.Utilities.*;
 import static org.fusesource.jansi.Ansi.ansi;
@@ -233,55 +232,21 @@ public class ClientCli implements Runnable, View {
                     if (Boolean.TRUE.equals(this.controller.getGameModel().getWaitingRoom().get(name)))
                         onlinePlayers.add(name);
                 WaitingRoom.print(terminal, onlinePlayers, this.controller.getGameCode(), this.controller.getGameModel().getPlayersNumber(), waitingIteration++);
-                pause();
+                if (Utilities.pause(1000, terminal, controller)) {
+                    controller.getGameServer().sendCommand(MessageCreator.logout());
+                    controller.resetGame();
+                    manageExit();
+                }
             }
         }
         updateScreen(false);
     }
 
     /**
-     * Pauses the waiting room for a while before changing state and catches the eventual user interruption.
-     */
-    private void pause() {
-
-        AtomicBoolean interrupted = new AtomicBoolean(false);
-
-        Thread thread = new Thread(() -> {
-            try {
-                readLine("", terminal, null, false, null);
-            } catch (UserInterruptException e) {
-                Thread.currentThread().interrupt();
-                interrupted.set(true);
-            }
-        });
-
-        thread.start();
-
-        synchronized (this.controller.getLock()) {
-            try {
-                this.controller.getLock().wait(1000);
-                thread.join(1);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                this.controller.getGameServer().sendCommand(MessageCreator.logout());
-                this.controller.resetGame();
-                manageExit();
-            }
-        }
-
-        if (interrupted.get()) {
-            this.controller.getGameServer().sendCommand(MessageCreator.logout());
-            this.controller.resetGame();
-            manageExit();
-        }
-
-        thread.interrupt();
-    }
-
-    /**
      * Manages the game-screen's I/O.
      */
     private void runGameRunning() {
+
         synchronized (this.controller.getLock()) {
             if (this.controller.getGameServer() != null) {
 
@@ -306,14 +271,8 @@ public class ClientCli implements Runnable, View {
                         this.controller.manageGameRunning(command);
                         return;
                     }
-                } else {
-                    try {
-                        this.controller.getLock().wait(1000);
-                    } catch (InterruptedException e) {
-                        this.controller.resetGame();
-                        Thread.currentThread().interrupt();
-                    }
-                }
+                } else if (Utilities.pause(1000, terminal, controller))
+                    this.controller.manageGameRunning("logout");
             }
         }
 

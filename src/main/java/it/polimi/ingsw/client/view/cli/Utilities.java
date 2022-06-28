@@ -1,7 +1,9 @@
 package it.polimi.ingsw.client.view.cli;
 
+import it.polimi.ingsw.client.controller.ClientController;
 import it.polimi.ingsw.client.view.cli.colours.*;
 import it.polimi.ingsw.utilities.HouseColor;
+import it.polimi.ingsw.utilities.MessageCreator;
 import org.fusesource.jansi.Ansi;
 import org.jline.builtins.Completers.TreeCompleter;
 import org.jline.reader.History;
@@ -12,6 +14,7 @@ import org.jline.terminal.Terminal;
 
 import java.io.IOError;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 
 import static org.fusesource.jansi.Ansi.ansi;
@@ -215,6 +218,37 @@ public class Utilities {
         input = end.matcher(input).replaceAll("");
         input = middle.matcher(input).replaceAll(" ");
         return input;
+    }
+
+
+
+    /**
+     * Pauses the CLI for a fixed amount of time and catches an eventual CTRL(/CMD)+C.
+     */
+    public static boolean pause(long millis, Terminal terminal, ClientController controller) {
+
+        AtomicBoolean interrupted = new AtomicBoolean(false);
+
+        Thread thread = new Thread(() -> {
+            try {
+                readLine("", terminal, null, false, null);
+            } catch (UserInterruptException e) {
+                Thread.currentThread().interrupt();
+                interrupted.set(true);
+            }
+        });
+
+        thread.start();
+
+        try {
+            thread.join(millis);
+            thread.interrupt();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return true;
+        }
+
+        return interrupted.get();
     }
 
     /**
