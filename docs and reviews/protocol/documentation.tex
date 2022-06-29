@@ -171,7 +171,7 @@
 
 	\end{multicols}
 
-	\subsection{Waiting room}
+	\subsection{Waiting room update}
 
 	This message is periodically sent from the server to the client in order to update the waiting room players list.
 
@@ -256,6 +256,7 @@
 	\paragraph{Requests} Parameters:
 
 	\begin{itemize}
+		\item \verb|player|: the player involved into the communication token exchange.
 		\item \verb|enable|: a boolean parameter which indicates whether the player can play.
 	\end{itemize}
 
@@ -263,12 +264,14 @@
 		\begin{minted}[samepage, tabsize=2]{json}
 {
 	"type": "turnEnable",
+	"player": "Player1",
 	"enable": true
 }
 		\end{minted}
 		\begin{minted}[samepage, tabsize=2]{json}
 {
 	"type": "turnEnable",
+	"player": "Player1",
 	"enable": false
 }
 		\end{minted}
@@ -310,50 +313,11 @@
 	"type": "command",
 	"subtype": "playAssistant",
 	"player": "Player 1",
-	"assistant": 10
+	"assistant": 4
 }
 	\end{minted}
 
 	\paragraph{Response} This message doesn't require a response.
-
-	\subsubsection{Move professor}
-
-	\paragraph{Requests} Parameters:
-
-	\begin{itemize}
-		\item \verb|player|: the player that's performing the move.
-		\item \verb|color|: the professor's colour.
-		\item \verb|from|: the player that owns the professor before the command.
-		\item \verb|to|: the player that will own the professor after the command.
-	\end{itemize}
-
-	\begin{multicols}{2}
-		\begin{minted}[samepage, tabsize=2]{json}
-{
-	"type": "command",
-	"subtype": "move",
-	"pawn": "professor",
-	"color": "RED",
-	"from": null,
-	"to": "Player 1"
-}
-		\end{minted}
-
-	\begin{minted}[samepage, tabsize=2]{json}
-{
-	"type": "command",
-	"subtype": "move",
-	"pawn": "professor",
-	"color": "RED",
-	"from": "Player 2",
-	"to": "Player 1"
-}
-		\end{minted}
-	\end{multicols}
-
-	\paragraph{Response} This message doesn't require a response.
-	
-	\pagebreak
 
 	\subsubsection{Move student}
 
@@ -366,6 +330,7 @@
 		\item \verb|to|: where the student will be after the movement.
 		\item \verb|fromId|: the identification number of the place where the student comes from.
 		\item \verb|toId|: the identification number of the place where the student has to move.
+		\item \verb|special|: a boolean flag that indicates if the move is caused by a special character's effect.
 	\end{itemize}
 
 	\begin{multicols}{3}
@@ -379,7 +344,8 @@
 	"from": "entrance",
 	"to": "diningRoom",
 	"fromId": null,
-	"toId": null
+	"toId": null,
+	"special": false
 }
 		\end{minted}
 
@@ -393,7 +359,8 @@
 	"from": "entrance",
 	"to": "island",
 	"fromId": null,
-	"toId": 0
+	"toId": 0,
+	"special": false
 }
 		\end{minted}
 
@@ -406,8 +373,9 @@
 	"color": "RED",
 	"from": "card",
 	"to": "entrance",
-	"fromId": 0,
-	"toId": null
+	"fromId": 1,
+	"toId": null,
+	"special": true
 }
 		\end{minted}
 	\end{multicols}
@@ -420,13 +388,16 @@
 
 	\begin{itemize}
 		\item \verb|island|: the identification number of the island where mother nature has to move.
+		\item \verb|move|: a boolean flag that indicates if mother nature has to be effectively moved.
 	\end{itemize}
 
 	\begin{minted}[samepage, tabsize=2]{json}
 {
 	"type": "command",
-	"subtype": "motherNature",
-	"island": 0
+	"subtype": "move",
+	"pawn": "motherNature",
+	"island": 0,
+	"move": true
 }
 	\end{minted}
 
@@ -506,7 +477,7 @@
 
 	\paragraph{Response} This message doesn't require a response.
 
-	\subsubsection{Refill cloud}
+	\subsubsection{Refill entrance}
 
 	This message is sent from a specific client to the server (which then redirects the same massage to all the other clients to update their views) when the player, at the end of his/her turn, takes the students from a cloud to refill the entrance.
 
@@ -528,8 +499,6 @@
 
 	\paragraph{Response} This message doesn't require a response.
 
-	\pagebreak
-
 	\subsection{Win}
 
 	This message is sent from the server to each clients in order to indicate that the game is ended, carrying the winners list.
@@ -537,7 +506,7 @@
 	\paragraph{Request} Parameters:
 
 	\begin{itemize}
-		\item \verb|winners|: A list of the players that won the game.
+		\item \verb|winners|: A list containing the players that won the game.
 	\end{itemize}
 
 	\begin{multicols}{2}
@@ -545,8 +514,8 @@
 {
 	"type": "win",
 	"winners": [
-		"player1",
-		"player3"
+		"player 1",
+		"player 3"
 	]
 }
 		\end{minted}
@@ -554,33 +523,46 @@
 
 	\paragraph{Response} This message doesn't require a response.
 
+	\pagebreak
+
 	\subsection{Status}
 
 	This message is sent from the server to the client in order to reload the game, when it satrtes or whene a player reconnects to the game.
 
-	\paragraph{Request} Parameters: all the parameters that are required to restart the game client-side.
+	\paragraph{Request} Parameters: all the parameters that are required to restart or update the game client-side.
 
 	\begin{multicols}{3}
 		\begin{minted}[tabsize=2]{json}
 {
-	"type": "state",
+	"type": "status",
+	"round": 1,
+	"expert": true,
+	"activeUser": "Player 1",
+	"phase": "PLANNING",
+	"subPhase": "PLAY_ASSISTANT",
 	"players": [
 		{
 			"name": "Player 1",
 			"wizardType": "GREEN",
 			"coins": 0,
 			"assistants": [
-				0,
-				10
+				{
+					"id": 0,
+					"bonus": false
+				},
+				{
+					"id": 10,
+					"bonus": false
+				}
 			],
 			"schoolBoard": {
 				"towerType": "WHITE",
-				"towersNumber": 0,
+				"towersNumber": 4,
 				"entrance": {
 					"BLUE": 1,
-					"FUCHSIA": 0,
+					"FUCHSIA": 2,
 					"GREEN": 1,
-					"RED": 0,
+					"RED": 2,
 					"YELLOW": 1
 				},
 				"diningRoom": {
@@ -591,15 +573,17 @@
 					"YELLOW": 1
 				}
 			}
-		}
+		},
+
+		*
 	],
 	"board": {
 		"bag": {
-			"BLUE": 0,
-			"FUCHSIA": 0,
-			"GREEN": 0,
-			"RED": 0,
-			"YELLOW": 0
+			"BLUE": 20,
+			"FUCHSIA": 8,
+			"GREEN": 14,
+			"RED": 21,
+			"YELLOW": 18
 		},
 		"clouds": [
 			{
@@ -609,6 +593,8 @@
 				"RED": 0,
 				"YELLOW": 0
 			}
+
+			**
 		],
 		"islands": [
 			{
@@ -616,41 +602,54 @@
 				"tower": "BLACK",
 				"ban": false,
 				"students": {
-					"BLUE": 0,
-					"FUCHSIA": 0,
+					"BLUE": 1,
+					"FUCHSIA": 2,
 					"GREEN": 0,
 					"RED": 0,
 					"YELLOW": 0
 				}
 			}
+
+			***
 		],
 		"playedAssistants": [
 			{
 				"player": "Player 1",
 				"assistant": 10
 			}
+
+			*
 		],
 		"characters": [
 			{
-				"id": 1,
+				"id": 0,
 				"effectCost": 0,
 				"alreadyPaid": false,
 				"paidInRound": false,
 				"active": false
 			}
+
+			****
 		],
 		"professors": {
 			"BLUE": null,
-			"FUCHSIA": null,
+			"FUCHSIA": "Player 1",
 			"GREEN": null,
 			"RED": null,
 			"YELLOW": null
 		},
-		"motherNatureIsland": 0
+		"motherNatureIsland": 0,
+		"ignoreColor": "BLUE",
+		"influenceBonus": null
 	}
 }
 		\end{minted}
 	\end{multicols}
+
+	* Same pattern for the other players.\newline
+	** Same pattern for the other clouds. \newline
+	*** Same pattern for the other islands. \newline
+	**** Same pattern for the other characters. \newline
 
 	\paragraph{Response} This message doesn't require a response.
 
@@ -724,8 +723,12 @@
 				\begin{call}{u1}{playAssistantCard()}{g}{implicit ack}
 					\begin{call}{g}{Add assistant}{g}{command}
 					\end{call}
+					\begin{call}{g}{notifyAll()}{u1}{implicit ack}
+						\begin{call}{u1}{sendMessage(status)}{c1}{implicit ack}
+						\end{call}
+					\end{call}
 					\begin{call}{g}{notifyAll()}{u2}{implicit ack}
-						\begin{call}{u2}{sendMessage(playAssistant)}{c2}{implicit ack}
+						\begin{call}{u2}{sendMessage(status)}{c2}{implicit ack}
 						\end{call}
 					\end{call}
 				\end{call}
@@ -752,33 +755,19 @@
 				\end{call}
 				\begin{call}{u1}{manageCommand()}{u1}{command}
 				\end{call}
-				\begin{call}{u1}{moveStudent}{g}{implicit ack}
+				\begin{call}{u1}{moveStudent()}{g}{implicit ack}
 					\begin{call}{g}{removeFromEntrance()}{g}{command}
 					\end{call}
 					\begin{call}{g}{addToDiningRoom()}{g}{command}
 					\end{call}
 					\begin{call}{g}{checkProfessor()}{g}{command}
 					\end{call}
-					\begin{call}{g}{notifyAll()}{u2}{implicit ack}
-						\begin{call}{u2}{sendMessage(refill)}{c2}{implicit ack}
+					\begin{call}{g}{notifyAll()}{u1}{implicit ack}
+						\begin{call}{u1}{sendMessage(status)}{c1}{implicit ack}
 						\end{call}
 					\end{call}
-				\end{call}
-			\end{call}
-			\begin{call}{c1}{sendMessage(move)}{u1}{implicit ack}
-				\begin{call}{u1}{getMessage()}{u1}{command}
-				\end{call}
-				\begin{call}{u1}{manageCommand()}{u1}{command}
-				\end{call}
-				\begin{call}{u1}{moveStudent}{g}{implicit ack}
-					\begin{call}{g}{removeFromEntrance()}{g}{command}
-					\end{call}
-					\begin{call}{g}{addToDiningRoom()}{g}{command}
-					\end{call}
-					\begin{call}{g}{checkProfessor()}{g}{command}
-					\end{call}
 					\begin{call}{g}{notifyAll()}{u2}{implicit ack}
-						\begin{call}{u2}{sendMessage(refill)}{c2}{implicit ack}
+						\begin{call}{u2}{sendMessage(status)}{c2}{implicit ack}
 						\end{call}
 					\end{call}
 				\end{call}
@@ -799,15 +788,19 @@
 				\end{call}
 				\begin{call}{u1}{manageCommand()}{u1}{command}
 				\end{call}
-				\begin{call}{u1}{moveStudent}{g}{implicit ack}
+				\begin{call}{u1}{moveStudent()}{g}{implicit ack}
 					\begin{call}{g}{removeFromEntrance()}{g}{command}
 					\end{call}
 					\begin{call}{g}{getIslandById()}{g}{command}
 					\end{call}
 					\begin{call}{g}{addStudent()}{g}{command}
 					\end{call}
+					\begin{call}{g}{notifyAll()}{u1}{implicit ack}
+						\begin{call}{u1}{sendMessage(status)}{c1}{implicit ack}
+						\end{call}
+					\end{call}
 					\begin{call}{g}{notifyAll()}{u2}{implicit ack}
-						\begin{call}{u2}{sendMessage(move)}{c2}{implicit ack}
+						\begin{call}{u2}{sendMessage(status)}{c2}{implicit ack}
 						\end{call}
 					\end{call}
 				\end{call}
@@ -839,10 +832,14 @@
 					\end{call}
 					\begin{call}{g}{getInfluence()}{g}{command}
 					\end{call}
-					\begin{call}{g}{updateTower}{g}{command}
+					\begin{call}{g}{update tower}{g}{command}
+					\end{call}
+					\begin{call}{g}{notifyAll()}{u1}{implicit ack}
+						\begin{call}{u1}{sendMessage(status)}{c1}{implicit ack}
+						\end{call}
 					\end{call}
 					\begin{call}{g}{notifyAll()}{u2}{implicit ack}
-						\begin{call}{u2}{sendMessage(move)}{c2}{implicit ack}
+						\begin{call}{u2}{sendMessage(status)}{c2}{implicit ack}
 						\end{call}
 					\end{call}
 				\end{call}
@@ -870,8 +867,12 @@
 				\begin{call}{u1}{manageCommand()}{u1}{command}
 				\end{call}
 				\begin{call}{u1}{refillEntrance()}{g}{implicit ack}
+					\begin{call}{g}{notifyAll()}{u1}{implicit ack}
+						\begin{call}{u1}{sendMessage(status)}{c1}{implicit ack}
+						\end{call}
+					\end{call}
 					\begin{call}{g}{notifyAll()}{u2}{implicit ack}
-						\begin{call}{u2}{sendMessage(refill)}{c2}{implicit ack}
+						\begin{call}{u2}{sendMessage(status)}{c2}{implicit ack}
 						\end{call}
 					\end{call}
 				\end{call}
@@ -890,7 +891,7 @@
 			\newthread{g}{game: Game}
 
 			\begin{call}{g}{notifyAll()}{u}{implicit ack}
-				\begin{call}{u}{sendMessage(end)}{c}{implicit ack}
+				\begin{call}{u}{sendMessage(win)}{c}{implicit ack}
 				\end{call}
 			\end{call}
 		\end{sequencediagram}
