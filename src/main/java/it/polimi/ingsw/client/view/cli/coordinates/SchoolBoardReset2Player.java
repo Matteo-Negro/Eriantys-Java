@@ -1,7 +1,5 @@
 package it.polimi.ingsw.client.view.cli.coordinates;
 
-import it.polimi.ingsw.client.view.cli.DeltaCoordinates;
-
 /**
  * SchoolBoard: cursor reset in case of 2 players.
  */

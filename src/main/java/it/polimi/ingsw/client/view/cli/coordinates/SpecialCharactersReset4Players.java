@@ -1,7 +1,5 @@
 package it.polimi.ingsw.client.view.cli.coordinates;
 
-import it.polimi.ingsw.client.view.cli.DeltaCoordinates;
-
 /**
  * SpecialCharacters: cursor reset in case of 3 or 4 players.
  */

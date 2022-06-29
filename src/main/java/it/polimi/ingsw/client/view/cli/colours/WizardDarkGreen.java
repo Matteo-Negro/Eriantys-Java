@@ -1,7 +1,5 @@
 package it.polimi.ingsw.client.view.cli.colours;
 
-import it.polimi.ingsw.client.view.cli.Colour;
-
 /**
  * Wizard dark green colour.
  */

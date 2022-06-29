@@ -1,7 +1,5 @@
 package it.polimi.ingsw.client.view.cli.coordinates;
 
-import it.polimi.ingsw.client.view.cli.DeltaCoordinates;
-
 /**
  * SchoolBoard: third position, no exp.
  */

@@ -1,7 +1,5 @@
 package it.polimi.ingsw.client.view.cli.coordinates;
 
-import it.polimi.ingsw.client.view.cli.DeltaCoordinates;
-
 /**
  * SpecialCharacter: first position in case of 3 or 4 player.
  */

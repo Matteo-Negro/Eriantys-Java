@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement />
+  <nodes>
+    <node x="-162.0" y="262.5">it.polimi.ingsw.server.model.GamePlatform</node>
+    <node x="-323.5" y="262.5">it.polimi.ingsw.server.ServerIO</node>
+    <node x="-132.51865284974087" y="542.5">it.polimi.ingsw.server.controller.Ping</node>
+    <node x="-467.5" y="542.5">it.polimi.ingsw.server.controller.GameController</node>
+    <node x="-487.5" y="102.5">it.polimi.ingsw.server.model.player</node>
+    <node x="-487.5" y="182.5">it.polimi.ingsw.server.model.board</node>
+    <node x="-445.53367875647666" y="682.5">it.polimi.ingsw.server.controller.User</node>
+    <node x="-482.71118259067356" y="382.5">it.polimi.ingsw.server.Server</node>
+    <node x="-159.5" y="682.5">it.polimi.ingsw.server.controller.Matchmaking</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="it.polimi.ingsw.server.controller.User" target="it.polimi.ingsw.server.controller.GameController" relationship="TO_ONE">
+      <point x="-40.0" y="-14.5" />
+      <point x="-351.0" y="597.0" />
+      <point x="-391.0" y="597.0" />
+      <point x="-80.0" y="14.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.server.Server" target="it.polimi.ingsw.server.controller.User" relationship="CREATE">
+      <point x="-140.0" y="14.5" />
+      <point x="-411.0" y="457.0" />
+      <point x="-531.0" y="457.0" />
+      <point x="-531.0" y="657.0" />
+      <point x="-411.0" y="657.0" />
+      <point x="-100.0" y="-14.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.server.Server" target="it.polimi.ingsw.server.controller.GameController" relationship="CREATE">
+      <point x="-140.0" y="14.5" />
+      <point x="-100.0" y="-14.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.server.controller.GameController" target="it.polimi.ingsw.server.model.GamePlatform" relationship="TO_ONE">
+      <point x="0.0" y="-14.5" />
+      <point x="-311.0" y="497.0" />
+      <point x="-31.0" y="497.0" />
+      <point x="-31.0" y="357.0" />
+      <point x="-51.0" y="357.0" />
+      <point x="40.0" y="14.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.server.controller.User" target="it.polimi.ingsw.server.controller.Ping" relationship="CREATE">
+      <point x="120.0" y="-14.5" />
+      <point x="-191.0" y="657.0" />
+      <point x="-111.0" y="657.0" />
+      <point x="-40.0" y="14.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.server.Server" target="it.polimi.ingsw.server.model.GamePlatform" relationship="CREATE">
+      <point x="140.0" y="-14.5" />
+      <point x="-40.0" y="14.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.server.Server" target="it.polimi.ingsw.server.controller.GameController" relationship="TO_MANY">
+      <point x="140.0" y="14.5" />
+      <point x="-131.0" y="517.0" />
+      <point x="-211.0" y="517.0" />
+      <point x="100.0" y="-14.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.server.controller.Ping" target="it.polimi.ingsw.server.controller.User" relationship="TO_ONE">
+      <point x="-48.60746113989637" y="14.5" />
+      <point x="-119.60746113989637" y="637.0" />
+      <point x="-231.0" y="637.0" />
+      <point x="80.0" y="-14.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.server.controller.User" target="it.polimi.ingsw.server.controller.Ping" relationship="TO_ONE">
+      <point x="-40.0" y="-14.5" />
+      <point x="-351.0" y="597.0" />
+      <point x="-128.21492227979275" y="597.0" />
+      <point x="-57.214922279792745" y="14.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.server.Server" target="it.polimi.ingsw.server.ServerIO" relationship="TO_ONE">
+      <point x="0.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.server.ServerIO" target="it.polimi.ingsw.server.Server" relationship="TO_ONE">
+      <point x="-40.0" y="14.5" />
+      <point x="-311.0" y="357.0" />
+      <point x="-411.0" y="357.0" />
+      <point x="-140.0" y="-14.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.server.controller.GameController" target="it.polimi.ingsw.server.controller.User" relationship="TO_MANY">
+      <point x="80.0" y="14.5" />
+      <point x="80.0" y="-14.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.server.controller.User" target="it.polimi.ingsw.server.Server" relationship="TO_ONE">
+      <point x="-40.0" y="-14.5" />
+      <point x="-351.0" y="597.0" />
+      <point x="-491.0" y="597.0" />
+      <point x="-491.0" y="477.0" />
+      <point x="-311.0" y="477.0" />
+      <point x="-40.0" y="14.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.server.Server" target="it.polimi.ingsw.server.ServerIO" relationship="CREATE">
+      <point x="140.0" y="-14.5" />
+      <point x="-131.0" y="357.0" />
+      <point x="-236.0" y="357.0" />
+      <point x="35.0" y="14.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.server.controller.GameController" target="it.polimi.ingsw.server.Server" relationship="TO_ONE">
+      <point x="0.0" y="-14.5" />
+      <point x="-40.0" y="14.5" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Compact" zoom="0.7507936507936508" showDependencies="true" x="-260.0" y="417.0" />
+  <SelectedNodes />
+  <Categories />
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+

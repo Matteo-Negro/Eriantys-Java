@@ -2,8 +2,8 @@ package it.polimi.ingsw.client.view.cli;
 
 import it.polimi.ingsw.client.controller.ClientController;
 import it.polimi.ingsw.client.view.cli.colours.*;
+import it.polimi.ingsw.client.view.cli.coordinates.DeltaCoordinates;
 import it.polimi.ingsw.utilities.HouseColor;
-import it.polimi.ingsw.utilities.MessageCreator;
 import org.fusesource.jansi.Ansi;
 import org.jline.builtins.Completers.TreeCompleter;
 import org.jline.reader.History;

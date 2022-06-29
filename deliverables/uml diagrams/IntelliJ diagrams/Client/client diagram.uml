@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement />
+  <nodes>
+    <node x="501.0" y="245.5">it.polimi.ingsw.client.view.cli</node>
+    <node x="596.0" y="105.5">it.polimi.ingsw.client.view.View</node>
+    <node x="583.0" y="-14.5">it.polimi.ingsw.client.view.ClientGui</node>
+    <node x="257.0" y="245.5">it.polimi.ingsw.client.model.Player</node>
+    <node x="84.0" y="105.5">it.polimi.ingsw.client.model.SpecialCharacter</node>
+    <node x="407.5" y="105.5">it.polimi.ingsw.client.model.Assistant</node>
+    <node x="497.5" y="365.5">it.polimi.ingsw.client.view.gui</node>
+    <node x="174.0" y="367.0">it.polimi.ingsw.client.controller</node>
+    <node x="-23.0" y="105.5">it.polimi.ingsw.client.model.Cloud</node>
+    <node x="465.5" y="-14.5">it.polimi.ingsw.client.view.ClientCli</node>
+    <node x="-61.5" y="245.5">it.polimi.ingsw.client.model.GameBoard</node>
+    <node x="255.5" y="105.5">it.polimi.ingsw.client.model.SchoolBoard</node>
+    <node x="-63.0" y="365.5">it.polimi.ingsw.client.model.GameModel</node>
+    <node x="-143.0" y="105.5">it.polimi.ingsw.client.model.Island</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="it.polimi.ingsw.client.model.GameBoard" target="it.polimi.ingsw.client.model.Cloud" relationship="CREATE">
+      <point x="20.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.client.model.GameModel" target="it.polimi.ingsw.client.model.Player" relationship="CREATE">
+      <point x="45.0" y="-14.5" />
+      <point x="46.0" y="337.0" />
+      <point x="316.0" y="337.0" />
+      <point x="15.0" y="14.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.client.model.Player" target="it.polimi.ingsw.client.model.Assistant" relationship="TO_MANY">
+      <point x="44.0" y="0.0" />
+      <point x="452.5" y="260.0" />
+      <point x="-8.5" y="14.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.client.model.GameModel" target="it.polimi.ingsw.client.model.Player" relationship="TO_MANY">
+      <point x="30.0" y="-14.5" />
+      <point x="31.0" y="322.0" />
+      <point x="301.0" y="322.0" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.client.view.ClientGui" target="it.polimi.ingsw.client.view.View" relationship="REALIZATION">
+      <point x="-0.0" y="14.5" />
+      <point x="-0.0" y="-14.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.client.model.Player" target="it.polimi.ingsw.client.model.SchoolBoard" relationship="TO_ONE">
+      <point x="-15.0" y="-14.5" />
+      <point x="-35.0" y="14.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.client.model.GameModel" target="it.polimi.ingsw.client.model.GameBoard" relationship="TO_ONE">
+      <point x="15.0" y="-14.5" />
+      <point x="15.0" y="14.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.client.model.GameModel" target="it.polimi.ingsw.client.model.GameBoard" relationship="CREATE">
+      <point x="-15.0" y="-14.5" />
+      <point x="-15.0" y="14.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.client.model.GameBoard" target="it.polimi.ingsw.client.model.Island" relationship="CREATE">
+      <point x="0.0" y="-14.5" />
+      <point x="1.0" y="197.0" />
+      <point x="-84.0" y="197.0" />
+      <point x="15.0" y="14.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.client.view.ClientCli" target="it.polimi.ingsw.client.view.View" relationship="REALIZATION">
+      <point x="-0.0" y="14.5" />
+      <point x="516.0" y="60.0" />
+      <point x="636.0" y="60.0" />
+      <point x="-0.0" y="-14.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.client.model.Player" target="it.polimi.ingsw.client.model.Assistant" relationship="CREATE">
+      <point x="0.0" y="-14.5" />
+      <point x="301.0" y="167.0" />
+      <point x="437.5" y="167.0" />
+      <point x="-23.5" y="14.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.client.model.Player" target="it.polimi.ingsw.client.model.SchoolBoard" relationship="CREATE">
+      <point x="-30.0" y="-14.5" />
+      <point x="-50.0" y="14.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.client.model.GameBoard" target="it.polimi.ingsw.client.model.SpecialCharacter" relationship="CREATE">
+      <point x="50.0" y="-14.5" />
+      <point x="51.0" y="227.0" />
+      <point x="141.5" y="227.0" />
+      <point x="-19.5" y="14.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.client.model.GameBoard" target="it.polimi.ingsw.client.model.SpecialCharacter" relationship="TO_MANY">
+      <point x="62.5" y="0.0" />
+      <point x="156.5" y="260.0" />
+      <point x="-4.5" y="14.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.client.model.GameBoard" target="it.polimi.ingsw.client.model.Island" relationship="TO_MANY">
+      <point x="-62.5" y="0.0" />
+      <point x="-99.0" y="260.0" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.client.model.GameBoard" target="it.polimi.ingsw.client.model.Cloud" relationship="TO_MANY">
+      <point x="35.0" y="-14.5" />
+      <point x="15.0" y="14.5" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Compact" zoom="0.768" showDependencies="true" x="382.4557291666668" y="250.66927083333334" />
+  <SelectedNodes>
+    <node>it.polimi.ingsw.client.controller</node>
+  </SelectedNodes>
+  <Categories />
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+

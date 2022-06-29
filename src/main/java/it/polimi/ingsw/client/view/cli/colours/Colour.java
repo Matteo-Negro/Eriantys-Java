@@ -1,4 +1,4 @@
-package it.polimi.ingsw.client.view.cli;
+package it.polimi.ingsw.client.view.cli.colours;
 
 /**
  * Colour interface for CLI.

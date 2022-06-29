@@ -1,4 +1,4 @@
-package it.polimi.ingsw.client.view.cli;
+package it.polimi.ingsw.client.view.cli.coordinates;
 
 /**
  * Delta movement interface for CLI.
