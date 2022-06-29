@@ -162,7 +162,6 @@ public class Game implements Prepare {
             Log.error(e);
             Thread.currentThread().interrupt();
         }
-
         activateButtons(false);
     }
 

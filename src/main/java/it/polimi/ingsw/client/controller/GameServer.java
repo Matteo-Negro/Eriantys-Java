@@ -227,7 +227,10 @@ public class GameServer implements Runnable {
      */
     private void manageTurnEnable(JsonObject message) {
         Log.debug("Token arrived.");
-        this.client.getGameModel().setCurrentPlayer(message.get("player").getAsString(), message.get("enable").getAsBoolean());
+        synchronized (this.client.getLock()) {
+            this.client.getGameModel().setCurrentPlayer(message.get("player").getAsString(), message.get("enable").getAsBoolean());
+            this.client.getLock().notifyAll();
+        }
     }
 
     /**
