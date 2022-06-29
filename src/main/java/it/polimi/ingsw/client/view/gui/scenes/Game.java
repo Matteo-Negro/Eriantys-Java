@@ -123,7 +123,16 @@ public class Game implements Prepare {
      * Updates all the view.
      */
     public void update() {
-
+        while(boards == null || boardsList == null || islands == null || clouds == null || characters == null) {
+            synchronized (this.client.getController().getLock()) {
+                try{
+                    this.client.getController().getLock().wait(10);
+                }catch(InterruptedException ie) {
+                    Log.debug("Gui: Update thread in Game scene has been interrupted.");
+                    return;
+                }
+            }
+        }
         GameModel gameModel = client.getController().getGameModel();
         if (gameModel == null)
             return;
@@ -229,6 +238,7 @@ public class Game implements Prepare {
         }
 
         activateButtons(true);
+        Log.debug("Graphic elements initialized.");
     }
 
     /**
