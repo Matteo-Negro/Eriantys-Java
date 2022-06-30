@@ -925,13 +925,13 @@ public class GameController implements Runnable {
      */
     public void checkProfessor(String color, String player) {
         String newProfessorOwner = null;
-        if (this.gameModel.getGameBoard().getProfessors().get(HouseColor.valueOf(color)) != null)
+        if (this.gameModel.getGameBoard().getProfessors().get(HouseColor.valueOf(color)) != null) {
             newProfessorOwner = this.gameModel.getGameBoard().getProfessors().get(HouseColor.valueOf(color)).getName();
-        else if (this.gameModel.getPlayerByName(player).getSchoolBoard().getStudentsNumberOf(HouseColor.valueOf(color)) > 0)
+        } else if (this.gameModel.getPlayerByName(player).getSchoolBoard().getStudentsNumberOf(HouseColor.valueOf(color)) > 0)
             newProfessorOwner = player;
 
         int numStudent;
-        numStudent = this.gameModel.getPlayerByName(player).getSchoolBoard().getStudentsNumberOf(HouseColor.valueOf(color));
+        numStudent = this.gameModel.getPlayerByName(newProfessorOwner).getSchoolBoard().getStudentsNumberOf(HouseColor.valueOf(color));
 
         for (Player p : this.gameModel.getPlayers()) {
             if (numStudent < p.getSchoolBoard().getStudentsNumberOf(HouseColor.valueOf(color))) {
