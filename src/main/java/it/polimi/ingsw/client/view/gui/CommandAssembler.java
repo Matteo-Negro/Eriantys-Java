@@ -41,7 +41,8 @@ public class CommandAssembler {
 
         if (command.contains("from chr01 to") || command.equals("ban "))
             command = String.format("%s%s", command, island);
-        else if (command.equals("") && this.controller.getGameModel().getGameBoard().getSpecialCharacters().stream().anyMatch(sp -> sp.getId() == 3 && sp.isActive())) {
+        else if (command.equals("") && this.controller.getGameModel().getGameBoard().getSpecialCharacters().stream().anyMatch(sp ->
+                    sp.getId() == 3 && sp.isActive() && sp.getUsesNumber() > 0)) {
             command = String.format("resolve %s", island);
         } else {
             switch (controller.getGameModel().getSubPhase()) {
@@ -193,7 +194,9 @@ public class CommandAssembler {
         Log.debug("Selected student from special character of color " + color.toString());
         if (!command.equals(""))
             flushCommand();
-        command = String.format("move student %s from chr11 to ", color.name().toLowerCase(Locale.ROOT));
+        command = String.format("take chr11-student %s", color.name().toLowerCase(Locale.ROOT));
+        sendCommand();
+        flushCommand();
     }
 
     /**

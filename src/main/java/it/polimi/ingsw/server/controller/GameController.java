@@ -845,16 +845,14 @@ public class GameController implements Runnable {
             for (int i = 0; i < 3; i++) {
                 try {
                     p.getSchoolBoard().removeFromDiningRoom(color);
+                    gameModel.getGameBoard().getBag().push(color);
                 } catch (NoStudentException nse) {
-                    for (HouseColor c : HouseColor.values()) {
-                        p.getSchoolBoard().getDiningRoom().replace(c, 0);
-                    }
+                    break;
                 }
             }
-            for (HouseColor c : HouseColor.values()) {
-                this.checkProfessor(c.toString(), p.getName());
-            }
         }
+        for (Player p : gameModel.getPlayers()) this.checkProfessor(color.toString(), p.getName());
+
         synchronized (this.actionNeededLock) {
             this.actionNeededLock.notifyAll();
         }
@@ -926,12 +924,14 @@ public class GameController implements Runnable {
      * @param player The name of the player.
      */
     public void checkProfessor(String color, String player) {
-        String newProfessorOwner = player;
+        String newProfessorOwner = null;
         if (this.gameModel.getGameBoard().getProfessors().get(HouseColor.valueOf(color)) != null)
             newProfessorOwner = this.gameModel.getGameBoard().getProfessors().get(HouseColor.valueOf(color)).getName();
+        else if (this.gameModel.getPlayerByName(player).getSchoolBoard().getStudentsNumberOf(HouseColor.valueOf(color)) > 0)
+            newProfessorOwner = player;
 
         int numStudent;
-        numStudent = this.gameModel.getPlayerByName(newProfessorOwner).getSchoolBoard().getStudentsNumberOf(HouseColor.valueOf(color));
+        numStudent = this.gameModel.getPlayerByName(player).getSchoolBoard().getStudentsNumberOf(HouseColor.valueOf(color));
 
         for (Player p : this.gameModel.getPlayers()) {
             if (numStudent < p.getSchoolBoard().getStudentsNumberOf(HouseColor.valueOf(color))) {

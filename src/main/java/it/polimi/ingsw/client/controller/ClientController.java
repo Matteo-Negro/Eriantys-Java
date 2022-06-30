@@ -356,7 +356,10 @@ public class ClientController {
      * @throws IllegalMoveException Thrown if the client model is not aligned with that of the game server.
      */
     private void checkOccurrences(JsonObject message) throws IllegalMoveException {
-        if (this.gameModel.isExpert() && ((message.get("subtype").getAsString().equals("ban")) || (message.get("special") != null && message.get("special").getAsBoolean()) || (message.get("move") != null && !message.get("move").getAsBoolean()))) {
+        if (this.gameModel.isExpert() && ((message.get("subtype").getAsString().equals("return")) ||
+                                            (message.get("subtype").getAsString().equals("ban")) ||
+                                            (message.get("special") != null && message.get("special").getAsBoolean()) ||
+                                            (message.get("move") != null && !message.get("move").getAsBoolean()))) {
             int idSpecialCharacter = 0;
             for (SpecialCharacter sc : gameModel.getGameBoard().getSpecialCharacters()) {
                 if (sc.isActive()) {
@@ -560,16 +563,17 @@ public class ClientController {
         int finalIsland = message.get("island").getAsInt();
         if (finalIsland < 0 || finalIsland > 11) throw new IllegalMoveException();
 
+        int motherNatureIsland = getGameModel().getGameBoard().getMotherNatureIsland();
+
+        while (getGameModel().getGameBoard().getIslandById(finalIsland).hasPrev()) {
+            finalIsland = (finalIsland - 1) % 12;
+            if (finalIsland < 0) finalIsland = finalIsland + 12;
+        }
+        message.remove("island");
+        message.addProperty("island", finalIsland);
+
         if (message.get("move").getAsBoolean()) {
             int maxDistance = getGameModel().getPlayerByName(this.getUserName()).getCurrentPlayedAssistant().getMaxDistance();
-            int motherNatureIsland = getGameModel().getGameBoard().getMotherNatureIsland();
-
-            while (getGameModel().getGameBoard().getIslandById(finalIsland).hasPrev()) {
-                finalIsland = (finalIsland - 1) % 12;
-                if (finalIsland < 0) finalIsland = finalIsland + 12;
-            }
-            message.remove("island");
-            message.addProperty("island", finalIsland);
 
             int distanceWanted = (getGameModel().getGameBoard().getIslandById(motherNatureIsland).hasNext()) ? -1 : 0;
             for (int i = ((motherNatureIsland + 1) % 12); i != finalIsland; i = ((i + 1) % 12)) {
