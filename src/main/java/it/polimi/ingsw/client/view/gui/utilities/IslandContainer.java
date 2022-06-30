@@ -81,6 +81,7 @@ public class IslandContainer {
      */
     void setConnection(Line connection) {
         this.connection = connection;
+        this.connection.setVisible(false);
     }
 
     /**
