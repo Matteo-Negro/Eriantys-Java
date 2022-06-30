@@ -123,10 +123,12 @@ public class Game implements Prepare {
      * Updates all the view.
      */
     public void update() {
-        while(boards == null || boardsList == null || islands == null || clouds == null || characters == null) {
+        if(client.getController().getGameModel() == null)
+            return;
+        while(boards == null || boardsList == null || islands == null || clouds == null || (this.client.getController().getGameModel().isExpert() && characters == null)) {
             synchronized (this.client.getController().getLock()) {
                 try{
-                    this.client.getController().getLock().wait(10);
+                    this.client.getController().getLock().wait(50);
                 }catch(InterruptedException ie) {
                     Log.debug("Gui: Update thread in Game scene has been interrupted.");
                     return;
