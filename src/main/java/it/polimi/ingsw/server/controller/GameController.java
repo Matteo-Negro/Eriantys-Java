@@ -931,20 +931,20 @@ public class GameController implements Runnable {
             newProfessorOwner = player;
 
         int numStudent;
-        numStudent = this.gameModel.getPlayerByName(newProfessorOwner).getSchoolBoard().getStudentsNumberOf(HouseColor.valueOf(color));
-
-        for (Player p : this.gameModel.getPlayers()) {
-            if (numStudent < p.getSchoolBoard().getStudentsNumberOf(HouseColor.valueOf(color))) {
-                numStudent = p.getSchoolBoard().getStudentsNumberOf(HouseColor.valueOf(color));
-                newProfessorOwner = p.getName();
-            } else if (this.gameModel.getGameBoard().getTieWinner() != null && this.gameModel.getGameBoard().getTieWinner().equals(p) && numStudent == p.getSchoolBoard().getStudentsNumberOf(HouseColor.valueOf(color))) {
-                numStudent = p.getSchoolBoard().getStudentsNumberOf(HouseColor.valueOf(color));
-                newProfessorOwner = p.getName();
+        if (newProfessorOwner != null) {
+            numStudent = this.gameModel.getPlayerByName(newProfessorOwner).getSchoolBoard().getStudentsNumberOf(HouseColor.valueOf(color));
+            for (Player p : this.gameModel.getPlayers()) {
+                if (numStudent < p.getSchoolBoard().getStudentsNumberOf(HouseColor.valueOf(color))) {
+                    numStudent = p.getSchoolBoard().getStudentsNumberOf(HouseColor.valueOf(color));
+                    newProfessorOwner = p.getName();
+                } else if (this.gameModel.getGameBoard().getTieWinner() != null && this.gameModel.getGameBoard().getTieWinner().equals(p) && numStudent == p.getSchoolBoard().getStudentsNumberOf(HouseColor.valueOf(color))) {
+                    numStudent = p.getSchoolBoard().getStudentsNumberOf(HouseColor.valueOf(color));
+                    newProfessorOwner = p.getName();
+                }
             }
-        }
 
-        if (newProfessorOwner != null)
             this.gameModel.getGameBoard().setProfessor(HouseColor.valueOf(color), this.gameModel.getPlayerByName(newProfessorOwner));
+        }
     }
 
     /**
