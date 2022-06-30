@@ -186,9 +186,9 @@ public class User implements Runnable {
      */
     private void manageGameCommand(JsonObject command) throws IllegalMoveException {
         if (gameController.getGameModel().isExpert() && ((command.get("subtype").getAsString().equals("return")) ||
-                                                            (command.get("subtype").getAsString().equals("ban")) ||
-                                                            (command.get("special") != null && command.get("special").getAsBoolean()) ||
-                                                            (command.get("move") != null && !command.get("move").getAsBoolean()))) {
+                (command.get("subtype").getAsString().equals("ban")) ||
+                (command.get("special") != null && command.get("special").getAsBoolean()) ||
+                (command.get("move") != null && !command.get("move").getAsBoolean()))) {
             SpecialCharacter specialCharacter = null;
             for (SpecialCharacter sc : gameController.getGameModel().getGameBoard().getCharacters()) {
                 if (sc.isActive()) {

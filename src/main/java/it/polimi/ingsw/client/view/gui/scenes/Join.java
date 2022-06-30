@@ -112,6 +112,7 @@ public class Join implements Prepare {
                     if (index != 0) {
                         code.get(index - 1).requestFocus();
                         code.get(index - 1).deselect();
+                        code.get(index - 1).setText("");
                     }
                 });
             else if (event.getCode().isLetterKey() || event.getCode().isDigitKey())

@@ -232,7 +232,7 @@ public class ClientCli implements Runnable, View {
                     if (Boolean.TRUE.equals(this.controller.getGameModel().getWaitingRoom().get(name)))
                         onlinePlayers.add(name);
                 WaitingRoom.print(terminal, onlinePlayers, this.controller.getGameCode(), this.controller.getGameModel().getPlayersNumber(), waitingIteration++);
-                if (Utilities.pause(1000, terminal, controller)) {
+                if (Utilities.pause(1000, terminal)) {
                     controller.getGameServer().sendCommand(MessageCreator.logout());
                     controller.resetGame();
                     manageExit();
@@ -271,7 +271,7 @@ public class ClientCli implements Runnable, View {
                         this.controller.manageGameRunning(command);
                         return;
                     }
-                } else if (Utilities.pause(1000, terminal, controller))
+                } else if (Utilities.pause(1000, terminal))
                     this.controller.manageGameRunning("logout");
             }
         }

@@ -1,7 +1,7 @@
 package it.polimi.ingsw.client.view.gui.scenes;
 
-import it.polimi.ingsw.client.view.ClientGui;
 import it.polimi.ingsw.client.model.*;
+import it.polimi.ingsw.client.view.ClientGui;
 import it.polimi.ingsw.client.view.gui.CommandAssembler;
 import it.polimi.ingsw.client.view.gui.utilities.*;
 import it.polimi.ingsw.utilities.ClientState;
@@ -123,13 +123,13 @@ public class Game implements Prepare {
      * Updates all the view.
      */
     public void update() {
-        if(client.getController().getGameModel() == null)
+        if (client.getController().getGameModel() == null)
             return;
-        while(boards == null || boardsList == null || islands == null || clouds == null || (this.client.getController().getGameModel().isExpert() && characters == null)) {
+        while (boards == null || boardsList == null || islands == null || clouds == null || (this.client.getController().getGameModel().isExpert() && characters == null)) {
             synchronized (this.client.getController().getLock()) {
-                try{
+                try {
                     this.client.getController().getLock().wait(50);
-                }catch(InterruptedException ie) {
+                } catch (InterruptedException ie) {
                     Log.debug("Gui: Update thread in Game scene has been interrupted.");
                     return;
                 }
@@ -302,11 +302,14 @@ public class Game implements Prepare {
      * Adds all the islands to the GUI.
      */
     private void addIslands() {
+
         Pair<List<IslandContainer>, List<Boolean>> tmp = Islands.get(client.getController().getGameModel().getGameBoard(), List.of(
                 next1, next2, next3, next4, next5, next6,
                 next7, next8, next9, next10, next11, next12
         ), commandAssembler);
+
         this.islands = tmp.first();
+
         Platform.runLater(() -> {
             islandsLayout.getChildren().clear();
             islandsLayout.add(this.islands.get(0).getPane(), 0, 1);

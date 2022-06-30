@@ -1,6 +1,5 @@
 package it.polimi.ingsw.client.view.cli;
 
-import it.polimi.ingsw.client.controller.ClientController;
 import it.polimi.ingsw.client.view.cli.colours.*;
 import it.polimi.ingsw.client.view.cli.coordinates.DeltaCoordinates;
 import it.polimi.ingsw.utilities.HouseColor;
@@ -221,11 +220,14 @@ public class Utilities {
     }
 
 
-
     /**
      * Pauses the CLI for a fixed amount of time and catches an eventual CTRL(/CMD)+C.
+     *
+     * @param millis   Milliseconds to pause.
+     * @param terminal Terminal to pause.
+     * @return whether the wait has been interrupted by the user.
      */
-    public static boolean pause(long millis, Terminal terminal, ClientController controller) {
+    public static boolean pause(long millis, Terminal terminal) {
 
         AtomicBoolean interrupted = new AtomicBoolean(false);
 

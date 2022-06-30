@@ -42,7 +42,7 @@ public class CommandAssembler {
         if (command.contains("from chr01 to") || command.equals("ban "))
             command = String.format("%s%s", command, island);
         else if (command.equals("") && this.controller.getGameModel().getGameBoard().getSpecialCharacters().stream().anyMatch(sp ->
-                    sp.getId() == 3 && sp.isActive() && sp.getUsesNumber() > 0)) {
+                sp.getId() == 3 && sp.isActive() && sp.getUsesNumber() > 0)) {
             command = String.format("resolve %s", island);
         } else {
             switch (controller.getGameModel().getSubPhase()) {

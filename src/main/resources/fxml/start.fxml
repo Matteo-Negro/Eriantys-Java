@@ -33,12 +33,12 @@
       </Label>
       <VBox alignment="CENTER" layoutX="207.0" layoutY="234.0" prefHeight="234.0" prefWidth="286.0">
          <children>
-            <TextField fx:id="ip" alignment="CENTER" prefHeight="26.0" prefWidth="247.0" promptText="Server IP or address (default: localhost)">
+            <TextField fx:id="ip" alignment="CENTER" onKeyPressed="#connect" prefHeight="26.0" prefWidth="247.0" promptText="Server IP or address (default: localhost)">
                <opaqueInsets>
                   <Insets />
                </opaqueInsets>
             </TextField>
-            <TextField fx:id="port" alignment="CENTER" prefHeight="26.0" prefWidth="247.0" promptText="Server port (default: 36803)">
+            <TextField fx:id="port" alignment="CENTER" onKeyPressed="#connect" prefHeight="26.0" prefWidth="247.0" promptText="Server port (default: 36803)">
                <VBox.margin>
                   <Insets top="20.0" />
                </VBox.margin>

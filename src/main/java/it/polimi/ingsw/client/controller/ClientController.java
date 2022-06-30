@@ -2,10 +2,10 @@ package it.polimi.ingsw.client.controller;
 
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
-import it.polimi.ingsw.client.view.View;
 import it.polimi.ingsw.client.model.GameModel;
 import it.polimi.ingsw.client.model.Player;
 import it.polimi.ingsw.client.model.SpecialCharacter;
+import it.polimi.ingsw.client.view.View;
 import it.polimi.ingsw.utilities.*;
 import it.polimi.ingsw.utilities.exceptions.IllegalActionException;
 import it.polimi.ingsw.utilities.exceptions.IllegalMoveException;
@@ -357,9 +357,9 @@ public class ClientController {
      */
     private void checkOccurrences(JsonObject message) throws IllegalMoveException {
         if (this.gameModel.isExpert() && ((message.get("subtype").getAsString().equals("return")) ||
-                                            (message.get("subtype").getAsString().equals("ban")) ||
-                                            (message.get("special") != null && message.get("special").getAsBoolean()) ||
-                                            (message.get("move") != null && !message.get("move").getAsBoolean()))) {
+                (message.get("subtype").getAsString().equals("ban")) ||
+                (message.get("special") != null && message.get("special").getAsBoolean()) ||
+                (message.get("move") != null && !message.get("move").getAsBoolean()))) {
             int idSpecialCharacter = 0;
             for (SpecialCharacter sc : gameModel.getGameBoard().getSpecialCharacters()) {
                 if (sc.isActive()) {
