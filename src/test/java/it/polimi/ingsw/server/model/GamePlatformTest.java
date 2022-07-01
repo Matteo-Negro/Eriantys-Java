@@ -106,20 +106,6 @@ class GamePlatformTest {
         assertEquals("Milici", tmp.get(2).getName());
     }
 
-    // TODO: think about it
-
-    /**
-     * Tests whether the player is added.
-     */
-    @Test
-    void addPlayer() {
-        try {
-            this.gamePlatforms.get(0).addPlayer("Matteo");
-        } catch (AlreadyExistingPlayerException | FullGameException e) {
-            assert true;
-        }
-    }
-
     /**
      * Tests whether returns the right player given him/her name.
      */

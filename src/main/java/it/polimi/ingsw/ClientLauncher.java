@@ -27,7 +27,6 @@ public class ClientLauncher {
 
         try {
             Log.createClientInstance();
-            Log.setLevel(Log.Level.DEBUG);
         } catch (IOException | IllegalAccessException e) {
             System.exit(1);
         }

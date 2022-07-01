@@ -23,7 +23,6 @@ public class ServerLauncher {
 
         try {
             Log.createServerInstance();
-            Log.setLevel(Log.Level.DEBUG);
         } catch (IOException | IllegalAccessException e) {
             System.exit(1);
         }
