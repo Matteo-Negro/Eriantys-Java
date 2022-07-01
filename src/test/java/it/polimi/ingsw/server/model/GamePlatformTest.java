@@ -218,7 +218,7 @@ class GamePlatformTest {
     }
 
     /**
-     * Tests whether the round incrementation & co work.
+     * Tests whether the round incrementation and co work.
      */
     @Test
     void nextRound() {
@@ -334,7 +334,7 @@ class GamePlatformTest {
     }
 
     /**
-     * Tests whether the turn incrementation & co work.
+     * Tests whether the turn incrementation and co work.
      */
     @Test
     void nextTurn() {
