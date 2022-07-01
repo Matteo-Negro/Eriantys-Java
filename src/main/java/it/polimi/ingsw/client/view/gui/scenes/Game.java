@@ -130,6 +130,7 @@ public class Game implements Prepare {
                 try {
                     this.client.getController().getLock().wait(50);
                 } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
                     Log.debug("Gui: Update thread in Game scene has been interrupted.");
                     return;
                 }
