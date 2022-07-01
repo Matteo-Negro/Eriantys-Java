@@ -20,7 +20,7 @@ Progetto realizzato da [Riccardo Milici](https://github.com/RiccardoMilici),
 
 ## Esecuzione del software
 
-Il software è suddiviso in due eseguibili: [client.jar](deliverables/jar/client.jar)
+Il software è suddiviso in due eseguibili (JRE 17 o superiori): [client.jar](deliverables/jar/client.jar)
 e [server.jar](deliverables/jar/server.jar).
 
 ### Client
